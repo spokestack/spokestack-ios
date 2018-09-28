@@ -87,7 +87,46 @@ class AudioController {
     
     // MARK: Public (methods)
     
-    func prepare() throws -> OSStatus {
+    func startStreaming() -> Void {
+        
+        /// Prepare
+        
+        do {
+        
+            try self.prepare()
+            self.start()
+
+        } catch AudioError.audioSessionSetup(let message) {
+        
+        } catch AudioError.general(let message) {
+        
+        } catch {
+        
+        }
+        
+        /// Start audio buffering
+        
+        
+    }
+    
+    func stopStreaming() -> Void {
+        
+    }
+    
+    // MARK: Private (methods)
+    
+    @discardableResult
+    private func start() -> OSStatus {
+        return AudioOutputUnitStart(remoteIOUnit!)
+    }
+    
+    @discardableResult
+    private func stop() -> OSStatus {
+        return AudioOutputUnitStop(remoteIOUnit!)
+    }
+    
+    @discardableResult
+    private func prepare() throws -> OSStatus {
         
         var status: OSStatus = noErr
         let session: AVAudioSession = AVAudioSession.sharedInstance()
