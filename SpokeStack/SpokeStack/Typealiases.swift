@@ -8,4 +8,4 @@
 
 import Foundation
 
-public typealias SpeechRecognitionClosure<T> = (_ result: SpeechRecognitionResult<T, SpeechRecognitionError>) -> Void
+public typealias SpeechRecognitionClosure<T> = (_ result: SPSpeechRecognitionResult<T, SPSpeechRecognitionError>) -> Void

@@ -10,12 +10,12 @@ import Foundation
 
 /// CloudKit
 
-public enum SpeechRecognitionError: Error {
+public enum SPSpeechRecognitionError: Error {
     case general(String)
     case emptyresult(String)
 }
 
-public enum SpeechRecognitionResult<T, ResultError: Error> {
+public enum SPSpeechRecognitionResult<T, ResultError: Error> {
     case success(T)
     case failure(ResultError)
 }
