@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		01074F9521627DDD005C4F99 /* SPSpeechContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01074F9421627DDD005C4F99 /* SPSpeechContext.swift */; };
+		01074F9621627DDD005C4F99 /* SPSpeechContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01074F9421627DDD005C4F99 /* SPSpeechContext.swift */; };
+		01074F9821627E0F005C4F99 /* SpeechRecognizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01074F9721627E0F005C4F99 /* SpeechRecognizer.swift */; };
+		01074F9921627E0F005C4F99 /* SpeechRecognizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01074F9721627E0F005C4F99 /* SpeechRecognizer.swift */; };
 		01559890215B089300959BEE /* SpokeStack.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01559886215B089300959BEE /* SpokeStack.framework */; };
 		01559895215B089300959BEE /* SpokeStackTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01559894215B089300959BEE /* SpokeStackTests.swift */; };
 		01559897215B089300959BEE /* SpokeStack.h in Headers */ = {isa = PBXBuildFile; fileRef = 01559889215B089300959BEE /* SpokeStack.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -42,6 +46,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		01074F9421627DDD005C4F99 /* SPSpeechContext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SPSpeechContext.swift; sourceTree = "<group>"; };
+		01074F9721627E0F005C4F99 /* SpeechRecognizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeechRecognizer.swift; sourceTree = "<group>"; };
 		01559886215B089300959BEE /* SpokeStack.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = SpokeStack.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		01559889215B089300959BEE /* SpokeStack.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SpokeStack.h; sourceTree = "<group>"; };
 		0155988A215B089300959BEE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -82,6 +88,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		01074F9321627DCC005C4F99 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				01074F9421627DDD005C4F99 /* SPSpeechContext.swift */,
+			);
+			name = Models;
+			sourceTree = "<group>";
+		};
 		0155987C215B089300959BEE = {
 			isa = PBXGroup;
 			children = (
@@ -105,6 +119,7 @@
 		01559888215B089300959BEE /* SpokeStack */ = {
 			isa = PBXGroup;
 			children = (
+				01074F9321627DCC005C4F99 /* Models */,
 				01AFF10A215EB62C00D51776 /* Configurations */,
 				01AFF102215E794F00D51776 /* Controllers */,
 				01AFF0FE215E78FE00D51776 /* Errors */,
@@ -141,6 +156,7 @@
 				01AFF0FB215E76AA00D51776 /* AudioControllerDelegate.swift */,
 				01AFF116215EBAAD00D51776 /* GoogleRecognizerConfiguration.swift */,
 				01AFF107215EB56B00D51776 /* RecognizerConfiguration.swift */,
+				01074F9721627E0F005C4F99 /* SpeechRecognizer.swift */,
 			);
 			name = Protocols;
 			sourceTree = "<group>";
@@ -346,6 +362,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				01AFF108215EB56B00D51776 /* RecognizerConfiguration.swift in Sources */,
+				01074F9521627DDD005C4F99 /* SPSpeechContext.swift in Sources */,
+				01074F9821627E0F005C4F99 /* SpeechRecognizer.swift in Sources */,
 				01AFF10C215EB64800D51776 /* StandardRecognizerConfiguration.swift in Sources */,
 				01AFF114215EB7E500D51776 /* Results.swift in Sources */,
 				01AFF110215EB79700D51776 /* Typealiases.swift in Sources */,
@@ -365,6 +383,8 @@
 				01AFF0F9215E762B00D51776 /* AudioController.swift in Sources */,
 				01AFF0FD215E76AA00D51776 /* AudioControllerDelegate.swift in Sources */,
 				01AFF109215EB56B00D51776 /* RecognizerConfiguration.swift in Sources */,
+				01074F9621627DDD005C4F99 /* SPSpeechContext.swift in Sources */,
+				01074F9921627E0F005C4F99 /* SpeechRecognizer.swift in Sources */,
 				01559895215B089300959BEE /* SpokeStackTests.swift in Sources */,
 				01AFF101215E790B00D51776 /* Error.swift in Sources */,
 				01AFF115215EB7E500D51776 /* Results.swift in Sources */,
