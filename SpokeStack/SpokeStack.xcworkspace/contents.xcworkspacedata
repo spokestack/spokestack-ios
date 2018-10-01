@@ -2,6 +2,9 @@
 <Workspace
    version = "1.0">
    <FileRef
+      location = "group:SpokeStackExample/SpokeStackExample.xcodeproj">
+   </FileRef>
+   <FileRef
       location = "group:SpokeStack.xcodeproj">
    </FileRef>
    <FileRef
