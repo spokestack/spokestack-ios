@@ -98,19 +98,20 @@ class AudioController {
 
         } catch AudioError.audioSessionSetup(let message) {
         
+            self.delegate?.setupFailed(message)
+            
         } catch AudioError.general(let message) {
         
+            self.delegate?.setupFailed(message)
+            
         } catch {
         
+            self.delegate?.setupFailed("An unknown error occured setting the stream")
         }
-        
-        /// Start audio buffering
-        
-        
     }
     
     func stopStreaming() -> Void {
-        
+        self.stop()
     }
     
     // MARK: Private (methods)
