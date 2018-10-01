@@ -11,6 +11,7 @@ import Foundation
 public protocol GoogleRecognizerConfiguration: RecognizerConfiguration {
     
     var host: String { get set }
+    
     var apiKey: String { get set }
 }
 
