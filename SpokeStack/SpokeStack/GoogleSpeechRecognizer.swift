@@ -9,23 +9,21 @@
 import Foundation
 import googleapis
 
-public class GoogleSpeechRecognizer: GoogleRecognizerConfiguration {
+public class GoogleSpeechRecognizer {
     
     // MARK: Public (properties)
     
     public static let sharedInstance: GoogleSpeechRecognizer = GoogleSpeechRecognizer()
-    
-    public var host: String = GoogleSpeechRecognizer.defaultHost
-    
-    public var apiKey: String = "REPLACE_ME"
 
     public var isStreaming: Bool {
         return self.streaming
     }
     
-    // MARK: Private (properties)
+    public var configuration: GoogleRecognizerConfiguration!
     
-    private static let defaultHost: String = "speech.googleapis.com"
+    weak public var delegate: SpeechRecognizer?
+    
+    // MARK: Private (properties)
     
     private var streaming: Bool = false
     
@@ -38,7 +36,7 @@ public class GoogleSpeechRecognizer: GoogleRecognizerConfiguration {
     private var call: GRPCProtoCall!
     
     lazy private var recognitionConfig: RecognitionConfig = {
-        
+
         let config: RecognitionConfig = RecognitionConfig()
         
         config.encoding =  .linear16
@@ -72,6 +70,8 @@ public class GoogleSpeechRecognizer: GoogleRecognizerConfiguration {
     // MARK: Initializers
     
     public init() {
+        
+//        self.configuration = configuration
         AudioController.shared.delegate = self
     }
     
@@ -100,23 +100,40 @@ public class GoogleSpeechRecognizer: GoogleRecognizerConfiguration {
     
     private func analyzeAudioData(_ data: Data) -> Void {
         
-        /// Convert to model and pass back to delegate
-        
-        
         /// if we aren't already streaming, set up a gRPC connection
         
-        self.client = Speech(host: self.host)
+        self.client = Speech(host: self.configuration.host)
         self.writer = GRXBufferedPipe()
-        self.call = self.client.rpcToStreamingRecognize(withRequestsWriter: self.writer, eventHandler: {done, response, error in
+        self.call = self.client.rpcToStreamingRecognize(withRequestsWriter: self.writer, eventHandler: {[weak self] done, response, error in
             print("done \(done) response \(String(describing: response)) and error \(String(describing: error))")
+            guard let strongSelf = self else {
+                return
+            }
             
-            // TODO: Pass to private method
-            //                    completion(response, error as? NSError)
+            if let error = error {
+//                strongSelf.textView.text = error.localizedDescription
+            } else if let response = response {
+                var finished = false
+                print(response)
+                for result in response.resultsArray! {
+                    if let result: StreamingRecognitionResult = result as? StreamingRecognitionResult {
+
+//                        self?.delegate?.didFinish(speechContext)
+                        if result.isFinal {
+                            finished = true
+                        }
+                    }
+                }
+//                strongSelf.textView.text = response.description
+//                if finished {
+//                    strongSelf.stopAudio(strongSelf)
+//                }
+            }
         })
         
         /// authenticate using an API key obtained from the Google Cloud Console
         
-        self.call.requestHeaders.setObject(NSString(string: self.apiKey),
+        self.call.requestHeaders.setObject(NSString(string: self.configuration.apiKey),
                                            forKey:NSString(string:"X-Goog-Api-Key"))
         
         /// if the API key has a bundle ID restriction, specify the bundle ID like this
@@ -134,7 +151,7 @@ public class GoogleSpeechRecognizer: GoogleRecognizerConfiguration {
         /// send a request message containing the audio data
         
         let streamingRecognizeRequest: StreamingRecognizeRequest = StreamingRecognizeRequest()
-        streamingRecognizeRequest.audioContent = audioData as Data
+        streamingRecognizeRequest.audioContent = self.audioData as Data
         
         self.writer.writeValue(streamingRecognizeRequest)
     }
