@@ -12,3 +12,7 @@ enum AudioError: Error {
     case general(String)
     case audioSessionSetup(String)
 }
+
+public enum SpeechPipleError: Error {
+    case invalidInitialzation(String)
+}
