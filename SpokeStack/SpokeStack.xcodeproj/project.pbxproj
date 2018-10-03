@@ -32,6 +32,11 @@
 		01AFF115215EB7E500D51776 /* Results.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01AFF113215EB7E500D51776 /* Results.swift */; };
 		01AFF117215EBAAD00D51776 /* GoogleRecognizerConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01AFF116215EBAAD00D51776 /* GoogleRecognizerConfiguration.swift */; };
 		01AFF118215EBAAD00D51776 /* GoogleRecognizerConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01AFF116215EBAAD00D51776 /* GoogleRecognizerConfiguration.swift */; };
+		01F492FE2163EDE200E630F2 /* SpeechPipeline.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01F492FD2163EDE200E630F2 /* SpeechPipeline.swift */; };
+		01F493002163EE2D00E630F2 /* RecognizerService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01F492FF2163EE2D00E630F2 /* RecognizerService.swift */; };
+		01F493012163EE2D00E630F2 /* RecognizerService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01F492FF2163EE2D00E630F2 /* RecognizerService.swift */; };
+		01F493042164057C00E630F2 /* SpeechRecognizerService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01F493032164057C00E630F2 /* SpeechRecognizerService.swift */; };
+		01F493052164057C00E630F2 /* SpeechRecognizerService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01F493032164057C00E630F2 /* SpeechRecognizerService.swift */; };
 		91B02756C6B7AB0B448AF667 /* Pods_SpokeStack.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 545216CCCFB1278BA5F68688 /* Pods_SpokeStack.framework */; };
 /* End PBXBuildFile section */
 
@@ -63,6 +68,9 @@
 		01AFF10F215EB79700D51776 /* Typealiases.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Typealiases.swift; sourceTree = "<group>"; };
 		01AFF113215EB7E500D51776 /* Results.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Results.swift; sourceTree = "<group>"; };
 		01AFF116215EBAAD00D51776 /* GoogleRecognizerConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoogleRecognizerConfiguration.swift; sourceTree = "<group>"; };
+		01F492FD2163EDE200E630F2 /* SpeechPipeline.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeechPipeline.swift; sourceTree = "<group>"; };
+		01F492FF2163EE2D00E630F2 /* RecognizerService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecognizerService.swift; sourceTree = "<group>"; };
+		01F493032164057C00E630F2 /* SpeechRecognizerService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeechRecognizerService.swift; sourceTree = "<group>"; };
 		411F1ED831171984383F750E /* Pods-SpokeStack.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SpokeStack.debug.xcconfig"; path = "Pods/Target Support Files/Pods-SpokeStack/Pods-SpokeStack.debug.xcconfig"; sourceTree = "<group>"; };
 		545216CCCFB1278BA5F68688 /* Pods_SpokeStack.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SpokeStack.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		F06E29015A0E5539D4D08488 /* Pods-SpokeStack.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SpokeStack.release.xcconfig"; path = "Pods/Target Support Files/Pods-SpokeStack/Pods-SpokeStack.release.xcconfig"; sourceTree = "<group>"; };
@@ -92,6 +100,7 @@
 			isa = PBXGroup;
 			children = (
 				01074F9421627DDD005C4F99 /* SPSpeechContext.swift */,
+				01F492FF2163EE2D00E630F2 /* RecognizerService.swift */,
 			);
 			name = Models;
 			sourceTree = "<group>";
@@ -119,10 +128,11 @@
 		01559888215B089300959BEE /* SpokeStack */ = {
 			isa = PBXGroup;
 			children = (
-				01074F9321627DCC005C4F99 /* Models */,
 				01AFF10A215EB62C00D51776 /* Configurations */,
 				01AFF102215E794F00D51776 /* Controllers */,
 				01AFF0FE215E78FE00D51776 /* Errors */,
+				01F492FC2163ED4900E630F2 /* Managers */,
+				01074F9321627DCC005C4F99 /* Models */,
 				01AFF0F4215E64AD00D51776 /* Protocols */,
 				01AFF103215EB3D600D51776 /* Recognizers */,
 				01AFF112215EB7D100D51776 /* Results */,
@@ -154,9 +164,9 @@
 			isa = PBXGroup;
 			children = (
 				01AFF0FB215E76AA00D51776 /* AudioControllerDelegate.swift */,
-				01AFF116215EBAAD00D51776 /* GoogleRecognizerConfiguration.swift */,
-				01AFF107215EB56B00D51776 /* RecognizerConfiguration.swift */,
+				01F493022163FFE200E630F2 /* Configurations */,
 				01074F9721627E0F005C4F99 /* SpeechRecognizer.swift */,
+				01F493032164057C00E630F2 /* SpeechRecognizerService.swift */,
 			);
 			name = Protocols;
 			sourceTree = "<group>";
@@ -207,6 +217,23 @@
 				01AFF113215EB7E500D51776 /* Results.swift */,
 			);
 			name = Results;
+			sourceTree = "<group>";
+		};
+		01F492FC2163ED4900E630F2 /* Managers */ = {
+			isa = PBXGroup;
+			children = (
+				01F492FD2163EDE200E630F2 /* SpeechPipeline.swift */,
+			);
+			name = Managers;
+			sourceTree = "<group>";
+		};
+		01F493022163FFE200E630F2 /* Configurations */ = {
+			isa = PBXGroup;
+			children = (
+				01AFF116215EBAAD00D51776 /* GoogleRecognizerConfiguration.swift */,
+				01AFF107215EB56B00D51776 /* RecognizerConfiguration.swift */,
+			);
+			name = Configurations;
 			sourceTree = "<group>";
 		};
 		495C42BCDAB38A25F30C389E /* Pods */ = {
@@ -364,14 +391,17 @@
 				01AFF108215EB56B00D51776 /* RecognizerConfiguration.swift in Sources */,
 				01074F9521627DDD005C4F99 /* SPSpeechContext.swift in Sources */,
 				01074F9821627E0F005C4F99 /* SpeechRecognizer.swift in Sources */,
+				01F493002163EE2D00E630F2 /* RecognizerService.swift in Sources */,
 				01AFF10C215EB64800D51776 /* StandardRecognizerConfiguration.swift in Sources */,
 				01AFF114215EB7E500D51776 /* Results.swift in Sources */,
 				01AFF110215EB79700D51776 /* Typealiases.swift in Sources */,
 				01AFF117215EBAAD00D51776 /* GoogleRecognizerConfiguration.swift in Sources */,
 				01AFF105215EB44600D51776 /* GoogleSpeechRecognizer.swift in Sources */,
 				01AFF100215E790B00D51776 /* Error.swift in Sources */,
+				01F492FE2163EDE200E630F2 /* SpeechPipeline.swift in Sources */,
 				01AFF0F8215E762B00D51776 /* AudioController.swift in Sources */,
 				01AFF0FC215E76AA00D51776 /* AudioControllerDelegate.swift in Sources */,
+				01F493042164057C00E630F2 /* SpeechRecognizerService.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -382,6 +412,7 @@
 				01AFF111215EB79700D51776 /* Typealiases.swift in Sources */,
 				01AFF0F9215E762B00D51776 /* AudioController.swift in Sources */,
 				01AFF0FD215E76AA00D51776 /* AudioControllerDelegate.swift in Sources */,
+				01F493012163EE2D00E630F2 /* RecognizerService.swift in Sources */,
 				01AFF109215EB56B00D51776 /* RecognizerConfiguration.swift in Sources */,
 				01074F9621627DDD005C4F99 /* SPSpeechContext.swift in Sources */,
 				01074F9921627E0F005C4F99 /* SpeechRecognizer.swift in Sources */,
@@ -391,6 +422,7 @@
 				01AFF118215EBAAD00D51776 /* GoogleRecognizerConfiguration.swift in Sources */,
 				01AFF10D215EB64800D51776 /* StandardRecognizerConfiguration.swift in Sources */,
 				01AFF106215EB44600D51776 /* GoogleSpeechRecognizer.swift in Sources */,
+				01F493052164057C00E630F2 /* SpeechRecognizerService.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
