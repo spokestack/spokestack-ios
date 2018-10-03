@@ -12,7 +12,7 @@ public protocol SpeechRecognizer: AnyObject {
     
     func didStart() -> Void
     
-    func didReceiveResult(_ result: SPSpeechContext) -> Void
+    func didRecognize(_ result: SPSpeechContext) -> Void
     
     func didFinish() -> Void
 }
