@@ -11,5 +11,6 @@ import Foundation
 protocol AudioControllerDelegate: AnyObject {
     
     func setupFailed(_ error: String) -> Void
+    
     func processSampleData(_ data: Data) -> Void
 }
