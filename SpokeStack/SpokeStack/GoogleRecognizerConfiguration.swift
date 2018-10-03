@@ -10,8 +10,16 @@ import Foundation
 
 public protocol GoogleRecognizerConfiguration: RecognizerConfiguration {
     
-    var host: String { get set }
+    var host: String { get }
     
-    var apiKey: String { get set }
+    var apiKey: String { get }
+    
+    var enableWordTimeOffsets: Bool { get }
+    
+    var maxAlternatives: Int32 { get }
+    
+    var singleUtterance: Bool { get }
+    
+    var interimResults: Bool { get }
 }
 
