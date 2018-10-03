@@ -11,11 +11,17 @@ import Foundation
 public protocol RecognizerConfiguration {
     
     var sampleRate: Int { get }
+    
+    var languageLocale: String { get }
 }
 
 extension RecognizerConfiguration {
     
     public var sampleRate: Int {
         return 16000
+    }
+    
+    public var languageLocale: String {
+        return "en-US"
     }
 }
