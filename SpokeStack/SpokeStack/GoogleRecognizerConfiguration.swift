@@ -23,3 +23,30 @@ public protocol GoogleRecognizerConfiguration: RecognizerConfiguration {
     var interimResults: Bool { get }
 }
 
+extension GoogleRecognizerConfiguration {
+    
+    public var host: String {
+        return "speech.google.com"
+    }
+    
+    public var apiKey: String {
+        return "12345"
+    }
+    
+    public var enableWordTimeOffsets: Bool {
+        return true
+    }
+    
+    public var maxAlternatives: Int32 {
+        return 30
+    }
+    
+    public var singleUtterance: Bool {
+        return false
+    }
+    
+    public var interimResults: Bool {
+        return true
+    }
+}
+
