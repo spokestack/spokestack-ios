@@ -10,7 +10,7 @@ import Foundation
 import googleapis
 
 class GoogleSpeechRecognizer: SpeechRecognizerService {
-    
+
     // MARK: Public (properties)
     
     static let sharedInstance: GoogleSpeechRecognizer = GoogleSpeechRecognizer()
@@ -21,7 +21,7 @@ class GoogleSpeechRecognizer: SpeechRecognizerService {
     
     // MARK: SpeechRecognizerService (properties)
     
-    var configuration: GoogleRecognizerConfiguration
+    var configuration: RecognizerConfiguration = StandardGoogleRecognitionConfiguration()
     
     weak var delegate: SpeechRecognizer?
     
@@ -37,15 +37,19 @@ class GoogleSpeechRecognizer: SpeechRecognizerService {
     
     private var call: GRPCProtoCall!
     
+    private var googleConfiguration: GoogleRecognizerConfiguration {
+        return self.configuration as! GoogleRecognizerConfiguration
+    }
+    
     lazy private var recognitionConfig: RecognitionConfig = {
 
         let config: RecognitionConfig = RecognitionConfig()
         
         config.encoding =  .linear16
         config.sampleRateHertz = Int32(AudioController.shared.sampleRate)
-        config.languageCode = self.configuration.languageLocale
-        config.maxAlternatives = self.configuration.maxAlternatives
-        config.enableWordTimeOffsets = self.configuration.enableWordTimeOffsets
+        config.languageCode = self.googleConfiguration.languageLocale
+        config.maxAlternatives = self.googleConfiguration.maxAlternatives
+        config.enableWordTimeOffsets = self.googleConfiguration.enableWordTimeOffsets
         
         return config
     }()
@@ -55,8 +59,8 @@ class GoogleSpeechRecognizer: SpeechRecognizerService {
         let config: StreamingRecognitionConfig = StreamingRecognitionConfig()
         
         config.config = self.recognitionConfig
-        config.singleUtterance = self.configuration.singleUtterance
-        config.interimResults = self.configuration.interimResults
+        config.singleUtterance = self.googleConfiguration.singleUtterance
+        config.interimResults = self.googleConfiguration.interimResults
         
         return config
     }()
@@ -99,10 +103,8 @@ class GoogleSpeechRecognizer: SpeechRecognizerService {
     // MARK: Private (methods)
     
     private func analyzeAudioData(_ data: Data) -> Void {
-
-        assert(self.configuration != nil, "You must set the configuration")
         
-        self.client = Speech(host: self.configuration.host)
+        self.client = Speech(host: self.googleConfiguration.host)
         self.writer = GRXBufferedPipe()
         self.call = self.client.rpcToStreamingRecognize(withRequestsWriter: self.writer, eventHandler: {[weak self] done, response, error in
             print("done \(done) response \(String(describing: response)) and error \(String(describing: error))")
@@ -133,7 +135,7 @@ class GoogleSpeechRecognizer: SpeechRecognizerService {
         
         /// authenticate using an API key obtained from the Google Cloud Console
         
-        self.call.requestHeaders.setObject(NSString(string: self.configuration.apiKey),
+        self.call.requestHeaders.setObject(NSString(string: self.googleConfiguration.apiKey),
                                            forKey:NSString(string:"X-Goog-Api-Key"))
         
         /// if the API key has a bundle ID restriction, specify the bundle ID like this
