@@ -1,7 +1,7 @@
 Pod::Spec.new do |s|
   
   s.name     = 'SpokeStack'
-  s.version  = '0.0.2'
+  s.version  = '0.0.3'
   s.license  = 'Apache 2.0'
   s.authors  = { 'Pylon, Inc' => 'contact@pylon.com'}
   s.homepage = 'https://github.com/kwylez/spokestack-ios'
@@ -14,6 +14,6 @@ Pod::Spec.new do |s|
 
   s.ios.deployment_target = '11.0'
 
-  s.source_files = "SpokeStack/**/*.{swift}"
+  s.source_files = "SpokeStack/**/*.{h, m, c, swift}"
 
 end
