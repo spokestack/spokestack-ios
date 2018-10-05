@@ -6,7 +6,7 @@ Pod::Spec.new do |s|
   s.authors  = { 'Pylon, Inc' => 'contact@pylon.com'}
   s.homepage = 'https://github.com/kwylez/spokestack-ios'
   s.source   = { :git => 'https://github.com/kwylez/spokestack-ios.git',
-                 :branch => 'project-integration' }
+                 :tag => '0.0.1' }
   
   s.summary  = 'SpokeStack Integration'
 
