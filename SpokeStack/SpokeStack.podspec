@@ -26,16 +26,16 @@ Pod::Spec.new do |s|
 
   # Run protoc with the Objective-C and gRPC plugins to generate protocol messages and gRPC clients.
   # You can run this command manually if you later change your protos and need to regenerate.  
-  s.prepare_command = <<-CMD
-    #{protoc} \
-        --objc_opt=named_framework_to_proto_path_mappings_path=./protomap \
-        --plugin=protoc-gen-grpc=#{plugin} \
-        --objc_out=. \
-        --grpc_out=. \
-        -I . \
-        -I #{protoc_dir} \
-        google/*/*.proto google/*/*/*/*.proto
-  CMD
+  # s.prepare_command = <<-CMD
+  #   #{protoc} \
+  #       --objc_opt=named_framework_to_proto_path_mappings_path=./protomap \
+  #       --plugin=protoc-gen-grpc=#{plugin} \
+  #       --objc_out=. \
+  #       --grpc_out=. \
+  #       -I . \
+  #       -I #{protoc_dir} \
+  #       google/*/*.proto google/*/*/*/*.proto
+  # CMD
 
   # The --objc_out plugin generates a pair of .pbobjc.h/.pbobjc.m files for each .proto file.
   s.subspec "Messages" do |ms|
