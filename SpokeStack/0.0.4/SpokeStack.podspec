@@ -14,6 +14,7 @@ Pod::Spec.new do |s|
 
   s.ios.deployment_target = '11.0'
 
-  s.source_files = "SpokeStack/**/*.{h, m, c, swift}"
+  # s.source_files = "SpokeStack/**/*.{h, m, c, swift}"
+  s.source_files = "SpokeStack/SpokeStack/*.{h, m, c, swift}"
 
 end
