@@ -1,12 +1,12 @@
 Pod::Spec.new do |s|
   
   s.name     = 'SpokeStack'
-  s.version  = '0.0.3'
+  s.version  = '0.0.4'
   s.license  = 'Apache 2.0'
   s.authors  = { 'Pylon, Inc' => 'contact@pylon.com'}
   s.homepage = 'https://github.com/kwylez/spokestack-ios'
   s.source   = { :git => 'https://github.com/kwylez/spokestack-ios.git',
-                 :tag => '#{s.version}' }
+                 :tag => '0.0.4' }
   
   s.summary  = 'SpokeStack Integration'
 
