@@ -39,7 +39,6 @@
 		01F493012163EE2D00E630F2 /* RecognizerService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01F492FF2163EE2D00E630F2 /* RecognizerService.swift */; };
 		01F493042164057C00E630F2 /* SpeechRecognizerService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01F493032164057C00E630F2 /* SpeechRecognizerService.swift */; };
 		01F493052164057C00E630F2 /* SpeechRecognizerService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01F493032164057C00E630F2 /* SpeechRecognizerService.swift */; };
-		91B02756C6B7AB0B448AF667 /* Pods_SpokeStack.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 545216CCCFB1278BA5F68688 /* Pods_SpokeStack.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -74,9 +73,6 @@
 		01F492FD2163EDE200E630F2 /* SpeechPipeline.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeechPipeline.swift; sourceTree = "<group>"; };
 		01F492FF2163EE2D00E630F2 /* RecognizerService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecognizerService.swift; sourceTree = "<group>"; };
 		01F493032164057C00E630F2 /* SpeechRecognizerService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeechRecognizerService.swift; sourceTree = "<group>"; };
-		411F1ED831171984383F750E /* Pods-SpokeStack.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SpokeStack.debug.xcconfig"; path = "Pods/Target Support Files/Pods-SpokeStack/Pods-SpokeStack.debug.xcconfig"; sourceTree = "<group>"; };
-		545216CCCFB1278BA5F68688 /* Pods_SpokeStack.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SpokeStack.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		F06E29015A0E5539D4D08488 /* Pods-SpokeStack.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SpokeStack.release.xcconfig"; path = "Pods/Target Support Files/Pods-SpokeStack/Pods-SpokeStack.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -84,7 +80,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				91B02756C6B7AB0B448AF667 /* Pods_SpokeStack.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -114,8 +109,6 @@
 				01559888215B089300959BEE /* SpokeStack */,
 				01559893215B089300959BEE /* SpokeStackTests */,
 				01559887215B089300959BEE /* Products */,
-				495C42BCDAB38A25F30C389E /* Pods */,
-				553D3C57A9A963E177B9D5C7 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -240,23 +233,6 @@
 			name = Configurations;
 			sourceTree = "<group>";
 		};
-		495C42BCDAB38A25F30C389E /* Pods */ = {
-			isa = PBXGroup;
-			children = (
-				411F1ED831171984383F750E /* Pods-SpokeStack.debug.xcconfig */,
-				F06E29015A0E5539D4D08488 /* Pods-SpokeStack.release.xcconfig */,
-			);
-			name = Pods;
-			sourceTree = "<group>";
-		};
-		553D3C57A9A963E177B9D5C7 /* Frameworks */ = {
-			isa = PBXGroup;
-			children = (
-				545216CCCFB1278BA5F68688 /* Pods_SpokeStack.framework */,
-			);
-			name = Frameworks;
-			sourceTree = "<group>";
-		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -275,7 +251,6 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 0155989A215B089300959BEE /* Build configuration list for PBXNativeTarget "SpokeStack" */;
 			buildPhases = (
-				0FB8BDCA8B758D6FCB662951 /* [CP] Check Pods Manifest.lock */,
 				01559881215B089300959BEE /* Headers */,
 				01559882215B089300959BEE /* Sources */,
 				01559883215B089300959BEE /* Frameworks */,
@@ -361,31 +336,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
-
-/* Begin PBXShellScriptBuildPhase section */
-		0FB8BDCA8B758D6FCB662951 /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-SpokeStack-checkManifestLockResult.txt",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
-/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		01559882215B089300959BEE /* Sources */ = {
@@ -567,7 +517,6 @@
 		};
 		0155989B215B089300959BEE /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 411F1ED831171984383F750E /* Pods-SpokeStack.debug.xcconfig */;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "";
@@ -596,7 +545,6 @@
 		};
 		0155989C215B089300959BEE /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = F06E29015A0E5539D4D08488 /* Pods-SpokeStack.release.xcconfig */;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "";
