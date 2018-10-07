@@ -7,279 +7,435 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		01074F9521627DDD005C4F99 /* SPSpeechContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01074F9421627DDD005C4F99 /* SPSpeechContext.swift */; };
-		01074F9621627DDD005C4F99 /* SPSpeechContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01074F9421627DDD005C4F99 /* SPSpeechContext.swift */; };
-		01074F9821627E0F005C4F99 /* SpeechRecognizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01074F9721627E0F005C4F99 /* SpeechRecognizer.swift */; };
-		01074F9921627E0F005C4F99 /* SpeechRecognizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01074F9721627E0F005C4F99 /* SpeechRecognizer.swift */; };
-		01559890215B089300959BEE /* SpokeStack.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01559886215B089300959BEE /* SpokeStack.framework */; };
-		01559895215B089300959BEE /* SpokeStackTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01559894215B089300959BEE /* SpokeStackTests.swift */; };
-		01559897215B089300959BEE /* SpokeStack.h in Headers */ = {isa = PBXBuildFile; fileRef = 01559889215B089300959BEE /* SpokeStack.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		0166F1D421666EAF00300D25 /* StandardGoogleRecognitionConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0166F1D321666EAF00300D25 /* StandardGoogleRecognitionConfiguration.swift */; };
-		0166F1D521666EAF00300D25 /* StandardGoogleRecognitionConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0166F1D321666EAF00300D25 /* StandardGoogleRecognitionConfiguration.swift */; };
-		01AFF0F8215E762B00D51776 /* AudioController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01AFF0F7215E762B00D51776 /* AudioController.swift */; };
-		01AFF0F9215E762B00D51776 /* AudioController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01AFF0F7215E762B00D51776 /* AudioController.swift */; };
-		01AFF0FC215E76AA00D51776 /* AudioControllerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01AFF0FB215E76AA00D51776 /* AudioControllerDelegate.swift */; };
-		01AFF0FD215E76AA00D51776 /* AudioControllerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01AFF0FB215E76AA00D51776 /* AudioControllerDelegate.swift */; };
-		01AFF100215E790B00D51776 /* Error.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01AFF0FF215E790B00D51776 /* Error.swift */; };
-		01AFF101215E790B00D51776 /* Error.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01AFF0FF215E790B00D51776 /* Error.swift */; };
-		01AFF105215EB44600D51776 /* GoogleSpeechRecognizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01AFF104215EB44600D51776 /* GoogleSpeechRecognizer.swift */; };
-		01AFF106215EB44600D51776 /* GoogleSpeechRecognizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01AFF104215EB44600D51776 /* GoogleSpeechRecognizer.swift */; };
-		01AFF108215EB56B00D51776 /* RecognizerConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01AFF107215EB56B00D51776 /* RecognizerConfiguration.swift */; };
-		01AFF109215EB56B00D51776 /* RecognizerConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01AFF107215EB56B00D51776 /* RecognizerConfiguration.swift */; };
-		01AFF10C215EB64800D51776 /* StandardRecognizerConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01AFF10B215EB64800D51776 /* StandardRecognizerConfiguration.swift */; };
-		01AFF10D215EB64800D51776 /* StandardRecognizerConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01AFF10B215EB64800D51776 /* StandardRecognizerConfiguration.swift */; };
-		01AFF110215EB79700D51776 /* Typealiases.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01AFF10F215EB79700D51776 /* Typealiases.swift */; };
-		01AFF111215EB79700D51776 /* Typealiases.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01AFF10F215EB79700D51776 /* Typealiases.swift */; };
-		01AFF114215EB7E500D51776 /* Results.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01AFF113215EB7E500D51776 /* Results.swift */; };
-		01AFF115215EB7E500D51776 /* Results.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01AFF113215EB7E500D51776 /* Results.swift */; };
-		01AFF117215EBAAD00D51776 /* GoogleRecognizerConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01AFF116215EBAAD00D51776 /* GoogleRecognizerConfiguration.swift */; };
-		01AFF118215EBAAD00D51776 /* GoogleRecognizerConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01AFF116215EBAAD00D51776 /* GoogleRecognizerConfiguration.swift */; };
-		01F492FE2163EDE200E630F2 /* SpeechPipeline.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01F492FD2163EDE200E630F2 /* SpeechPipeline.swift */; };
-		01F493002163EE2D00E630F2 /* RecognizerService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01F492FF2163EE2D00E630F2 /* RecognizerService.swift */; };
-		01F493012163EE2D00E630F2 /* RecognizerService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01F492FF2163EE2D00E630F2 /* RecognizerService.swift */; };
-		01F493042164057C00E630F2 /* SpeechRecognizerService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01F493032164057C00E630F2 /* SpeechRecognizerService.swift */; };
-		01F493052164057C00E630F2 /* SpeechRecognizerService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01F493032164057C00E630F2 /* SpeechRecognizerService.swift */; };
-		91B02756C6B7AB0B448AF667 /* Pods_SpokeStack.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 545216CCCFB1278BA5F68688 /* Pods_SpokeStack.framework */; };
+		01AC1539216BB6CE001B9146 /* openssl.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 01D322F4216BB10C0055FD45 /* openssl.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		01AC153A216BB6CE001B9146 /* googleapis.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 01D322AD216BB10C0055FD45 /* googleapis.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		01AC153B216BB6CE001B9146 /* GRPCClient.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 01D322AF216BB10C0055FD45 /* GRPCClient.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		01AC153C216BB6CE001B9146 /* grpc.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 01D322FE216BB10D0055FD45 /* grpc.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		01AC153D216BB6CE001B9146 /* ProtoRPC.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 01D322AB216BB10C0055FD45 /* ProtoRPC.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		01AC153E216BB6CE001B9146 /* RxLibrary.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 01D322A9216BB10C0055FD45 /* RxLibrary.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		01AC153F216BB6CE001B9146 /* nanopb.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 01D322FA216BB10C0055FD45 /* nanopb.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		01AC1540216BB6CE001B9146 /* Protobuf.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 01D322FC216BB10D0055FD45 /* Protobuf.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		01D31F45216BAF260055FD45 /* SpokeStack.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01D31F3B216BAF260055FD45 /* SpokeStack.framework */; };
+		01D31F4A216BAF260055FD45 /* SpokeStackTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01D31F49216BAF260055FD45 /* SpokeStackTests.swift */; };
+		01D31F4C216BAF260055FD45 /* SpokeStack.h in Headers */ = {isa = PBXBuildFile; fileRef = 01D31F3E216BAF260055FD45 /* SpokeStack.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		01D31F5C216BAF950055FD45 /* StandardGoogleRecognitionConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01D31F5A216BAF950055FD45 /* StandardGoogleRecognitionConfiguration.swift */; };
+		01D31F5D216BAF950055FD45 /* StandardGoogleRecognitionConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01D31F5A216BAF950055FD45 /* StandardGoogleRecognitionConfiguration.swift */; };
+		01D31F5E216BAF950055FD45 /* StandardRecognizerConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01D31F5B216BAF950055FD45 /* StandardRecognizerConfiguration.swift */; };
+		01D31F5F216BAF950055FD45 /* StandardRecognizerConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01D31F5B216BAF950055FD45 /* StandardRecognizerConfiguration.swift */; };
+		01D31F62216BAFA40055FD45 /* AudioController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01D31F61216BAFA40055FD45 /* AudioController.swift */; };
+		01D31F63216BAFA40055FD45 /* AudioController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01D31F61216BAFA40055FD45 /* AudioController.swift */; };
+		01D31F66216BAFB50055FD45 /* Error.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01D31F65216BAFB50055FD45 /* Error.swift */; };
+		01D31F67216BAFB50055FD45 /* Error.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01D31F65216BAFB50055FD45 /* Error.swift */; };
+		01D31F6A216BAFC60055FD45 /* SpeechPipeline.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01D31F69216BAFC60055FD45 /* SpeechPipeline.swift */; };
+		01D31F6B216BAFC60055FD45 /* SpeechPipeline.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01D31F69216BAFC60055FD45 /* SpeechPipeline.swift */; };
+		01D31F6F216BAFD90055FD45 /* SPSpeechContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01D31F6D216BAFD90055FD45 /* SPSpeechContext.swift */; };
+		01D31F70216BAFD90055FD45 /* SPSpeechContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01D31F6D216BAFD90055FD45 /* SPSpeechContext.swift */; };
+		01D31F71216BAFD90055FD45 /* RecognizerService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01D31F6E216BAFD90055FD45 /* RecognizerService.swift */; };
+		01D31F72216BAFD90055FD45 /* RecognizerService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01D31F6E216BAFD90055FD45 /* RecognizerService.swift */; };
+		01D31F77216BAFEF0055FD45 /* SpeechRecognizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01D31F74216BAFEF0055FD45 /* SpeechRecognizer.swift */; };
+		01D31F78216BAFEF0055FD45 /* SpeechRecognizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01D31F74216BAFEF0055FD45 /* SpeechRecognizer.swift */; };
+		01D31F79216BAFEF0055FD45 /* AudioControllerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01D31F75216BAFEF0055FD45 /* AudioControllerDelegate.swift */; };
+		01D31F7A216BAFEF0055FD45 /* AudioControllerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01D31F75216BAFEF0055FD45 /* AudioControllerDelegate.swift */; };
+		01D31F7B216BAFEF0055FD45 /* SpeechRecognizerService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01D31F76216BAFEF0055FD45 /* SpeechRecognizerService.swift */; };
+		01D31F7C216BAFEF0055FD45 /* SpeechRecognizerService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01D31F76216BAFEF0055FD45 /* SpeechRecognizerService.swift */; };
+		01D31F80216BB0000055FD45 /* GoogleRecognizerConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01D31F7E216BB0000055FD45 /* GoogleRecognizerConfiguration.swift */; };
+		01D31F81216BB0000055FD45 /* GoogleRecognizerConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01D31F7E216BB0000055FD45 /* GoogleRecognizerConfiguration.swift */; };
+		01D31F82216BB0000055FD45 /* RecognizerConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01D31F7F216BB0000055FD45 /* RecognizerConfiguration.swift */; };
+		01D31F83216BB0000055FD45 /* RecognizerConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01D31F7F216BB0000055FD45 /* RecognizerConfiguration.swift */; };
+		01D31F86216BB0120055FD45 /* GoogleSpeechRecognizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01D31F85216BB0110055FD45 /* GoogleSpeechRecognizer.swift */; };
+		01D31F87216BB0120055FD45 /* GoogleSpeechRecognizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01D31F85216BB0110055FD45 /* GoogleSpeechRecognizer.swift */; };
+		01D31F8A216BB0220055FD45 /* Results.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01D31F89216BB0220055FD45 /* Results.swift */; };
+		01D31F8B216BB0220055FD45 /* Results.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01D31F89216BB0220055FD45 /* Results.swift */; };
+		01D31F8E216BB0370055FD45 /* Typealiases.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01D31F8D216BB0370055FD45 /* Typealiases.swift */; };
+		01D31F8F216BB0370055FD45 /* Typealiases.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01D31F8D216BB0370055FD45 /* Typealiases.swift */; };
+		01D32466216BB10D0055FD45 /* RxLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01D322A9216BB10C0055FD45 /* RxLibrary.framework */; };
+		01D32467216BB10D0055FD45 /* RxLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01D322A9216BB10C0055FD45 /* RxLibrary.framework */; };
+		01D32468216BB10D0055FD45 /* ProtoRPC.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01D322AB216BB10C0055FD45 /* ProtoRPC.framework */; };
+		01D32469216BB10D0055FD45 /* ProtoRPC.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01D322AB216BB10C0055FD45 /* ProtoRPC.framework */; };
+		01D3246A216BB10D0055FD45 /* googleapis.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01D322AD216BB10C0055FD45 /* googleapis.framework */; };
+		01D3246B216BB10D0055FD45 /* googleapis.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01D322AD216BB10C0055FD45 /* googleapis.framework */; };
+		01D3246C216BB10D0055FD45 /* GRPCClient.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01D322AF216BB10C0055FD45 /* GRPCClient.framework */; };
+		01D3246D216BB10D0055FD45 /* GRPCClient.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01D322AF216BB10C0055FD45 /* GRPCClient.framework */; };
+		01D3246E216BB10D0055FD45 /* gRPCCertificates.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 01D322B0216BB10C0055FD45 /* gRPCCertificates.bundle */; };
+		01D3246F216BB10D0055FD45 /* gRPCCertificates.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 01D322B0216BB10C0055FD45 /* gRPCCertificates.bundle */; };
+		01D32494216BB10D0055FD45 /* openssl.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01D322F4216BB10C0055FD45 /* openssl.framework */; };
+		01D32495216BB10D0055FD45 /* openssl.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01D322F4216BB10C0055FD45 /* openssl.framework */; };
+		01D32498216BB10D0055FD45 /* nanopb.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01D322FA216BB10C0055FD45 /* nanopb.framework */; };
+		01D32499216BB10D0055FD45 /* nanopb.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01D322FA216BB10C0055FD45 /* nanopb.framework */; };
+		01D3249A216BB10D0055FD45 /* Protobuf.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01D322FC216BB10D0055FD45 /* Protobuf.framework */; };
+		01D3249B216BB10D0055FD45 /* Protobuf.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01D322FC216BB10D0055FD45 /* Protobuf.framework */; };
+		01D3249C216BB10D0055FD45 /* grpc.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01D322FE216BB10D0055FD45 /* grpc.framework */; };
+		01D3249D216BB10D0055FD45 /* grpc.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01D322FE216BB10D0055FD45 /* grpc.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		01559891215B089300959BEE /* PBXContainerItemProxy */ = {
+		01D31F46216BAF260055FD45 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 0155987D215B089300959BEE /* Project object */;
+			containerPortal = 01D31F32216BAF260055FD45 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 01559885215B089300959BEE;
+			remoteGlobalIDString = 01D31F3A216BAF260055FD45;
 			remoteInfo = SpokeStack;
 		};
 /* End PBXContainerItemProxy section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		01AC1538216BB6AA001B9146 /* Copy Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				01AC1539216BB6CE001B9146 /* openssl.framework in Copy Frameworks */,
+				01AC153A216BB6CE001B9146 /* googleapis.framework in Copy Frameworks */,
+				01AC153B216BB6CE001B9146 /* GRPCClient.framework in Copy Frameworks */,
+				01AC153C216BB6CE001B9146 /* grpc.framework in Copy Frameworks */,
+				01AC153D216BB6CE001B9146 /* ProtoRPC.framework in Copy Frameworks */,
+				01AC153E216BB6CE001B9146 /* RxLibrary.framework in Copy Frameworks */,
+				01AC153F216BB6CE001B9146 /* nanopb.framework in Copy Frameworks */,
+				01AC1540216BB6CE001B9146 /* Protobuf.framework in Copy Frameworks */,
+			);
+			name = "Copy Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
-		01074F9421627DDD005C4F99 /* SPSpeechContext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SPSpeechContext.swift; sourceTree = "<group>"; };
-		01074F9721627E0F005C4F99 /* SpeechRecognizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeechRecognizer.swift; sourceTree = "<group>"; };
-		01559886215B089300959BEE /* SpokeStack.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = SpokeStack.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		01559889215B089300959BEE /* SpokeStack.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SpokeStack.h; sourceTree = "<group>"; };
-		0155988A215B089300959BEE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		0155988F215B089300959BEE /* SpokeStackTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SpokeStackTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		01559894215B089300959BEE /* SpokeStackTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpokeStackTests.swift; sourceTree = "<group>"; };
-		01559896215B089300959BEE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		0166F1D321666EAF00300D25 /* StandardGoogleRecognitionConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StandardGoogleRecognitionConfiguration.swift; sourceTree = "<group>"; };
-		01AFF0F7215E762B00D51776 /* AudioController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioController.swift; sourceTree = "<group>"; };
-		01AFF0FB215E76AA00D51776 /* AudioControllerDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioControllerDelegate.swift; sourceTree = "<group>"; };
-		01AFF0FF215E790B00D51776 /* Error.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Error.swift; sourceTree = "<group>"; };
-		01AFF104215EB44600D51776 /* GoogleSpeechRecognizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoogleSpeechRecognizer.swift; sourceTree = "<group>"; };
-		01AFF107215EB56B00D51776 /* RecognizerConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecognizerConfiguration.swift; sourceTree = "<group>"; };
-		01AFF10B215EB64800D51776 /* StandardRecognizerConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StandardRecognizerConfiguration.swift; sourceTree = "<group>"; };
-		01AFF10F215EB79700D51776 /* Typealiases.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Typealiases.swift; sourceTree = "<group>"; };
-		01AFF113215EB7E500D51776 /* Results.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Results.swift; sourceTree = "<group>"; };
-		01AFF116215EBAAD00D51776 /* GoogleRecognizerConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoogleRecognizerConfiguration.swift; sourceTree = "<group>"; };
-		01F492FD2163EDE200E630F2 /* SpeechPipeline.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeechPipeline.swift; sourceTree = "<group>"; };
-		01F492FF2163EE2D00E630F2 /* RecognizerService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecognizerService.swift; sourceTree = "<group>"; };
-		01F493032164057C00E630F2 /* SpeechRecognizerService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeechRecognizerService.swift; sourceTree = "<group>"; };
-		411F1ED831171984383F750E /* Pods-SpokeStack.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SpokeStack.debug.xcconfig"; path = "Pods/Target Support Files/Pods-SpokeStack/Pods-SpokeStack.debug.xcconfig"; sourceTree = "<group>"; };
-		545216CCCFB1278BA5F68688 /* Pods_SpokeStack.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SpokeStack.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		F06E29015A0E5539D4D08488 /* Pods-SpokeStack.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SpokeStack.release.xcconfig"; path = "Pods/Target Support Files/Pods-SpokeStack/Pods-SpokeStack.release.xcconfig"; sourceTree = "<group>"; };
+		01D31F3B216BAF260055FD45 /* SpokeStack.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = SpokeStack.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		01D31F3E216BAF260055FD45 /* SpokeStack.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SpokeStack.h; sourceTree = "<group>"; };
+		01D31F3F216BAF260055FD45 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		01D31F44216BAF260055FD45 /* SpokeStackTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SpokeStackTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		01D31F49216BAF260055FD45 /* SpokeStackTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpokeStackTests.swift; sourceTree = "<group>"; };
+		01D31F4B216BAF260055FD45 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		01D31F57216BAF680055FD45 /* SpokeStackConfig.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = SpokeStackConfig.xcconfig; sourceTree = "<group>"; };
+		01D31F5A216BAF950055FD45 /* StandardGoogleRecognitionConfiguration.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StandardGoogleRecognitionConfiguration.swift; sourceTree = "<group>"; };
+		01D31F5B216BAF950055FD45 /* StandardRecognizerConfiguration.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StandardRecognizerConfiguration.swift; sourceTree = "<group>"; };
+		01D31F61216BAFA40055FD45 /* AudioController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AudioController.swift; sourceTree = "<group>"; };
+		01D31F65216BAFB50055FD45 /* Error.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Error.swift; sourceTree = "<group>"; };
+		01D31F69216BAFC60055FD45 /* SpeechPipeline.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SpeechPipeline.swift; sourceTree = "<group>"; };
+		01D31F6D216BAFD90055FD45 /* SPSpeechContext.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SPSpeechContext.swift; sourceTree = "<group>"; };
+		01D31F6E216BAFD90055FD45 /* RecognizerService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RecognizerService.swift; sourceTree = "<group>"; };
+		01D31F74216BAFEF0055FD45 /* SpeechRecognizer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SpeechRecognizer.swift; sourceTree = "<group>"; };
+		01D31F75216BAFEF0055FD45 /* AudioControllerDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AudioControllerDelegate.swift; sourceTree = "<group>"; };
+		01D31F76216BAFEF0055FD45 /* SpeechRecognizerService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SpeechRecognizerService.swift; sourceTree = "<group>"; };
+		01D31F7E216BB0000055FD45 /* GoogleRecognizerConfiguration.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GoogleRecognizerConfiguration.swift; sourceTree = "<group>"; };
+		01D31F7F216BB0000055FD45 /* RecognizerConfiguration.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RecognizerConfiguration.swift; sourceTree = "<group>"; };
+		01D31F85216BB0110055FD45 /* GoogleSpeechRecognizer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GoogleSpeechRecognizer.swift; sourceTree = "<group>"; };
+		01D31F89216BB0220055FD45 /* Results.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Results.swift; sourceTree = "<group>"; };
+		01D31F8D216BB0370055FD45 /* Typealiases.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Typealiases.swift; sourceTree = "<group>"; };
+		01D322A9216BB10C0055FD45 /* RxLibrary.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = RxLibrary.framework; sourceTree = "<group>"; };
+		01D322AB216BB10C0055FD45 /* ProtoRPC.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = ProtoRPC.framework; sourceTree = "<group>"; };
+		01D322AD216BB10C0055FD45 /* googleapis.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = googleapis.framework; sourceTree = "<group>"; };
+		01D322AF216BB10C0055FD45 /* GRPCClient.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = GRPCClient.framework; sourceTree = "<group>"; };
+		01D322B0216BB10C0055FD45 /* gRPCCertificates.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = gRPCCertificates.bundle; sourceTree = "<group>"; };
+		01D322F4216BB10C0055FD45 /* openssl.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = openssl.framework; sourceTree = "<group>"; };
+		01D322FA216BB10C0055FD45 /* nanopb.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = nanopb.framework; sourceTree = "<group>"; };
+		01D322FC216BB10D0055FD45 /* Protobuf.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Protobuf.framework; sourceTree = "<group>"; };
+		01D322FE216BB10D0055FD45 /* grpc.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = grpc.framework; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		01559883215B089300959BEE /* Frameworks */ = {
+		01D31F38216BAF260055FD45 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				91B02756C6B7AB0B448AF667 /* Pods_SpokeStack.framework in Frameworks */,
+				01D32494216BB10D0055FD45 /* openssl.framework in Frameworks */,
+				01D32466216BB10D0055FD45 /* RxLibrary.framework in Frameworks */,
+				01D3249A216BB10D0055FD45 /* Protobuf.framework in Frameworks */,
+				01D3246A216BB10D0055FD45 /* googleapis.framework in Frameworks */,
+				01D32468216BB10D0055FD45 /* ProtoRPC.framework in Frameworks */,
+				01D32498216BB10D0055FD45 /* nanopb.framework in Frameworks */,
+				01D3249C216BB10D0055FD45 /* grpc.framework in Frameworks */,
+				01D3246C216BB10D0055FD45 /* GRPCClient.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		0155988C215B089300959BEE /* Frameworks */ = {
+		01D31F41216BAF260055FD45 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				01559890215B089300959BEE /* SpokeStack.framework in Frameworks */,
+				01D32469216BB10D0055FD45 /* ProtoRPC.framework in Frameworks */,
+				01D32467216BB10D0055FD45 /* RxLibrary.framework in Frameworks */,
+				01D3249D216BB10D0055FD45 /* grpc.framework in Frameworks */,
+				01D3246B216BB10D0055FD45 /* googleapis.framework in Frameworks */,
+				01D32499216BB10D0055FD45 /* nanopb.framework in Frameworks */,
+				01D32495216BB10D0055FD45 /* openssl.framework in Frameworks */,
+				01D31F45216BAF260055FD45 /* SpokeStack.framework in Frameworks */,
+				01D3246D216BB10D0055FD45 /* GRPCClient.framework in Frameworks */,
+				01D3249B216BB10D0055FD45 /* Protobuf.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		01074F9321627DCC005C4F99 /* Models */ = {
+		01D31F31216BAF260055FD45 = {
 			isa = PBXGroup;
 			children = (
-				01074F9421627DDD005C4F99 /* SPSpeechContext.swift */,
-				01F492FF2163EE2D00E630F2 /* RecognizerService.swift */,
-			);
-			name = Models;
-			sourceTree = "<group>";
-		};
-		0155987C215B089300959BEE = {
-			isa = PBXGroup;
-			children = (
-				01559888215B089300959BEE /* SpokeStack */,
-				01559893215B089300959BEE /* SpokeStackTests */,
-				01559887215B089300959BEE /* Products */,
-				495C42BCDAB38A25F30C389E /* Pods */,
-				553D3C57A9A963E177B9D5C7 /* Frameworks */,
+				01D31F3C216BAF260055FD45 /* Products */,
+				01D31F3D216BAF260055FD45 /* SpokeStack */,
+				01D31F48216BAF260055FD45 /* SpokeStackTests */,
 			);
 			sourceTree = "<group>";
 		};
-		01559887215B089300959BEE /* Products */ = {
+		01D31F3C216BAF260055FD45 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				01559886215B089300959BEE /* SpokeStack.framework */,
-				0155988F215B089300959BEE /* SpokeStackTests.xctest */,
+				01D31F3B216BAF260055FD45 /* SpokeStack.framework */,
+				01D31F44216BAF260055FD45 /* SpokeStackTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		01559888215B089300959BEE /* SpokeStack */ = {
+		01D31F3D216BAF260055FD45 /* SpokeStack */ = {
 			isa = PBXGroup;
 			children = (
-				01AFF10A215EB62C00D51776 /* Configurations */,
-				01AFF102215E794F00D51776 /* Controllers */,
-				01AFF0FE215E78FE00D51776 /* Errors */,
-				01F492FC2163ED4900E630F2 /* Managers */,
-				01074F9321627DCC005C4F99 /* Models */,
-				01AFF0F4215E64AD00D51776 /* Protocols */,
-				01AFF103215EB3D600D51776 /* Recognizers */,
-				01AFF112215EB7D100D51776 /* Results */,
-				01AFF0F3215E61A300D51776 /* Supporting Files */,
-				01AFF10E215EB78800D51776 /* Typealiases */,
+				01D31F90216BB09E0055FD45 /* Externals */,
+				01D31F59216BAF710055FD45 /* Configurations */,
+				01D31F60216BAF9A0055FD45 /* Controllers */,
+				01D31F64216BAFAA0055FD45 /* Errors */,
+				01D31F68216BAFBC0055FD45 /* Managers */,
+				01D31F6C216BAFCD0055FD45 /* Models */,
+				01D31F73216BAFE20055FD45 /* Protocols */,
+				01D31F84216BB0070055FD45 /* Recognizers */,
+				01D31F88216BB0180055FD45 /* Results */,
+				01D31F55216BAF3D0055FD45 /* Support Files */,
+				01D31F8C216BB0270055FD45 /* Typealiases */,
+				01D31F56216BAF5C0055FD45 /* XConfigs */,
 			);
 			path = SpokeStack;
 			sourceTree = "<group>";
 		};
-		01559893215B089300959BEE /* SpokeStackTests */ = {
+		01D31F48216BAF260055FD45 /* SpokeStackTests */ = {
 			isa = PBXGroup;
 			children = (
-				01559894215B089300959BEE /* SpokeStackTests.swift */,
-				01559896215B089300959BEE /* Info.plist */,
+				01D31F49216BAF260055FD45 /* SpokeStackTests.swift */,
+				01D31F4B216BAF260055FD45 /* Info.plist */,
 			);
 			path = SpokeStackTests;
 			sourceTree = "<group>";
 		};
-		01AFF0F3215E61A300D51776 /* Supporting Files */ = {
+		01D31F55216BAF3D0055FD45 /* Support Files */ = {
 			isa = PBXGroup;
 			children = (
-				01559889215B089300959BEE /* SpokeStack.h */,
-				0155988A215B089300959BEE /* Info.plist */,
+				01D31F3E216BAF260055FD45 /* SpokeStack.h */,
+				01D31F3F216BAF260055FD45 /* Info.plist */,
 			);
-			name = "Supporting Files";
+			name = "Support Files";
 			sourceTree = "<group>";
 		};
-		01AFF0F4215E64AD00D51776 /* Protocols */ = {
+		01D31F56216BAF5C0055FD45 /* XConfigs */ = {
 			isa = PBXGroup;
 			children = (
-				01AFF0FB215E76AA00D51776 /* AudioControllerDelegate.swift */,
-				01074F9721627E0F005C4F99 /* SpeechRecognizer.swift */,
-				01F493032164057C00E630F2 /* SpeechRecognizerService.swift */,
-				01F493022163FFE200E630F2 /* Configurations */,
+				01D31F57216BAF680055FD45 /* SpokeStackConfig.xcconfig */,
 			);
-			name = Protocols;
+			name = XConfigs;
 			sourceTree = "<group>";
 		};
-		01AFF0FE215E78FE00D51776 /* Errors */ = {
+		01D31F59216BAF710055FD45 /* Configurations */ = {
 			isa = PBXGroup;
 			children = (
-				01AFF0FF215E790B00D51776 /* Error.swift */,
+				01D31F5A216BAF950055FD45 /* StandardGoogleRecognitionConfiguration.swift */,
+				01D31F5B216BAF950055FD45 /* StandardRecognizerConfiguration.swift */,
 			);
-			name = Errors;
+			name = Configurations;
 			sourceTree = "<group>";
 		};
-		01AFF102215E794F00D51776 /* Controllers */ = {
+		01D31F60216BAF9A0055FD45 /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
-				01AFF0F7215E762B00D51776 /* AudioController.swift */,
+				01D31F61216BAFA40055FD45 /* AudioController.swift */,
 			);
 			name = Controllers;
 			sourceTree = "<group>";
 		};
-		01AFF103215EB3D600D51776 /* Recognizers */ = {
+		01D31F64216BAFAA0055FD45 /* Errors */ = {
 			isa = PBXGroup;
 			children = (
-				01AFF104215EB44600D51776 /* GoogleSpeechRecognizer.swift */,
+				01D31F65216BAFB50055FD45 /* Error.swift */,
 			);
-			name = Recognizers;
+			name = Errors;
 			sourceTree = "<group>";
 		};
-		01AFF10A215EB62C00D51776 /* Configurations */ = {
+		01D31F68216BAFBC0055FD45 /* Managers */ = {
 			isa = PBXGroup;
 			children = (
-				01AFF10B215EB64800D51776 /* StandardRecognizerConfiguration.swift */,
-				0166F1D321666EAF00300D25 /* StandardGoogleRecognitionConfiguration.swift */,
-			);
-			name = Configurations;
-			sourceTree = "<group>";
-		};
-		01AFF10E215EB78800D51776 /* Typealiases */ = {
-			isa = PBXGroup;
-			children = (
-				01AFF10F215EB79700D51776 /* Typealiases.swift */,
-			);
-			name = Typealiases;
-			sourceTree = "<group>";
-		};
-		01AFF112215EB7D100D51776 /* Results */ = {
-			isa = PBXGroup;
-			children = (
-				01AFF113215EB7E500D51776 /* Results.swift */,
-			);
-			name = Results;
-			sourceTree = "<group>";
-		};
-		01F492FC2163ED4900E630F2 /* Managers */ = {
-			isa = PBXGroup;
-			children = (
-				01F492FD2163EDE200E630F2 /* SpeechPipeline.swift */,
+				01D31F69216BAFC60055FD45 /* SpeechPipeline.swift */,
 			);
 			name = Managers;
 			sourceTree = "<group>";
 		};
-		01F493022163FFE200E630F2 /* Configurations */ = {
+		01D31F6C216BAFCD0055FD45 /* Models */ = {
 			isa = PBXGroup;
 			children = (
-				01AFF116215EBAAD00D51776 /* GoogleRecognizerConfiguration.swift */,
-				01AFF107215EB56B00D51776 /* RecognizerConfiguration.swift */,
+				01D31F6E216BAFD90055FD45 /* RecognizerService.swift */,
+				01D31F6D216BAFD90055FD45 /* SPSpeechContext.swift */,
+			);
+			name = Models;
+			sourceTree = "<group>";
+		};
+		01D31F73216BAFE20055FD45 /* Protocols */ = {
+			isa = PBXGroup;
+			children = (
+				01D31F7D216BAFF40055FD45 /* Configurations */,
+				01D31F75216BAFEF0055FD45 /* AudioControllerDelegate.swift */,
+				01D31F74216BAFEF0055FD45 /* SpeechRecognizer.swift */,
+				01D31F76216BAFEF0055FD45 /* SpeechRecognizerService.swift */,
+			);
+			name = Protocols;
+			sourceTree = "<group>";
+		};
+		01D31F7D216BAFF40055FD45 /* Configurations */ = {
+			isa = PBXGroup;
+			children = (
+				01D31F7E216BB0000055FD45 /* GoogleRecognizerConfiguration.swift */,
+				01D31F7F216BB0000055FD45 /* RecognizerConfiguration.swift */,
 			);
 			name = Configurations;
 			sourceTree = "<group>";
 		};
-		495C42BCDAB38A25F30C389E /* Pods */ = {
+		01D31F84216BB0070055FD45 /* Recognizers */ = {
 			isa = PBXGroup;
 			children = (
-				411F1ED831171984383F750E /* Pods-SpokeStack.debug.xcconfig */,
-				F06E29015A0E5539D4D08488 /* Pods-SpokeStack.release.xcconfig */,
+				01D31F85216BB0110055FD45 /* GoogleSpeechRecognizer.swift */,
 			);
-			name = Pods;
+			name = Recognizers;
 			sourceTree = "<group>";
 		};
-		553D3C57A9A963E177B9D5C7 /* Frameworks */ = {
+		01D31F88216BB0180055FD45 /* Results */ = {
 			isa = PBXGroup;
 			children = (
-				545216CCCFB1278BA5F68688 /* Pods_SpokeStack.framework */,
+				01D31F89216BB0220055FD45 /* Results.swift */,
 			);
-			name = Frameworks;
+			name = Results;
 			sourceTree = "<group>";
+		};
+		01D31F8C216BB0270055FD45 /* Typealiases */ = {
+			isa = PBXGroup;
+			children = (
+				01D31F8D216BB0370055FD45 /* Typealiases.swift */,
+			);
+			name = Typealiases;
+			sourceTree = "<group>";
+		};
+		01D31F90216BB09E0055FD45 /* Externals */ = {
+			isa = PBXGroup;
+			children = (
+				01D31F91216BB0A40055FD45 /* Google */,
+			);
+			name = Externals;
+			sourceTree = "<group>";
+		};
+		01D31F91216BB0A40055FD45 /* Google */ = {
+			isa = PBXGroup;
+			children = (
+				01D322B1216BB10C0055FD45 /* BoringSSL-GRPC */,
+				01D322AC216BB10C0055FD45 /* googleapis */,
+				01D322AE216BB10C0055FD45 /* gRPC */,
+				01D322FD216BB10D0055FD45 /* gRPC-Core */,
+				01D322AA216BB10C0055FD45 /* gRPC-ProtoRPC */,
+				01D322A8216BB10C0055FD45 /* gRPC-RxLibrary */,
+				01D322F9216BB10C0055FD45 /* nanopb */,
+				01D322FB216BB10D0055FD45 /* Protobuf */,
+			);
+			name = Google;
+			sourceTree = "<group>";
+		};
+		01D322A8216BB10C0055FD45 /* gRPC-RxLibrary */ = {
+			isa = PBXGroup;
+			children = (
+				01D322A9216BB10C0055FD45 /* RxLibrary.framework */,
+			);
+			name = "gRPC-RxLibrary";
+			path = "Frameworks/gRPC-RxLibrary";
+			sourceTree = SOURCE_ROOT;
+		};
+		01D322AA216BB10C0055FD45 /* gRPC-ProtoRPC */ = {
+			isa = PBXGroup;
+			children = (
+				01D322AB216BB10C0055FD45 /* ProtoRPC.framework */,
+			);
+			name = "gRPC-ProtoRPC";
+			path = "Frameworks/gRPC-ProtoRPC";
+			sourceTree = SOURCE_ROOT;
+		};
+		01D322AC216BB10C0055FD45 /* googleapis */ = {
+			isa = PBXGroup;
+			children = (
+				01D322AD216BB10C0055FD45 /* googleapis.framework */,
+			);
+			name = googleapis;
+			path = Frameworks/googleapis;
+			sourceTree = SOURCE_ROOT;
+		};
+		01D322AE216BB10C0055FD45 /* gRPC */ = {
+			isa = PBXGroup;
+			children = (
+				01D322AF216BB10C0055FD45 /* GRPCClient.framework */,
+				01D322B0216BB10C0055FD45 /* gRPCCertificates.bundle */,
+			);
+			name = gRPC;
+			path = Frameworks/gRPC;
+			sourceTree = SOURCE_ROOT;
+		};
+		01D322B1216BB10C0055FD45 /* BoringSSL-GRPC */ = {
+			isa = PBXGroup;
+			children = (
+				01D322F4216BB10C0055FD45 /* openssl.framework */,
+			);
+			name = "BoringSSL-GRPC";
+			path = "Frameworks/BoringSSL-GRPC";
+			sourceTree = SOURCE_ROOT;
+		};
+		01D322F9216BB10C0055FD45 /* nanopb */ = {
+			isa = PBXGroup;
+			children = (
+				01D322FA216BB10C0055FD45 /* nanopb.framework */,
+			);
+			name = nanopb;
+			path = Frameworks/nanopb;
+			sourceTree = SOURCE_ROOT;
+		};
+		01D322FB216BB10D0055FD45 /* Protobuf */ = {
+			isa = PBXGroup;
+			children = (
+				01D322FC216BB10D0055FD45 /* Protobuf.framework */,
+			);
+			name = Protobuf;
+			path = Frameworks/Protobuf;
+			sourceTree = SOURCE_ROOT;
+		};
+		01D322FD216BB10D0055FD45 /* gRPC-Core */ = {
+			isa = PBXGroup;
+			children = (
+				01D322FE216BB10D0055FD45 /* grpc.framework */,
+			);
+			name = "gRPC-Core";
+			path = "Frameworks/gRPC-Core";
+			sourceTree = SOURCE_ROOT;
 		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
-		01559881215B089300959BEE /* Headers */ = {
+		01D31F36216BAF260055FD45 /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				01559897215B089300959BEE /* SpokeStack.h in Headers */,
+				01D31F4C216BAF260055FD45 /* SpokeStack.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
-		01559885215B089300959BEE /* SpokeStack */ = {
+		01D31F3A216BAF260055FD45 /* SpokeStack */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 0155989A215B089300959BEE /* Build configuration list for PBXNativeTarget "SpokeStack" */;
+			buildConfigurationList = 01D31F4F216BAF260055FD45 /* Build configuration list for PBXNativeTarget "SpokeStack" */;
 			buildPhases = (
-				0FB8BDCA8B758D6FCB662951 /* [CP] Check Pods Manifest.lock */,
-				01559881215B089300959BEE /* Headers */,
-				01559882215B089300959BEE /* Sources */,
-				01559883215B089300959BEE /* Frameworks */,
-				01559884215B089300959BEE /* Resources */,
+				01D31F36216BAF260055FD45 /* Headers */,
+				01D31F37216BAF260055FD45 /* Sources */,
+				01D31F38216BAF260055FD45 /* Frameworks */,
+				01D31F39216BAF260055FD45 /* Resources */,
+				01AC1538216BB6AA001B9146 /* Copy Frameworks */,
 			);
 			buildRules = (
 			);
@@ -287,163 +443,141 @@
 			);
 			name = SpokeStack;
 			productName = SpokeStack;
-			productReference = 01559886215B089300959BEE /* SpokeStack.framework */;
+			productReference = 01D31F3B216BAF260055FD45 /* SpokeStack.framework */;
 			productType = "com.apple.product-type.framework";
 		};
-		0155988E215B089300959BEE /* SpokeStackTests */ = {
+		01D31F43216BAF260055FD45 /* SpokeStackTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 0155989D215B089300959BEE /* Build configuration list for PBXNativeTarget "SpokeStackTests" */;
+			buildConfigurationList = 01D31F52216BAF260055FD45 /* Build configuration list for PBXNativeTarget "SpokeStackTests" */;
 			buildPhases = (
-				0155988B215B089300959BEE /* Sources */,
-				0155988C215B089300959BEE /* Frameworks */,
-				0155988D215B089300959BEE /* Resources */,
+				01D31F40216BAF260055FD45 /* Sources */,
+				01D31F41216BAF260055FD45 /* Frameworks */,
+				01D31F42216BAF260055FD45 /* Resources */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				01559892215B089300959BEE /* PBXTargetDependency */,
+				01D31F47216BAF260055FD45 /* PBXTargetDependency */,
 			);
 			name = SpokeStackTests;
 			productName = SpokeStackTests;
-			productReference = 0155988F215B089300959BEE /* SpokeStackTests.xctest */;
+			productReference = 01D31F44216BAF260055FD45 /* SpokeStackTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
-		0155987D215B089300959BEE /* Project object */ = {
+		01D31F32216BAF260055FD45 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 1000;
-				LastUpgradeCheck = 1000;
+				LastUpgradeCheck = 1010;
 				ORGANIZATIONNAME = "Pylon AI, Inc.";
 				TargetAttributes = {
-					01559885215B089300959BEE = {
+					01D31F3A216BAF260055FD45 = {
 						CreatedOnToolsVersion = 10.0;
 						LastSwiftMigration = 1000;
 					};
-					0155988E215B089300959BEE = {
+					01D31F43216BAF260055FD45 = {
 						CreatedOnToolsVersion = 10.0;
 					};
 				};
 			};
-			buildConfigurationList = 01559880215B089300959BEE /* Build configuration list for PBXProject "SpokeStack" */;
+			buildConfigurationList = 01D31F35216BAF260055FD45 /* Build configuration list for PBXProject "SpokeStack" */;
 			compatibilityVersion = "Xcode 9.3";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
 			);
-			mainGroup = 0155987C215B089300959BEE;
-			productRefGroup = 01559887215B089300959BEE /* Products */;
+			mainGroup = 01D31F31216BAF260055FD45;
+			productRefGroup = 01D31F3C216BAF260055FD45 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				01559885215B089300959BEE /* SpokeStack */,
-				0155988E215B089300959BEE /* SpokeStackTests */,
+				01D31F3A216BAF260055FD45 /* SpokeStack */,
+				01D31F43216BAF260055FD45 /* SpokeStackTests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		01559884215B089300959BEE /* Resources */ = {
+		01D31F39216BAF260055FD45 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				01D3246E216BB10D0055FD45 /* gRPCCertificates.bundle in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		0155988D215B089300959BEE /* Resources */ = {
+		01D31F42216BAF260055FD45 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				01D3246F216BB10D0055FD45 /* gRPCCertificates.bundle in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
 
-/* Begin PBXShellScriptBuildPhase section */
-		0FB8BDCA8B758D6FCB662951 /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-SpokeStack-checkManifestLockResult.txt",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
-/* End PBXShellScriptBuildPhase section */
-
 /* Begin PBXSourcesBuildPhase section */
-		01559882215B089300959BEE /* Sources */ = {
+		01D31F37216BAF260055FD45 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				01AFF108215EB56B00D51776 /* RecognizerConfiguration.swift in Sources */,
-				01074F9521627DDD005C4F99 /* SPSpeechContext.swift in Sources */,
-				01074F9821627E0F005C4F99 /* SpeechRecognizer.swift in Sources */,
-				01F493002163EE2D00E630F2 /* RecognizerService.swift in Sources */,
-				01AFF10C215EB64800D51776 /* StandardRecognizerConfiguration.swift in Sources */,
-				01AFF114215EB7E500D51776 /* Results.swift in Sources */,
-				01AFF110215EB79700D51776 /* Typealiases.swift in Sources */,
-				01AFF117215EBAAD00D51776 /* GoogleRecognizerConfiguration.swift in Sources */,
-				01AFF105215EB44600D51776 /* GoogleSpeechRecognizer.swift in Sources */,
-				01AFF100215E790B00D51776 /* Error.swift in Sources */,
-				0166F1D421666EAF00300D25 /* StandardGoogleRecognitionConfiguration.swift in Sources */,
-				01F492FE2163EDE200E630F2 /* SpeechPipeline.swift in Sources */,
-				01AFF0F8215E762B00D51776 /* AudioController.swift in Sources */,
-				01AFF0FC215E76AA00D51776 /* AudioControllerDelegate.swift in Sources */,
-				01F493042164057C00E630F2 /* SpeechRecognizerService.swift in Sources */,
+				01D31F6F216BAFD90055FD45 /* SPSpeechContext.swift in Sources */,
+				01D31F77216BAFEF0055FD45 /* SpeechRecognizer.swift in Sources */,
+				01D31F8E216BB0370055FD45 /* Typealiases.swift in Sources */,
+				01D31F66216BAFB50055FD45 /* Error.swift in Sources */,
+				01D31F5C216BAF950055FD45 /* StandardGoogleRecognitionConfiguration.swift in Sources */,
+				01D31F6A216BAFC60055FD45 /* SpeechPipeline.swift in Sources */,
+				01D31F80216BB0000055FD45 /* GoogleRecognizerConfiguration.swift in Sources */,
+				01D31F7B216BAFEF0055FD45 /* SpeechRecognizerService.swift in Sources */,
+				01D31F71216BAFD90055FD45 /* RecognizerService.swift in Sources */,
+				01D31F82216BB0000055FD45 /* RecognizerConfiguration.swift in Sources */,
+				01D31F62216BAFA40055FD45 /* AudioController.swift in Sources */,
+				01D31F8A216BB0220055FD45 /* Results.swift in Sources */,
+				01D31F79216BAFEF0055FD45 /* AudioControllerDelegate.swift in Sources */,
+				01D31F5E216BAF950055FD45 /* StandardRecognizerConfiguration.swift in Sources */,
+				01D31F86216BB0120055FD45 /* GoogleSpeechRecognizer.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		0155988B215B089300959BEE /* Sources */ = {
+		01D31F40216BAF260055FD45 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				01AFF111215EB79700D51776 /* Typealiases.swift in Sources */,
-				01AFF0F9215E762B00D51776 /* AudioController.swift in Sources */,
-				01AFF0FD215E76AA00D51776 /* AudioControllerDelegate.swift in Sources */,
-				01F493012163EE2D00E630F2 /* RecognizerService.swift in Sources */,
-				01AFF109215EB56B00D51776 /* RecognizerConfiguration.swift in Sources */,
-				01074F9621627DDD005C4F99 /* SPSpeechContext.swift in Sources */,
-				01074F9921627E0F005C4F99 /* SpeechRecognizer.swift in Sources */,
-				01559895215B089300959BEE /* SpokeStackTests.swift in Sources */,
-				01AFF101215E790B00D51776 /* Error.swift in Sources */,
-				01AFF115215EB7E500D51776 /* Results.swift in Sources */,
-				0166F1D521666EAF00300D25 /* StandardGoogleRecognitionConfiguration.swift in Sources */,
-				01AFF118215EBAAD00D51776 /* GoogleRecognizerConfiguration.swift in Sources */,
-				01AFF10D215EB64800D51776 /* StandardRecognizerConfiguration.swift in Sources */,
-				01AFF106215EB44600D51776 /* GoogleSpeechRecognizer.swift in Sources */,
-				01F493052164057C00E630F2 /* SpeechRecognizerService.swift in Sources */,
+				01D31F8F216BB0370055FD45 /* Typealiases.swift in Sources */,
+				01D31F70216BAFD90055FD45 /* SPSpeechContext.swift in Sources */,
+				01D31F83216BB0000055FD45 /* RecognizerConfiguration.swift in Sources */,
+				01D31F5D216BAF950055FD45 /* StandardGoogleRecognitionConfiguration.swift in Sources */,
+				01D31F5F216BAF950055FD45 /* StandardRecognizerConfiguration.swift in Sources */,
+				01D31F87216BB0120055FD45 /* GoogleSpeechRecognizer.swift in Sources */,
+				01D31F72216BAFD90055FD45 /* RecognizerService.swift in Sources */,
+				01D31F63216BAFA40055FD45 /* AudioController.swift in Sources */,
+				01D31F7C216BAFEF0055FD45 /* SpeechRecognizerService.swift in Sources */,
+				01D31F78216BAFEF0055FD45 /* SpeechRecognizer.swift in Sources */,
+				01D31F8B216BB0220055FD45 /* Results.swift in Sources */,
+				01D31F81216BB0000055FD45 /* GoogleRecognizerConfiguration.swift in Sources */,
+				01D31F6B216BAFC60055FD45 /* SpeechPipeline.swift in Sources */,
+				01D31F7A216BAFEF0055FD45 /* AudioControllerDelegate.swift in Sources */,
+				01D31F67216BAFB50055FD45 /* Error.swift in Sources */,
+				01D31F4A216BAF260055FD45 /* SpokeStackTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		01559892215B089300959BEE /* PBXTargetDependency */ = {
+		01D31F47216BAF260055FD45 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 01559885215B089300959BEE /* SpokeStack */;
-			targetProxy = 01559891215B089300959BEE /* PBXContainerItemProxy */;
+			target = 01D31F3A216BAF260055FD45 /* SpokeStack */;
+			targetProxy = 01D31F46216BAF260055FD45 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
-		01559898215B089300959BEE /* Debug */ = {
+		01D31F4D216BAF260055FD45 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -507,7 +641,7 @@
 			};
 			name = Debug;
 		};
-		01559899215B089300959BEE /* Release */ = {
+		01D31F4E216BAF260055FD45 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -565,9 +699,9 @@
 			};
 			name = Release;
 		};
-		0155989B215B089300959BEE /* Debug */ = {
+		01D31F50216BAF260055FD45 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 411F1ED831171984383F750E /* Pods-SpokeStack.debug.xcconfig */;
+			baseConfigurationReference = 01D31F57216BAF680055FD45 /* SpokeStackConfig.xcconfig */;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "";
@@ -577,9 +711,19 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Frameworks/gRPC-RxLibrary",
+					"$(PROJECT_DIR)/Frameworks/gRPC-ProtoRPC",
+					"$(PROJECT_DIR)/Frameworks/googleapis",
+					"$(PROJECT_DIR)/Frameworks/gRPC",
+					"$(PROJECT_DIR)/Frameworks/BoringSSL-GRPC",
+					"$(PROJECT_DIR)/Frameworks/nanopb",
+					"$(PROJECT_DIR)/Frameworks/Protobuf",
+					"$(PROJECT_DIR)/Frameworks/gRPC-Core",
+				);
 				INFOPLIST_FILE = SpokeStack/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -594,9 +738,9 @@
 			};
 			name = Debug;
 		};
-		0155989C215B089300959BEE /* Release */ = {
+		01D31F51216BAF260055FD45 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = F06E29015A0E5539D4D08488 /* Pods-SpokeStack.release.xcconfig */;
+			baseConfigurationReference = 01D31F57216BAF680055FD45 /* SpokeStackConfig.xcconfig */;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "";
@@ -606,9 +750,19 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Frameworks/gRPC-RxLibrary",
+					"$(PROJECT_DIR)/Frameworks/gRPC-ProtoRPC",
+					"$(PROJECT_DIR)/Frameworks/googleapis",
+					"$(PROJECT_DIR)/Frameworks/gRPC",
+					"$(PROJECT_DIR)/Frameworks/BoringSSL-GRPC",
+					"$(PROJECT_DIR)/Frameworks/nanopb",
+					"$(PROJECT_DIR)/Frameworks/Protobuf",
+					"$(PROJECT_DIR)/Frameworks/gRPC-Core",
+				);
 				INFOPLIST_FILE = SpokeStack/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -622,12 +776,24 @@
 			};
 			name = Release;
 		};
-		0155989E215B089300959BEE /* Debug */ = {
+		01D31F53216BAF260055FD45 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 01D31F57216BAF680055FD45 /* SpokeStackConfig.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = XM4VAKDQL9;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Frameworks/gRPC-RxLibrary",
+					"$(PROJECT_DIR)/Frameworks/gRPC-ProtoRPC",
+					"$(PROJECT_DIR)/Frameworks/googleapis",
+					"$(PROJECT_DIR)/Frameworks/gRPC",
+					"$(PROJECT_DIR)/Frameworks/BoringSSL-GRPC",
+					"$(PROJECT_DIR)/Frameworks/nanopb",
+					"$(PROJECT_DIR)/Frameworks/Protobuf",
+					"$(PROJECT_DIR)/Frameworks/gRPC-Core",
+				);
 				INFOPLIST_FILE = SpokeStackTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -641,12 +807,24 @@
 			};
 			name = Debug;
 		};
-		0155989F215B089300959BEE /* Release */ = {
+		01D31F54216BAF260055FD45 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 01D31F57216BAF680055FD45 /* SpokeStackConfig.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = XM4VAKDQL9;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Frameworks/gRPC-RxLibrary",
+					"$(PROJECT_DIR)/Frameworks/gRPC-ProtoRPC",
+					"$(PROJECT_DIR)/Frameworks/googleapis",
+					"$(PROJECT_DIR)/Frameworks/gRPC",
+					"$(PROJECT_DIR)/Frameworks/BoringSSL-GRPC",
+					"$(PROJECT_DIR)/Frameworks/nanopb",
+					"$(PROJECT_DIR)/Frameworks/Protobuf",
+					"$(PROJECT_DIR)/Frameworks/gRPC-Core",
+				);
 				INFOPLIST_FILE = SpokeStackTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -663,34 +841,34 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		01559880215B089300959BEE /* Build configuration list for PBXProject "SpokeStack" */ = {
+		01D31F35216BAF260055FD45 /* Build configuration list for PBXProject "SpokeStack" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				01559898215B089300959BEE /* Debug */,
-				01559899215B089300959BEE /* Release */,
+				01D31F4D216BAF260055FD45 /* Debug */,
+				01D31F4E216BAF260055FD45 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		0155989A215B089300959BEE /* Build configuration list for PBXNativeTarget "SpokeStack" */ = {
+		01D31F4F216BAF260055FD45 /* Build configuration list for PBXNativeTarget "SpokeStack" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				0155989B215B089300959BEE /* Debug */,
-				0155989C215B089300959BEE /* Release */,
+				01D31F50216BAF260055FD45 /* Debug */,
+				01D31F51216BAF260055FD45 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		0155989D215B089300959BEE /* Build configuration list for PBXNativeTarget "SpokeStackTests" */ = {
+		01D31F52216BAF260055FD45 /* Build configuration list for PBXNativeTarget "SpokeStackTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				0155989E215B089300959BEE /* Debug */,
-				0155989F215B089300959BEE /* Release */,
+				01D31F53216BAF260055FD45 /* Debug */,
+				01D31F54216BAF260055FD45 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
-	rootObject = 0155987D215B089300959BEE /* Project object */;
+	rootObject = 01D31F32216BAF260055FD45 /* Project object */;
 }
