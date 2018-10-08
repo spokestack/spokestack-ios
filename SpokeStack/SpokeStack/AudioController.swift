@@ -38,9 +38,9 @@ func recordingCallback(
                              inNumberFrames,
                              UnsafeMutablePointer<AudioBufferList>(&bufferList))
     if (status != noErr) {
-        return status;
+        return status
     }
-    
+
     let data: Data = Data(bytes: buffers[0].mData!, count: Int(buffers[0].mDataByteSize))
     
     DispatchQueue.main.async {
@@ -88,7 +88,7 @@ class AudioController {
     // MARK: Public (methods)
     
     func startStreaming() -> Void {
-        
+
         /// Prepare
         
         do {
@@ -136,8 +136,9 @@ class AudioController {
         
         do {
         
-            try AVAudioSession.sharedInstance().setCategory(.record, mode: .default, options: [])
+            try AVAudioSession.sharedInstance().setCategory(.playAndRecord, mode: .spokenAudio, options: .defaultToSpeaker)
             try session.setPreferredIOBufferDuration(self.bufferDuration)
+            try session.setActive(true, options: .notifyOthersOnDeactivation)
 
         } catch {
             
@@ -145,9 +146,9 @@ class AudioController {
         }
         
         /// Session Sample Rate
-        
-        var sessionSampleRate = session.sampleRate
-        sessionSampleRate = Double(self.sampleRate)
+
+        var sampleRate = session.sampleRate
+        sampleRate = Double(self.sampleRate)
 
         /// Get the RemoteIO unit
         
@@ -157,7 +158,7 @@ class AudioController {
         
         status = AudioComponentInstanceNew(remoteIOComponent, &remoteIOUnit)
         
-        if (status != noErr) {
+        if status != noErr {
             return status
         }
         
@@ -172,15 +173,15 @@ class AudioController {
                                       bus1,
                                       &oneFlag,
                                       UInt32(MemoryLayout<UInt32>.size));
-        if (status != noErr) {
+        if status != noErr {
             return status
         }
         
         /// Set format for mic input (bus 1) on RemoteIO's output scope
 
-        var asbd = AudioStreamBasicDescription()
+        var asbd: AudioStreamBasicDescription = AudioStreamBasicDescription()
 
-        asbd.mSampleRate = sessionSampleRate
+        asbd.mSampleRate = sampleRate
         asbd.mFormatID = kAudioFormatLinearPCM
         asbd.mFormatFlags = kAudioFormatFlagIsSignedInteger | kAudioFormatFlagIsPacked
         asbd.mBytesPerPacket = 2
@@ -188,6 +189,7 @@ class AudioController {
         asbd.mBytesPerFrame = 2
         asbd.mChannelsPerFrame = 1
         asbd.mBitsPerChannel = 16
+        
         status = AudioUnitSetProperty(self.remoteIOUnit!,
                                       kAudioUnitProperty_StreamFormat,
                                       kAudioUnitScope_Output,
@@ -210,7 +212,7 @@ class AudioController {
                                       bus1,
                                       &callbackStruct,
                                       UInt32(MemoryLayout<AURenderCallbackStruct>.size));
-        if (status != noErr) {
+        if status != noErr {
             return status
         }
         

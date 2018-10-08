@@ -8,7 +8,7 @@
 
 import Foundation
 
-public struct StandardGoogleRecognitionConfiguration {
+struct StandardGoogleRecognitionConfiguration {
     public init() {}
 }
 

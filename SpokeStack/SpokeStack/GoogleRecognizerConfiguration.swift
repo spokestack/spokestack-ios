@@ -26,11 +26,11 @@ public protocol GoogleRecognizerConfiguration: RecognizerConfiguration {
 extension GoogleRecognizerConfiguration {
     
     public var host: String {
-        return "speech.google.com"
+        return "speech.googleapis.com"
     }
     
     public var apiKey: String {
-        return "12345"
+        return "12344"
     }
     
     public var enableWordTimeOffsets: Bool {

@@ -9,27 +9,23 @@
 import Foundation
 import googleapis
 
-class GoogleSpeechRecognizer: SpeechRecognizerService {
-
+public class GoogleSpeechRecognizer: SpeechRecognizerService {
+    
     // MARK: Public (properties)
     
     static let sharedInstance: GoogleSpeechRecognizer = GoogleSpeechRecognizer()
-
-    var isStreaming: Bool {
-        return self.streaming
-    }
     
     // MARK: SpeechRecognizerService (properties)
     
-    var configuration: RecognizerConfiguration = StandardGoogleRecognitionConfiguration()
+    public var configuration: RecognizerConfiguration = StandardGoogleRecognitionConfiguration()
     
-    weak var delegate: SpeechRecognizer?
+    public weak var delegate: SpeechRecognizer?
     
     // MARK: Private (properties)
     
     private var streaming: Bool = false
     
-    private var audioData: NSMutableData = NSMutableData()
+    private var audioData: NSMutableData!
     
     private var client: Speech!
     
@@ -42,7 +38,7 @@ class GoogleSpeechRecognizer: SpeechRecognizerService {
     }
     
     lazy private var recognitionConfig: RecognitionConfig = {
-
+        
         let config: RecognitionConfig = RecognitionConfig()
         
         config.encoding =  .linear16
@@ -55,7 +51,7 @@ class GoogleSpeechRecognizer: SpeechRecognizerService {
     }()
     
     lazy private var streamingRecognitionConfig: StreamingRecognitionConfig = {
-       
+        
         let config: StreamingRecognitionConfig = StreamingRecognitionConfig()
         
         config.config = self.recognitionConfig
@@ -66,7 +62,7 @@ class GoogleSpeechRecognizer: SpeechRecognizerService {
     }()
     
     lazy private var streamingRecognizerRequest: StreamingRecognizeRequest = {
-       
+        
         let recognizer: StreamingRecognizeRequest = StreamingRecognizeRequest()
         recognizer.streamingConfig = self.streamingRecognitionConfig
         
@@ -75,20 +71,22 @@ class GoogleSpeechRecognizer: SpeechRecognizerService {
     
     // MARK: Initializers
     
-    init() {
+    public init() {
         AudioController.shared.delegate = self
     }
     
     // MARK: SpeechRecognizerService
     
-    func startStreaming() -> Void {
+    public func startStreaming() -> Void {
         
-        if !self.streaming {
-            AudioController.shared.startStreaming()
-        }
+        self.audioData = NSMutableData()
+        AudioController.shared.startStreaming()
+        self.delegate?.didStart()
     }
     
-    func stopStreaming() -> Void {
+    public func stopStreaming() -> Void {
+        
+        AudioController.shared.stopStreaming()
         
         if !self.streaming {
             return
@@ -96,64 +94,68 @@ class GoogleSpeechRecognizer: SpeechRecognizerService {
         
         self.writer.finishWithError(nil)
         self.streaming = false
-        
-        AudioController.shared.stopStreaming()
     }
     
     // MARK: Private (methods)
     
-    private func analyzeAudioData(_ data: Data) -> Void {
+    private func analyzeAudioData(_ audioData: NSData) -> Void {
         
-        self.client = Speech(host: self.googleConfiguration.host)
-        self.writer = GRXBufferedPipe()
-        self.call = self.client.rpcToStreamingRecognize(withRequestsWriter: self.writer, eventHandler: {[weak self] done, response, error in
-            print("done \(done) response \(String(describing: response)) and error \(String(describing: error))")
-//            guard let strongSelf = self else {
-//                return
-//            }
+        if !self.streaming {
             
-//            if let error = error {
-////                strongSelf.textView.text = error.localizedDescription
-//            } else if let response = response {
-//                var finished = false
-//                print(response)
-//                for result in response.resultsArray! {
-//                    if let result: StreamingRecognitionResult = result as? StreamingRecognitionResult {
-//
-////                        self?.delegate?.didFinish(speechContext)
-//                        if result.isFinal {
-//                            finished = true
-//                        }
-//                    }
-//                }
-////                strongSelf.textView.text = response.description
-////                if finished {
-////                    strongSelf.stopAudio(strongSelf)
-////                }
-//            }
-        })
-        
-        /// authenticate using an API key obtained from the Google Cloud Console
-        
-        self.call.requestHeaders.setObject(NSString(string: self.googleConfiguration.apiKey),
-                                           forKey:NSString(string:"X-Goog-Api-Key"))
-        
-        /// if the API key has a bundle ID restriction, specify the bundle ID like this
-        
-        self.call.requestHeaders.setObject(NSString(string:Bundle.main.bundleIdentifier!),
-                                           forKey:NSString(string:"X-Ios-Bundle-Identifier"))
-        
-        self.call.start()
-        self.streaming = true
-        
-        /// send an initial request message to configure the service
-        
-        self.writer.writeValue(self.streamingRecognizerRequest)
+            self.client = Speech(host: self.googleConfiguration.host)
+            self.writer = GRXBufferedPipe()
+            self.call = self.client.rpcToStreamingRecognize(withRequestsWriter: self.writer,
+                                                            eventHandler: {[weak self] done, response, error in
+                                                                
+                                                                guard let strongSelf = self, error == nil else {
+                                                                    
+                                                                    self?.delegate?.didFinish()
+                                                                    return
+                                                                }
+                                                                
+                                                                var finished = false
+                                                                
+                                                                
+                                                                if let result: StreamingRecognitionResult = response?.resultsArray.firstObject as? StreamingRecognitionResult,
+                                                                    let alt: SpeechRecognitionAlternative = result.alternativesArray.firstObject as? SpeechRecognitionAlternative {
+                                                                    
+                                                                    if result.isFinal {
+                                                                        finished = true
+                                                                    }
+                                                                    
+                                                                    if finished {
+                                                                        
+                                                                        let context: SPSpeechContext = SPSpeechContext(transcript: alt.transcript, confidence: alt.confidence)
+                                                                        
+                                                                        strongSelf.delegate?.didRecognize(context)
+                                                                        strongSelf.stopStreaming()
+                                                                    }
+                                                                }
+                                                                
+            })
+            
+            /// authenticate using an API key obtained from the Google Cloud Console
+            
+            self.call.requestHeaders.setObject(NSString(string: self.googleConfiguration.apiKey),
+                                               forKey:NSString(string:"X-Goog-Api-Key"))
+            
+            /// if the API key has a bundle ID restriction, specify the bundle ID like this
+            
+            self.call.requestHeaders.setObject(NSString(string:Bundle.main.bundleIdentifier!),
+                                               forKey:NSString(string:"X-Ios-Bundle-Identifier"))
+            
+            self.call.start()
+            self.streaming = true
+            
+            /// send an initial request message to configure the service
+            
+            self.writer.writeValue(self.streamingRecognizerRequest)
+        }
         
         /// send a request message containing the audio data
         
         let streamingRecognizeRequest: StreamingRecognizeRequest = StreamingRecognizeRequest()
-        streamingRecognizeRequest.audioContent = self.audioData as Data
+        streamingRecognizeRequest.audioContent = audioData as Data
         
         self.writer.writeValue(streamingRecognizeRequest)
     }
@@ -162,11 +164,13 @@ class GoogleSpeechRecognizer: SpeechRecognizerService {
 extension GoogleSpeechRecognizer: AudioControllerDelegate {
     
     func setupFailed(_ error: String) {
+        
         self.streaming = false
+        self.delegate?.didFinish()
     }
     
     func processSampleData(_ data: Data) -> Void {
-
+        
         /// Convert to model and pass back to delegate
         
         self.audioData.append(data)
@@ -176,7 +180,9 @@ extension GoogleSpeechRecognizer: AudioControllerDelegate {
         let chunkSize: Int = Int(0.1 * Double(AudioController.shared.sampleRate) * 2)
         
         if self.audioData.length > chunkSize {
-            self.analyzeAudioData(data)
+            
+            self.analyzeAudioData(self.audioData)
+            self.audioData = NSMutableData()
         }
     }
 }
