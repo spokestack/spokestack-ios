@@ -7,8 +7,9 @@
 //
 
 import UIKit
+import SpokeStack
 
-struct GoogleConfiguration: GoogleRecognizerConfiguration {
+public struct GoogleConfiguration: GoogleRecognizerConfiguration {
     
     public var host: String {
         return "speech.google.com"
