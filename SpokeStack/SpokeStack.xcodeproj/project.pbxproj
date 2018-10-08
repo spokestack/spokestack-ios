@@ -14,6 +14,7 @@
 		011C192A216BCA3200DB36FD /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 011C1928216BCA3200DB36FD /* LaunchScreen.storyboard */; };
 		011C1935216BCA8F00DB36FD /* SpokeStack.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01D31F3B216BAF260055FD45 /* SpokeStack.framework */; };
 		011C1936216BCA8F00DB36FD /* SpokeStack.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 01D31F3B216BAF260055FD45 /* SpokeStack.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		011C193B216BCBCA00DB36FD /* StandardGoogleRecognitionConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 011C193A216BCBCA00DB36FD /* StandardGoogleRecognitionConfiguration.swift */; };
 		01AC1539216BB6CE001B9146 /* openssl.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 01D322F4216BB10C0055FD45 /* openssl.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		01AC153A216BB6CE001B9146 /* googleapis.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 01D322AD216BB10C0055FD45 /* googleapis.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		01AC153B216BB6CE001B9146 /* GRPCClient.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 01D322AF216BB10C0055FD45 /* GRPCClient.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -130,6 +131,7 @@
 		011C1926216BCA3200DB36FD /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		011C1929216BCA3200DB36FD /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		011C192B216BCA3200DB36FD /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		011C193A216BCBCA00DB36FD /* StandardGoogleRecognitionConfiguration.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StandardGoogleRecognitionConfiguration.swift; sourceTree = "<group>"; };
 		01D31F3B216BAF260055FD45 /* SpokeStack.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = SpokeStack.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		01D31F3E216BAF260055FD45 /* SpokeStack.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SpokeStack.h; sourceTree = "<group>"; };
 		01D31F3F216BAF260055FD45 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -294,6 +296,7 @@
 		01D31F59216BAF710055FD45 /* Configurations */ = {
 			isa = PBXGroup;
 			children = (
+				011C193A216BCBCA00DB36FD /* StandardGoogleRecognitionConfiguration.swift */,
 				01D31F5B216BAF950055FD45 /* StandardRecognizerConfiguration.swift */,
 			);
 			name = Configurations;
@@ -637,6 +640,7 @@
 				01D31F71216BAFD90055FD45 /* RecognizerService.swift in Sources */,
 				01D31F82216BB0000055FD45 /* RecognizerConfiguration.swift in Sources */,
 				01D31F62216BAFA40055FD45 /* AudioController.swift in Sources */,
+				011C193B216BCBCA00DB36FD /* StandardGoogleRecognitionConfiguration.swift in Sources */,
 				01D31F8A216BB0220055FD45 /* Results.swift in Sources */,
 				01D31F79216BAFEF0055FD45 /* AudioControllerDelegate.swift in Sources */,
 				01D31F5E216BAF950055FD45 /* StandardRecognizerConfiguration.swift in Sources */,
