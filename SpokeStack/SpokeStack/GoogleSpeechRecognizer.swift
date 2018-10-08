@@ -85,6 +85,7 @@ class GoogleSpeechRecognizer: SpeechRecognizerService {
         
         if !self.streaming {
             AudioController.shared.startStreaming()
+            self.delegate?.didStart()
         }
     }
     
@@ -106,31 +107,30 @@ class GoogleSpeechRecognizer: SpeechRecognizerService {
         
         self.client = Speech(host: self.googleConfiguration.host)
         self.writer = GRXBufferedPipe()
-        self.call = self.client.rpcToStreamingRecognize(withRequestsWriter: self.writer, eventHandler: {[weak self] done, response, error in
+        self.call = self.client.rpcToStreamingRecognize(withRequestsWriter: self.writer,
+                                                        eventHandler: {[weak self] done, response, error in
+                                                            
+                                                            guard let strongSelf = self else { return }
+                                                            
             print("done \(done) response \(String(describing: response)) and error \(String(describing: error))")
-//            guard let strongSelf = self else {
-//                return
-//            }
             
-//            if let error = error {
-////                strongSelf.textView.text = error.localizedDescription
-//            } else if let response = response {
-//                var finished = false
-//                print(response)
-//                for result in response.resultsArray! {
-//                    if let result: StreamingRecognitionResult = result as? StreamingRecognitionResult {
-//
-////                        self?.delegate?.didFinish(speechContext)
-//                        if result.isFinal {
-//                            finished = true
-//                        }
-//                    }
-//                }
-////                strongSelf.textView.text = response.description
-////                if finished {
-////                    strongSelf.stopAudio(strongSelf)
-////                }
-//            }
+                                                            var finished = false
+            let result: StreamingRecognitionResult = response!.resultsArray!.firstObject as! StreamingRecognitionResult
+            let alt: SpeechRecognitionAlternative = result.alternativesArray!.firstObject as! SpeechRecognitionAlternative
+            
+            if result.isFinal {
+                finished = true
+            }
+                                                            
+            if finished {
+
+                //                    print("result \(result) and isFinished \(result.isFinal)")
+
+                let context: SPSpeechContext = SPSpeechContext(transcript: alt.transcript, confidence: alt.confidence)
+//                print("alt \(alt.confidence) and \(alt.transcript)")
+                strongSelf.delegate?.didRecognize(context)
+                strongSelf.stopStreaming()
+            }
         })
         
         /// authenticate using an API key obtained from the Google Cloud Console
