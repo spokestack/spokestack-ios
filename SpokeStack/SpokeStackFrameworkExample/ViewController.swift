@@ -1,29 +1,14 @@
 //
-//  GoogleRecognizerConfiguration.swift
-//  SpokeStack
+//  ViewController.swift
+//  SpokeStackFrameworkExample
 //
-//  Created by Cory D. Wiles on 9/28/18.
+//  Created by Cory D. Wiles on 10/8/18.
 //  Copyright © 2018 Pylon AI, Inc. All rights reserved.
 //
 
-import Foundation
+import UIKit
 
-public protocol GoogleRecognizerConfiguration: RecognizerConfiguration {
-    
-    var host: String { get }
-    
-    var apiKey: String { get }
-    
-    var enableWordTimeOffsets: Bool { get }
-    
-    var maxAlternatives: Int32 { get }
-    
-    var singleUtterance: Bool { get }
-    
-    var interimResults: Bool { get }
-}
-
-extension GoogleRecognizerConfiguration {
+struct GoogleConfiguration: GoogleRecognizerConfiguration {
     
     public var host: String {
         return "speech.google.com"
@@ -48,5 +33,15 @@ extension GoogleRecognizerConfiguration {
     public var interimResults: Bool {
         return true
     }
+}
+
+class ViewController: UIViewController {
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        // Do any additional setup after loading the view, typically from a nib.
+    }
+
+
 }
 

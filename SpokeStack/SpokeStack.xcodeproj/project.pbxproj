@@ -7,6 +7,13 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		011C1920216BCA3200DB36FD /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 011C191F216BCA3200DB36FD /* AppDelegate.swift */; };
+		011C1922216BCA3200DB36FD /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 011C1921216BCA3200DB36FD /* ViewController.swift */; };
+		011C1925216BCA3200DB36FD /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 011C1923216BCA3200DB36FD /* Main.storyboard */; };
+		011C1927216BCA3200DB36FD /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 011C1926216BCA3200DB36FD /* Assets.xcassets */; };
+		011C192A216BCA3200DB36FD /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 011C1928216BCA3200DB36FD /* LaunchScreen.storyboard */; };
+		011C1935216BCA8F00DB36FD /* SpokeStack.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01D31F3B216BAF260055FD45 /* SpokeStack.framework */; };
+		011C1936216BCA8F00DB36FD /* SpokeStack.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 01D31F3B216BAF260055FD45 /* SpokeStack.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		01AC1539216BB6CE001B9146 /* openssl.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 01D322F4216BB10C0055FD45 /* openssl.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		01AC153A216BB6CE001B9146 /* googleapis.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 01D322AD216BB10C0055FD45 /* googleapis.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		01AC153B216BB6CE001B9146 /* GRPCClient.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 01D322AF216BB10C0055FD45 /* GRPCClient.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -18,8 +25,6 @@
 		01D31F45216BAF260055FD45 /* SpokeStack.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01D31F3B216BAF260055FD45 /* SpokeStack.framework */; };
 		01D31F4A216BAF260055FD45 /* SpokeStackTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01D31F49216BAF260055FD45 /* SpokeStackTests.swift */; };
 		01D31F4C216BAF260055FD45 /* SpokeStack.h in Headers */ = {isa = PBXBuildFile; fileRef = 01D31F3E216BAF260055FD45 /* SpokeStack.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		01D31F5C216BAF950055FD45 /* StandardGoogleRecognitionConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01D31F5A216BAF950055FD45 /* StandardGoogleRecognitionConfiguration.swift */; };
-		01D31F5D216BAF950055FD45 /* StandardGoogleRecognitionConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01D31F5A216BAF950055FD45 /* StandardGoogleRecognitionConfiguration.swift */; };
 		01D31F5E216BAF950055FD45 /* StandardRecognizerConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01D31F5B216BAF950055FD45 /* StandardRecognizerConfiguration.swift */; };
 		01D31F5F216BAF950055FD45 /* StandardRecognizerConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01D31F5B216BAF950055FD45 /* StandardRecognizerConfiguration.swift */; };
 		01D31F62216BAFA40055FD45 /* AudioController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01D31F61216BAFA40055FD45 /* AudioController.swift */; };
@@ -69,6 +74,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		011C1937216BCA8F00DB36FD /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 01D31F32216BAF260055FD45 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 01D31F3A216BAF260055FD45;
+			remoteInfo = SpokeStack;
+		};
 		01D31F46216BAF260055FD45 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 01D31F32216BAF260055FD45 /* Project object */;
@@ -79,6 +91,17 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
+		011C1939216BCA8F00DB36FD /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				011C1936216BCA8F00DB36FD /* SpokeStack.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		01AC1538216BB6AA001B9146 /* Copy Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -100,6 +123,13 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		011C191D216BCA3200DB36FD /* SpokeStackFrameworkExample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SpokeStackFrameworkExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		011C191F216BCA3200DB36FD /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		011C1921216BCA3200DB36FD /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		011C1924216BCA3200DB36FD /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		011C1926216BCA3200DB36FD /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		011C1929216BCA3200DB36FD /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		011C192B216BCA3200DB36FD /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		01D31F3B216BAF260055FD45 /* SpokeStack.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = SpokeStack.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		01D31F3E216BAF260055FD45 /* SpokeStack.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SpokeStack.h; sourceTree = "<group>"; };
 		01D31F3F216BAF260055FD45 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -107,7 +137,6 @@
 		01D31F49216BAF260055FD45 /* SpokeStackTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpokeStackTests.swift; sourceTree = "<group>"; };
 		01D31F4B216BAF260055FD45 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		01D31F57216BAF680055FD45 /* SpokeStackConfig.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = SpokeStackConfig.xcconfig; sourceTree = "<group>"; };
-		01D31F5A216BAF950055FD45 /* StandardGoogleRecognitionConfiguration.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StandardGoogleRecognitionConfiguration.swift; sourceTree = "<group>"; };
 		01D31F5B216BAF950055FD45 /* StandardRecognizerConfiguration.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StandardRecognizerConfiguration.swift; sourceTree = "<group>"; };
 		01D31F61216BAFA40055FD45 /* AudioController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AudioController.swift; sourceTree = "<group>"; };
 		01D31F65216BAFB50055FD45 /* Error.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Error.swift; sourceTree = "<group>"; };
@@ -134,6 +163,14 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		011C191A216BCA3200DB36FD /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				011C1935216BCA8F00DB36FD /* SpokeStack.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		01D31F38216BAF260055FD45 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -168,12 +205,34 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		011C1917216BCA1A00DB36FD /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		011C191E216BCA3200DB36FD /* SpokeStackFrameworkExample */ = {
+			isa = PBXGroup;
+			children = (
+				011C191F216BCA3200DB36FD /* AppDelegate.swift */,
+				011C1921216BCA3200DB36FD /* ViewController.swift */,
+				011C1923216BCA3200DB36FD /* Main.storyboard */,
+				011C1926216BCA3200DB36FD /* Assets.xcassets */,
+				011C1928216BCA3200DB36FD /* LaunchScreen.storyboard */,
+				011C192B216BCA3200DB36FD /* Info.plist */,
+			);
+			path = SpokeStackFrameworkExample;
+			sourceTree = "<group>";
+		};
 		01D31F31216BAF260055FD45 = {
 			isa = PBXGroup;
 			children = (
+				011C191E216BCA3200DB36FD /* SpokeStackFrameworkExample */,
 				01D31F3C216BAF260055FD45 /* Products */,
 				01D31F3D216BAF260055FD45 /* SpokeStack */,
 				01D31F48216BAF260055FD45 /* SpokeStackTests */,
+				011C1917216BCA1A00DB36FD /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -182,6 +241,7 @@
 			children = (
 				01D31F3B216BAF260055FD45 /* SpokeStack.framework */,
 				01D31F44216BAF260055FD45 /* SpokeStackTests.xctest */,
+				011C191D216BCA3200DB36FD /* SpokeStackFrameworkExample.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -234,7 +294,6 @@
 		01D31F59216BAF710055FD45 /* Configurations */ = {
 			isa = PBXGroup;
 			children = (
-				01D31F5A216BAF950055FD45 /* StandardGoogleRecognitionConfiguration.swift */,
 				01D31F5B216BAF950055FD45 /* StandardRecognizerConfiguration.swift */,
 			);
 			name = Configurations;
@@ -427,6 +486,25 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
+		011C191C216BCA3200DB36FD /* SpokeStackFrameworkExample */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 011C192C216BCA3200DB36FD /* Build configuration list for PBXNativeTarget "SpokeStackFrameworkExample" */;
+			buildPhases = (
+				011C1919216BCA3200DB36FD /* Sources */,
+				011C191A216BCA3200DB36FD /* Frameworks */,
+				011C191B216BCA3200DB36FD /* Resources */,
+				011C1939216BCA8F00DB36FD /* Embed Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				011C1938216BCA8F00DB36FD /* PBXTargetDependency */,
+			);
+			name = SpokeStackFrameworkExample;
+			productName = SpokeStackFrameworkExample;
+			productReference = 011C191D216BCA3200DB36FD /* SpokeStackFrameworkExample.app */;
+			productType = "com.apple.product-type.application";
+		};
 		01D31F3A216BAF260055FD45 /* SpokeStack */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 01D31F4F216BAF260055FD45 /* Build configuration list for PBXNativeTarget "SpokeStack" */;
@@ -474,6 +552,9 @@
 				LastUpgradeCheck = 1010;
 				ORGANIZATIONNAME = "Pylon AI, Inc.";
 				TargetAttributes = {
+					011C191C216BCA3200DB36FD = {
+						CreatedOnToolsVersion = 10.0;
+					};
 					01D31F3A216BAF260055FD45 = {
 						CreatedOnToolsVersion = 10.0;
 						LastSwiftMigration = 1000;
@@ -489,6 +570,7 @@
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
+				Base,
 			);
 			mainGroup = 01D31F31216BAF260055FD45;
 			productRefGroup = 01D31F3C216BAF260055FD45 /* Products */;
@@ -497,11 +579,22 @@
 			targets = (
 				01D31F3A216BAF260055FD45 /* SpokeStack */,
 				01D31F43216BAF260055FD45 /* SpokeStackTests */,
+				011C191C216BCA3200DB36FD /* SpokeStackFrameworkExample */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		011C191B216BCA3200DB36FD /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				011C192A216BCA3200DB36FD /* LaunchScreen.storyboard in Resources */,
+				011C1927216BCA3200DB36FD /* Assets.xcassets in Resources */,
+				011C1925216BCA3200DB36FD /* Main.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		01D31F39216BAF260055FD45 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -521,6 +614,15 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		011C1919216BCA3200DB36FD /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				011C1922216BCA3200DB36FD /* ViewController.swift in Sources */,
+				011C1920216BCA3200DB36FD /* AppDelegate.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		01D31F37216BAF260055FD45 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -529,7 +631,6 @@
 				01D31F77216BAFEF0055FD45 /* SpeechRecognizer.swift in Sources */,
 				01D31F8E216BB0370055FD45 /* Typealiases.swift in Sources */,
 				01D31F66216BAFB50055FD45 /* Error.swift in Sources */,
-				01D31F5C216BAF950055FD45 /* StandardGoogleRecognitionConfiguration.swift in Sources */,
 				01D31F6A216BAFC60055FD45 /* SpeechPipeline.swift in Sources */,
 				01D31F80216BB0000055FD45 /* GoogleRecognizerConfiguration.swift in Sources */,
 				01D31F7B216BAFEF0055FD45 /* SpeechRecognizerService.swift in Sources */,
@@ -550,7 +651,6 @@
 				01D31F8F216BB0370055FD45 /* Typealiases.swift in Sources */,
 				01D31F70216BAFD90055FD45 /* SPSpeechContext.swift in Sources */,
 				01D31F83216BB0000055FD45 /* RecognizerConfiguration.swift in Sources */,
-				01D31F5D216BAF950055FD45 /* StandardGoogleRecognitionConfiguration.swift in Sources */,
 				01D31F5F216BAF950055FD45 /* StandardRecognizerConfiguration.swift in Sources */,
 				01D31F87216BB0120055FD45 /* GoogleSpeechRecognizer.swift in Sources */,
 				01D31F72216BAFD90055FD45 /* RecognizerService.swift in Sources */,
@@ -569,6 +669,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		011C1938216BCA8F00DB36FD /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 01D31F3A216BAF260055FD45 /* SpokeStack */;
+			targetProxy = 011C1937216BCA8F00DB36FD /* PBXContainerItemProxy */;
+		};
 		01D31F47216BAF260055FD45 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 01D31F3A216BAF260055FD45 /* SpokeStack */;
@@ -576,7 +681,64 @@
 		};
 /* End PBXTargetDependency section */
 
+/* Begin PBXVariantGroup section */
+		011C1923216BCA3200DB36FD /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				011C1924216BCA3200DB36FD /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+		011C1928216BCA3200DB36FD /* LaunchScreen.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				011C1929216BCA3200DB36FD /* Base */,
+			);
+			name = LaunchScreen.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
 /* Begin XCBuildConfiguration section */
+		011C192D216BCA3200DB36FD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = XM4VAKDQL9;
+				INFOPLIST_FILE = SpokeStackFrameworkExample/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.pylon.SpokeStackFrameworkExample;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 4.2;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		011C192E216BCA3200DB36FD /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = XM4VAKDQL9;
+				INFOPLIST_FILE = SpokeStackFrameworkExample/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.pylon.SpokeStackFrameworkExample;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 4.2;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 		01D31F4D216BAF260055FD45 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -841,6 +1003,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		011C192C216BCA3200DB36FD /* Build configuration list for PBXNativeTarget "SpokeStackFrameworkExample" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				011C192D216BCA3200DB36FD /* Debug */,
+				011C192E216BCA3200DB36FD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		01D31F35216BAF260055FD45 /* Build configuration list for PBXProject "SpokeStack" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
