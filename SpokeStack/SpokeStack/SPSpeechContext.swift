@@ -12,5 +12,5 @@ public struct SPSpeechContext {
     
     public let transcript: String
     
-    public let confidence: Double
+    public let confidence: Float
 }
