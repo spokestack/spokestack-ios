@@ -7,6 +7,14 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		01AC1539216BB6CE001B9146 /* openssl.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 01D322F4216BB10C0055FD45 /* openssl.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		01AC153A216BB6CE001B9146 /* googleapis.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 01D322AD216BB10C0055FD45 /* googleapis.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		01AC153B216BB6CE001B9146 /* GRPCClient.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 01D322AF216BB10C0055FD45 /* GRPCClient.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		01AC153C216BB6CE001B9146 /* grpc.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 01D322FE216BB10D0055FD45 /* grpc.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		01AC153D216BB6CE001B9146 /* ProtoRPC.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 01D322AB216BB10C0055FD45 /* ProtoRPC.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		01AC153E216BB6CE001B9146 /* RxLibrary.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 01D322A9216BB10C0055FD45 /* RxLibrary.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		01AC153F216BB6CE001B9146 /* nanopb.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 01D322FA216BB10C0055FD45 /* nanopb.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		01AC1540216BB6CE001B9146 /* Protobuf.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 01D322FC216BB10D0055FD45 /* Protobuf.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		01D31F45216BAF260055FD45 /* SpokeStack.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01D31F3B216BAF260055FD45 /* SpokeStack.framework */; };
 		01D31F4A216BAF260055FD45 /* SpokeStackTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01D31F49216BAF260055FD45 /* SpokeStackTests.swift */; };
 		01D31F4C216BAF260055FD45 /* SpokeStack.h in Headers */ = {isa = PBXBuildFile; fileRef = 01D31F3E216BAF260055FD45 /* SpokeStack.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -69,6 +77,27 @@
 			remoteInfo = SpokeStack;
 		};
 /* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		01AC1538216BB6AA001B9146 /* Copy Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				01AC1539216BB6CE001B9146 /* openssl.framework in Copy Frameworks */,
+				01AC153A216BB6CE001B9146 /* googleapis.framework in Copy Frameworks */,
+				01AC153B216BB6CE001B9146 /* GRPCClient.framework in Copy Frameworks */,
+				01AC153C216BB6CE001B9146 /* grpc.framework in Copy Frameworks */,
+				01AC153D216BB6CE001B9146 /* ProtoRPC.framework in Copy Frameworks */,
+				01AC153E216BB6CE001B9146 /* RxLibrary.framework in Copy Frameworks */,
+				01AC153F216BB6CE001B9146 /* nanopb.framework in Copy Frameworks */,
+				01AC1540216BB6CE001B9146 /* Protobuf.framework in Copy Frameworks */,
+			);
+			name = "Copy Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		01D31F3B216BAF260055FD45 /* SpokeStack.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = SpokeStack.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -406,6 +435,7 @@
 				01D31F37216BAF260055FD45 /* Sources */,
 				01D31F38216BAF260055FD45 /* Frameworks */,
 				01D31F39216BAF260055FD45 /* Resources */,
+				01AC1538216BB6AA001B9146 /* Copy Frameworks */,
 			);
 			buildRules = (
 			);
