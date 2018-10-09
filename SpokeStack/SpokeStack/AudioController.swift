@@ -40,8 +40,7 @@ func recordingCallback(
     if (status != noErr) {
         return status
     }
-    let c = Int(buffers[0].mDataByteSize)
-    print("byte size buffer \(c)")
+
     let data: Data = Data(bytes: buffers[0].mData!, count: Int(buffers[0].mDataByteSize))
     
     DispatchQueue.main.async {
@@ -149,9 +148,7 @@ class AudioController {
         /// Session Sample Rate
 
         var sampleRate = session.sampleRate
-        print("hardware sample rate = \(sampleRate), using specified rate = \(self.sampleRate)")
         sampleRate = Double(self.sampleRate)
-        print("hardware sample rate2 = \(sampleRate), using specified rate2 = \(self.sampleRate)")
 
         /// Get the RemoteIO unit
         
