@@ -26,7 +26,7 @@ public protocol GoogleRecognizerConfiguration: RecognizerConfiguration {
 extension GoogleRecognizerConfiguration {
     
     public var host: String {
-        return "speech.google.com"
+        return "speech.googleapis.com"
     }
     
     public var apiKey: String {
