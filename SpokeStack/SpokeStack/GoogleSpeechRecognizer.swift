@@ -10,7 +10,7 @@ import Foundation
 import googleapis
 
 public class GoogleSpeechRecognizer: SpeechRecognizerService {
-
+    
     // MARK: Public (properties)
     
     static let sharedInstance: GoogleSpeechRecognizer = GoogleSpeechRecognizer()
@@ -38,7 +38,7 @@ public class GoogleSpeechRecognizer: SpeechRecognizerService {
     }
     
     lazy private var recognitionConfig: RecognitionConfig = {
-
+        
         let config: RecognitionConfig = RecognitionConfig()
         
         config.encoding =  .linear16
@@ -51,7 +51,7 @@ public class GoogleSpeechRecognizer: SpeechRecognizerService {
     }()
     
     lazy private var streamingRecognitionConfig: StreamingRecognitionConfig = {
-       
+        
         let config: StreamingRecognitionConfig = StreamingRecognitionConfig()
         
         config.config = self.recognitionConfig
@@ -62,7 +62,7 @@ public class GoogleSpeechRecognizer: SpeechRecognizerService {
     }()
     
     lazy private var streamingRecognizerRequest: StreamingRecognizeRequest = {
-       
+        
         let recognizer: StreamingRecognizeRequest = StreamingRecognizeRequest()
         recognizer.streamingConfig = self.streamingRecognitionConfig
         
@@ -78,7 +78,7 @@ public class GoogleSpeechRecognizer: SpeechRecognizerService {
     // MARK: SpeechRecognizerService
     
     public func startStreaming() -> Void {
-
+        
         self.audioData = NSMutableData()
         AudioController.shared.startStreaming()
         self.delegate?.didStart()
@@ -101,44 +101,37 @@ public class GoogleSpeechRecognizer: SpeechRecognizerService {
     private func analyzeAudioData(_ audioData: NSData) -> Void {
         
         if !self.streaming {
-        
-            self.delegate?.didHaveConfiguration(self.googleConfiguration)
+            
             self.client = Speech(host: self.googleConfiguration.host)
             self.writer = GRXBufferedPipe()
             self.call = self.client.rpcToStreamingRecognize(withRequestsWriter: self.writer,
                                                             eventHandler: {[weak self] done, response, error in
-                                                                print("what is the response \(String(describing: response))")
+                                                                
                                                                 guard let strongSelf = self, error == nil else {
-                                                                    self?.delegate?.didFindResults("failed at guard \(String(describing: error?.localizedDescription))")
+                                                                    
                                                                     self?.delegate?.didFinish()
                                                                     return
                                                                 }
                                                                 
-                                                                let debug: String = "done \(done) response \(String(describing: response)) and error \(String(describing: error))"
-                                                                
-                                                                strongSelf.delegate?.didFindResults(debug)
-                
                                                                 var finished = false
-                                                                let result: StreamingRecognitionResult = response!.resultsArray!.firstObject as! StreamingRecognitionResult
-                                                                let alt: SpeechRecognitionAlternative = result.alternativesArray!.firstObject as! SpeechRecognitionAlternative
                                                                 
-                                                                if result.isFinal {
-                                                                    finished = true
+                                                                
+                                                                if let result: StreamingRecognitionResult = response?.resultsArray.firstObject as? StreamingRecognitionResult,
+                                                                    let alt: SpeechRecognitionAlternative = result.alternativesArray.firstObject as? SpeechRecognitionAlternative {
+                                                                    
+                                                                    if result.isFinal {
+                                                                        finished = true
+                                                                    }
+                                                                    
+                                                                    if finished {
+                                                                        
+                                                                        let context: SPSpeechContext = SPSpeechContext(transcript: alt.transcript, confidence: alt.confidence)
+                                                                        
+                                                                        strongSelf.delegate?.didRecognize(context)
+                                                                        strongSelf.stopStreaming()
+                                                                    }
                                                                 }
                                                                 
-                                                                if finished {
-
-                                                                    //                    print("result \(result) and isFinished \(result.isFinal)")
-
-                                                                    let context: SPSpeechContext = SPSpeechContext(transcript: alt.transcript, confidence: alt.confidence)
-                                                    //                print("alt \(alt.confidence) and \(alt.transcript)")
-                                                                    strongSelf.delegate?.didRecognize(context)
-                                                                    strongSelf.stopStreaming()
-                                                                    
-                                                                } else {
-                                                                    
-                                                                    strongSelf.delegate?.didFindResultsButNotFinal()
-                                                                }
             })
             
             /// authenticate using an API key obtained from the Google Cloud Console
@@ -151,16 +144,11 @@ public class GoogleSpeechRecognizer: SpeechRecognizerService {
             self.call.requestHeaders.setObject(NSString(string:Bundle.main.bundleIdentifier!),
                                                forKey:NSString(string:"X-Ios-Bundle-Identifier"))
             
-            self.delegate?.didFindResults("\(String(describing: self.call.requestHeaders))")
-            
             self.call.start()
             self.streaming = true
             
-            self.delegate?.streamingDidStart()
-            
             /// send an initial request message to configure the service
-
-            self.delegate?.didWriteInital(self.streamingRecognizerRequest)
+            
             self.writer.writeValue(self.streamingRecognizerRequest)
         }
         
@@ -169,16 +157,7 @@ public class GoogleSpeechRecognizer: SpeechRecognizerService {
         let streamingRecognizeRequest: StreamingRecognizeRequest = StreamingRecognizeRequest()
         streamingRecognizeRequest.audioContent = audioData as Data
         
-        self.delegate?.didWriteSteamingAudioContent(streamingRecognizeRequest)
         self.writer.writeValue(streamingRecognizeRequest)
-        
-        let dataCount = streamingRecognizeRequest.audioContent.count
-        let bcf = ByteCountFormatter()
-
-        bcf.countStyle = .file
-
-        let string = bcf.string(fromByteCount: Int64(dataCount))
-        print("did write more audio 2222 \(string)")
     }
 }
 
@@ -187,11 +166,11 @@ extension GoogleSpeechRecognizer: AudioControllerDelegate {
     func setupFailed(_ error: String) {
         
         self.streaming = false
-        self.delegate?.setupFailed()
+        self.delegate?.didFinish()
     }
     
     func processSampleData(_ data: Data) -> Void {
-
+        
         /// Convert to model and pass back to delegate
         
         self.audioData.append(data)
@@ -200,11 +179,8 @@ extension GoogleSpeechRecognizer: AudioControllerDelegate {
         
         let chunkSize: Int = Int(0.1 * Double(AudioController.shared.sampleRate) * 2)
         
-        print("what is the chunk size \(chunkSize)")
-        
         if self.audioData.length > chunkSize {
             
-            self.delegate?.beginAnalyzing()
             self.analyzeAudioData(self.audioData)
             self.audioData = NSMutableData()
         }
