@@ -30,7 +30,7 @@ extension GoogleRecognizerConfiguration {
     }
     
     public var apiKey: String {
-        return "AIzaSyAX01kY6iygg04-dexAr-cR9ZdYSMemWL0"
+        return "12344"
     }
     
     public var enableWordTimeOffsets: Bool {

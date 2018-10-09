@@ -8,6 +8,8 @@
 
 import UIKit
 import SpokeStack
+import googleapis
+import AVFoundation
 
 public struct GoogleConfiguration: GoogleRecognizerConfiguration {
     
@@ -37,12 +39,89 @@ public struct GoogleConfiguration: GoogleRecognizerConfiguration {
 }
 
 class ViewController: UIViewController {
+    
+    @IBOutlet weak var startRecordingButton: UIButton!
+
+    @IBOutlet weak var stopRecordingButton: UIButton!
+    
+    @IBOutlet weak var resultsLabel: UILabel!
+    
+    lazy private var pipeline: SpeechPipeline = {
+        
+        let configuration: GoogleConfiguration = GoogleConfiguration()
+        return try! SpeechPipeline(.google,
+                                   configuration: configuration,
+                                   delegate: self)
+    }()
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view, typically from a nib.
     }
+    
+    @IBAction func startRecordingAction(_ sender: Any) {
+        self.pipeline.start()
+    }
+    
+    @IBAction func stopRecordingAction(_ sender: Any) {
+        self.pipeline.stop()
+    }
+}
 
-
+extension ViewController: SpeechRecognizer {
+    
+    func didWriteSteamingAudioContent(_ request: StreamingRecognizeRequest) {
+    
+        let dataCount = request.audioContent.count
+        let bcf = ByteCountFormatter()
+        
+        bcf.countStyle = .file
+        
+        let string = bcf.string(fromByteCount: Int64(dataCount))
+        print("did write more audio \(string)")
+    }
+    
+    
+    func didWriteInital(_ request: StreamingRecognizeRequest) {
+        print("did write initial request \(request)")
+    }
+    
+    func didFindResultsButNotFinal() {
+        print("didFindResultsButNotFinal")
+    }
+    
+    func didHaveConfiguration(_ configuration: RecognizerConfiguration) {
+        let gconfig = configuration as! GoogleConfiguration
+        print("what is my configuration \(gconfig.host)")
+    }
+    
+    func streamingDidStart() {
+        print("streaming did start")
+    }
+    
+    func beginAnalyzing() {
+        print("beingAnalyzing")
+    }
+    
+    func didFindResults(_ result: String) {
+        print("results found \(result)")
+    }
+    
+    func setupFailed() {
+        print("setup failed")
+    }
+    
+    
+    func didRecognize(_ result: SPSpeechContext) {
+        print("result \(result)")
+        self.resultsLabel.text = result.transcript
+    }
+    
+    func didFinish() {
+        print("didFinish")
+    }
+    
+    func didStart() {
+        print("didStart")
+    }
 }
 
