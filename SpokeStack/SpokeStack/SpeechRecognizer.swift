@@ -7,7 +7,6 @@
 //
 
 import Foundation
-import googleapis
 
 public protocol SpeechRecognizer: AnyObject {
     
@@ -16,22 +15,4 @@ public protocol SpeechRecognizer: AnyObject {
     func didRecognize(_ result: SPSpeechContext) -> Void
     
     func didFinish() -> Void
-    
-    ////
-    
-    func didFindResults(_ result: String) -> Void
-    
-    func setupFailed() -> Void
-    
-    func streamingDidStart() -> Void
-    
-    func beginAnalyzing() -> Void
-    
-    func didHaveConfiguration(_ configuration: RecognizerConfiguration) -> Void
-    
-    func didFindResultsButNotFinal() -> Void
-    
-    func didWriteInital(_ request: StreamingRecognizeRequest) -> Void
-    
-    func didWriteSteamingAudioContent(_ request: StreamingRecognizeRequest) -> Void
 }
