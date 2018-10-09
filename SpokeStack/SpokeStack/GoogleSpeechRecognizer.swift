@@ -128,6 +128,7 @@ public class GoogleSpeechRecognizer: SpeechRecognizerService {
                                                                         let context: SPSpeechContext = SPSpeechContext(transcript: alt.transcript, confidence: alt.confidence)
                                                                         
                                                                         strongSelf.delegate?.didRecognize(context)
+                                                                        strongSelf.delegate?.didFinish()
                                                                         strongSelf.stopStreaming()
                                                                     }
                                                                 }
