@@ -14,7 +14,7 @@ import AVFoundation
 public struct GoogleConfiguration: GoogleRecognizerConfiguration {
     
     public var host: String {
-        return "speech.google.com"
+        return "speech.googleapis.com"
     }
     
     public var apiKey: String {
@@ -69,59 +69,18 @@ class ViewController: UIViewController {
 
 extension ViewController: SpeechRecognizer {
     
-    func didWriteSteamingAudioContent(_ request: StreamingRecognizeRequest) {
-    
-        let dataCount = request.audioContent.count
-        let bcf = ByteCountFormatter()
-        
-        bcf.countStyle = .file
-        
-        let string = bcf.string(fromByteCount: Int64(dataCount))
-        print("did write more audio \(string)")
-    }
-    
-    
-    func didWriteInital(_ request: StreamingRecognizeRequest) {
-        print("did write initial request \(request)")
-    }
-    
-    func didFindResultsButNotFinal() {
-        print("didFindResultsButNotFinal")
-    }
-    
-    func didHaveConfiguration(_ configuration: RecognizerConfiguration) {
-        let gconfig = configuration as! GoogleConfiguration
-        print("what is my configuration \(gconfig.host)")
-    }
-    
-    func streamingDidStart() {
-        print("streaming did start")
-    }
-    
-    func beginAnalyzing() {
-        print("beingAnalyzing")
-    }
-    
-    func didFindResults(_ result: String) {
-        print("results found \(result)")
-    }
-    
-    func setupFailed() {
-        print("setup failed")
-    }
-    
-    
     func didRecognize(_ result: SPSpeechContext) {
-        print("result \(result)")
         self.resultsLabel.text = result.transcript
     }
     
     func didFinish() {
         print("didFinish")
+        // Disable finish
     }
     
     func didStart() {
         print("didStart")
+        // Disable start
     }
 }
 
