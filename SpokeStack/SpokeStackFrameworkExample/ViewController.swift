@@ -11,29 +11,29 @@ import SpokeStack
 import googleapis
 import AVFoundation
 
-public struct GoogleConfiguration: GoogleRecognizerConfiguration {
+struct GoogleConfiguration: GoogleRecognizerConfiguration {
     
-    public var host: String {
+    var host: String {
         return "speech.googleapis.com"
     }
     
-    public var apiKey: String {
-        return "AIzaSyAX01kY6iygg04-dexAr-cR9ZdYSMemWL0"
+    var apiKey: String {
+        return "REPLACE_ME"
     }
     
-    public var enableWordTimeOffsets: Bool {
+    var enableWordTimeOffsets: Bool {
         return true
     }
     
-    public var maxAlternatives: Int32 {
+    var maxAlternatives: Int32 {
         return 30
     }
     
-    public var singleUtterance: Bool {
+    var singleUtterance: Bool {
         return false
     }
     
-    public var interimResults: Bool {
+    var interimResults: Bool {
         return true
     }
 }
@@ -74,13 +74,15 @@ extension ViewController: SpeechRecognizer {
     }
     
     func didFinish() {
-        print("didFinish")
-        // Disable finish
+        
+        self.stopRecordingButton.isEnabled.toggle()
+        self.startRecordingButton.isEnabled.toggle()
     }
     
     func didStart() {
-        print("didStart")
-        // Disable start
+        
+        self.stopRecordingButton.isEnabled.toggle()
+        self.startRecordingButton.isEnabled.toggle()
     }
 }
 
