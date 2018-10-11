@@ -37,10 +37,8 @@ public final class SpeechPipeline {
             switch service {
             case .google where configuration is GoogleRecognizerConfiguration:
 
-                self.speechRecognizerService = service.speechRecognizerService
                 self.speechRecognizerService.configuration = configuration
-                self.speechRecognizerService.delegate = self.delegate
-
+                
                 didInitialize = true
                 break
             default: break
@@ -48,6 +46,9 @@ public final class SpeechPipeline {
             
             return didInitialize
         }
+        
+        self.speechRecognizerService = service.speechRecognizerService
+        self.speechRecognizerService.delegate = self.delegate
         
         self.service = service
         self.configuration = configuration
