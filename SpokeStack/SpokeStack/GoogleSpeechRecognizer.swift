@@ -113,8 +113,7 @@ public class GoogleSpeechRecognizer: SpeechRecognizerService {
                                                                     return
                                                                 }
                                                                 
-                                                                var finished = false
-                                                                
+                                                                var finished: Bool = false
                                                                 
                                                                 if let result: StreamingRecognitionResult = response?.resultsArray.firstObject as? StreamingRecognitionResult,
                                                                     let alt: SpeechRecognitionAlternative = result.alternativesArray.firstObject as? SpeechRecognitionAlternative {
