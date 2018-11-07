@@ -8,20 +8,17 @@
 
 import Foundation
 
-public protocol RecognizerConfiguration {
+@objc public class RecognizerConfiguration: NSObject {
     
-    var sampleRate: Int { get }
-    
-    var languageLocale: String { get }
-}
-
-extension RecognizerConfiguration {
-    
-    public var sampleRate: Int {
-        return 16000
+    var sampleRate: Int {
+        get {
+            return  16000
+        }
     }
     
-    public var languageLocale: String {
-        return "en-US"
+    var languageLocale: String {
+        get {
+            return "en-US"
+        }
     }
 }

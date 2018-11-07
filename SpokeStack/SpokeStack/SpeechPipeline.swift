@@ -8,7 +8,7 @@
 
 import Foundation
 
-public final class SpeechPipeline {
+@objc public final class SpeechPipeline: NSObject {
     
     // MARK: Public (properties)
     
@@ -53,6 +53,8 @@ public final class SpeechPipeline {
         self.service = service
         self.configuration = configuration
         self.delegate = delegate
+        
+        super.init()
         
         if !didInitialize() {
             
