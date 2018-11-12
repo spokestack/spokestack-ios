@@ -10,15 +10,6 @@ import Foundation
 
 @objc public class RecognizerConfiguration: NSObject {
     
-    var sampleRate: Int {
-        get {
-            return  16000
-        }
-    }
-    
-    var languageLocale: String {
-        get {
-            return "en-US"
-        }
-    }
+    var sampleRate = 16000
+    var languageLocale = "en-US"
 }

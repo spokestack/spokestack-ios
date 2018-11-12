@@ -240,13 +240,6 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		011C1917216BCA1A00DB36FD /* Frameworks */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			name = Frameworks;
-			sourceTree = "<group>";
-		};
 		011C191E216BCA3200DB36FD /* SpokeStackFrameworkExample */ = {
 			isa = PBXGroup;
 			children = (
@@ -267,7 +260,6 @@
 				01D31F3C216BAF260055FD45 /* Products */,
 				01D31F3D216BAF260055FD45 /* SpokeStack */,
 				01D31F48216BAF260055FD45 /* SpokeStackTests */,
-				011C1917216BCA1A00DB36FD /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
