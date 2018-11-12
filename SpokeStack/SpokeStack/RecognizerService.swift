@@ -8,7 +8,7 @@
 
 import Foundation
 
-public enum RecognizerService {
+@objc public enum RecognizerService: Int {
     case google
 }
 
