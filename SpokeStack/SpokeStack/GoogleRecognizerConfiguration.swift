@@ -15,5 +15,5 @@ import Foundation
     public var enableWordTimeOffsets = true
     public var maxAlternatives: Int32 = 30
     public var singleUtterance = false
-    public var interimResults = true
+    public var interimResults = true
 }
