@@ -10,10 +10,10 @@ import Foundation
 
 @objc public class GoogleRecognizerConfiguration: RecognizerConfiguration {
     
-    var host = "speech.googleapis.com"
-    var apiKey = "12344"
-    var enableWordTimeOffsets = true
-    var maxAlternatives: Int32 = 30
-    var singleUtterance = false
-    var interimResults = true
+    public var host = "speech.googleapis.com"
+    public var apiKey = "12344"
+    public var enableWordTimeOffsets = true
+    public var maxAlternatives: Int32 = 30
+    public var singleUtterance = false
+    public var interimResults = true
 }
