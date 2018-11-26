@@ -6,6 +6,21 @@
 	objectVersion = 50;
 	objects = {
 
+/* Begin PBXAggregateTarget section */
+		013E705B21AC3C3D0034F43E /* SpokeStackUniversal */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 013E705E21AC3C3E0034F43E /* Build configuration list for PBXAggregateTarget "SpokeStackUniversal" */;
+			buildPhases = (
+				013E706121AC3D4F0034F43E /* Create Universal Framework */,
+			);
+			dependencies = (
+				013E706021AC3D400034F43E /* PBXTargetDependency */,
+			);
+			name = SpokeStackUniversal;
+			productName = SpokeStackUniversal;
+		};
+/* End PBXAggregateTarget section */
+
 /* Begin PBXBuildFile section */
 		011C1920216BCA3200DB36FD /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 011C191F216BCA3200DB36FD /* AppDelegate.swift */; };
 		011C1922216BCA3200DB36FD /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 011C1921216BCA3200DB36FD /* ViewController.swift */; };
@@ -93,6 +108,13 @@
 
 /* Begin PBXContainerItemProxy section */
 		011C1945216BDBE000DB36FD /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 01D31F32216BAF260055FD45 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 01D31F3A216BAF260055FD45;
+			remoteInfo = SpokeStack;
+		};
+		013E705F21AC3D400034F43E /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 01D31F32216BAF260055FD45 /* Project object */;
 			proxyType = 1;
@@ -591,6 +613,9 @@
 					011C191C216BCA3200DB36FD = {
 						CreatedOnToolsVersion = 10.0;
 					};
+					013E705B21AC3C3D0034F43E = {
+						CreatedOnToolsVersion = 10.1;
+					};
 					01D31F3A216BAF260055FD45 = {
 						CreatedOnToolsVersion = 10.0;
 						LastSwiftMigration = 1000;
@@ -616,6 +641,7 @@
 				01D31F3A216BAF260055FD45 /* SpokeStack */,
 				01D31F43216BAF260055FD45 /* SpokeStackTests */,
 				011C191C216BCA3200DB36FD /* SpokeStackFrameworkExample */,
+				013E705B21AC3C3D0034F43E /* SpokeStackUniversal */,
 			);
 		};
 /* End PBXProject section */
@@ -649,6 +675,27 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		013E706121AC3D4F0034F43E /* Create Universal Framework */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Create Universal Framework";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\nexec > /tmp/${PROJECT_NAME}_archive.log 2>&1\n\nUNIVERSAL_OUTPUTFOLDER=${BUILD_DIR}/${CONFIGURATION}-universal\n\nif [ \"true\" == ${ALREADYINVOKED:-false} ]\nthen\necho \"RECURSION: Detected, stopping\"\nelse\nexport ALREADYINVOKED=\"true\"\n\n# make sure the output directory exists\nmkdir -p \"${UNIVERSAL_OUTPUTFOLDER}\"\n#mkdir -p \"${UNIVERSAL_OUTPUTFOLDER}/${TARGET_NAME}.framework\" \n\necho \"Building for iPhoneSimulator\"\nxcodebuild -workspace \"${WORKSPACE_PATH}\" -scheme \"${TARGET_NAME}\" -configuration ${CONFIGURATION} -sdk iphonesimulator -destination 'platform=iOS Simulator,name=iPhone XS' ONLY_ACTIVE_ARCH=NO ARCHS='i386 x86_64' BUILD_DIR=\"${BUILD_DIR}\" BUILD_ROOT=\"${BUILD_ROOT}\" ENABLE_BITCODE=YES OTHER_CFLAGS=\"-fembed-bitcode\" BITCODE_GENERATION_MODE=bitcode clean build\n\n# Step 1. Copy the framework structure (from iphoneos build) to the universal folder\necho \"Copying to output folder\"\ncp -R \"${ARCHIVE_PRODUCTS_PATH}${INSTALL_PATH}/\" \"${UNIVERSAL_OUTPUTFOLDER}\"\n\n# Step 2. Copy Swift modules from iphonesimulator build (if it exists) to the copied framework directory\nSIMULATOR_SWIFT_MODULES_DIR=\"${BUILD_DIR}/${CONFIGURATION}-iphonesimulator/${TARGET_NAME}.framework/Modules/${TARGET_NAME}.swiftmodule/.\"\nif [ -d \"${SIMULATOR_SWIFT_MODULES_DIR}\" ]; then\ncp -R \"${SIMULATOR_SWIFT_MODULES_DIR}\" \"${UNIVERSAL_OUTPUTFOLDER}/${TARGET_NAME}.framework/Modules/${TARGET_NAME}.swiftmodule\"\nfi\n\n# Step 3. Create universal binary file using lipo and place the combined executable in the copied framework directory\necho \"Combining executables\"\nlipo -create -output \"${UNIVERSAL_OUTPUTFOLDER}/${EXECUTABLE_PATH}\" \"${BUILD_DIR}/${CONFIGURATION}-iphonesimulator/${EXECUTABLE_PATH}\" \"${ARCHIVE_PRODUCTS_PATH}${INSTALL_PATH}/${EXECUTABLE_PATH}\"\n\necho \"Combining executables end\"\n\n# Step 4. Create universal binaries for embedded frameworks\nfor SUB_FRAMEWORK in $( ls \"${UNIVERSAL_OUTPUTFOLDER}/${TARGET_NAME}.framework/Frameworks\" ); do\nBINARY_NAME=\"${SUB_FRAMEWORK%.*}\"\necho \"${ARCHIVE_PRODUCTS_PATH}${INSTALL_PATH}/${TARGET_NAME}.framework/Frameworks/${SUB_FRAMEWORK}/${BINARY_NAME}\"\nlipo -create -output \"${UNIVERSAL_OUTPUTFOLDER}/${TARGET_NAME}.framework/Frameworks/${SUB_FRAMEWORK}/${BINARY_NAME}\" \"${BUILD_DIR}/${CONFIGURATION}-iphonesimulator/${SUB_FRAMEWORK}/${BINARY_NAME}\" \"${ARCHIVE_PRODUCTS_PATH}${INSTALL_PATH}/${TARGET_NAME}.framework/Frameworks/${SUB_FRAMEWORK}/${BINARY_NAME}\"\ndone\n\n# Step 5. Convenience step to copy the framework to the project's directory\necho \"Copying to project dir\"\nyes | cp -Rf \"${UNIVERSAL_OUTPUTFOLDER}/${FULL_PRODUCT_NAME}\" \"${PROJECT_DIR}\"\n\nopen \"${PROJECT_DIR}\"\n\nfi\n";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		011C1919216BCA3200DB36FD /* Sources */ = {
@@ -711,6 +758,11 @@
 			isa = PBXTargetDependency;
 			target = 01D31F3A216BAF260055FD45 /* SpokeStack */;
 			targetProxy = 011C1945216BDBE000DB36FD /* PBXContainerItemProxy */;
+		};
+		013E706021AC3D400034F43E /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 01D31F3A216BAF260055FD45 /* SpokeStack */;
+			targetProxy = 013E705F21AC3D400034F43E /* PBXContainerItemProxy */;
 		};
 		01D31F47216BAF260055FD45 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -798,6 +850,24 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		013E705C21AC3C3E0034F43E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = XM4VAKDQL9;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		013E705D21AC3C3E0034F43E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = XM4VAKDQL9;
+				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
 		};
@@ -1070,6 +1140,15 @@
 			buildConfigurations = (
 				011C192D216BCA3200DB36FD /* Debug */,
 				011C192E216BCA3200DB36FD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		013E705E21AC3C3E0034F43E /* Build configuration list for PBXAggregateTarget "SpokeStackUniversal" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				013E705C21AC3C3E0034F43E /* Debug */,
+				013E705D21AC3C3E0034F43E /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
