@@ -8,7 +8,6 @@
 
 import UIKit
 import SpokeStack
-import googleapis
 import AVFoundation
 
 struct GoogleConfiguration: GoogleRecognizerConfiguration {
