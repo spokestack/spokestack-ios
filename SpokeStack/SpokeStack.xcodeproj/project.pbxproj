@@ -13,8 +13,6 @@
 		011C1927216BCA3200DB36FD /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 011C1926216BCA3200DB36FD /* Assets.xcassets */; };
 		011C192A216BCA3200DB36FD /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 011C1928216BCA3200DB36FD /* LaunchScreen.storyboard */; };
 		011C193B216BCBCA00DB36FD /* StandardGoogleRecognitionConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 011C193A216BCBCA00DB36FD /* StandardGoogleRecognitionConfiguration.swift */; };
-		013E706221AC407C0034F43E /* SpokeStack.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01D31F3B216BAF260055FD45 /* SpokeStack.framework */; };
-		013E706321AC40840034F43E /* SpokeStack.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 01D31F3B216BAF260055FD45 /* SpokeStack.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		01AC1539216BB6CE001B9146 /* openssl.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 01D322F4216BB10C0055FD45 /* openssl.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		01AC153A216BB6CE001B9146 /* googleapis.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 01D322AD216BB10C0055FD45 /* googleapis.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		01AC153B216BB6CE001B9146 /* GRPCClient.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 01D322AF216BB10C0055FD45 /* GRPCClient.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -23,6 +21,16 @@
 		01AC153E216BB6CE001B9146 /* RxLibrary.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 01D322A9216BB10C0055FD45 /* RxLibrary.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		01AC153F216BB6CE001B9146 /* nanopb.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 01D322FA216BB10C0055FD45 /* nanopb.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		01AC1540216BB6CE001B9146 /* Protobuf.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 01D322FC216BB10D0055FD45 /* Protobuf.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		01B2B42721ADC32A00289890 /* SpokeStack.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01D31F3B216BAF260055FD45 /* SpokeStack.framework */; };
+		01B2B42821ADC33000289890 /* SpokeStack.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 01D31F3B216BAF260055FD45 /* SpokeStack.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		01B2B42A21ADC7E200289890 /* openssl.framework in Copy the Google Dependencies */ = {isa = PBXBuildFile; fileRef = 01D322F4216BB10C0055FD45 /* openssl.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		01B2B42B21ADC7E200289890 /* googleapis.framework in Copy the Google Dependencies */ = {isa = PBXBuildFile; fileRef = 01D322AD216BB10C0055FD45 /* googleapis.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		01B2B42C21ADC7E200289890 /* GRPCClient.framework in Copy the Google Dependencies */ = {isa = PBXBuildFile; fileRef = 01D322AF216BB10C0055FD45 /* GRPCClient.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		01B2B42D21ADC7E200289890 /* grpc.framework in Copy the Google Dependencies */ = {isa = PBXBuildFile; fileRef = 01D322FE216BB10D0055FD45 /* grpc.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		01B2B42E21ADC7E200289890 /* ProtoRPC.framework in Copy the Google Dependencies */ = {isa = PBXBuildFile; fileRef = 01D322AB216BB10C0055FD45 /* ProtoRPC.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		01B2B42F21ADC7E200289890 /* RxLibrary.framework in Copy the Google Dependencies */ = {isa = PBXBuildFile; fileRef = 01D322A9216BB10C0055FD45 /* RxLibrary.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		01B2B43021ADC7E200289890 /* nanopb.framework in Copy the Google Dependencies */ = {isa = PBXBuildFile; fileRef = 01D322FA216BB10C0055FD45 /* nanopb.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		01B2B43121ADC7E200289890 /* Protobuf.framework in Copy the Google Dependencies */ = {isa = PBXBuildFile; fileRef = 01D322FC216BB10D0055FD45 /* Protobuf.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		01D31F45216BAF260055FD45 /* SpokeStack.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01D31F3B216BAF260055FD45 /* SpokeStack.framework */; };
 		01D31F4A216BAF260055FD45 /* SpokeStackTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01D31F49216BAF260055FD45 /* SpokeStackTests.swift */; };
 		01D31F4C216BAF260055FD45 /* SpokeStack.h in Headers */ = {isa = PBXBuildFile; fileRef = 01D31F3E216BAF260055FD45 /* SpokeStack.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -99,7 +107,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				013E706321AC40840034F43E /* SpokeStack.framework in Embed Frameworks */,
+				01B2B42821ADC33000289890 /* SpokeStack.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -122,6 +130,24 @@
 			name = "Copy Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		01B2B42921ADC7AC00289890 /* Copy the Google Dependencies */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				01B2B42A21ADC7E200289890 /* openssl.framework in Copy the Google Dependencies */,
+				01B2B42B21ADC7E200289890 /* googleapis.framework in Copy the Google Dependencies */,
+				01B2B42C21ADC7E200289890 /* GRPCClient.framework in Copy the Google Dependencies */,
+				01B2B42D21ADC7E200289890 /* grpc.framework in Copy the Google Dependencies */,
+				01B2B42E21ADC7E200289890 /* ProtoRPC.framework in Copy the Google Dependencies */,
+				01B2B42F21ADC7E200289890 /* RxLibrary.framework in Copy the Google Dependencies */,
+				01B2B43021ADC7E200289890 /* nanopb.framework in Copy the Google Dependencies */,
+				01B2B43121ADC7E200289890 /* Protobuf.framework in Copy the Google Dependencies */,
+			);
+			name = "Copy the Google Dependencies";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
@@ -139,7 +165,7 @@
 		01D31F44216BAF260055FD45 /* SpokeStackTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SpokeStackTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		01D31F49216BAF260055FD45 /* SpokeStackTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpokeStackTests.swift; sourceTree = "<group>"; };
 		01D31F4B216BAF260055FD45 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		01D31F57216BAF680055FD45 /* SpokeStackConfig.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = SpokeStackConfig.xcconfig; sourceTree = "<group>"; };
+		01D31F57216BAF680055FD45 /* SpokeStackiOSConfig.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = SpokeStackiOSConfig.xcconfig; sourceTree = "<group>"; };
 		01D31F5B216BAF950055FD45 /* StandardRecognizerConfiguration.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StandardRecognizerConfiguration.swift; sourceTree = "<group>"; };
 		01D31F61216BAFA40055FD45 /* AudioController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AudioController.swift; sourceTree = "<group>"; };
 		01D31F65216BAFB50055FD45 /* Error.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Error.swift; sourceTree = "<group>"; };
@@ -170,7 +196,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				013E706221AC407C0034F43E /* SpokeStack.framework in Frameworks */,
+				01B2B42721ADC32A00289890 /* SpokeStack.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -289,7 +315,7 @@
 		01D31F56216BAF5C0055FD45 /* XConfigs */ = {
 			isa = PBXGroup;
 			children = (
-				01D31F57216BAF680055FD45 /* SpokeStackConfig.xcconfig */,
+				01D31F57216BAF680055FD45 /* SpokeStackiOSConfig.xcconfig */,
 			);
 			name = XConfigs;
 			sourceTree = "<group>";
@@ -498,6 +524,7 @@
 				011C191A216BCA3200DB36FD /* Frameworks */,
 				011C191B216BCA3200DB36FD /* Resources */,
 				011C1947216BDBE000DB36FD /* Embed Frameworks */,
+				01B2B42921ADC7AC00289890 /* Copy the Google Dependencies */,
 			);
 			buildRules = (
 			);
@@ -709,11 +736,12 @@
 /* Begin XCBuildConfiguration section */
 		011C192D216BCA3200DB36FD /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 01D31F57216BAF680055FD45 /* SpokeStackConfig.xcconfig */;
+			baseConfigurationReference = 01D31F57216BAF680055FD45 /* SpokeStackiOSConfig.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
+				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
 				DEVELOPMENT_TEAM = XM4VAKDQL9;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -733,11 +761,12 @@
 		};
 		011C192E216BCA3200DB36FD /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 01D31F57216BAF680055FD45 /* SpokeStackConfig.xcconfig */;
+			baseConfigurationReference = 01D31F57216BAF680055FD45 /* SpokeStackiOSConfig.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
+				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
 				DEVELOPMENT_TEAM = XM4VAKDQL9;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -879,7 +908,7 @@
 		};
 		01D31F50216BAF260055FD45 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 01D31F57216BAF680055FD45 /* SpokeStackConfig.xcconfig */;
+			baseConfigurationReference = 01D31F57216BAF680055FD45 /* SpokeStackiOSConfig.xcconfig */;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "";
@@ -939,7 +968,7 @@
 		};
 		01D31F51216BAF260055FD45 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 01D31F57216BAF680055FD45 /* SpokeStackConfig.xcconfig */;
+			baseConfigurationReference = 01D31F57216BAF680055FD45 /* SpokeStackiOSConfig.xcconfig */;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "";
@@ -998,7 +1027,7 @@
 		};
 		01D31F53216BAF260055FD45 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 01D31F57216BAF680055FD45 /* SpokeStackConfig.xcconfig */;
+			baseConfigurationReference = 01D31F57216BAF680055FD45 /* SpokeStackiOSConfig.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
@@ -1029,7 +1058,7 @@
 		};
 		01D31F54216BAF260055FD45 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 01D31F57216BAF680055FD45 /* SpokeStackConfig.xcconfig */;
+			baseConfigurationReference = 01D31F57216BAF680055FD45 /* SpokeStackiOSConfig.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
