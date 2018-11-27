@@ -11,7 +11,7 @@ Pod::Spec.new do |s|
 
   s.source_files = 'SpokeStack/*'
   s.exclude_files = 'SpokeStackFrameworkExample/*.*'
-  s.xcconfig  = {
-    'VALID_ARCHS' => 'armv7 armv7s arm64, arm64e'
-  }
+  # s.xcconfig  = {
+  #   'VALID_ARCHS' => 'armv7 armv7s arm64, arm64e'
+  # }
 end
