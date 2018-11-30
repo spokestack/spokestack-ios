@@ -8,7 +8,7 @@
 
 import Foundation
 
-public final class SpeechPipeline {
+@objc public final class SpeechPipeline: NSObject {
     
     // MARK: Public (properties)
     
@@ -28,7 +28,7 @@ public final class SpeechPipeline {
         speechRecognizerService.delegate = nil
     }
     
-    public init<RC: RecognizerConfiguration>(_ service: RecognizerService, configuration: RC, delegate: SpeechRecognizer?) throws {
+    @objc public init (_ service: RecognizerService, configuration: RecognizerConfiguration, delegate: SpeechRecognizer?) throws {
         
         func didInitialize() -> Bool {
             
@@ -54,6 +54,8 @@ public final class SpeechPipeline {
         self.configuration = configuration
         self.delegate = delegate
         
+        super.init()
+        
         if !didInitialize() {
             
             let errorMessage: String = """
@@ -64,11 +66,11 @@ public final class SpeechPipeline {
         }
     }
     
-    public func start() -> Void {
+    @objc public func start() -> Void {
         self.speechRecognizerService.startStreaming()
     }
     
-    public func stop() -> Void {
+    @objc public func stop() -> Void {
         self.speechRecognizerService.stopStreaming()
     }
 }

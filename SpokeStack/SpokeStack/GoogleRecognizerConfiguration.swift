@@ -8,45 +8,12 @@
 
 import Foundation
 
-public protocol GoogleRecognizerConfiguration: RecognizerConfiguration {
+@objc public class GoogleRecognizerConfiguration: RecognizerConfiguration {
     
-    var host: String { get }
-    
-    var apiKey: String { get }
-    
-    var enableWordTimeOffsets: Bool { get }
-    
-    var maxAlternatives: Int32 { get }
-    
-    var singleUtterance: Bool { get }
-    
-    var interimResults: Bool { get }
+    @objc public var host = "speech.googleapis.com"
+    @objc public var apiKey = "12344"
+    @objc public var enableWordTimeOffsets = true
+    @objc public var maxAlternatives: Int32 = 30
+    @objc public var singleUtterance = false
+    @objc public var interimResults = true
 }
-
-extension GoogleRecognizerConfiguration {
-    
-    public var host: String {
-        return "speech.googleapis.com"
-    }
-    
-    public var apiKey: String {
-        return "12344"
-    }
-    
-    public var enableWordTimeOffsets: Bool {
-        return true
-    }
-    
-    public var maxAlternatives: Int32 {
-        return 30
-    }
-    
-    public var singleUtterance: Bool {
-        return false
-    }
-    
-    public var interimResults: Bool {
-        return true
-    }
-}
-
