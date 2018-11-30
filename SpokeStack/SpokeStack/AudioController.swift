@@ -92,22 +92,20 @@ class AudioController {
         /// Prepare
         
         do {
-            debugPrint("AudioController startStreaming")
+        
             try self.prepare()
-            debugPrint("AudioController startStreaming prepared")
             self.start()
-             debugPrint("AudioController startStreaming started")
 
         } catch AudioError.audioSessionSetup(let message) {
-            debugPrint("AudioController startStreaming error audioSessionSetup" + message)
+        
             self.delegate?.setupFailed(message)
             
         } catch AudioError.general(let message) {
-            debugPrint("AudioController startStreaming error general" + message)
+        
             self.delegate?.setupFailed(message)
             
         } catch {
-            debugPrint("AudioController failed to start for unknown reason")
+        
             self.delegate?.setupFailed("An unknown error occured setting the stream")
         }
     }
