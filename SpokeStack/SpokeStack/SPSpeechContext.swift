@@ -9,8 +9,8 @@
 import Foundation
 
 @objc public class SPSpeechContext: NSObject {
-    public var transcript: String
-    public var confidence: Float
+    @objc public var transcript: String
+    @objc public var confidence: Float
     init(transcript:String, confidence:Float) {
         self.transcript = transcript
         self.confidence = confidence

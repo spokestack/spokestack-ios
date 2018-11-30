@@ -28,7 +28,7 @@ import Foundation
         speechRecognizerService.delegate = nil
     }
     
-    public init<RC: RecognizerConfiguration>(_ service: RecognizerService, configuration: RC, delegate: SpeechRecognizer?) throws {
+    @objc public init (_ service: RecognizerService, configuration: RecognizerConfiguration, delegate: SpeechRecognizer?) throws {
         
         func didInitialize() -> Bool {
             
@@ -66,11 +66,11 @@ import Foundation
         }
     }
     
-    public func start() -> Void {
+    @objc public func start() -> Void {
         self.speechRecognizerService.startStreaming()
     }
     
-    public func stop() -> Void {
+    @objc public func stop() -> Void {
         self.speechRecognizerService.stopStreaming()
     }
 }
