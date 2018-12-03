@@ -62,7 +62,7 @@ import Foundation
             The service must be google and your configuration must conform to GoogleRecognizerConfiguration.
             Future release will support other services.
             """
-            throw SpeechPipleError.invalidInitialzation(errorMessage)
+            throw SpeechPipleError.invalidInitialization(errorMessage)
         }
     }
     

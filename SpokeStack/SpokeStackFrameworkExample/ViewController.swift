@@ -83,5 +83,11 @@ extension ViewController: SpeechRecognizer {
         self.stopRecordingButton.isEnabled.toggle()
         self.startRecordingButton.isEnabled.toggle()
     }
+    
+    func didError(_ error: String) {
+        self.resultsLabel.text = error
+        self.stopRecordingButton.isEnabled.toggle()
+        self.startRecordingButton.isEnabled.toggle()
+    }
 }
 

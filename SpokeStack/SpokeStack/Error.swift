@@ -14,5 +14,5 @@ enum AudioError: Error {
 }
 
 public enum SpeechPipleError: Error {
-    case invalidInitialzation(String)
+    case invalidInitialization(String)
 }

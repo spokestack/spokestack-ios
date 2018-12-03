@@ -166,7 +166,7 @@ extension GoogleSpeechRecognizer: AudioControllerDelegate {
     func setupFailed(_ error: String) {
         
         self.streaming = false
-        self.delegate?.didFinish()
+        self.delegate?.didError(error)
     }
     
     func processSampleData(_ data: Data) -> Void {

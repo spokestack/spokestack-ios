@@ -15,4 +15,6 @@ import Foundation
     func didRecognize(_ result: SPSpeechContext) -> Void
     
     func didFinish() -> Void
+    
+    func didError(_ error: String) -> Void
 }
