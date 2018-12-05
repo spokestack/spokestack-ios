@@ -16,11 +16,23 @@ public final class SpeechPipeline {
     
     public private (set) var configuration: RecognizerConfiguration
     
+    public private (set) var wakeWordConfig: WakeRecognizerConfiguration? {
+        
+        didSet {
+            
+            if let currentWakeWordConfig: WakeRecognizerConfiguration = wakeWordConfig {
+                self.wakeWordController = WakeWordController(currentWakeWordConfig)
+            }
+        }
+    }
+    
     public weak var delegate: SpeechRecognizer?
     
     // MARK: Private (properties)
     
     private var speechRecognizerService: SpeechRecognizerService = GoogleSpeechRecognizer.sharedInstance
+    
+    private var wakeWordController: WakeWordController!
     
     // MARK: Initializers
     
@@ -28,7 +40,10 @@ public final class SpeechPipeline {
         speechRecognizerService.delegate = nil
     }
     
-    public init<RC: RecognizerConfiguration>(_ service: RecognizerService, configuration: RC, delegate: SpeechRecognizer?) throws {
+    public init(_ service: RecognizerService,
+                configuration: RecognizerConfiguration,
+                delegate: SpeechRecognizer?,
+                wakeWordConfig: WakeRecognizerConfiguration?) throws {
         
         func didInitialize() -> Bool {
             
@@ -53,6 +68,7 @@ public final class SpeechPipeline {
         self.service = service
         self.configuration = configuration
         self.delegate = delegate
+        self.wakeWordConfig = wakeWordConfig
         
         if !didInitialize() {
             
@@ -65,11 +81,27 @@ public final class SpeechPipeline {
     }
     
     public func start() -> Void {
-        self.speechRecognizerService.startStreaming()
+        
+        guard let _: WakeRecognizerConfiguration = self.wakeWordConfig else {
+            
+            self.speechRecognizerService.startStreaming()
+            return
+        }
+        
+        self.wakeWordController.activate()
     }
     
     public func stop() -> Void {
-        self.speechRecognizerService.stopStreaming()
+        
+        guard let _: WakeRecognizerConfiguration = self.wakeWordConfig else {
+            
+            self.speechRecognizerService.stopStreaming()
+            return
+        }
+        
+        self.wakeWordController.deactivate()
     }
 }
+
+/// Need delegate for the wake word
 
