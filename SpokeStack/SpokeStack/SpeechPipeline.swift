@@ -8,6 +8,10 @@
 
 import Foundation
 
+public enum SpeechPipelineError: Error {
+    case illegalState(message: String)
+}
+
 public final class SpeechPipeline {
     
     // MARK: Public (properties)
