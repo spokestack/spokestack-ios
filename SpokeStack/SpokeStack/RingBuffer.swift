@@ -46,29 +46,25 @@ final class RingBuffer {
     
     // MARK: Public (methods)
     
+    @discardableResult
     func rewind() -> RingBuffer {
         
         self.rpos = self.pos(self.wpos + 1)
         return self
     }
     
+    @discardableResult
     func seek(_ elems: Int) -> RingBuffer {
         
         self.rpos = self.pos(self.rpos + elems)
         return self
     }
 
+    @discardableResult
     func reset() -> RingBuffer {
         
         self.rpos = self.wpos
         return self
-    }
-
-    func fill(_ value: Float) -> RingBuffer {
-        
-        while !self.isFull {
-            self.write(value)
-        }
     }
     
     func read() throws -> Float {
@@ -83,7 +79,7 @@ final class RingBuffer {
         return value
     }
 
-    func write(_ value: Float) -> Void {
+    func write(_ value: Float) throws -> Void {
         
         if self.isFull {
             throw RingBufferStateError.illegalState(message: "ring buffer is full")
@@ -93,10 +89,12 @@ final class RingBuffer {
         self.wpos = self.pos(self.wpos + 1)
     }
     
+    @discardableResult
     func fill(_ value: Float) -> RingBuffer {
         
         while !self.isFull {
-            self.write(value)
+            
+            try! self.write(value)
         }
         
         return self
