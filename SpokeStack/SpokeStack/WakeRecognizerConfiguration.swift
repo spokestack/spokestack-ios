@@ -16,6 +16,8 @@ public protocol WakeRecognizerConfiguration: RecognizerConfiguration {
     
     var wakeSmoothLength: Int { get }
     
+    var frameWidth: Int { get }
+    
     var fftWindowType: String { get }
     
     var rmsTarget: Float { get }
@@ -41,6 +43,10 @@ extension WakeRecognizerConfiguration {
     
     var fftWindowType: String {
         return "hann"
+    }
+    
+    var frameWidth: Int {
+        return 10
     }
     
     var rmsTarget: Float {
