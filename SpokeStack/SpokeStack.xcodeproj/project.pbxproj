@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0112624821B9C6F000B85563 /* FFT.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0112624721B9C6F000B85563 /* FFT.swift */; };
 		011C1920216BCA3200DB36FD /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 011C191F216BCA3200DB36FD /* AppDelegate.swift */; };
 		011C1922216BCA3200DB36FD /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 011C1921216BCA3200DB36FD /* ViewController.swift */; };
 		011C1925216BCA3200DB36FD /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 011C1923216BCA3200DB36FD /* Main.storyboard */; };
@@ -157,6 +158,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		0112624721B9C6F000B85563 /* FFT.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFT.swift; sourceTree = "<group>"; };
 		011C191D216BCA3200DB36FD /* SpokeStackFrameworkExample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SpokeStackFrameworkExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		011C191F216BCA3200DB36FD /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		011C1921216BCA3200DB36FD /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -382,6 +384,7 @@
 				01D31F6E216BAFD90055FD45 /* RecognizerService.swift */,
 				012CBD6D21B855580091322B /* RingBuffer.swift */,
 				01D31F6D216BAFD90055FD45 /* SPSpeechContext.swift */,
+				0112624721B9C6F000B85563 /* FFT.swift */,
 			);
 			name = Models;
 			sourceTree = "<group>";
@@ -402,8 +405,8 @@
 			children = (
 				01D31F7E216BB0000055FD45 /* GoogleRecognizerConfiguration.swift */,
 				01D31F7F216BB0000055FD45 /* RecognizerConfiguration.swift */,
-				01BADDE921B6DB1D00515701 /* WakeRecognizerConfiguration.swift */,
 				0193DD4521B7766900288EB1 /* SampleWakeRecognizerConfiguration.swift */,
+				01BADDE921B6DB1D00515701 /* WakeRecognizerConfiguration.swift */,
 			);
 			name = Configurations;
 			sourceTree = "<group>";
@@ -694,6 +697,7 @@
 				01D31F80216BB0000055FD45 /* GoogleRecognizerConfiguration.swift in Sources */,
 				01BADDEA21B6DB1D00515701 /* WakeRecognizerConfiguration.swift in Sources */,
 				01D31F7B216BAFEF0055FD45 /* SpeechRecognizerService.swift in Sources */,
+				0112624821B9C6F000B85563 /* FFT.swift in Sources */,
 				01D31F71216BAFD90055FD45 /* RecognizerService.swift in Sources */,
 				01D31F82216BB0000055FD45 /* RecognizerConfiguration.swift in Sources */,
 				01D31F62216BAFA40055FD45 /* AudioController.swift in Sources */,
