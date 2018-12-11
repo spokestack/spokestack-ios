@@ -17,6 +17,17 @@ struct GoogleConfiguration: GoogleRecognizerConfiguration {
     }
 }
 
+struct WKWordConfiguration: WakeRecognizerConfiguration {
+    
+    var wakeWords: String {
+        return "up, dog, break, yo, self, fool"
+    }
+    
+    var wakePhrases: String {
+        return "up dog, break yo self fool"
+    }
+}
+
 class ViewController: UIViewController {
     
     @IBOutlet weak var startRecordingButton: UIButton!
@@ -28,9 +39,12 @@ class ViewController: UIViewController {
     lazy private var pipeline: SpeechPipeline = {
         
         let configuration: GoogleConfiguration = GoogleConfiguration()
+        let wakeConfiguration: WKWordConfiguration = WKWordConfiguration()
+        
         return try! SpeechPipeline(.google,
                                    configuration: configuration,
-                                   delegate: self, wakeWordConfig: nil)
+                                   delegate: self,
+                                   wakeWordConfig: wakeConfiguration)
     }()
 
     override func viewDidLoad() {
