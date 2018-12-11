@@ -92,20 +92,16 @@ class AudioController {
         /// Prepare
         
         do {
-        
             try self.prepare()
             self.start()
 
         } catch AudioError.audioSessionSetup(let message) {
-        
             self.delegate?.setupFailed(message)
             
         } catch AudioError.general(let message) {
-        
             self.delegate?.setupFailed(message)
             
         } catch {
-        
             self.delegate?.setupFailed("An unknown error occured setting the stream")
         }
     }

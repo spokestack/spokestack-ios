@@ -8,34 +8,8 @@
 
 import UIKit
 import SpokeStack
+import googleapis
 import AVFoundation
-
-struct GoogleConfiguration: GoogleRecognizerConfiguration {
-    
-    var host: String {
-        return "speech.googleapis.com"
-    }
-    
-    var apiKey: String {
-        return "REPLACE_ME"
-    }
-    
-    var enableWordTimeOffsets: Bool {
-        return true
-    }
-    
-    var maxAlternatives: Int32 {
-        return 30
-    }
-    
-    var singleUtterance: Bool {
-        return false
-    }
-    
-    var interimResults: Bool {
-        return true
-    }
-}
 
 class ViewController: UIViewController {
     
@@ -47,7 +21,8 @@ class ViewController: UIViewController {
     
     lazy private var pipeline: SpeechPipeline = {
         
-        let configuration: GoogleConfiguration = GoogleConfiguration()
+        let configuration: GoogleRecognizerConfiguration = GoogleRecognizerConfiguration()
+        configuration.apiKey = "REPLACE_ME"
         return try! SpeechPipeline(.google,
                                    configuration: configuration,
                                    delegate: self)
@@ -79,7 +54,6 @@ extension ViewController: SpeechRecognizer {
     }
     
     func didStart() {
-        
         self.stopRecordingButton.isEnabled.toggle()
         self.startRecordingButton.isEnabled.toggle()
     }
