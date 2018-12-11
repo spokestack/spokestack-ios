@@ -70,18 +70,24 @@ class WakeWordController {
     
     private let audioController: AudioController = AudioController()
     
+    private let audioEngineController: AudioEngineController
+    
     // MARK: Initializers
     
     init(_ configuration: WakeRecognizerConfiguration) {
         
         self.wakeWordConfiguration = configuration
+        
+        let buffer: Int = configuration.sampleRate / 1000 * configuration.frameWidth
+        self.audioEngineController = AudioEngineController(buffer)
+        
         self.setup()
     }
     
     // MARK: Internal (methods)
     
     func activate() -> Void {
-        
+        self.audioEngineController.startRecording()
     }
     
     func deactivate() -> Void {
@@ -96,17 +102,22 @@ class WakeWordController {
         /// Allocate an additional slot for the non-keyword class at 0
         
         let wakeWords: Array<String> = self.wakeWordConfiguration.wakeWords.components(separatedBy: ",")
+        print("wakeWords \(wakeWords)")
         self.words = wakeWords
         
         /// Parse the keyword phrase configuration
         
-        let wakePhrases: Array<String> = self.wakeWordConfiguration.wakePhrases.components(separatedBy: ",")
-        self.phrases = Array<Array<Int>>.init(repeating: [0], count: wakePhrases.count)
+        var wakePhrases: Array<String> = self.wakeWordConfiguration.wakePhrases.components(separatedBy: ",")
+        print("local wakePhrases \(wakePhrases)")
+
+        self.phrases = TwoDimensionArray<Int>.init(repeating: [0], count: wakePhrases.count)
+        print("self.phrases \(self.phrases)")
         
         for (index, _) in wakePhrases.enumerated() {
             
             let wakePhrase: String = wakePhrases[index]
             let wakePhraseArray: Array<String> = wakePhrase.components(separatedBy: " ")
+            print("wakePhraseArray \(wakePhraseArray)")
             
             /// Allocate an additional (null) slot at the end of each phrase,
             /// which forces the phraser to continue detection until the end
@@ -114,9 +125,12 @@ class WakeWordController {
             
             self.phrases[index] = Array<Int>.init(repeating: 0, count: wakePhrases.count + 1)
             
-            for (j, _) in wakePhraseArray.enumerated() {
+            print("self.phrases after setting \(self.phrases)")
+            
+            for (j, v) in wakePhraseArray.enumerated() {
+                print("what is the [v] \(v) for [j] \(j) wakePhraseArray")
                 
-                guard let k: Int = wakeWords.firstIndex(of: wakePhraseArray[j]) else {
+                guard let k: Int = wakeWords.index(of: wakePhraseArray[j]) else {
                     
                     assertionFailure("wake-phrases")
                     return
