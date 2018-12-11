@@ -73,15 +73,16 @@ public final class SpeechPipeline {
         self.configuration = configuration
         self.delegate = delegate
         self.wakeWordConfig = wakeWordConfig
+        self.wakeWordController = WakeWordController(wakeWordConfig!)
         
-        if !didInitialize() {
-            
-            let errorMessage: String = """
-            The service must be google and your configuration must conform to GoogleRecognizerConfiguration.
-            Future release will support other services.
-            """
-            throw SpeechPipleError.invalidInitialzation(errorMessage)
-        }
+//        if !didInitialize() {
+//            
+//            let errorMessage: String = """
+//            The service must be google and your configuration must conform to GoogleRecognizerConfiguration.
+//            Future release will support other services.
+//            """
+//            throw SpeechPipleError.invalidInitialzation(errorMessage)
+//        }
     }
     
     public func start() -> Void {
