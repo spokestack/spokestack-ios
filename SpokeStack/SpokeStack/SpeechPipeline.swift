@@ -29,7 +29,6 @@ import Foundation
     }
     
     @objc public init (_ service: RecognizerService, configuration: RecognizerConfiguration, delegate: SpeechRecognizer?) throws {
-        
         func didInitialize() -> Bool {
             
             var didInitialize: Bool = false
@@ -47,12 +46,12 @@ import Foundation
             return didInitialize
         }
         
-        self.speechRecognizerService = service.speechRecognizerService
-        self.speechRecognizerService.delegate = self.delegate
-        
         self.service = service
         self.configuration = configuration
         self.delegate = delegate
+        
+        self.speechRecognizerService = service.speechRecognizerService
+        self.speechRecognizerService.delegate = self.delegate
         
         super.init()
         

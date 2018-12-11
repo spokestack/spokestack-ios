@@ -78,7 +78,6 @@ public class GoogleSpeechRecognizer: SpeechRecognizerService {
     // MARK: SpeechRecognizerService
     
     public func startStreaming() -> Void {
-        
         self.audioData = NSMutableData()
         AudioController.shared.startStreaming()
         self.delegate?.didStart()
@@ -99,7 +98,6 @@ public class GoogleSpeechRecognizer: SpeechRecognizerService {
     // MARK: Private (methods)
     
     private func analyzeAudioData(_ audioData: NSData) -> Void {
-        
         if !self.streaming {
             
             self.client = Speech(host: self.googleConfiguration.host)
@@ -108,8 +106,7 @@ public class GoogleSpeechRecognizer: SpeechRecognizerService {
                                                             eventHandler: {[weak self] done, response, error in
                                                                 
                                                                 guard let strongSelf = self, error == nil else {
-                                                                    
-                                                                    self?.delegate?.didFinish()
+                                                                    self?.delegate?.didError(error?.localizedDescription ?? "no error description provided")
                                                                     return
                                                                 }
                                                                 
@@ -117,15 +114,12 @@ public class GoogleSpeechRecognizer: SpeechRecognizerService {
                                                                 
                                                                 if let result: StreamingRecognitionResult = response?.resultsArray.firstObject as? StreamingRecognitionResult,
                                                                     let alt: SpeechRecognitionAlternative = result.alternativesArray.firstObject as? SpeechRecognitionAlternative {
-                                                                    
                                                                     if result.isFinal {
                                                                         finished = true
                                                                     }
                                                                     
                                                                     if finished {
-                                                                        
                                                                         let context: SPSpeechContext = SPSpeechContext(transcript: alt.transcript, confidence: alt.confidence)
-                                                                        
                                                                         strongSelf.delegate?.didRecognize(context)
                                                                         strongSelf.delegate?.didFinish()
                                                                         strongSelf.stopStreaming()
@@ -141,8 +135,8 @@ public class GoogleSpeechRecognizer: SpeechRecognizerService {
             
             /// if the API key has a bundle ID restriction, specify the bundle ID like this
             
-            self.call.requestHeaders.setObject(NSString(string:Bundle.main.bundleIdentifier!),
-                                               forKey:NSString(string:"X-Ios-Bundle-Identifier"))
+//            self.call.requestHeaders.setObject(NSString(string:Bundle.main.bundleIdentifier!),
+//                                               forKey:NSString(string:"X-Ios-Bundle-Identifier"))
             
             self.call.start()
             self.streaming = true
@@ -164,13 +158,11 @@ public class GoogleSpeechRecognizer: SpeechRecognizerService {
 extension GoogleSpeechRecognizer: AudioControllerDelegate {
     
     func setupFailed(_ error: String) {
-        
         self.streaming = false
         self.delegate?.didError(error)
     }
     
     func processSampleData(_ data: Data) -> Void {
-        
         /// Convert to model and pass back to delegate
         
         self.audioData.append(data)
