@@ -41,51 +41,51 @@ public protocol WakeRecognizerConfiguration: RecognizerConfiguration {
 
 extension WakeRecognizerConfiguration {
     
-    var fftWindowType: String {
+    public var fftWindowType: String {
         return "hann"
     }
     
-    var frameWidth: Int {
+    public var frameWidth: Int {
         return 10
     }
     
-    var rmsTarget: Float {
+    public var rmsTarget: Float {
         return 0.08
     }
     
-    var rmsAlpha: Float {
+    public var rmsAlpha: Float {
         return 0.1
     }
     
-    var fftWindowSize: Int {
+    public var fftWindowSize: Int {
         return 512
     }
     
-    var fftHopLength: Int {
+    public var fftHopLength: Int {
         return 10
     }
     
-    var melFrameLength: Int {
+    public var melFrameLength: Int {
         return 400
     }
     
-    var melFrameWidth: Int {
+    public var melFrameWidth: Int {
         return 40
     }
     
-    var wakeSmoothLength: Int {
+    public var wakeSmoothLength: Int {
         return 300
     }
     
-    var wakePhraseLength: Int {
+    public var wakePhraseLength: Int {
         return 500
     }
 
-    var wakeActionMin: Int {
+    public var wakeActionMin: Int {
         return 500
     }
     
-    var wakeActionMax: Int {
+    public var wakeActionMax: Int {
         return 5000
     }
 }
