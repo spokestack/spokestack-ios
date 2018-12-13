@@ -9,7 +9,22 @@
 import Foundation
 import AVFoundation
 
+protocol AudioEngineControllerDelegate: AnyObject {
+    
+    func didStart(_ engineController: AudioEngineController) -> Void
+    func didStop(_ engineController: AudioEngineController) -> Void
+    func didReceive(_ buffer: AVAudioPCMBuffer) -> Void
+}
+
+public enum AudioEngineControllerError: Error {
+    case failedToSTart(message: String)
+}
+
 final class AudioEngineController {
+    
+    // MARK: Internal (properties)
+    
+    weak var delegate: AudioEngineControllerDelegate?
     
     // MARK: Private (properties)
     
@@ -17,7 +32,7 @@ final class AudioEngineController {
 
     private var engine: AVAudioEngine = AVAudioEngine()
     
-    private var audioBuffer:AVAudioPCMBuffer = AVAudioPCMBuffer()
+    private var audioBuffer: AVAudioPCMBuffer = AVAudioPCMBuffer()
     
     // MARK: Initializers
     
@@ -35,9 +50,11 @@ final class AudioEngineController {
         
         do {
             
-            try AVAudioSession.sharedInstance().setCategory(.playAndRecord, mode: .spokenAudio, options: .defaultToSpeaker)
+            try AVAudioSession.sharedInstance().setCategory(.playAndRecord,
+                                                            mode: .spokenAudio,
+                                                            options: .defaultToSpeaker)
             
-            let ioBufferDuration = Double(bufferSize) / 44100.0
+            let ioBufferDuration = Double(self.bufferSize) / 44100.0
             try AVAudioSession.sharedInstance().setPreferredIOBufferDuration(ioBufferDuration)
             
         } catch {
@@ -48,7 +65,7 @@ final class AudioEngineController {
     
     // MARK: Internal (methods)
     
-    func startRecording() -> Void {
+    func startRecording() throws -> Void {
 
         let mixer = self.engine.mainMixerNode
         let format = mixer.outputFormat(forBus: 0)
@@ -56,11 +73,28 @@ final class AudioEngineController {
         mixer.installTap(onBus: 0,
                          bufferSize: AVAudioFrameCount(self.bufferSize),
                          format: format,
-                         block: {buffer, time in
+                         block: {[weak self] buffer, time in
             
-                            print("buffer coming back \(buffer.frameLength) and time \(time)")
+                            print("buffer coming back \(Int(buffer.frameLength)) and time \(time)")
+                            self?.delegate?.didReceive(buffer)
+                            
         })
         
-        try! self.engine.start()
+        do {
+            
+            try self.engine.start()
+            self.delegate?.didStart(self)
+
+        } catch let error {
+            
+            throw AudioEngineControllerError.failedToSTart(message: error.localizedDescription)
+        }
+    }
+    
+    func stopRecording() -> Void {
+        
+        self.engine.mainMixerNode.removeTap(onBus: 0)
+        self.engine.stop()
+        self.delegate?.didStop(self)
     }
 }
