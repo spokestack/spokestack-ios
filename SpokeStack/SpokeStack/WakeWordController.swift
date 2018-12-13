@@ -87,11 +87,11 @@ class WakeWordController {
     // MARK: Internal (methods)
     
     func activate() -> Void {
-        self.audioEngineController.startRecording()
+        try? self.audioEngineController.startRecording()
     }
     
     func deactivate() -> Void {
-        
+        self.audioEngineController.stopRecording()
     }
     
     // MARK: Private (methods)
@@ -102,22 +102,26 @@ class WakeWordController {
         /// Allocate an additional slot for the non-keyword class at 0
         
         let wakeWords: Array<String> = self.wakeWordConfiguration.wakeWords.components(separatedBy: ",")
-        print("wakeWords \(wakeWords)")
-        self.words = wakeWords
+        self.words = Array(repeating: "", count: wakeWords.count + 1)
+        
+        for (index, _) in self.words.enumerated() {
+            
+            let indexOffset: Int = index + 1
+            
+            if indexOffset < self.words.count {
+                self.words[indexOffset] = wakeWords[indexOffset - 1]
+            }
+        }
         
         /// Parse the keyword phrase configuration
         
         var wakePhrases: Array<String> = self.wakeWordConfiguration.wakePhrases.components(separatedBy: ",")
-        print("local wakePhrases \(wakePhrases)")
-
         self.phrases = TwoDimensionArray<Int>.init(repeating: [0], count: wakePhrases.count)
-        print("self.phrases \(self.phrases)")
         
         for (index, _) in wakePhrases.enumerated() {
             
             let wakePhrase: String = wakePhrases[index]
             let wakePhraseArray: Array<String> = wakePhrase.components(separatedBy: " ")
-            print("wakePhraseArray \(wakePhraseArray)")
             
             /// Allocate an additional (null) slot at the end of each phrase,
             /// which forces the phraser to continue detection until the end
@@ -125,18 +129,17 @@ class WakeWordController {
             
             self.phrases[index] = Array<Int>.init(repeating: 0, count: wakePhrases.count + 1)
             
-            print("self.phrases after setting \(self.phrases)")
-            
-            for (j, v) in wakePhraseArray.enumerated() {
-                print("what is the [v] \(v) for [j] \(j) wakePhraseArray")
-                
+            for (j, _) in wakePhraseArray.enumerated() {
+
                 guard let k: Int = wakeWords.index(of: wakePhraseArray[j]) else {
                     
                     assertionFailure("wake-phrases")
                     return
                 }
-                
-                self.phrases[index][j] = k + 1
+
+                if j < self.phrases[index].count {
+                    self.phrases[index][j] = k + 1
+                }
             }
         }
         
