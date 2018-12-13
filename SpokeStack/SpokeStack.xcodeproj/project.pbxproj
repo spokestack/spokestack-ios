@@ -15,8 +15,9 @@
 		011C192A216BCA3200DB36FD /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 011C1928216BCA3200DB36FD /* LaunchScreen.storyboard */; };
 		011C193B216BCBCA00DB36FD /* StandardGoogleRecognitionConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 011C193A216BCBCA00DB36FD /* StandardGoogleRecognitionConfiguration.swift */; };
 		012CBD6E21B855580091322B /* RingBuffer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 012CBD6D21B855580091322B /* RingBuffer.swift */; };
-		0184FFF621B0ECAF00D4A650 /* filter.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = 0184FFF421B0ECAE00D4A650 /* filter.mlmodel */; };
-		0184FFF721B0ECAF00D4A650 /* detect.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = 0184FFF521B0ECAF00D4A650 /* detect.mlmodel */; };
+		0167942D21C30FE600BE457E /* AVAudioPCMBuffer+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0167942C21C30FE600BE457E /* AVAudioPCMBuffer+Extensions.swift */; };
+		0167943021C3178A00BE457E /* WakeWordDetect.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = 0167942E21C3178900BE457E /* WakeWordDetect.mlmodel */; };
+		0167943121C3178A00BE457E /* WakeWordFilter.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = 0167942F21C3178900BE457E /* WakeWordFilter.mlmodel */; };
 		0193DD4621B7766900288EB1 /* SampleWakeRecognizerConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0193DD4521B7766900288EB1 /* SampleWakeRecognizerConfiguration.swift */; };
 		01AC1539216BB6CE001B9146 /* openssl.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 01D322F4216BB10C0055FD45 /* openssl.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		01AC153A216BB6CE001B9146 /* googleapis.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 01D322AD216BB10C0055FD45 /* googleapis.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -169,8 +170,9 @@
 		011C192B216BCA3200DB36FD /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		011C193A216BCBCA00DB36FD /* StandardGoogleRecognitionConfiguration.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StandardGoogleRecognitionConfiguration.swift; sourceTree = "<group>"; };
 		012CBD6D21B855580091322B /* RingBuffer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RingBuffer.swift; sourceTree = "<group>"; };
-		0184FFF421B0ECAE00D4A650 /* filter.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = filter.mlmodel; sourceTree = "<group>"; };
-		0184FFF521B0ECAF00D4A650 /* detect.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = detect.mlmodel; sourceTree = "<group>"; };
+		0167942C21C30FE600BE457E /* AVAudioPCMBuffer+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AVAudioPCMBuffer+Extensions.swift"; sourceTree = "<group>"; };
+		0167942E21C3178900BE457E /* WakeWordDetect.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = WakeWordDetect.mlmodel; sourceTree = "<group>"; };
+		0167942F21C3178900BE457E /* WakeWordFilter.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = WakeWordFilter.mlmodel; sourceTree = "<group>"; };
 		0193DD4521B7766900288EB1 /* SampleWakeRecognizerConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SampleWakeRecognizerConfiguration.swift; sourceTree = "<group>"; };
 		01B50EA521BEC75E002B2127 /* AudioEngineController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioEngineController.swift; sourceTree = "<group>"; };
 		01BADDE921B6DB1D00515701 /* WakeRecognizerConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WakeRecognizerConfiguration.swift; sourceTree = "<group>"; };
@@ -270,11 +272,19 @@
 			path = SpokeStackFrameworkExample;
 			sourceTree = "<group>";
 		};
+		0167942B21C30FAE00BE457E /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				0167942C21C30FE600BE457E /* AVAudioPCMBuffer+Extensions.swift */,
+			);
+			name = Extensions;
+			sourceTree = "<group>";
+		};
 		0184FFF821B0ED3500D4A650 /* Machine Learning */ = {
 			isa = PBXGroup;
 			children = (
-				0184FFF521B0ECAF00D4A650 /* detect.mlmodel */,
-				0184FFF421B0ECAE00D4A650 /* filter.mlmodel */,
+				0167942E21C3178900BE457E /* WakeWordDetect.mlmodel */,
+				0167942F21C3178900BE457E /* WakeWordFilter.mlmodel */,
 			);
 			name = "Machine Learning";
 			sourceTree = "<group>";
@@ -303,11 +313,12 @@
 		01D31F3D216BAF260055FD45 /* SpokeStack */ = {
 			isa = PBXGroup;
 			children = (
-				0184FFF821B0ED3500D4A650 /* Machine Learning */,
-				01D31F90216BB09E0055FD45 /* Externals */,
 				01D31F59216BAF710055FD45 /* Configurations */,
 				01D31F60216BAF9A0055FD45 /* Controllers */,
 				01D31F64216BAFAA0055FD45 /* Errors */,
+				0167942B21C30FAE00BE457E /* Extensions */,
+				01D31F90216BB09E0055FD45 /* Externals */,
+				0184FFF821B0ED3500D4A650 /* Machine Learning */,
 				01D31F68216BAFBC0055FD45 /* Managers */,
 				01D31F6C216BAFCD0055FD45 /* Models */,
 				01D31F73216BAFE20055FD45 /* Protocols */,
@@ -704,12 +715,13 @@
 				01D31F71216BAFD90055FD45 /* RecognizerService.swift in Sources */,
 				01D31F82216BB0000055FD45 /* RecognizerConfiguration.swift in Sources */,
 				01D31F62216BAFA40055FD45 /* AudioController.swift in Sources */,
-				0184FFF721B0ECAF00D4A650 /* detect.mlmodel in Sources */,
+				0167942D21C30FE600BE457E /* AVAudioPCMBuffer+Extensions.swift in Sources */,
+				0167943021C3178A00BE457E /* WakeWordDetect.mlmodel in Sources */,
 				0193DD4621B7766900288EB1 /* SampleWakeRecognizerConfiguration.swift in Sources */,
+				0167943121C3178A00BE457E /* WakeWordFilter.mlmodel in Sources */,
 				011C193B216BCBCA00DB36FD /* StandardGoogleRecognitionConfiguration.swift in Sources */,
 				01BADDEC21B6E59C00515701 /* WakeWordController.swift in Sources */,
 				01D31F8A216BB0220055FD45 /* Results.swift in Sources */,
-				0184FFF621B0ECAF00D4A650 /* filter.mlmodel in Sources */,
 				01D31F79216BAFEF0055FD45 /* AudioControllerDelegate.swift in Sources */,
 				01D31F5E216BAF950055FD45 /* StandardRecognizerConfiguration.swift in Sources */,
 				01D31F86216BB0120055FD45 /* GoogleSpeechRecognizer.swift in Sources */,
