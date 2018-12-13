@@ -5,7 +5,7 @@ Pod::Spec.new do |s|
   s.summary = 'Spokestack provides an extensible speech recognition pipeline for the iOS platform.'
   s.homepage = 'https://www.pylon.com'
   s.authors = { 'Spokestack' => 'support@pylon.com' }
-  s.source = { :git => 'https://github.com/pylon/spokestack-ios.git', :branch => 'master' }
+  s.source = { :git => 'https://github.com/pylon/spokestack-ios.git', :tag => '0.0.1' }
 
   s.ios.deployment_target = '11.0'
   s.swift_version = '4.0'
