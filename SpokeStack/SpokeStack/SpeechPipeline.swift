@@ -107,6 +107,3 @@ public final class SpeechPipeline {
         self.wakeWordController.deactivate()
     }
 }
-
-/// Need delegate for the wake word
-
