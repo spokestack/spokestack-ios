@@ -41,7 +41,7 @@ final class RingBuffer {
     required init(_ capacity: Int) {
         
         let reservedCapacity: Int = capacity + 1
-        self.data.reserveCapacity(reservedCapacity)
+        self.data = Array(repeating: 0.0, count: reservedCapacity)
     }
     
     // MARK: Public (methods)
@@ -103,6 +103,6 @@ final class RingBuffer {
     // MARK: Private (properties)
 
     private func pos(_ x: Int) -> Int {
-        return x % self.data.count
+        return x - self.data.count * Int(floor(Double(x / self.data.count)))
     }
 }
