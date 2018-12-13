@@ -20,11 +20,11 @@ struct GoogleConfiguration: GoogleRecognizerConfiguration {
 struct WKWordConfiguration: WakeRecognizerConfiguration {
     
     var wakeWords: String {
-        return "up, dog, break, yo, self, fool"
+        return "up,dog,break,yo,self,fool"
     }
     
     var wakePhrases: String {
-        return "up dog, break yo self fool"
+        return "up dog,break yo self fool"
     }
 }
 
