@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import AVFoundation
 
 class WakeWordController {
     
@@ -73,6 +74,10 @@ class WakeWordController {
     private let audioEngineController: AudioEngineController
     
     // MARK: Initializers
+    
+    deinit {
+        audioEngineController.delegate = nil
+    }
     
     init(_ configuration: WakeRecognizerConfiguration) {
         
@@ -211,6 +216,15 @@ class WakeWordController {
         self.maxActive = self.wakeWordConfiguration.wakeActionMax / frameWidth
     }
     
+    private func process(_ data: Data) -> Void {
+        
+        // TODO: Need to handle "state"
+        //
+        // See: https://github.com/pylon/spokestack-android/blob/a5b1e4cf194b10e209c1b740c2e9655989b24cb9/src/main/java/com/pylon/spokestack/wakeword/WakewordTrigger.java#L370
+        
+        self.sample(data)
+    }
+    
     private func sample(_ data: Data) -> Void {
         
         /// Update the rms normalization factors
@@ -290,6 +304,21 @@ class WakeWordController {
         
         return Float(sqrt(sum / Float(count)))
     }
+    
+    private func reset() -> Void {
+        
+        /// Empty the sample buffer, so that only contiguous
+        /// speech samples are written to it
+        
+        self.sampleWindow.reset()
+        
+        /// Reset and fill the other buffers,
+        /// hich prevents them from lagging the detection
+        
+        self.frameWindow.reset().fill(0)
+        self.smoothWindow.reset().fill(0)
+        self.phraseWindow.reset().fill(0)
+    }
 }
 
 
@@ -317,6 +346,9 @@ extension WakeWordController {
     }
     
     private func filter() -> Void {
+        
+//        let prediction = try? WakeWordDetect().prediction(input: <#T##WakeWordDetectInput#>)
+        let wwdetect = try? WakeWordDetect()
         
         /// Decode the FFT outputs into the filter model's input
         /// Compute the nagitude (abs) of each complex stft component
@@ -385,6 +417,28 @@ extension WakeWordController {
 //        this.smoothWindow.write(this.detectModel.outputs().getFloat());
 //
 //        smooth();
+    }
+}
+
+extension WakeWordController: AudioEngineControllerDelegate {
+    
+    func didReceive(_ buffer: AVAudioPCMBuffer) {
+        
+        let audioBuffer: Data = buffer.spstk_data
+        self.process(audioBuffer)
+    }
+    
+    func didStart(_ engineController: AudioEngineController) {
+        
+    }
+    
+    func didStop(_ engineController: AudioEngineController) {
+        
+        /// "close"
+        
+        /// Reset
+        
+        self.reset()
     }
 }
 
