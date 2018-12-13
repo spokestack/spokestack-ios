@@ -131,9 +131,9 @@ class AudioController {
         /// AVSession setup
         
         do {
-            try AVAudioSession.sharedInstance().setCategory(AVAudioSessionCategoryPlayAndRecord, mode:  AVAudioSessionModeSpokenAudio, options: .defaultToSpeaker)
+            try AVAudioSession.sharedInstance().setCategory(AVAudioSession.Category.playAndRecord, mode:  AVAudioSession.Mode.spokenAudio, options: .defaultToSpeaker)
             try session.setPreferredIOBufferDuration(self.bufferDuration)
-            try session.setActive(true, with: .notifyOthersOnDeactivation)
+            try session.setActive(true, options: .notifyOthersOnDeactivation)
 
         } catch {
             
