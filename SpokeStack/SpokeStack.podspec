@@ -6,9 +6,10 @@ Pod::Spec.new do |s|
   s.homepage = 'https://www.pylon.com'
   s.authors = { 'Spokestack' => 'support@pylon.com' }
   s.source = { :git => 'https://github.com/pylon/spokestack-ios.git', :tag => '0.0.1' }
-  s.license = 'Apache'
+  s.license = {'type' => 'Apache', :file => '../LICENSE'}
   s.ios.deployment_target = '11.0'
   s.swift_version = '4.2'
+  s.static_framework = true
   s.ios.framework = 'AVFoundation'
   s.source_files = 'SpokeStack/*.{h,m,o,swift}'
   s.exclude_files = 'SpokeStackFrameworkExample/*.*, SpokeStackTests/*.*, SpokeStack/Info.plist'
