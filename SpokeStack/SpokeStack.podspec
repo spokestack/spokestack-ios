@@ -10,9 +10,9 @@ Pod::Spec.new do |s|
   s.ios.deployment_target = '11.0'
   s.swift_version = '4.0'
   s.ios.framework = 'AVFoundation'
-  s.source_files = 'SpokeStack/*'
+  s.source_files = 'SpokeStack/*.{h,m,o,swift}'
   s.exclude_files = 'SpokeStackFrameworkExample/*.*, SpokeStackTests/*.*, SpokeStack/Info.plist'
-  s.resource = 'gRPCCertificates.bundle'
+  s.resource = 'Frameworks/gRPC/gRPCCertificates.bundle'
   s.preserve_paths = 'Frameworks/BoringSSL-GRPC/openssl.framework', 'Frameworks/googleapis/googleapis.framework', 'Frameworks/gRPC/GRPCClient.framework', 'Frameworks/gRPC-Core/grpc.framework', 'Frameworks/gRPC-ProtoRPC/ProtoRPC.framework', 'Frameworks/gRPC-RxLibrary/RxLibrary.framework', 'Frameworks/nanopb/nanopb.framework', 'Frameworks/Protobuf/Protobuf.framework'
 
   s.vendored_frameworks = 'Frameworks/BoringSSL-GRPC/openssl.framework', 'Frameworks/googleapis/googleapis.framework', 'Frameworks/gRPC/GRPCClient.framework', 'Frameworks/gRPC-Core/grpc.framework', 'Frameworks/gRPC-ProtoRPC/ProtoRPC.framework', 'Frameworks/gRPC-RxLibrary/RxLibrary.framework', 'Frameworks/nanopb/nanopb.framework', 'Frameworks/Protobuf/Protobuf.framework'
