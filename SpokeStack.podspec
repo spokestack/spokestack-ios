@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name = 'SpokeStack'
-  s.version = '0.0.1'
+  s.version = '0.0.2'
   s.license = 'Apache'
   s.summary = 'Spokestack provides an extensible speech recognition pipeline for the iOS platform.'
   s.homepage = 'https://www.pylon.com'
@@ -11,7 +11,7 @@ Pod::Spec.new do |s|
   s.swift_version = '4.2'
   s.ios.framework = 'AVFoundation'
   s.source_files = 'SpokeStack/*'
-  s.exclude_files = 'SpokeStackFrameworkExample/*.*, SpokeStackTests/*.*, SpokeStack/Info.plist'
+  s.exclude_files = 'SpokeStackFrameworkExample/*.*', 'SpokeStackTests/*.*', 'SpokeStack/Info.plist'
   s.resource = 'Frameworks/gRPC/gRPCCertificates.bundle'
   s.preserve_paths = 'Frameworks/BoringSSL-GRPC/openssl.framework', 'Frameworks/googleapis/googleapis.framework', 'Frameworks/gRPC/GRPCClient.framework', 'Frameworks/gRPC-Core/grpc.framework', 'Frameworks/gRPC-ProtoRPC/ProtoRPC.framework', 'Frameworks/gRPC-RxLibrary/RxLibrary.framework', 'Frameworks/nanopb/nanopb.framework', 'Frameworks/Protobuf/Protobuf.framework'
 
