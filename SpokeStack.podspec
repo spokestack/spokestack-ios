@@ -17,9 +17,8 @@ Pod::Spec.new do |s|
 
   s.vendored_frameworks = 'Frameworks/BoringSSL-GRPC/openssl.framework', 'Frameworks/googleapis/googleapis.framework', 'Frameworks/gRPC/GRPCClient.framework', 'Frameworks/gRPC-Core/grpc.framework', 'Frameworks/gRPC-ProtoRPC/ProtoRPC.framework', 'Frameworks/gRPC-RxLibrary/RxLibrary.framework', 'Frameworks/nanopb/nanopb.framework', 'Frameworks/Protobuf/Protobuf.framework'
   s.pod_target_xcconfig  = {
-    # 'FRAMEWORK_SEARCH_PATHS' => '$(inherited) Frameworks/**',
-    # 'OTHER_LDFLAGS' => '$(inherited) -ObjC',
-    # 'OTHER_LDFLAGS' => '$(inherited) -undefined dynamic_lookup',
+    # SDKROOT cannot be overridden sadly, see https://github.com/CocoaPods/CocoaPods/pull/8058, https://github.com/CocoaPods/CocoaPods/issues/7972
+    # 'SDKROOT' => 'iphoneos',
     'VALID_ARCHS' => 'armv7 armv7s arm64 arm64e',
     'GCC_PREPROCESSOR_DEFINITIONS' => '$(inherited) GPB_USE_PROTOBUF_FRAMEWORK_IMPORTS=1 PB_FIELD_32BIT=1 PB_NO_PACKED_STRUCTS=1'
   }
