@@ -6,17 +6,17 @@ Pod::Spec.new do |s|
   s.homepage = 'https://www.pylon.com'
   s.authors = { 'Spokestack' => 'support@pylon.com' }
   s.source = { :git => 'https://github.com/pylon/spokestack-ios.git', :tag => '0.0.1' }
-  s.license = {'type' => 'Apache', :file => '../LICENSE'}
+  s.license = {:type => 'Apache', :file => 'LICENSE'}
   s.ios.deployment_target = '11.0'
   s.swift_version = '4.2'
   s.ios.framework = 'AVFoundation'
-  s.source_files = 'SpokeStack/*.{h,m,o,swift}'
+  s.source_files = 'SpokeStack/*'
   s.exclude_files = 'SpokeStackFrameworkExample/*.*, SpokeStackTests/*.*, SpokeStack/Info.plist'
   s.resource = 'Frameworks/gRPC/gRPCCertificates.bundle'
   s.preserve_paths = 'Frameworks/BoringSSL-GRPC/openssl.framework', 'Frameworks/googleapis/googleapis.framework', 'Frameworks/gRPC/GRPCClient.framework', 'Frameworks/gRPC-Core/grpc.framework', 'Frameworks/gRPC-ProtoRPC/ProtoRPC.framework', 'Frameworks/gRPC-RxLibrary/RxLibrary.framework', 'Frameworks/nanopb/nanopb.framework', 'Frameworks/Protobuf/Protobuf.framework'
 
   s.vendored_frameworks = 'Frameworks/BoringSSL-GRPC/openssl.framework', 'Frameworks/googleapis/googleapis.framework', 'Frameworks/gRPC/GRPCClient.framework', 'Frameworks/gRPC-Core/grpc.framework', 'Frameworks/gRPC-ProtoRPC/ProtoRPC.framework', 'Frameworks/gRPC-RxLibrary/RxLibrary.framework', 'Frameworks/nanopb/nanopb.framework', 'Frameworks/Protobuf/Protobuf.framework'
-  s.user_target_xcconfig  = {
+  s.pod_target_xcconfig  = {
     # 'FRAMEWORK_SEARCH_PATHS' => '$(inherited) Frameworks/**',
     # 'OTHER_LDFLAGS' => '$(inherited) -ObjC',
     # 'OTHER_LDFLAGS' => '$(inherited) -undefined dynamic_lookup',
