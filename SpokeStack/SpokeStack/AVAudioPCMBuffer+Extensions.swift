@@ -14,9 +14,22 @@ extension AVAudioPCMBuffer {
     // MARK: Internal (properties)
     
     var spstk_data: Data {
+
+        ///
+
+        let leftChannel = self.floatChannelData![0]
+        let count: Int = Int(self.frameLength)
+        let arr = Array(UnsafeBufferPointer(start: leftChannel, count: count))
+        let data = Data(bytes: leftChannel, count: count)
+
+        print("what the arr \(arr)")
+        print("what is the data length \(data.count)")
         
-        let audioBuffer: (AudioBuffer) = self.audioBufferList.pointee.mBuffers
-        let data: Data = Data(bytes: audioBuffer.mData!, count: Int(audioBuffer.mDataByteSize))
+        ///
+
+//        let audioBuffer: (AudioBuffer) = self.audioBufferList.pointee.mBuffers
+//        print("what is the audioBuffer data size \(audioBuffer.mDataByteSize) and data \(String(describing: audioBuffer.mData))")
+//        let data: Data = Data(bytes: audioBuffer.mData!, count: Int(audioBuffer.mDataByteSize))
 
         return data
     }

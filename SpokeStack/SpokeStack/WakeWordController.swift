@@ -8,6 +8,16 @@
 
 import Foundation
 import AVFoundation
+import CoreML
+
+private struct ModelConstants {
+    
+    static let numOfBatches = 1
+    
+    static let numOfFrames = 1
+    
+    static let numOfFFTComponents = 257
+}
 
 class WakeWordController {
     
@@ -69,8 +79,6 @@ class WakeWordController {
     
     private var wakeWordConfiguration: WakeRecognizerConfiguration
     
-    private let audioController: AudioController = AudioController()
-    
     private let audioEngineController: AudioEngineController
     
     // MARK: Initializers
@@ -82,9 +90,12 @@ class WakeWordController {
     init(_ configuration: WakeRecognizerConfiguration) {
         
         self.wakeWordConfiguration = configuration
+        let buffer: Int = (configuration.sampleRate / 1000) * configuration.frameWidth
         
-        let buffer: Int = configuration.sampleRate / 1000 * configuration.frameWidth
         self.audioEngineController = AudioEngineController(buffer)
+        self.audioEngineController.delegate = self
+        
+//        AudioController.shared.delegate = self
         
         self.setup()
     }
@@ -93,10 +104,12 @@ class WakeWordController {
     
     func activate() -> Void {
         try? self.audioEngineController.startRecording()
+//        AudioController.shared.startStreaming()
     }
     
     func deactivate() -> Void {
         self.audioEngineController.stopRecording()
+//        AudioController.shared.stopStreaming()
     }
     
     // MARK: Private (methods)
@@ -221,51 +234,57 @@ class WakeWordController {
         // TODO: Need to handle "state"
         //
         // See: https://github.com/pylon/spokestack-android/blob/a5b1e4cf194b10e209c1b740c2e9655989b24cb9/src/main/java/com/pylon/spokestack/wakeword/WakewordTrigger.java#L370
-        
+        print("i'm starting to process \(data.count)")
         self.sample(data)
     }
     
     private func sample(_ data: Data) -> Void {
-        
+        print("I should be sampling lots of data \(data.count)")
         /// Update the rms normalization factors
         /// Maintain an ewma of the rms signal energy for speech samples
-        
+
         self.rmsValue = self.rmsAlpha * self.rms(data) + (1 - self.rmsAlpha) * self.rmsValue
-        
+
         /// Process all samples in the frame
         var newData = data
         let range = data.startIndex..<data.endIndex
         newData.resetBytes(in: range)
 
         while !newData.isEmpty {
-            
+
             /// Normalize and clip the 16-bit sample to the target rms energy
-            
+
             var sample: Float = Float(newData[newData.index(newData.startIndex, offsetBy: 2)]) / .greatestFiniteMagnitude
-            
+
             sample = sample * (self.rmsTarget / self.rmsValue)
             sample = max(-1.0, min(sample, 1.0))
-            
+
             /// Process the sample
             /// Write it to the sample sliding window
             /// run the remainder of the detection pipleline if speech
             /// advance the sample sliding window
-            
+
             do {
+                print("Sample is being written")
                 try self.sampleWindow.write(sample)
+
             } catch SpeechPipelineError.illegalState(let message) {
+
                 print("illegal state error \(message)")
+
             } catch {
+
                 print("Unknown Error Occurred while processing sample")
             }
-            
+
             if self.sampleWindow.isFull {
-            
+                print("the windows should be full and analyzing")
                 self.analyze()
                 self.sampleWindow.rewind().seek(self.hopLength)
+            } else {
+                print("what is going on?")
             }
         }
-        
     }
     
     private func hannWindow(_ length: Int) -> Array<Float> {
@@ -285,7 +304,8 @@ class WakeWordController {
     }
 
     private func rms(_ data: Data) -> Float {
-    
+        /// Size of data is 19200 so it is taking awhle to process and then come
+        /// back and return
         var sum: Float = 0
         var count: Int = 0
         var newData = data
@@ -294,7 +314,7 @@ class WakeWordController {
         let range = newData.startIndex..<newData.endIndex
         newData.resetBytes(in: range)
 
-        while !data.isEmpty {
+        while !newData.isEmpty {
 
             let sample: Float = Float(newData[newData.index(newData.startIndex, offsetBy: 2)]) / .greatestFiniteMagnitude
 
@@ -302,7 +322,9 @@ class WakeWordController {
             count += 1
         }
         
-        return Float(sqrt(sum / Float(count)))
+        let v = Float(sqrt(sum / Float(count)))
+        
+        return v
     }
     
     private func reset() -> Void {
@@ -320,7 +342,6 @@ class WakeWordController {
         self.phraseWindow.reset().fill(0)
     }
 }
-
 
 extension WakeWordController {
     
@@ -346,9 +367,9 @@ extension WakeWordController {
     }
     
     private func filter() -> Void {
-        
-//        let prediction = try? WakeWordDetect().prediction(input: <#T##WakeWordDetectInput#>)
-        let wwdetect = try? WakeWordDetect()
+        print("do i ever hit the filter????")
+
+        let wwfilter = try? WakeWordFilter()
         
         /// Decode the FFT outputs into the filter model's input
         /// Compute the nagitude (abs) of each complex stft component
@@ -356,9 +377,55 @@ extension WakeWordController {
         /// and are stored in the first of the first two positions of the stft
         /// output. The remaining components contact real / imaginary parts
         
-        /// Execute the mel filterbank tensorflow model
+        var components: Array<Double> = Array<Double>.init(repeating: 0, count: ModelConstants.numOfFFTComponents)
+        
+        /// Populate the components
+        
+        let firstComponent: Double = Double(self.fftFrame.first!)
+        components.append(firstComponent)
+        
+        var i: Int = 1
+        repeat {
+            
+            i += 1
+            
+            let re: Float = self.fftFrame[i * 2 + 0]
+            let im: Float = self.fftFrame[i * 2 + 1]
+            let ab: Float = sqrt(re * re + im * im)
+            
+            components.append(Double(ab))
+            
+        } while i < (self.fftFrame.count / 2)
+        
+        let lastComponent: Double = Double(self.fftFrame[1])
+        components.append(lastComponent)
+        
+        /// Run the predictions
+        
+        guard let multiArray = try? MLMultiArray(shape: [
+            ModelConstants.numOfBatches,
+            ModelConstants.numOfFrames,
+            ModelConstants.numOfFFTComponents] as [NSNumber], dataType: .double) else {
+                
+                fatalError("Unexpected runtime error. MLMultiArray")
+        }
+        
+        for (index, value) in components.enumerated() {
+            multiArray[[0, 0, index] as [NSNumber]] = value as NSNumber
+        }
+        print("what is my multiArray \(multiArray)")
+        let input: WakeWordFilterInput = WakeWordFilterInput(linspec_inputs__0: multiArray)
+        let predictions: WakeWordFilterOutput = try! wwfilter!.prediction(input: input)
         
         /// Copy the current mel frame into the mel window
+        
+        self.frameWindow.rewind().seek(self.melWidth)
+        
+        for i in 0...40 {
+            
+            let result = String(describing: predictions.melspec_outputs__0[i])
+            print("what is my result \(result)")
+        }
         
         /// Detect
         
@@ -429,7 +496,7 @@ extension WakeWordController: AudioEngineControllerDelegate {
     }
     
     func didStart(_ engineController: AudioEngineController) {
-        
+        print("it did start")
     }
     
     func didStop(_ engineController: AudioEngineController) {
@@ -549,3 +616,16 @@ extension WakeWordController {
         }
     }
 }
+
+extension WakeWordController: AudioControllerDelegate {
+    func setupFailed(_ error: String) {
+        
+    }
+    
+    
+    func processSampleData(_ data: Data) {
+        print("what is the data length \(data.count)")
+        self.process(data)
+    }
+}
+

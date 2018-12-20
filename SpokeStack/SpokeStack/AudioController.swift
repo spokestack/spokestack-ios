@@ -40,7 +40,7 @@ func recordingCallback(
     if (status != noErr) {
         return status
     }
-
+    print("buffers \(String(describing: buffers[0].mData))")
     let data: Data = Data(bytes: buffers[0].mData!, count: Int(buffers[0].mDataByteSize))
     
     DispatchQueue.main.async {

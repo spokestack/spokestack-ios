@@ -66,18 +66,39 @@ final class AudioEngineController {
     // MARK: Internal (methods)
     
     func startRecording() throws -> Void {
-
-        let mixer = self.engine.mainMixerNode
-        let format = mixer.outputFormat(forBus: 0)
         
-        mixer.installTap(onBus: 0,
-                         bufferSize: AVAudioFrameCount(self.bufferSize),
-                         format: format,
+        let node: AVAudioInputNode = self.engine.inputNode
+        let outputFormat: AVAudioFormat = node.outputFormat(forBus: 0)
+        let bufferSize: AVAudioFrameCount = AVAudioFrameCount(self.bufferSize)
+        
+        node.installTap(onBus: 0,
+                         bufferSize: bufferSize,
+                         format: outputFormat,
                          block: {[weak self] buffer, time in
             
-                            print("buffer coming back \(Int(buffer.frameLength)) and time \(time)")
-                            self?.delegate?.didReceive(buffer)
+                            guard let strongSelf = self else {
+                                return
+                            }
                             
+                            var sum:Float = 0
+                            
+                            // do a quick calc from the buffer values
+                            var i = 0
+                            repeat {
+                                i += 1
+                                
+                                sum += buffer.floatChannelData!.pointee[i] * 10_000
+                            } while i < bufferSize
+                            
+                            let printstatement = sum / Float(bufferSize)
+                            
+                            print("what is the print \(printstatement)")
+                            
+                            print("buffer duration \(AVAudioSession.sharedInstance().ioBufferDuration)")
+                            print("preferred buffer duration \(AVAudioSession.sharedInstance().preferredIOBufferDuration)")
+                            print("buffer coming back \(Int(buffer.frameLength)) and time \(time) and capacity \(buffer.frameCapacity)")
+                            strongSelf.delegate?.didReceive(buffer)
+
         })
         
         do {
