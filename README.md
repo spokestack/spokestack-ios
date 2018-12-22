@@ -7,9 +7,10 @@ speech recognition services, such as the Google Speech API.
 
 ## Installation
 [![](https://img.shields.io/cocoapods/v/SpokeStack.svg)](https://cocoapods.org/pods/SpokeStack)
+
 [CocoaPods](https://cocoapods.org) is a dependency manager for Cocoa projects. For usage and installation instructions, visit their website. To integrate Spokestack into your Xcode project using CocoaPods, specify it in your Podfile:
 
-`pod 'Spokestack', '~> 0.0.3'`
+`pod 'Spokestack', '~> 0.0.2'`
 
 ## Release
   1. Ensure that CocoaPods has been installed via `gem`, not via `brew`
