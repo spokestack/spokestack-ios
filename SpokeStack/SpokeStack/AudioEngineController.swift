@@ -54,8 +54,9 @@ final class AudioEngineController {
                                                             mode: .spokenAudio,
                                                             options: .defaultToSpeaker)
             
-            let ioBufferDuration = Double(self.bufferSize) / 44100.0
+            let ioBufferDuration = Double(self.bufferSize) / 48000.0
             try AVAudioSession.sharedInstance().setPreferredIOBufferDuration(ioBufferDuration)
+            try AVAudioSession.sharedInstance().setActive(true, options: .notifyOthersOnDeactivation)
             
         } catch {
             
@@ -70,40 +71,33 @@ final class AudioEngineController {
         let node: AVAudioInputNode = self.engine.inputNode
         let outputFormat: AVAudioFormat = node.outputFormat(forBus: 0)
         let bufferSize: AVAudioFrameCount = AVAudioFrameCount(self.bufferSize)
-        
+
+
+        print("formatDescription \(outputFormat.formatDescription)")
+        print("sampleRate \(outputFormat.sampleRate)")
+        print("streamDescription \(outputFormat.streamDescription)")
+        print("settings \(outputFormat.settings)")
+
         node.installTap(onBus: 0,
                          bufferSize: bufferSize,
                          format: outputFormat,
                          block: {[weak self] buffer, time in
-            
+
                             guard let strongSelf = self else {
                                 return
                             }
-                            
-                            var sum:Float = 0
-                            
-                            // do a quick calc from the buffer values
-                            var i = 0
-                            repeat {
-                                i += 1
-                                
-                                sum += buffer.floatChannelData!.pointee[i] * 10_000
-                            } while i < bufferSize
-                            
-                            let printstatement = sum / Float(bufferSize)
-                            
-                            print("what is the print \(printstatement)")
-                            
+
                             print("buffer duration \(AVAudioSession.sharedInstance().ioBufferDuration)")
                             print("preferred buffer duration \(AVAudioSession.sharedInstance().preferredIOBufferDuration)")
                             print("buffer coming back \(Int(buffer.frameLength)) and time \(time) and capacity \(buffer.frameCapacity)")
                             strongSelf.delegate?.didReceive(buffer)
-
         })
         
         do {
             
+            self.engine.prepare()
             try self.engine.start()
+            
             self.delegate?.didStart(self)
 
         } catch let error {

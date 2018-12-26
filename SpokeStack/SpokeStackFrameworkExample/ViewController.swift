@@ -66,8 +66,8 @@ extension ViewController: SpeechRecognizer {
         self.resultsLabel.text = result.transcript
     }
     
-    func didFinish() {
-        
+    func didFinish(_ error: Error?) {
+        print("didFinish \(String(describing: error))")
         self.stopRecordingButton.isEnabled.toggle()
         self.startRecordingButton.isEnabled.toggle()
     }

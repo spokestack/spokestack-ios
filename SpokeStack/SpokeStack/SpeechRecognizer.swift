@@ -14,5 +14,5 @@ public protocol SpeechRecognizer: AnyObject {
     
     func didRecognize(_ result: SPSpeechContext) -> Void
     
-    func didFinish() -> Void
+    func didFinish(_ error: Error?) -> Void
 }
