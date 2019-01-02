@@ -72,7 +72,6 @@ final class AudioEngineController {
         let outputFormat: AVAudioFormat = node.outputFormat(forBus: 0)
         let bufferSize: AVAudioFrameCount = AVAudioFrameCount(self.bufferSize)
 
-
         print("formatDescription \(outputFormat.formatDescription)")
         print("sampleRate \(outputFormat.sampleRate)")
         print("streamDescription \(outputFormat.streamDescription)")
@@ -87,10 +86,9 @@ final class AudioEngineController {
                                 return
                             }
 
-                            print("buffer duration \(AVAudioSession.sharedInstance().ioBufferDuration)")
-                            print("preferred buffer duration \(AVAudioSession.sharedInstance().preferredIOBufferDuration)")
-                            print("buffer coming back \(Int(buffer.frameLength)) and time \(time) and capacity \(buffer.frameCapacity)")
+                            print("buffer coming back \(Int(buffer.frameLength)) and time \(time) and capacity \(buffer.frameCapacity)")                            
                             strongSelf.delegate?.didReceive(buffer)
+                            
         })
         
         do {
