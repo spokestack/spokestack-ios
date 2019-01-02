@@ -89,6 +89,7 @@
 		01D3249B216BB10D0055FD45 /* Protobuf.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01D322FC216BB10D0055FD45 /* Protobuf.framework */; };
 		01D3249C216BB10D0055FD45 /* grpc.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01D322FE216BB10D0055FD45 /* grpc.framework */; };
 		01D3249D216BB10D0055FD45 /* grpc.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01D322FE216BB10D0055FD45 /* grpc.framework */; };
+		01D489E721D42A070030D015 /* Data+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01D489E621D42A070030D015 /* Data+Extensions.swift */; };
 		01DE0FEF216BFEE2007C23A7 /* gRPCCertificates.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 01D322B0216BB10C0055FD45 /* gRPCCertificates.bundle */; };
 /* End PBXBuildFile section */
 
@@ -207,6 +208,7 @@
 		01D322FA216BB10C0055FD45 /* nanopb.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = nanopb.framework; sourceTree = "<group>"; };
 		01D322FC216BB10D0055FD45 /* Protobuf.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Protobuf.framework; sourceTree = "<group>"; };
 		01D322FE216BB10D0055FD45 /* grpc.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = grpc.framework; sourceTree = "<group>"; };
+		01D489E621D42A070030D015 /* Data+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Data+Extensions.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -276,6 +278,7 @@
 			isa = PBXGroup;
 			children = (
 				0167942C21C30FE600BE457E /* AVAudioPCMBuffer+Extensions.swift */,
+				01D489E621D42A070030D015 /* Data+Extensions.swift */,
 			);
 			name = Extensions;
 			sourceTree = "<group>";
@@ -711,6 +714,7 @@
 				01D31F80216BB0000055FD45 /* GoogleRecognizerConfiguration.swift in Sources */,
 				01BADDEA21B6DB1D00515701 /* WakeRecognizerConfiguration.swift in Sources */,
 				01D31F7B216BAFEF0055FD45 /* SpeechRecognizerService.swift in Sources */,
+				01D489E721D42A070030D015 /* Data+Extensions.swift in Sources */,
 				0112624821B9C6F000B85563 /* FFT.swift in Sources */,
 				01D31F71216BAFD90055FD45 /* RecognizerService.swift in Sources */,
 				01D31F82216BB0000055FD45 /* RecognizerConfiguration.swift in Sources */,
