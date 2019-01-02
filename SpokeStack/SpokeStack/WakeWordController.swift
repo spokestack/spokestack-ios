@@ -229,47 +229,32 @@ class WakeWordController {
         self.maxActive = self.wakeWordConfiguration.wakeActionMax / frameWidth
     }
     
-    private func process(_ data: Data) -> Void {
+    private func process(_ buffer: AVAudioPCMBuffer) -> Void {
         
         // TODO: Need to handle "state"
         //
         // See: https://github.com/pylon/spokestack-android/blob/a5b1e4cf194b10e209c1b740c2e9655989b24cb9/src/main/java/com/pylon/spokestack/wakeword/WakewordTrigger.java#L370
         
-        self.sample(data)
+        self.sample(buffer.spstk_data, buffer: buffer)
     }
     
-    private func sample(_ data: Data) -> Void {
-        print("I should be sampling lots of data \(data.count)")
+    private func sample(_ data: Data, buffer: AVAudioPCMBuffer) -> Void {
+
         /// Update the rms normalization factors
         /// Maintain an ewma of the rms signal energy for speech samples
 
-        self.rmsValue = self.rmsAlpha * self.rms(data) + (1 - self.rmsAlpha) * self.rmsValue
+        self.rmsValue = self.rmsAlpha * self.rms(buffer) + (1 - self.rmsAlpha) * self.rmsValue
 
         /// Process all samples in the frame
-        var newData = data
-        let range = data.startIndex..<data.endIndex
-        newData.resetBytes(in: range)
         
-        var newDataIterator = newData.makeIterator()
+        let floats: Array<Float> = data.elements()
+        var newDataIterator = floats.makeIterator()
+
         while let num = newDataIterator.next() {
-            
-//            print("in RMS while loop \(nextIterator)")
-//            //            let gift = Int16(bigEndian: newData.withUnsafeBytes { $0.pointee })
-//            let num = Float(exactly: Int16(bigEndian: newData.withUnsafeBytes { $0.pointee } ))
-//            print("num \(String(describing: num))")
-//            let sample: Float = Float(num! / Float(Int16.max))
-//
-//            sum += sample * sample
-//            count += 1
-//            print("while loop RMS \(sum) and \(count)")
-            
-            print("in RMS while loop \(num)")
-            
-            let num = Float(exactly: Int16(bigEndian: newData.withUnsafeBytes { $0.pointee } ))
-            
+
             /// Normalize and clip the 16-bit sample to the target rms energy
             
-            var sample: Float = Float(num! / Float(Int16.max))
+            var sample: Float = Float(num / Float(Int16.max))
             
             sample = sample * (self.rmsTarget / self.rmsValue)
             sample = max(-1.0, min(sample, 1.0))
@@ -280,7 +265,7 @@ class WakeWordController {
             /// advance the sample sliding window
             
             do {
-                print("Sample is being written")
+
                 try self.sampleWindow.write(sample)
                 
             } catch SpeechPipelineError.illegalState(let message) {
@@ -293,49 +278,12 @@ class WakeWordController {
             }
             
             if self.sampleWindow.isFull {
-                print("the windows should be full and analyzing")
+
                 self.analyze()
                 self.sampleWindow.rewind().seek(self.hopLength)
-            } else {
-                print("what is going on?")
+
             }
         }
-
-//        while !newData.isEmpty {
-//
-//            /// Normalize and clip the 16-bit sample to the target rms energy
-//
-//            var sample: Float = Float(newData[newData.index(newData.startIndex, offsetBy: 2)]) / .greatestFiniteMagnitude
-//
-//            sample = sample * (self.rmsTarget / self.rmsValue)
-//            sample = max(-1.0, min(sample, 1.0))
-//
-//            /// Process the sample
-//            /// Write it to the sample sliding window
-//            /// run the remainder of the detection pipleline if speech
-//            /// advance the sample sliding window
-//
-//            do {
-//                print("Sample is being written")
-//                try self.sampleWindow.write(sample)
-//
-//            } catch SpeechPipelineError.illegalState(let message) {
-//
-//                print("illegal state error \(message)")
-//
-//            } catch {
-//
-//                print("Unknown Error Occurred while processing sample")
-//            }
-//
-//            if self.sampleWindow.isFull {
-//                print("the windows should be full and analyzing")
-//                self.analyze()
-//                self.sampleWindow.rewind().seek(self.hopLength)
-//            } else {
-//                print("what is going on?")
-//            }
-//        }
     }
     
     private func hannWindow(_ length: Int) -> Array<Float> {
@@ -354,40 +302,20 @@ class WakeWordController {
         return window
     }
 
-    private func rms(_ data: Data) -> Float {
-
-        var sum: Float = 0
-        var count: Int = 0
-        var newData = data
-
-        let range = newData.startIndex..<newData.endIndex
-//        newData.resetBytes(in: range)
+    private func rms(_ buffer: AVAudioPCMBuffer) -> Float {
         
-        print("in RMS and before while loop")
-        
-        var newDataIterator = newData.makeIterator()
-        while let nextIterator = newDataIterator.next() {
-
-            print("in RMS while loop \(nextIterator)")
-//            let gift = Int16(bigEndian: newData.withUnsafeBytes { $0.pointee })
-            
-            newData.enumerateBytes({pointer, index, stop in
-                print("pointer \(pointer) index \(index) and stop \(stop)")
-            })
-            
-            /// THESE ARE FLOATS!!!!!!!!
-            let num = Float(exactly: Int16(bigEndian: newData.withUnsafeBytes { $0.pointee } ))
-            print("num \(String(describing: num))")
-            let sample: Float = Float(num! / Float(Int16.max))
-            
-            sum += sample * sample
-            count += 1
-            print("while loop RMS \(sum) and \(count)")
+        guard let channelData = buffer.floatChannelData else {
+            return 0.0
         }
         
-        let v = Float(sqrt(sum / Float(count)))
-        print("RMS v \(v)")
-        return v
+        let channelDataValue = channelData.pointee
+        let channelDataValueArray = stride(from: 0,
+                                           to: Int(buffer.frameLength),
+                                           by: buffer.stride).map{ channelDataValue[$0] }
+
+        let rms = sqrt(channelDataValueArray.map{ $0 * $0 }.reduce(0, +) / Float(buffer.frameLength))
+
+        return rms
     }
     
     private func reset() -> Void {
@@ -447,16 +375,16 @@ extension WakeWordController {
         let firstComponent: Double = Double(self.fftFrame.first!)
         components.append(firstComponent)
         
-        var i: Int = 1
+        var i: Int = 0
         repeat {
-            
-            i += 1
             
             let re: Float = self.fftFrame[i * 2 + 0]
             let im: Float = self.fftFrame[i * 2 + 1]
             let ab: Float = sqrt(re * re + im * im)
             
             components.append(Double(ab))
+            
+            i += 1
             
         } while i < (self.fftFrame.count / 2)
         
@@ -553,9 +481,7 @@ extension WakeWordController {
 extension WakeWordController: AudioEngineControllerDelegate {
     
     func didReceive(_ buffer: AVAudioPCMBuffer) {
-        
-        print("audioData \(String(describing: self.audioData))")
-        self.process(buffer.spstk_data)
+        self.process(buffer)
     }
     
     func didStart(_ engineController: AudioEngineController) {
@@ -628,7 +554,6 @@ extension WakeWordController {
         
         repeat {
             
-            index += 1
             for (subindex, _) in self.words.enumerated() {
 
                 do {
@@ -646,6 +571,9 @@ extension WakeWordController {
                     print("Unknown Error Occurred while processing sample")
                 }
             }
+            
+            index += 1
+
         } while !self.phraseWindow.isEmpty
         
         /// Attempt to find a matching phrase amoung the argmaxes
