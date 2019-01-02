@@ -15,15 +15,18 @@ extension AVAudioPCMBuffer {
     
     var spstk_data: Data {
         
-        let leftChannel = self.floatChannelData![0]
         let count: Int = Int(self.frameLength)
-
-        let arr = Array(UnsafeBufferPointer(start: leftChannel, count: count))
-        let data = Data(bytes: leftChannel, count: count)
-
-        print("what the array \(arr)")
-        print("what is the data length \(data.count)")
+        let data = Data(bytes: self.spstk_float32Audio, count: count)
 
         return data
+    }
+    
+    var spstk_float32Audio: Array<Float> {
+        
+        let leftChannel: UnsafeMutablePointer<Float> = self.floatChannelData![0]
+        let count: Int = Int(self.frameLength)
+        let audioArray: Array<Float> = Array(UnsafeBufferPointer(start: leftChannel, count: count))
+        
+        return audioArray
     }
 }
