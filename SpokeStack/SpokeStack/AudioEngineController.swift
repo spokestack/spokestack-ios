@@ -86,9 +86,10 @@ final class AudioEngineController {
                                 return
                             }
 
-                            print("buffer coming back \(Int(buffer.frameLength)) and time \(time) and capacity \(buffer.frameCapacity)")                            
-                            strongSelf.delegate?.didReceive(buffer)
-                            
+                            print("buffer coming back \(Int(buffer.frameLength)) and time \(time) and capacity \(buffer.frameCapacity)")
+                            DispatchQueue.main.async {
+                                strongSelf.delegate?.didReceive(buffer)
+                            }
         })
         
         do {
