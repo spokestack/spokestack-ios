@@ -55,6 +55,7 @@ final class AudioEngineController {
                                                             options: .defaultToSpeaker)
             
             let ioBufferDuration = Double(self.bufferSize) / 48000.0
+            
             try AVAudioSession.sharedInstance().setPreferredIOBufferDuration(ioBufferDuration)
             try AVAudioSession.sharedInstance().setActive(true, options: .notifyOthersOnDeactivation)
             
@@ -71,11 +72,14 @@ final class AudioEngineController {
         let node: AVAudioInputNode = self.engine.inputNode
         let outputFormat: AVAudioFormat = node.outputFormat(forBus: 0)
         let bufferSize: AVAudioFrameCount = AVAudioFrameCount(self.bufferSize)
-
-        print("formatDescription \(outputFormat.formatDescription)")
-        print("sampleRate \(outputFormat.sampleRate)")
-        print("streamDescription \(outputFormat.streamDescription)")
-        print("settings \(outputFormat.settings)")
+        
+        
+        ///
+        
+//        let downMixer = AVAudioMixerNode()
+//        self.engine.attach(downMixer)
+        
+        ///
 
         node.installTap(onBus: 0,
                          bufferSize: bufferSize,
@@ -85,14 +89,39 @@ final class AudioEngineController {
                             guard let strongSelf = self else {
                                 return
                             }
+                            
+                            ////
+                            
+//                            var theLength = Int(buffer.frameLength)
+//                            print("theLength = \(theLength)")
+//                            
+//                            var samplesAsDoubles:[Double] = []
+//                            for i in 0 ..< Int(buffer.frameLength)
+//                            {
+//                                var theSample = Double((buffer.floatChannelData?.pointee[i])!)
+//                                samplesAsDoubles.append( theSample )
+//                            }
+//                            
+//                            print("samplesAsDoubles = \(samplesAsDoubles)")
+                            
+                            ////
 
-                            print("buffer coming back \(Int(buffer.frameLength)) and time \(time) and capacity \(buffer.frameCapacity)")
+                            print("buffer comingff back \(Int(buffer.frameLength)) and time \(time) and capacity \(buffer.frameCapacity)")
                             DispatchQueue.main.async {
                                 strongSelf.delegate?.didReceive(buffer)
                             }
         })
         
         do {
+            
+            ///
+//            let format = node.inputFormat(forBus: 0)
+//            let format16KHzMono = AVAudioFormat.init(commonFormat: .pcmFormatInt16, sampleRate: 8000, channels: 1, interleaved: true)
+//
+//            self.engine.connect(node, to: downMixer, format: format)
+//            self.engine.connect(downMixer, to: self.engine.mainMixerNode, format: format16KHzMono)
+            
+            ///
             
             self.engine.prepare()
             try self.engine.start()
@@ -107,7 +136,7 @@ final class AudioEngineController {
     
     func stopRecording() -> Void {
         
-        self.engine.mainMixerNode.removeTap(onBus: 0)
+        self.engine.inputNode.removeTap(onBus: 0)
         self.engine.stop()
         self.delegate?.didStop(self)
     }
