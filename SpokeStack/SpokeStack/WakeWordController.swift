@@ -31,6 +31,10 @@ class WakeWordController {
     
     private var audioData: NSMutableData!
     
+    private var wwfilter: WakeWordFilter!
+    
+    private var wwdetect: WakeWordDetect!
+    
     /// Keyword / phrase configuration and preallocated buffers
     
     private var words: Array<String> = []
@@ -251,10 +255,13 @@ class WakeWordController {
         var newDataIterator = floats.makeIterator()
 
         while let num = newDataIterator.next() {
+            
+//            let fraction = Float.random(in: 0 ..< 1)
+//            print("what is the number from the sample \(num)")
 
             /// Normalize and clip the 16-bit sample to the target rms energy
             
-            var sample: Float = Float(num / Float(Int16.max))
+            var sample: Float = num / Float(Int16.max)
             
             sample = sample * (self.rmsTarget / self.rmsValue)
             sample = max(-1.0, min(sample, 1.0))
@@ -263,6 +270,8 @@ class WakeWordController {
             /// Write it to the sample sliding window
             /// run the remainder of the detection pipleline if speech
             /// advance the sample sliding window
+            
+            print("what is the sample \(sample)")
             
             do {
 
@@ -296,6 +305,7 @@ class WakeWordController {
             
             let base: Double = Double(sin((Float.pi * Float(index)) / Float((length - 1))))
             let exponent: Double = 2
+
             window[index] = Float(pow(base, exponent))
         }
         
@@ -343,10 +353,15 @@ extension WakeWordController {
         for (index, _) in self.fftFrame.enumerated() {
             
             do {
+                
                 self.fftFrame[index] = try self.sampleWindow.read() * self.fftWindow[index]
+                
             } catch SpeechPipelineError.illegalState(let message) {
+                
                 print("illegal state error \(message)")
+                
             } catch {
+                
                 print("Unknown Error Occurred while processing sample")
             }
         }
@@ -358,10 +373,11 @@ extension WakeWordController {
     }
     
     private func filter() -> Void {
+        
         print("do i ever hit the filter???? \(self.fftFrame) and count \(self.fftFrame.count)")
 
-        let wwfilter = try? WakeWordFilter()
-        
+        self.wwfilter = WakeWordFilter()
+
         /// Decode the FFT outputs into the filter model's input
         /// Compute the nagitude (abs) of each complex stft component
         /// The first and last stft components contain only real parts
@@ -375,7 +391,7 @@ extension WakeWordController {
         let firstComponent: Double = Double(self.fftFrame.first!)
         components.append(firstComponent)
         
-        var i: Int = 0
+        var i: Int = 1
         repeat {
             
             let re: Float = self.fftFrame[i * 2 + 0]
@@ -401,51 +417,36 @@ extension WakeWordController {
                 fatalError("Unexpected runtime error. MLMultiArray")
         }
         
+        print("componentes in filter \(components)")
         for (index, value) in components.enumerated() {
             multiArray[[0, 0, index] as [NSNumber]] = value as NSNumber
         }
-        print("what is my multiArray \(multiArray)")
-        let input: WakeWordFilterInput = WakeWordFilterInput(linspec_inputs__0: multiArray)
-        let predictions: WakeWordFilterOutput = try! wwfilter!.prediction(input: input)
         
-        /// Copy the current mel frame into the mel window
+        print("what is my multiArray \(multiArray.strides)")
+    
+        do {
         
-        self.frameWindow.rewind().seek(self.melWidth)
-        
-        for i in 0...40 {
+            let input: WakeWordFilterInput = WakeWordFilterInput(linspec_inputs__0: multiArray)
+            let predictions: WakeWordFilterOutput = try self.wwfilter.prediction(input: input)
             
-            let result = String(describing: predictions.melspec_outputs__0[i])
-            print("what is my result \(result)")
+            /// Copy the current mel frame into the mel window
+            
+            self.frameWindow.rewind().seek(self.melWidth)
+            
+            for i in 0...40 {
+                
+                let result = String(describing: predictions.melspec_outputs__0[i])
+                print("what is my result \(result)")
+            }
+            
+            /// Detect
+            
+            self.detect()
+            
+        } catch let modelFilterError {
+            
+            print("modelFilterError is thrown \(modelFilterError)")
         }
-        
-        /// Detect
-        
-        self.detect()
-        
-//        // decode the FFT outputs into the filter model's inputs
-//        // . compute the magnitude (abs) of each complex stft component
-//        // . the first and last stft components contain only real parts
-//        //   and are stored in the first two positions of the stft output
-//        // . the remaining components contain real/imaginary parts
-//        this.filterModel.inputs().rewind();
-//        this.filterModel.inputs().putFloat(this.fftFrame[0]);
-//        for (int i = 1; i < this.fftFrame.length / 2; i++) {
-//            float re = this.fftFrame[i * 2 + 0];
-//            float im = this.fftFrame[i * 2 + 1];
-//            float ab = (float) Math.sqrt(re * re + im * im);
-//            this.filterModel.inputs().putFloat(ab);
-//        }
-//        this.filterModel.inputs().putFloat(this.fftFrame[1]);
-//
-//        // execute the mel filterbank tensorflow model
-//        this.filterModel.run();
-//
-//        // copy the current mel frame into the mel window
-//        this.frameWindow.rewind().seek(this.melWidth);
-//        while (this.filterModel.outputs().hasRemaining())
-//        this.frameWindow.write(this.filterModel.outputs().getFloat());
-//
-//        detect();
     }
     
     private func detect() -> Void {
@@ -455,8 +456,32 @@ extension WakeWordController {
         self.frameWindow.rewind()
         
         /// Setup CoreML
+
+        self.wwdetect = WakeWordDetect()
+        
+        guard let multiArray = try? MLMultiArray(shape: [1, 40, 40] as [NSNumber], dataType: .double) else {
+            fatalError("Unexpected runtime error. MLMultiArray")
+        }
+        
+        for index in 0...40 {
+            multiArray[[0, index, index] as [NSNumber]] = index as NSNumber
+        }
         
         /// Run against CoreML
+        
+        do {
+            
+            let input: WakeWordDetectInput = WakeWordDetectInput(melspec_inputs__0: multiArray)
+            let predictions: WakeWordDetectOutput = try self.wwdetect.prediction(input: input)
+            
+            for result in predictions.detect_outputs__0.strides {
+                print("what is my output result \(result)")
+            }
+            
+        } catch let modelFilterError {
+            
+            print("modelFilterError is thrown \(modelFilterError)")
+        }
         
         /// Rransfer the classifier's outputs to the posterior smoothing window
         
