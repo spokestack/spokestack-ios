@@ -9,6 +9,7 @@
 import Foundation
 import AVFoundation
 import CoreML
+import Speech
 
 private struct ModelConstants {
     
@@ -19,7 +20,7 @@ private struct ModelConstants {
     static let numOfFFTComponents = 257
 }
 
-class WakeWordController {
+class WakeWordController: NSObject {
     
     // MARK: Internal (properties)
     
@@ -83,37 +84,98 @@ class WakeWordController {
     
     private var activeLength: Int = 0
     
-    private var wakeWordConfiguration: WakeRecognizerConfiguration
+    private var wakeWordConfiguration: WakeRecognizerConfiguration!
     
-    private let audioEngineController: AudioEngineController
+//    private let audioEngineController: AudioEngineController
+    
+    ///
+    
+    private let speechRecognizer: SFSpeechRecognizer = SFSpeechRecognizer(locale: NSLocale.current)!
+    
+    private var recognitionRequest: SFSpeechAudioBufferRecognitionRequest?
+    
+    private var recognitionTask: SFSpeechRecognitionTask?
+    
+    private let audioEngine: AVAudioEngine = AVAudioEngine()
+    
+    ///
     
     // MARK: Initializers
     
     deinit {
-        audioEngineController.delegate = nil
+//        audioEngineController.delegate = nil
     }
     
-    init(_ configuration: WakeRecognizerConfiguration) {
-        
+    override init() {
+        super.init()
+    }
+    
+    required convenience init(_ configuration: WakeRecognizerConfiguration) {
+
+//        let buffer: Int = (configuration.sampleRate / 1000) * configuration.frameWidth
+//
+//        self.audioEngineController = AudioEngineController(buffer)
+//        self.audioEngineController.delegate = self
+//
+//        self.setup()
+        self.init()
         self.wakeWordConfiguration = configuration
-        let buffer: Int = (configuration.sampleRate / 1000) * configuration.frameWidth
-        
-        self.audioEngineController = AudioEngineController(buffer)
-        self.audioEngineController.delegate = self
-        
-        self.setup()
     }
     
     // MARK: Internal (methods)
     
     func activate() -> Void {
         
-        self.audioData = NSMutableData()
-        try? self.audioEngineController.startRecording()
+        if self.audioEngine.isRunning {
+            self.audioEngine.stop()
+        }
+        
+        self.recognitionTask?.cancel()
+        let audioSession = AVAudioSession.sharedInstance()
+
+        do {
+            
+            try audioSession.setCategory(.record, mode: .spokenAudio, options: .defaultToSpeaker)
+            try audioSession.setActive(true, options: .notifyOthersOnDeactivation)
+
+        } catch {
+            print("audioSession properties weren't set because of an error.")
+        }
+        
+//        self.audioData = NSMutableData()
+//        try? self.audioEngineController.startRecording()
+        
+        self.recognitionRequest = SFSpeechAudioBufferRecognitionRequest()
+        self.speechRecognizer.delegate = self
+
+        let inputNode = audioEngine.inputNode
+        
+        guard let recognitionRequest = recognitionRequest else {
+            fatalError("Unable to create an SFSpeechAudioBufferRecognitionRequest object")
+        }
+        
+        recognitionRequest.shouldReportPartialResults = true
+        self.speechRecognizer.recognitionTask(with: recognitionRequest, delegate: self)
+        
+        let recordingFormat = inputNode.outputFormat(forBus: 0)
+        inputNode.installTap(onBus: 0, bufferSize: 1024, format: recordingFormat) { (buffer, when) in
+            self.recognitionRequest?.append(buffer)
+        }
+        
+        audioEngine.prepare()
+        
+        do {
+            try audioEngine.start()
+        } catch {
+            print("audioEngine couldn't start because of an error.")
+        }
     }
     
     func deactivate() -> Void {
-        self.audioEngineController.stopRecording()
+//        self.audioEngineController.stopRecording()
+        recognitionRequest?.endAudio()
+        speechRecognizer.delegate = nil
+        audioEngine.stop()
     }
     
     // MARK: Private (methods)
@@ -341,6 +403,44 @@ class WakeWordController {
         self.frameWindow.reset().fill(0)
         self.smoothWindow.reset().fill(0)
         self.phraseWindow.reset().fill(0)
+    }
+}
+
+extension WakeWordController: SFSpeechRecognizerDelegate {
+    
+    func speechRecognizer(_ speechRecognizer: SFSpeechRecognizer, availabilityDidChange available: Bool) {
+        print("didChange \(available)")
+    }
+}
+
+extension WakeWordController: SFSpeechRecognitionTaskDelegate {
+    
+    func speechRecognitionDidDetectSpeech(_ task: SFSpeechRecognitionTask) {
+        print("speechRecognitionDidDetectSpeech \(task)")
+    }
+    
+    func speechRecognitionTaskFinishedReadingAudio(_ task: SFSpeechRecognitionTask) {
+        print("speechRecognitionTaskFinishedReadingAudio")
+    }
+    
+    func speechRecognitionTaskWasCancelled(_ task: SFSpeechRecognitionTask) {
+        print("speechRecognitionTaskWasCancelled")
+    }
+    
+    func speechRecognitionTask(_ task: SFSpeechRecognitionTask, didFinishSuccessfully successfully: Bool) {
+        print("didFinishSuccessfully")
+    }
+    
+    func speechRecognitionTask(_ task: SFSpeechRecognitionTask, didRecord audioPCMBuffer: AVAudioPCMBuffer) {
+        print("didRecord \(audioPCMBuffer)")
+    }
+    
+    func speechRecognitionTask(_ task: SFSpeechRecognitionTask, didHypothesizeTranscription transcription: SFTranscription) {
+        print("didHypothesizeTranscription \(transcription.formattedString)")
+    }
+    
+    func speechRecognitionTask(_ task: SFSpeechRecognitionTask, didFinishRecognition recognitionResult: SFSpeechRecognitionResult) {
+        print("didFinishRecognition \(recognitionResult.bestTranscription)")
     }
 }
 

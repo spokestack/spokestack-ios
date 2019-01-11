@@ -38,13 +38,12 @@ class ViewController: UIViewController {
     
     lazy private var pipeline: SpeechPipeline = {
         
-        let configuration: GoogleConfiguration = GoogleConfiguration()
+//        let configuration: GoogleConfiguration = GoogleConfiguration()
         let wakeConfiguration: WKWordConfiguration = WKWordConfiguration()
         
-        return try! SpeechPipeline(.google,
-                                   configuration: configuration,
-                                   delegate: self,
-                                   wakeWordConfig: wakeConfiguration)
+        return try! SpeechPipeline(.wakeword,
+                                   configuration: wakeConfiguration,
+                                   delegate: self)
     }()
 
     override func viewDidLoad() {
