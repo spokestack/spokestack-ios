@@ -21,9 +21,7 @@ class AppleSpeechRecognizer: NSObject, SpeechRecognizerService {
     
     // MARK: Private (properties)
     
-    private var wakeWordConfiguration: WakeRecognizerConfiguration {
-        return self.configuration as! WakeRecognizerConfiguration
-    }
+    private let audioSession: AVAudioSession = AVAudioSession.sharedInstance()
     
     private let speechRecognizer: SFSpeechRecognizer = SFSpeechRecognizer(locale: NSLocale.current)!
     
@@ -32,6 +30,10 @@ class AppleSpeechRecognizer: NSObject, SpeechRecognizerService {
     private var recognitionTask: SFSpeechRecognitionTask?
     
     private let audioEngine: AVAudioEngine = AVAudioEngine()
+    
+    private var wakeWordConfiguration: WakeRecognizerConfiguration {
+        return self.configuration as! WakeRecognizerConfiguration
+    }
     
     // MARK: Initializers
     
@@ -72,14 +74,13 @@ class AppleSpeechRecognizer: NSObject, SpeechRecognizerService {
         
         /// AVAudioSession setup
         
-        let audioSession = AVAudioSession.sharedInstance()
-        
         do {
             
             try audioSession.setCategory(.record, mode: .spokenAudio, options: .defaultToSpeaker)
             try audioSession.setActive(true, options: .notifyOthersOnDeactivation)
             
         } catch let error {
+            
             print("audioSession properties weren't set because of an error. \(error)")
         }
     }
@@ -112,10 +113,20 @@ class AppleSpeechRecognizer: NSObject, SpeechRecognizerService {
                     result!.bestTranscription.formattedString.lowercased().contains($0.lowercased())
                 }).isEmpty
                 
+                print("returned \(String(describing: result))")
+                
                 if foundResult {
                     
+                    strongSelf.recognitionTask?.cancel()
                     print("found it \(String(describing: result?.bestTranscription.formattedString))")
                     isFinal = true
+                    
+                    let finalTranscript: SFTranscription = result!.bestTranscription
+                    let confidence: Float = finalTranscript.segments.last?.confidence ?? 0.0
+                    let context: SPSpeechContext = SPSpeechContext(transcript: finalTranscript.formattedString, confidence: confidence)
+    
+                    strongSelf.delegate?.didRecognize(context)
+                    strongSelf.delegate?.didFinish(nil)
                 }
             }
             

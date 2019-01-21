@@ -21,7 +21,7 @@
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSMicrophoneUsageDescription</key>
-	<string>Microphone</string>
+	<string>Microphone should be used for using wakeword</string>
 	<key>NSSpeechRecognitionUsageDescription</key>
 	<string>Speech to Text Wakeword</string>
 	<key>UILaunchStoryboardName</key>

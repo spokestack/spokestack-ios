@@ -18,9 +18,21 @@ private struct ModelConstants {
     static let numOfFrames = 1
     
     static let numOfFFTComponents = 257
+    
+    static let numOfMelOutputs = 40
 }
 
-class WakeWordController: NSObject {
+public class WakeWordSpeechRecognizer: SpeechRecognizerService {
+    
+    // MARK: Public (properties)
+    
+    static let sharedInstance: WakeWordSpeechRecognizer = WakeWordSpeechRecognizer()
+    
+    // MARK: SpeechRecognizerService (properties)
+    
+    public var configuration: RecognizerConfiguration = StandardWakeWordConfiguration()
+    
+    public weak var delegate: SpeechRecognizer?
     
     // MARK: Internal (properties)
     
@@ -35,6 +47,10 @@ class WakeWordController: NSObject {
     private var wwfilter: WakeWordFilter!
     
     private var wwdetect: WakeWordDetect!
+    
+    private var wakeWordConfiguration: WakeRecognizerConfiguration {
+        return self.configuration as! WakeRecognizerConfiguration
+    }
     
     /// Keyword / phrase configuration and preallocated buffers
     
@@ -84,98 +100,38 @@ class WakeWordController: NSObject {
     
     private var activeLength: Int = 0
     
-    private var wakeWordConfiguration: WakeRecognizerConfiguration!
-    
-//    private let audioEngineController: AudioEngineController
-    
-    ///
-    
-    private let speechRecognizer: SFSpeechRecognizer = SFSpeechRecognizer(locale: NSLocale.current)!
-    
-    private var recognitionRequest: SFSpeechAudioBufferRecognitionRequest?
-    
-    private var recognitionTask: SFSpeechRecognitionTask?
-    
-    private let audioEngine: AVAudioEngine = AVAudioEngine()
-    
-    ///
+    private var audioEngineController: AudioEngineController!
     
     // MARK: Initializers
     
     deinit {
-//        audioEngineController.delegate = nil
+        audioEngineController.delegate = nil
     }
     
-    override init() {
-        super.init()
+    public init() {
+        self.setup()
     }
     
-    required convenience init(_ configuration: WakeRecognizerConfiguration) {
+    // MARK: Public (methods)
+    
+    public func startStreaming() -> Void {
+        
+//        self.filter()
+        
+        self.audioData = NSMutableData()
 
-//        let buffer: Int = (configuration.sampleRate / 1000) * configuration.frameWidth
-//
-//        self.audioEngineController = AudioEngineController(buffer)
-//        self.audioEngineController.delegate = self
-//
-//        self.setup()
-        self.init()
-        self.wakeWordConfiguration = configuration
+        let buffer: Int = (self.wakeWordConfiguration.sampleRate / 1000) * self.wakeWordConfiguration.frameWidth
+
+        self.audioEngineController = AudioEngineController(buffer)
+        self.audioEngineController.delegate = self
+
+        try? self.audioEngineController.startRecording()
     }
     
-    // MARK: Internal (methods)
-    
-    func activate() -> Void {
-        
-        if self.audioEngine.isRunning {
-            self.audioEngine.stop()
-        }
-        
-        self.recognitionTask?.cancel()
-        let audioSession = AVAudioSession.sharedInstance()
+    public func stopStreaming() -> Void {
 
-        do {
-            
-            try audioSession.setCategory(.record, mode: .spokenAudio, options: .defaultToSpeaker)
-            try audioSession.setActive(true, options: .notifyOthersOnDeactivation)
-
-        } catch {
-            print("audioSession properties weren't set because of an error.")
-        }
-        
-//        self.audioData = NSMutableData()
-//        try? self.audioEngineController.startRecording()
-        
-        self.recognitionRequest = SFSpeechAudioBufferRecognitionRequest()
-        self.speechRecognizer.delegate = self
-
-        let inputNode = audioEngine.inputNode
-        
-        guard let recognitionRequest = recognitionRequest else {
-            fatalError("Unable to create an SFSpeechAudioBufferRecognitionRequest object")
-        }
-        
-        recognitionRequest.shouldReportPartialResults = true
-        self.speechRecognizer.recognitionTask(with: recognitionRequest, delegate: self)
-        
-        let recordingFormat = inputNode.outputFormat(forBus: 0)
-        inputNode.installTap(onBus: 0, bufferSize: 1024, format: recordingFormat) { (buffer, when) in
-            self.recognitionRequest?.append(buffer)
-        }
-        
-        audioEngine.prepare()
-        
-        do {
-            try audioEngine.start()
-        } catch {
-            print("audioEngine couldn't start because of an error.")
-        }
-    }
-    
-    func deactivate() -> Void {
-//        self.audioEngineController.stopRecording()
-        recognitionRequest?.endAudio()
-        speechRecognizer.delegate = nil
-        audioEngine.stop()
+        self.audioEngineController.stopRecording()
+        self.audioEngineController.delegate = nil
     }
     
     // MARK: Private (methods)
@@ -317,9 +273,6 @@ class WakeWordController: NSObject {
         var newDataIterator = floats.makeIterator()
 
         while let num = newDataIterator.next() {
-            
-//            let fraction = Float.random(in: 0 ..< 1)
-//            print("what is the number from the sample \(num)")
 
             /// Normalize and clip the 16-bit sample to the target rms energy
             
@@ -352,7 +305,6 @@ class WakeWordController: NSObject {
 
                 self.analyze()
                 self.sampleWindow.rewind().seek(self.hopLength)
-
             }
         }
     }
@@ -406,45 +358,7 @@ class WakeWordController: NSObject {
     }
 }
 
-extension WakeWordController: SFSpeechRecognizerDelegate {
-    
-    func speechRecognizer(_ speechRecognizer: SFSpeechRecognizer, availabilityDidChange available: Bool) {
-        print("didChange \(available)")
-    }
-}
-
-extension WakeWordController: SFSpeechRecognitionTaskDelegate {
-    
-    func speechRecognitionDidDetectSpeech(_ task: SFSpeechRecognitionTask) {
-        print("speechRecognitionDidDetectSpeech \(task)")
-    }
-    
-    func speechRecognitionTaskFinishedReadingAudio(_ task: SFSpeechRecognitionTask) {
-        print("speechRecognitionTaskFinishedReadingAudio")
-    }
-    
-    func speechRecognitionTaskWasCancelled(_ task: SFSpeechRecognitionTask) {
-        print("speechRecognitionTaskWasCancelled")
-    }
-    
-    func speechRecognitionTask(_ task: SFSpeechRecognitionTask, didFinishSuccessfully successfully: Bool) {
-        print("didFinishSuccessfully")
-    }
-    
-    func speechRecognitionTask(_ task: SFSpeechRecognitionTask, didRecord audioPCMBuffer: AVAudioPCMBuffer) {
-        print("didRecord \(audioPCMBuffer)")
-    }
-    
-    func speechRecognitionTask(_ task: SFSpeechRecognitionTask, didHypothesizeTranscription transcription: SFTranscription) {
-        print("didHypothesizeTranscription \(transcription.formattedString)")
-    }
-    
-    func speechRecognitionTask(_ task: SFSpeechRecognitionTask, didFinishRecognition recognitionResult: SFSpeechRecognitionResult) {
-        print("didFinishRecognition \(recognitionResult.bestTranscription)")
-    }
-}
-
-extension WakeWordController {
+extension WakeWordSpeechRecognizer {
     
     private func analyze() -> Void {
         
@@ -473,8 +387,24 @@ extension WakeWordController {
     }
     
     private func filter() -> Void {
+
+        ///
         
-        print("do i ever hit the filter???? \(self.fftFrame) and count \(self.fftFrame.count)")
+        var testValues: Array<Float> = Array(repeating: 0, count: ModelConstants.numOfFFTComponents)
+        var increment: Int = 0
+        
+        repeat {
+            
+            let randomNumber = Float.random(in: -1 ..< 1)
+            testValues[increment] = randomNumber
+
+            increment += 1
+            
+        } while increment < ModelConstants.numOfFFTComponents
+        
+        self.fftFrame = testValues
+        
+        ///
 
         self.wwfilter = WakeWordFilter()
 
@@ -517,12 +447,12 @@ extension WakeWordController {
                 fatalError("Unexpected runtime error. MLMultiArray")
         }
         
-        print("componentes in filter \(components)")
-        for (index, value) in components.enumerated() {
+        print("componentes in filter \(testValues)")
+        for (index, value) in testValues.enumerated() {
             multiArray[[0, 0, index] as [NSNumber]] = value as NSNumber
         }
         
-        print("what is my multiArray \(multiArray.strides)")
+//        print("what is my multiArray \(multiArray.strides)")
     
         do {
         
@@ -533,10 +463,10 @@ extension WakeWordController {
             
             self.frameWindow.rewind().seek(self.melWidth)
             
-            for i in 0...40 {
+            for i in 0...ModelConstants.numOfMelOutputs {
                 
                 let result = String(describing: predictions.melspec_outputs__0[i])
-                print("what is my result \(result)")
+                print("what is my result from filter \(result)")
             }
             
             /// Detect
@@ -559,11 +489,11 @@ extension WakeWordController {
 
         self.wwdetect = WakeWordDetect()
         
-        guard let multiArray = try? MLMultiArray(shape: [1, 40, 40] as [NSNumber], dataType: .double) else {
+        guard let multiArray = try? MLMultiArray(shape: [1, ModelConstants.numOfMelOutputs, ModelConstants.numOfMelOutputs] as [NSNumber], dataType: .double) else {
             fatalError("Unexpected runtime error. MLMultiArray")
         }
         
-        for index in 0...40 {
+        for index in 0...ModelConstants.numOfMelOutputs {
             multiArray[[0, index, index] as [NSNumber]] = index as NSNumber
         }
         
@@ -575,7 +505,7 @@ extension WakeWordController {
             let predictions: WakeWordDetectOutput = try self.wwdetect.prediction(input: input)
             
             for result in predictions.detect_outputs__0.strides {
-                print("what is my output result \(result)")
+                print("detect output result \(result)")
             }
             
         } catch let modelFilterError {
@@ -603,7 +533,7 @@ extension WakeWordController {
     }
 }
 
-extension WakeWordController: AudioEngineControllerDelegate {
+extension WakeWordSpeechRecognizer: AudioEngineControllerDelegate {
     
     func didReceive(_ buffer: AVAudioPCMBuffer) {
         self.process(buffer)
@@ -623,7 +553,7 @@ extension WakeWordController: AudioEngineControllerDelegate {
     }
 }
 
-extension WakeWordController {
+extension WakeWordSpeechRecognizer {
     
     private func smooth() -> Void {
         
