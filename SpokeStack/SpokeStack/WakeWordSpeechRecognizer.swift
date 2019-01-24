@@ -42,9 +42,9 @@ public class WakeWordSpeechRecognizer: SpeechRecognizerService {
     
     // MARK: Private (properties)
     
-    private var wwfilter: WakeWordFilter!
+    private var wwfilter: WakeWordFilter = WakeWordFilter()
     
-    private var wwdetect: WakeWordDetect!
+    private var wwdetect: WakeWordDetect = WakeWordDetect()
     
     private var wakeWordConfiguration: WakeRecognizerConfiguration {
         return self.configuration as! WakeRecognizerConfiguration
@@ -113,8 +113,6 @@ public class WakeWordSpeechRecognizer: SpeechRecognizerService {
     // MARK: Public (methods)
     
     public func startStreaming() -> Void {
-        
-//        self.filter()
 
         let buffer: Int = (self.wakeWordConfiguration.sampleRate / 1000) * self.wakeWordConfiguration.frameWidth
 
@@ -265,36 +263,41 @@ public class WakeWordSpeechRecognizer: SpeechRecognizerService {
 
         /// Process all samples in the frame
         
-        let floats: Array<Float> = data.elements()
-        var newDataIterator = floats.makeIterator()
-
+        let dataElements: Array<Int16> = data.elements()
+        var newDataIterator = dataElements.makeIterator()
+        
         while let num = newDataIterator.next() {
 
             /// Normalize and clip the 16-bit sample to the target rms energy
-            
-            var sample: Float = num / Float(Int16.max)
-            
+            print("num \(num)")
+            var sample: Float = Float(num) / Float(Int16.max)
+
+            print("first sample \(sample)")
+
             sample = sample * (self.rmsTarget / self.rmsValue)
+            print("second sample \(sample)")
+
             sample = max(-1.0, min(sample, 1.0))
-            
+            print("third sample \(sample)")
+
             /// Process the sample
             /// Write it to the sample sliding window
             /// run the remainder of the detection pipleline if speech
             /// advance the sample sliding window
-            
+
             do {
 
                 try self.sampleWindow.write(sample)
-                
+
             } catch SpeechPipelineError.illegalState(let message) {
-                
-                print("illegal state error \(message)")
-                
+
+                fatalError("illegal state error \(message)")
+
             } catch {
-                
-                print("Unknown Error Occurred while processing sample")
+
+                fatalError("Unknown Error Occurred while processing sample \(#line)")
             }
-            
+
             if self.sampleWindow.isFull {
 
                 self.analyze()
@@ -322,21 +325,45 @@ public class WakeWordSpeechRecognizer: SpeechRecognizerService {
 
     private func rms(_ buffer: AVAudioPCMBuffer) -> Float {
         
-        print("what is 16 \(buffer.spstk_float16Audio)")
+        print("what is 16 \(buffer.spstk_int16Audio)")
+
+        var sum: Float = 0
+        var count: Int = 0
         
-        guard let channelData = buffer.floatChannelData else {
-            print("i'm right, channel data is wrong")
-            return 0.0
+//        let dataArray: Array<UInt8> = Array(buffer.spstk_data)
+        
+        for audio in buffer.spstk_int16Audio {
+
+            let sample: Float = Float(audio) / Float(Int16.max)
+            
+            sum += sample * sample
+            count += 1
         }
         
-        let channelDataValue = channelData.pointee
-        let channelDataValueArray = stride(from: 0,
-                                           to: Int(buffer.frameLength),
-                                           by: buffer.stride).map{ channelDataValue[$0] }
-
-        let rms = sqrt(channelDataValueArray.map{ $0 * $0 }.reduce(0, +) / Float(buffer.frameLength))
+//        for data in dataArray {
+////            print(
+////            """
+////            what the max int \(Int16.max) and float \(Float(Int16.max))
+////            what is my data \(data) and count \(dataArray.count)
+////            """
+////            )
+//            let sample: Float = Float(data) / Float(Int16.max)
+//
+//            sum += sample * sample
+//            count += 1
+//        }
+        
+        let rms: Float = Float(sqrt(sum / Float(count)))
+        print("what is my rms value \(rms)")
 
         return rms
+        
+        
+//        let mapped = buffer.spstk_int16Audio.map{ $0 * $0 }
+//        let reduced = Float(mapped.reduce(0, +))
+//        let rms = sqrt(reduced / Float(buffer.frameLength))
+
+//        return 0.2
     }
     
     private func reset() -> Void {
@@ -373,7 +400,7 @@ extension WakeWordSpeechRecognizer {
                 
             } catch {
                 
-                print("Unknown Error Occurred while processing sample")
+                fatalError("Unknown Error Occurred while analyzing \(#line)")
             }
         }
         
@@ -402,8 +429,6 @@ extension WakeWordSpeechRecognizer {
 //        self.fftFrame = testValues
 //
 //        ///
-
-        self.wwfilter = WakeWordFilter()
 
         /// Decode the FFT outputs into the filter model's input
         /// Compute the nagitude (abs) of each complex stft component
@@ -461,6 +486,8 @@ extension WakeWordSpeechRecognizer {
             for i in 0...ModelConstants.numOfMelOutputs {
                 
                 let result = String(describing: predictions.melspec_outputs__0[i])
+                try? self.frameWindow.write(predictions.melspec_outputs__0[i].floatValue)
+                
                 print("what is my result from filter \(result)")
             }
             
@@ -470,7 +497,7 @@ extension WakeWordSpeechRecognizer {
             
         } catch let modelFilterError {
             
-            print("modelFilterError is thrown \(modelFilterError)")
+            fatalError("modelFilterError is thrown \(modelFilterError)")
         }
     }
     
@@ -479,10 +506,6 @@ extension WakeWordSpeechRecognizer {
         /// Transfer the mel filterbank window to the detector model's inputs
         
         self.frameWindow.rewind()
-        
-        /// Setup CoreML
-
-        self.wwdetect = WakeWordDetect()
         
         guard let multiArray = try? MLMultiArray(shape: [
             1,
@@ -529,9 +552,9 @@ extension WakeWordSpeechRecognizer {
 
             ////
             
-        } catch let modelFilterError {
+        } catch let modelDetectError {
             
-            print("modelFilterError is thrown \(modelFilterError)")
+            fatalError("modelDetectError is thrown \(modelDetectError)")
         }
         
         self.smooth()
@@ -577,9 +600,12 @@ extension WakeWordSpeechRecognizer {
                     self.phraseSum[index] += try self.smoothWindow.read()
 
                 } catch SpeechPipelineError.illegalState(let message) {
-                    print("illegal state error \(message)")
+                    
+                    fatalError("Error occured while smoothing \(message)")
+                    
                 } catch {
-                    print("Unknown Error Occurred while processing sample")
+                    
+                     fatalError("Error occured while smoothing \(#line)")
                 }
             }
         }
@@ -597,9 +623,12 @@ extension WakeWordSpeechRecognizer {
                 try self.phraseWindow.write(self.phraseSum[index] / Float(total))
 
             } catch SpeechPipelineError.illegalState(let message) {
-                print("illegal state error \(message)")
+                
+                fatalError("illegal state error \(message)")
+                
             } catch {
-                print("Unknown Error Occurred while processing sample")
+                
+                fatalError("Error occured while smoothing \(#line)")
             }
         }
         
@@ -628,9 +657,12 @@ extension WakeWordSpeechRecognizer {
                     }
 
                 } catch SpeechPipelineError.illegalState(let message) {
-                    print("illegal state error \(message)")
+                    
+                    fatalError("illegal state error \(message)")
+                    
                 } catch {
-                    print("Unknown Error Occurred while processing sample")
+                    
+                    fatalError("Error occured while phrase \(#line)")
                 }
             }
             
