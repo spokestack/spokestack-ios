@@ -24,7 +24,7 @@ extension AVAudioPCMBuffer {
     var spstk_data: Data {
         
         let count: Int = Int(self.frameLength)
-        let data = Data(bytes: self.spstk_float32Audio, count: count)
+        let data = Data(bytes: self.spstk_int16Audio, count: count)
 
         return data
     }
@@ -38,7 +38,7 @@ extension AVAudioPCMBuffer {
         return audioArray
     }
     
-    var spstk_float16Audio: Array<Int16> {
+    var spstk_int16Audio: Array<Int16> {
         
         let leftChannel: UnsafeMutablePointer<Int16> = self.int16ChannelData![0]
         let count: Int = Int(self.frameLength)
