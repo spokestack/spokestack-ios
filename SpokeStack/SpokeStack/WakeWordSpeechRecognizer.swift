@@ -42,8 +42,6 @@ public class WakeWordSpeechRecognizer: SpeechRecognizerService {
     
     // MARK: Private (properties)
     
-    private var audioData: NSMutableData!
-    
     private var wwfilter: WakeWordFilter!
     
     private var wwdetect: WakeWordDetect!
@@ -117,8 +115,6 @@ public class WakeWordSpeechRecognizer: SpeechRecognizerService {
     public func startStreaming() -> Void {
         
 //        self.filter()
-        
-        self.audioData = NSMutableData()
 
         let buffer: Int = (self.wakeWordConfiguration.sampleRate / 1000) * self.wakeWordConfiguration.frameWidth
 
@@ -257,7 +253,7 @@ public class WakeWordSpeechRecognizer: SpeechRecognizerService {
         //
         // See: https://github.com/pylon/spokestack-android/blob/a5b1e4cf194b10e209c1b740c2e9655989b24cb9/src/main/java/com/pylon/spokestack/wakeword/WakewordTrigger.java#L370
         
-        self.sample(buffer.spstk_data, buffer: buffer)
+        self.sample(buffer.spstk_16BitAudioData, buffer: buffer)
     }
     
     private func sample(_ data: Data, buffer: AVAudioPCMBuffer) -> Void {
@@ -285,8 +281,6 @@ public class WakeWordSpeechRecognizer: SpeechRecognizerService {
             /// Write it to the sample sliding window
             /// run the remainder of the detection pipleline if speech
             /// advance the sample sliding window
-            
-            print("what is the sample \(sample)")
             
             do {
 
@@ -328,7 +322,10 @@ public class WakeWordSpeechRecognizer: SpeechRecognizerService {
 
     private func rms(_ buffer: AVAudioPCMBuffer) -> Float {
         
+        print("what is 16 \(buffer.spstk_float16Audio)")
+        
         guard let channelData = buffer.floatChannelData else {
+            print("i'm right, channel data is wrong")
             return 0.0
         }
         
@@ -388,23 +385,23 @@ extension WakeWordSpeechRecognizer {
     
     private func filter() -> Void {
 
-        ///
-        
-        var testValues: Array<Float> = Array(repeating: 0, count: ModelConstants.numOfFFTComponents)
-        var increment: Int = 0
-        
-        repeat {
-            
-            let randomNumber = Float.random(in: -1 ..< 1)
-            testValues[increment] = randomNumber
-
-            increment += 1
-            
-        } while increment < ModelConstants.numOfFFTComponents
-        
-        self.fftFrame = testValues
-        
-        ///
+//        ///
+//
+//        var testValues: Array<Float> = Array(repeating: 0, count: ModelConstants.numOfFFTComponents)
+//        var increment: Int = 0
+//
+//        repeat {
+//
+//            let randomNumber = Float.random(in: -1 ..< 1)
+//            testValues[increment] = randomNumber
+//
+//            increment += 1
+//
+//        } while increment < ModelConstants.numOfFFTComponents
+//
+//        self.fftFrame = testValues
+//
+//        ///
 
         self.wwfilter = WakeWordFilter()
 
@@ -440,19 +437,17 @@ extension WakeWordSpeechRecognizer {
         /// Run the predictions
         
         guard let multiArray = try? MLMultiArray(shape: [
-            ModelConstants.numOfBatches,
+            ModelConstants.numOfFFTComponents,
             ModelConstants.numOfFrames,
-            ModelConstants.numOfFFTComponents] as [NSNumber], dataType: .double) else {
+            ModelConstants.numOfBatches] as [NSNumber], dataType: .float32) else {
                 
                 fatalError("Unexpected runtime error. MLMultiArray")
         }
         
-        print("componentes in filter \(testValues)")
-        for (index, value) in testValues.enumerated() {
+        print("componentes in filter \(components)")
+        for (index, value) in components.enumerated() {
             multiArray[[0, 0, index] as [NSNumber]] = value as NSNumber
         }
-        
-//        print("what is my multiArray \(multiArray.strides)")
     
         do {
         
@@ -489,8 +484,12 @@ extension WakeWordSpeechRecognizer {
 
         self.wwdetect = WakeWordDetect()
         
-        guard let multiArray = try? MLMultiArray(shape: [1, ModelConstants.numOfMelOutputs, ModelConstants.numOfMelOutputs] as [NSNumber], dataType: .double) else {
-            fatalError("Unexpected runtime error. MLMultiArray")
+        guard let multiArray = try? MLMultiArray(shape: [
+            1,
+            ModelConstants.numOfMelOutputs,
+            ModelConstants.numOfMelOutputs] as [NSNumber], dataType: .float32) else {
+            
+                fatalError("Unexpected runtime error. MLMultiArray")
         }
         
         for index in 0...ModelConstants.numOfMelOutputs {
@@ -504,32 +503,38 @@ extension WakeWordSpeechRecognizer {
             let input: WakeWordDetectInput = WakeWordDetectInput(melspec_inputs__0: multiArray)
             let predictions: WakeWordDetectOutput = try self.wwdetect.prediction(input: input)
             
-            for result in predictions.detect_outputs__0.strides {
-                print("detect output result \(result)")
-            }
+            /// Transfer the classifier's outputs to the posterior smoothing window
+            
+            self.smoothWindow.rewind().seek(self.words.count)
+            
+            ////
+            
+            let resultCount: Int = predictions.detect_outputs__0.count
+
+            print("predictions.detect_outputs__0 \(predictions.detect_outputs__0)")
+            
+            var indexIncrement: Int = 0
+            
+            repeat {
+                
+                print("value \(predictions.detect_outputs__0[indexIncrement])")
+                
+                let predictionFloat: Float = predictions.detect_outputs__0[indexIncrement].floatValue
+                print("is the prediction float \(predictionFloat)")
+                try? self.smoothWindow.write(predictionFloat)
+                
+                indexIncrement += 1
+
+            } while indexIncrement < resultCount
+
+            ////
             
         } catch let modelFilterError {
             
             print("modelFilterError is thrown \(modelFilterError)")
         }
         
-        /// Rransfer the classifier's outputs to the posterior smoothing window
-        
-//        // transfer the mel filterbank window to the detector model's inputs
-//        this.frameWindow.rewind();
-//        this.detectModel.inputs().rewind();
-//        while (!this.frameWindow.isEmpty())
-//        this.detectModel.inputs().putFloat(this.frameWindow.read());
-//
-//        // run the classifier tensorflow model
-//        this.detectModel.run();
-//
-//        // transfer the classifier's outputs to the posterior smoothing window
-//        this.smoothWindow.rewind().seek(this.words.length);
-//        while (this.detectModel.outputs().hasRemaining())
-//        this.smoothWindow.write(this.detectModel.outputs().getFloat());
-//
-//        smooth();
+        self.smooth()
     }
 }
 
@@ -562,13 +567,15 @@ extension WakeWordSpeechRecognizer {
         for (index, _) in self.words.enumerated() {
             self.phraseSum[index] = 0
         }
-        
+
         while !self.smoothWindow.isEmpty {
             
             for (index, _) in self.words.enumerated() {
                 
                 do {
+
                     self.phraseSum[index] += try self.smoothWindow.read()
+
                 } catch SpeechPipelineError.illegalState(let message) {
                     print("illegal state error \(message)")
                 } catch {
