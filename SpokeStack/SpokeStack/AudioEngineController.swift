@@ -112,15 +112,7 @@ final class AudioEngineController {
                 print(error)
                 return
             }
-            
-//            let it16Buffer = converted16BitBuffer.spstk_float16Audio
-//            let it32Buffer = buffer.spstk_float32Audio
-//            print(
-//            """
-//            16 \(it16Buffer)
-//            32 \(it32Buffer)
-//            """
-//            )
+
             DispatchQueue.main.async {
                 strongSelf.delegate?.didReceive(converted16BitBuffer)
             }
