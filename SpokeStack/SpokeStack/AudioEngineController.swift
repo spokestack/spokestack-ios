@@ -17,7 +17,7 @@ protocol AudioEngineControllerDelegate: AnyObject {
 }
 
 public enum AudioEngineControllerError: Error {
-    case failedToSTart(message: String)
+    case failedToStart(message: String)
 }
 
 final class AudioEngineController {
@@ -69,59 +69,64 @@ final class AudioEngineController {
     
     func startRecording() throws -> Void {
         
-        let node: AVAudioInputNode = self.engine.inputNode
-        let outputFormat: AVAudioFormat = node.outputFormat(forBus: 0)
+        let inputNode: AVAudioInputNode = self.engine.inputNode
+        let outputFormat: AVAudioFormat = inputNode.outputFormat(forBus: 0)
+        
+        let formatIn: AVAudioFormat = AVAudioFormat(commonFormat: .pcmFormatFloat32,
+                                                    sampleRate: 16000,
+                                                    channels: 1,
+                                                    interleaved: false)!
+        
+        let formatOut: AVAudioFormat = AVAudioFormat(commonFormat: .pcmFormatInt16,
+                                                     sampleRate: 16000,
+                                                     channels: 1,
+                                                     interleaved: false)!
+        
         let bufferSize: AVAudioFrameCount = AVAudioFrameCount(self.bufferSize)
         
+        guard let bufferMapper = AVAudioConverter(from: formatIn, to: formatOut) else {
+            throw AudioEngineControllerError.failedToStart(message: "Failed to create buffer mapper")
+        }
         
-        ///
-        
-//        let downMixer = AVAudioMixerNode()
-//        self.engine.attach(downMixer)
-        
-        ///
+        inputNode.installTap(onBus: 0, bufferSize: bufferSize, format: outputFormat, block: {[weak self] buffer, time in
+            
+            guard let strongSelf = self,
+                let converted16BitBuffer: AVAudioPCMBuffer = AVAudioPCMBuffer(pcmFormat: formatOut, frameCapacity: buffer.frameCapacity) else {
+                    
+                    fatalError("Can't create PCM buffer")
+            }
+            
+            /// This is needed because the 'frameLenght' default value is 0
+            /// (since iOS 10) and cause the 'convert' call to faile with an
+            /// error (Error Domain=NSOSStatusErrorDomain Code=-50 "(null)")
+            /// More here: http://stackoverflow.com/questions/39714244/avaudioconverter-is-broken-in-ios-10
 
-        node.installTap(onBus: 0,
-                         bufferSize: bufferSize,
-                         format: outputFormat,
-                         block: {[weak self] buffer, time in
-
-                            guard let strongSelf = self else {
-                                return
-                            }
-                            
-                            ////
-                            
-//                            var theLength = Int(buffer.frameLength)
-//                            print("theLength = \(theLength)")
-//                            
-//                            var samplesAsDoubles:[Double] = []
-//                            for i in 0 ..< Int(buffer.frameLength)
-//                            {
-//                                var theSample = Double((buffer.floatChannelData?.pointee[i])!)
-//                                samplesAsDoubles.append( theSample )
-//                            }
-//                            
-//                            print("samplesAsDoubles = \(samplesAsDoubles)")
-                            
-                            ////
-
-                            print("buffer comingff back \(Int(buffer.frameLength)) and time \(time) and capacity \(buffer.frameCapacity)")
-                            DispatchQueue.main.async {
-                                strongSelf.delegate?.didReceive(buffer)
-                            }
+            converted16BitBuffer.frameLength = converted16BitBuffer.frameCapacity
+            
+            do {
+                
+                try bufferMapper.convert(to: converted16BitBuffer, from: buffer)
+                
+            } catch(let error as NSError) {
+                
+                print(error)
+                return
+            }
+            
+//            let it16Buffer = converted16BitBuffer.spstk_float16Audio
+//            let it32Buffer = buffer.spstk_float32Audio
+//            print(
+//            """
+//            16 \(it16Buffer)
+//            32 \(it32Buffer)
+//            """
+//            )
+            DispatchQueue.main.async {
+                strongSelf.delegate?.didReceive(converted16BitBuffer)
+            }
         })
         
         do {
-            
-            ///
-//            let format = node.inputFormat(forBus: 0)
-//            let format16KHzMono = AVAudioFormat.init(commonFormat: .pcmFormatInt16, sampleRate: 8000, channels: 1, interleaved: true)
-//
-//            self.engine.connect(node, to: downMixer, format: format)
-//            self.engine.connect(downMixer, to: self.engine.mainMixerNode, format: format16KHzMono)
-            
-            ///
             
             self.engine.prepare()
             try self.engine.start()
@@ -130,7 +135,7 @@ final class AudioEngineController {
 
         } catch let error {
             
-            throw AudioEngineControllerError.failedToSTart(message: error.localizedDescription)
+            throw AudioEngineControllerError.failedToStart(message: error.localizedDescription)
         }
     }
     
