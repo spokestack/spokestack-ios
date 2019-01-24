@@ -84,7 +84,7 @@ final class RingBuffer {
         if self.isFull {
             throw RingBufferStateError.illegalState(message: "ring buffer is full")
         }
-        
+
         self.data[self.wpos] = value
         self.wpos = self.pos(self.wpos + 1)
     }
