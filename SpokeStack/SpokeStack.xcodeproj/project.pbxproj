@@ -7,8 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0104CB4121F781C40020A3C4 /* WakeWordFilter.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = 0104CB4021F781C30020A3C4 /* WakeWordFilter.mlmodel */; };
 		0112624821B9C6F000B85563 /* FFT.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0112624721B9C6F000B85563 /* FFT.swift */; };
-		0116B27F21F65A8D001E29CB /* WakeWordFilter.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = 0116B27E21F65A8C001E29CB /* WakeWordFilter.mlmodel */; };
 		011C1920216BCA3200DB36FD /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 011C191F216BCA3200DB36FD /* AppDelegate.swift */; };
 		011C1922216BCA3200DB36FD /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 011C1921216BCA3200DB36FD /* ViewController.swift */; };
 		011C1925216BCA3200DB36FD /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 011C1923216BCA3200DB36FD /* Main.storyboard */; };
@@ -163,8 +163,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		0104CB4021F781C30020A3C4 /* WakeWordFilter.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = WakeWordFilter.mlmodel; sourceTree = "<group>"; };
 		0112624721B9C6F000B85563 /* FFT.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFT.swift; sourceTree = "<group>"; };
-		0116B27E21F65A8C001E29CB /* WakeWordFilter.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = WakeWordFilter.mlmodel; sourceTree = "<group>"; };
 		011C191D216BCA3200DB36FD /* SpokeStackFrameworkExample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SpokeStackFrameworkExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		011C191F216BCA3200DB36FD /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		011C1921216BCA3200DB36FD /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -290,7 +290,7 @@
 		0184FFF821B0ED3500D4A650 /* Machine Learning */ = {
 			isa = PBXGroup;
 			children = (
-				0116B27E21F65A8C001E29CB /* WakeWordFilter.mlmodel */,
+				0104CB4021F781C30020A3C4 /* WakeWordFilter.mlmodel */,
 				011DA80E21DD188A001345C7 /* WakeWordDetect.mlmodel */,
 			);
 			name = "Machine Learning";
@@ -721,7 +721,7 @@
 				01D31F80216BB0000055FD45 /* GoogleRecognizerConfiguration.swift in Sources */,
 				01BADDEA21B6DB1D00515701 /* WakeRecognizerConfiguration.swift in Sources */,
 				0181E33D21E7D440004B3D7B /* AppleSpeechRecognizer.swift in Sources */,
-				0116B27F21F65A8D001E29CB /* WakeWordFilter.mlmodel in Sources */,
+				0104CB4121F781C40020A3C4 /* WakeWordFilter.mlmodel in Sources */,
 				01D31F7B216BAFEF0055FD45 /* SpeechRecognizerService.swift in Sources */,
 				01D489E721D42A070030D015 /* Data+Extensions.swift in Sources */,
 				0112624821B9C6F000B85563 /* FFT.swift in Sources */,
