@@ -11,10 +11,10 @@ import Foundation
 struct StandardWakeWordConfiguration: WakeRecognizerConfiguration {
     
     var wakeWords: String {
-        return "up,dog,break,yo,self,fool"
+        return "up,dog"
     }
     
     var wakePhrases: String {
-        return "up dog,break yo self fool"
+        return "up dog"
     }
 }
