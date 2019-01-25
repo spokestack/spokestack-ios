@@ -34,7 +34,7 @@ final class FFT {
     // MARK: Initializers
     
     deinit {
-        vDSP_destroy_fftsetup(fftSetup)
+//        vDSP_destroy_fftsetup(fftSetup)
     }
     
     required init(_ size: Int) {
