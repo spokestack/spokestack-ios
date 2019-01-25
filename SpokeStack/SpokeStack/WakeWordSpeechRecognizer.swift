@@ -269,16 +269,11 @@ public class WakeWordSpeechRecognizer: SpeechRecognizerService {
         while let num = newDataIterator.next() {
 
             /// Normalize and clip the 16-bit sample to the target rms energy
-            print("num \(num)")
+
             var sample: Float = Float(num) / Float(Int16.max)
 
-            print("first sample \(sample)")
-
             sample = sample * (self.rmsTarget / self.rmsValue)
-            print("second sample \(sample)")
-
             sample = max(-1.0, min(sample, 1.0))
-            print("third sample \(sample)")
 
             /// Process the sample
             /// Write it to the sample sliding window
@@ -469,7 +464,7 @@ extension WakeWordSpeechRecognizer {
                 fatalError("Unexpected runtime error. MLMultiArray")
         }
         
-        print("componentes in filter \(components)")
+//        print("componentes in filter \(components)")
         for (index, value) in components.enumerated() {
             multiArray[[0, 0, index] as [NSNumber]] = value as NSNumber
         }
@@ -488,7 +483,7 @@ extension WakeWordSpeechRecognizer {
                 let result = String(describing: predictions.melspec_outputs__0[i])
                 try? self.frameWindow.write(predictions.melspec_outputs__0[i].floatValue)
                 
-                print("what is my result from filter \(result)")
+//                print("what is my result from filter \(result)")
             }
             
             /// Detect
