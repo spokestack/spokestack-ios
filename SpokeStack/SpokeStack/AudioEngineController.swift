@@ -88,7 +88,7 @@ final class AudioEngineController {
             throw AudioEngineControllerError.failedToStart(message: "Failed to create buffer mapper")
         }
         
-        inputNode.installTap(onBus: 0, bufferSize: bufferSize, format: outputFormat, block: {[weak self] buffer, time in
+        inputNode.installTap(onBus: 0, bufferSize: 2048, format: outputFormat, block: {[weak self] buffer, time in
             
             guard let strongSelf = self,
                 let converted16BitBuffer: AVAudioPCMBuffer = AVAudioPCMBuffer(pcmFormat: formatOut, frameCapacity: buffer.frameCapacity) else {
