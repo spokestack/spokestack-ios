@@ -407,37 +407,24 @@ extension WakeWordSpeechRecognizer {
     
     private func filter() -> Void {
 
-//        ///
-//
-//        var testValues: Array<Float> = Array(repeating: 0, count: ModelConstants.numOfFFTComponents)
-//        var increment: Int = 0
-//
-//        repeat {
-//
-//            let randomNumber = Float.random(in: -1 ..< 1)
-//            testValues[increment] = randomNumber
-//
-//            increment += 1
-//
-//        } while increment < ModelConstants.numOfFFTComponents
-//
-//        self.fftFrame = testValues
-//
-//        ///
-
         /// Decode the FFT outputs into the filter model's input
         /// Compute the nagitude (abs) of each complex stft component
         /// The first and last stft components contain only real parts
         /// and are stored in the first of the first two positions of the stft
         /// output. The remaining components contact real / imaginary parts
         
-        var components: Array<Double> = Array<Double>.init(repeating: 0, count: ModelConstants.numOfFFTComponents)
+        
+        let frameCount: Int = (self.fftFrame.count / 2)
+        var components: Array<Float> = []
+        components.reserveCapacity(frameCount)
+
+        print("components first count \(components.count)")
         
         /// Populate the components
-        
-        let firstComponent: Double = Double(self.fftFrame.first!)
+    
+        let firstComponent: Float = self.fftFrame.first!
         components.append(firstComponent)
-        
+    
         var i: Int = 1
         repeat {
             
@@ -445,28 +432,24 @@ extension WakeWordSpeechRecognizer {
             let im: Float = self.fftFrame[i * 2 + 1]
             let ab: Float = sqrt(re * re + im * im)
             
-            components.append(Double(ab))
+            components.append(ab)
             
             i += 1
             
-        } while i < (self.fftFrame.count / 2)
-        
-        let lastComponent: Double = Double(self.fftFrame[1])
+        } while i < frameCount
+    
+        let lastComponent: Float = self.fftFrame[1]
         components.append(lastComponent)
-        
+
         /// Run the predictions
-        
-        guard let multiArray = try? MLMultiArray(shape: [
-            ModelConstants.numOfFFTComponents,
-            ModelConstants.numOfFrames,
-            ModelConstants.numOfBatches] as [NSNumber], dataType: .float32) else {
+    
+        guard let multiArray = try? MLMultiArray(shape: [257,1,1], dataType: .float32) else {
                 
                 fatalError("Unexpected runtime error. MLMultiArray")
         }
-        
-//        print("componentes in filter \(components)")
+
         for (index, value) in components.enumerated() {
-            multiArray[[0, 0, index] as [NSNumber]] = value as NSNumber
+            multiArray[index] = NSNumber(value: value)
         }
     
         do {
@@ -478,12 +461,12 @@ extension WakeWordSpeechRecognizer {
             
             self.frameWindow.rewind().seek(self.melWidth)
             
-            for i in 0...ModelConstants.numOfMelOutputs {
+            for i in 0..<ModelConstants.numOfMelOutputs {
                 
                 let result = String(describing: predictions.melspec_outputs__0[i])
                 try? self.frameWindow.write(predictions.melspec_outputs__0[i].floatValue)
                 
-//                print("what is my result from filter \(result)")
+                print("what is my result from filter \(result)")
             }
             
             /// Detect
@@ -497,21 +480,20 @@ extension WakeWordSpeechRecognizer {
     }
     
     private func detect() -> Void {
+        
+        print("detec is being fired off")
 
         /// Transfer the mel filterbank window to the detector model's inputs
         
         self.frameWindow.rewind()
         
-        guard let multiArray = try? MLMultiArray(shape: [
-            1,
-            ModelConstants.numOfMelOutputs,
-            ModelConstants.numOfMelOutputs] as [NSNumber], dataType: .float32) else {
+        guard let multiArray = try? MLMultiArray(shape: [1,40,40], dataType: .float32) else {
             
                 fatalError("Unexpected runtime error. MLMultiArray")
         }
         
-        for index in 0...ModelConstants.numOfMelOutputs {
-            multiArray[[0, index, index] as [NSNumber]] = index as NSNumber
+        for index in 0..<ModelConstants.numOfMelOutputs {
+            multiArray[index] = NSNumber(value: index)
         }
         
         /// Run against CoreML
@@ -593,6 +575,7 @@ extension WakeWordSpeechRecognizer {
                 do {
 
                     self.phraseSum[index] += try self.smoothWindow.read()
+                    print("self.phraseSum[index] \(self.phraseSum[index])")
 
                 } catch SpeechPipelineError.illegalState(let message) {
                     
@@ -615,7 +598,10 @@ extension WakeWordSpeechRecognizer {
             
             do {
                 
-                try self.phraseWindow.write(self.phraseSum[index] / Float(total))
+                let windowValue: Float = self.phraseSum[index] / Float(total)
+                try self.phraseWindow.write(windowValue)
+                
+                print("windowValue \(windowValue)")
 
             } catch SpeechPipelineError.illegalState(let message) {
                 
@@ -645,9 +631,12 @@ extension WakeWordSpeechRecognizer {
                 do {
 
                     let value: Float = try self.phraseWindow.read()
+                    
+                    print("value in the phrase \(value)")
+                    
                     if value > max {
+                    
                         self.phraseArg[index] = subindex
-                        
                         max = value
                     }
 
@@ -675,11 +664,12 @@ extension WakeWordSpeechRecognizer {
             var match: Int = 0
             
             phraseArgumentLabel: for word in self.phraseArg {
-                
+                print("what is the word \(word)")
                 if word == phrase[match] {
                     
                     match -= 1
                     if match == phrase.count {
+                        print("match == phrase count \(match) and phrase \(phrase)")
                         break
                     }
                 }
@@ -687,7 +677,7 @@ extension WakeWordSpeechRecognizer {
             
             /// If we reached the end of a phrase, we have a match,
             /// So start the activation counter
-            
+            print("match == phrase.count before active length)")
             if match == phrase.count {
                 
                 self.activeLength = 1

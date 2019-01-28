@@ -71,12 +71,6 @@ final class AudioEngineController {
         
         let inputNode: AVAudioInputNode = self.engine.inputNode
         let outputFormat: AVAudioFormat = inputNode.outputFormat(forBus: 0)
-        
-        let formatIn: AVAudioFormat = AVAudioFormat(commonFormat: .pcmFormatFloat32,
-                                                    sampleRate: 16000,
-                                                    channels: 1,
-                                                    interleaved: false)!
-        
         let formatOut: AVAudioFormat = AVAudioFormat(commonFormat: .pcmFormatInt16,
                                                      sampleRate: 16000,
                                                      channels: 1,
@@ -84,37 +78,37 @@ final class AudioEngineController {
         
         let bufferSize: AVAudioFrameCount = AVAudioFrameCount(self.bufferSize)
         
-        guard let bufferMapper = AVAudioConverter(from: formatIn, to: formatOut) else {
-            throw AudioEngineControllerError.failedToStart(message: "Failed to create buffer mapper")
-        }
-        
-        inputNode.installTap(onBus: 0, bufferSize: 2048, format: outputFormat, block: {[weak self] buffer, time in
+        inputNode.installTap(onBus: 0, bufferSize: bufferSize, format: outputFormat, block: {[weak self] buffer, time in
             
             guard let strongSelf = self,
-                let converted16BitBuffer: AVAudioPCMBuffer = AVAudioPCMBuffer(pcmFormat: formatOut, frameCapacity: buffer.frameCapacity) else {
-                    
-                    fatalError("Can't create PCM buffer")
+                let converted16BitBuffer: AVAudioPCMBuffer = AVAudioPCMBuffer(pcmFormat: formatOut,
+                                                                              frameCapacity: buffer.frameCapacity),
+                let converter: AVAudioConverter = AVAudioConverter(from: buffer.format, to: converted16BitBuffer.format) else {
+
+                    fatalError("Can't create PCM buffer or bufferMapper")
             }
             
-            /// This is needed because the 'frameLenght' default value is 0
-            /// (since iOS 10) and cause the 'convert' call to faile with an
-            /// error (Error Domain=NSOSStatusErrorDomain Code=-50 "(null)")
-            /// More here: http://stackoverflow.com/questions/39714244/avaudioconverter-is-broken-in-ios-10
-
             converted16BitBuffer.frameLength = converted16BitBuffer.frameCapacity
-            
-            do {
-                
-                try bufferMapper.convert(to: converted16BitBuffer, from: buffer)
-                
-            } catch(let error as NSError) {
-                
-                print(error)
-                return
-            }
 
-            DispatchQueue.main.async {
-                strongSelf.delegate?.didReceive(converted16BitBuffer)
+            let inputBlock: AVAudioConverterInputBlock = { inNumPackets, outStatus in
+                
+                outStatus.pointee = AVAudioConverterInputStatus.haveData
+                return buffer
+            }
+            
+            var error: NSError? = nil
+            let status: AVAudioConverterOutputStatus = converter.convert(to: converted16BitBuffer,
+                                                                            error: &error,
+                                                                            withInputFrom: inputBlock)
+            
+            print("Converter Output status \(status.rawValue)")
+
+            if status == .haveData {
+             
+                DispatchQueue.main.async {
+                    print("converted \(converted16BitBuffer.spstk_int16Audio.count)")
+                    strongSelf.delegate?.didReceive(converted16BitBuffer)
+                }
             }
         })
         
