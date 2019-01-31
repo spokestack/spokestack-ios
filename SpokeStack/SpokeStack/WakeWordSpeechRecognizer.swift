@@ -650,7 +650,7 @@ extension WakeWordSpeechRecognizer {
             /// So start the activation counter
 
             if match == phrase.count {
-                
+                print("match does == phrase count before activate")
                 self.activeLength = 1
                 break
             }
