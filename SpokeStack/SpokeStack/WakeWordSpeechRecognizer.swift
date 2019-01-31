@@ -506,13 +506,8 @@ extension WakeWordSpeechRecognizer {
             /// Transfer the classifier's outputs to the posterior smoothing window
             
             self.smoothWindow.rewind().seek(self.words.count)
-            
-            ////
-            
-            let resultCount: Int = predictions.detect_outputs__0.count
 
-            print("predictions.detect_outputs__0 \(predictions.detect_outputs__0)")
-            
+            let resultCount: Int = predictions.detect_outputs__0.count
             var indexIncrement: Int = 0
             
             repeat {
@@ -521,13 +516,20 @@ extension WakeWordSpeechRecognizer {
                 
                 let predictionFloat: Float = predictions.detect_outputs__0[indexIncrement].floatValue
                 print("is the prediction float \(predictionFloat)")
-                try? self.smoothWindow.write(predictionFloat)
+                
+            
+                do {
+                    
+                    try self.smoothWindow.write(predictionFloat)
+                    
+                } catch {
+                  
+                    fatalError("couldn't write the smooth window")
+                }
                 
                 indexIncrement += 1
 
             } while indexIncrement < resultCount
-
-            ////
             
         } catch let modelDetectError {
             
@@ -664,11 +666,14 @@ extension WakeWordSpeechRecognizer {
             var match: Int = 0
             
             phraseArgumentLabel: for word in self.phraseArg {
+                
                 print("what is the word \(word)")
+                
                 if word == phrase[match] {
                     
                     match -= 1
                     if match == phrase.count {
+                       
                         print("match == phrase count \(match) and phrase \(phrase)")
                         break
                     }
@@ -677,6 +682,7 @@ extension WakeWordSpeechRecognizer {
             
             /// If we reached the end of a phrase, we have a match,
             /// So start the activation counter
+            
             print("match == phrase.count before active length)")
             if match == phrase.count {
                 
