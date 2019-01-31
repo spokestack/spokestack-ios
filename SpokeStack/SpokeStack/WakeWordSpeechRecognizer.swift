@@ -325,8 +325,6 @@ public class WakeWordSpeechRecognizer: SpeechRecognizerService {
         var sum: Float = 0
         var count: Int = 0
         
-//        let dataArray: Array<UInt8> = Array(buffer.spstk_data)
-        
         for audio in buffer.spstk_int16Audio {
 
             let sample: Float = Float(audio) / Float(Int16.max)
@@ -334,19 +332,6 @@ public class WakeWordSpeechRecognizer: SpeechRecognizerService {
             sum += sample * sample
             count += 1
         }
-        
-//        for data in dataArray {
-////            print(
-////            """
-////            what the max int \(Int16.max) and float \(Float(Int16.max))
-////            what is my data \(data) and count \(dataArray.count)
-////            """
-////            )
-//            let sample: Float = Float(data) / Float(Int16.max)
-//
-//            sum += sample * sample
-//            count += 1
-//        }
         
         let rms: Float = Float(sqrt(sum / Float(count)))
         print("what is my rms value \(rms)")
