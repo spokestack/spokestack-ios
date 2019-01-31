@@ -319,8 +319,6 @@ public class WakeWordSpeechRecognizer: SpeechRecognizerService {
     }
 
     private func rms(_ buffer: AVAudioPCMBuffer) -> Float {
-        
-        print("what is 16 \(buffer.spstk_int16Audio)")
 
         var sum: Float = 0
         var count: Int = 0
@@ -334,16 +332,7 @@ public class WakeWordSpeechRecognizer: SpeechRecognizerService {
         }
         
         let rms: Float = Float(sqrt(sum / Float(count)))
-        print("what is my rms value \(rms)")
-
         return rms
-        
-        
-//        let mapped = buffer.spstk_int16Audio.map{ $0 * $0 }
-//        let reduced = Float(mapped.reduce(0, +))
-//        let rms = sqrt(reduced / Float(buffer.frameLength))
-
-//        return 0.2
     }
     
     private func reset() -> Void {
@@ -451,7 +440,7 @@ extension WakeWordSpeechRecognizer {
                 let result = String(describing: predictions.melspec_outputs__0[i])
                 try? self.frameWindow.write(predictions.melspec_outputs__0[i].floatValue)
                 
-                print("what is my result from filter \(result)")
+//                print("what is my result from filter \(result)")
             }
             
             /// Detect
@@ -497,12 +486,9 @@ extension WakeWordSpeechRecognizer {
             
             repeat {
                 
-                print("value \(predictions.detect_outputs__0[indexIncrement])")
-                
                 let predictionFloat: Float = predictions.detect_outputs__0[indexIncrement].floatValue
-                print("is the prediction float \(predictionFloat)")
-                
-            
+                print("is the prediction float [[[ \(predictionFloat) ]]]")
+
                 do {
                     
                     try self.smoothWindow.write(predictionFloat)
@@ -562,7 +548,6 @@ extension WakeWordSpeechRecognizer {
                 do {
 
                     self.phraseSum[index] += try self.smoothWindow.read()
-                    print("self.phraseSum[index] \(self.phraseSum[index])")
 
                 } catch SpeechPipelineError.illegalState(let message) {
                     
@@ -619,7 +604,7 @@ extension WakeWordSpeechRecognizer {
 
                     let value: Float = try self.phraseWindow.read()
                     
-                    print("value in the phrase \(value)")
+//                    print("value in the phrase \(value)")
                     
                     if value > max {
                     
@@ -652,8 +637,6 @@ extension WakeWordSpeechRecognizer {
             
             phraseArgumentLabel: for word in self.phraseArg {
                 
-                print("what is the word \(word)")
-                
                 if word == phrase[match] {
                     
                     match -= 1
@@ -667,8 +650,7 @@ extension WakeWordSpeechRecognizer {
             
             /// If we reached the end of a phrase, we have a match,
             /// So start the activation counter
-            
-            print("match == phrase.count before active length)")
+
             if match == phrase.count {
                 
                 self.activeLength = 1
