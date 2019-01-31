@@ -100,13 +100,10 @@ final class AudioEngineController {
             let status: AVAudioConverterOutputStatus = converter.convert(to: converted16BitBuffer,
                                                                             error: &error,
                                                                             withInputFrom: inputBlock)
-            
-            print("Converter Output status \(status.rawValue)")
 
             if status == .haveData {
              
                 DispatchQueue.main.async {
-                    print("converted \(converted16BitBuffer.spstk_int16Audio.count)")
                     strongSelf.delegate?.didReceive(converted16BitBuffer)
                 }
             }
