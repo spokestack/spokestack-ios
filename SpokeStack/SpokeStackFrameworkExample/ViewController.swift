@@ -8,73 +8,34 @@
 
 import UIKit
 import SpokeStack
-import AVFoundation
-
-struct GoogleConfiguration: GoogleRecognizerConfiguration {
-    
-    var apiKey: String {
-        return "REPLACE_ME"
-    }
-}
-
-struct WKWordConfiguration: WakeRecognizerConfiguration {
-    
-    var wakeWords: String {
-        return "up,dog"
-    }
-    
-    var wakePhrases: String {
-        return "up dog"
-    }
-}
 
 class ViewController: UIViewController {
-    
-    @IBOutlet weak var startRecordingButton: UIButton!
 
-    @IBOutlet weak var stopRecordingButton: UIButton!
+    // MARK: Outlets
     
-    @IBOutlet weak var resultsLabel: UILabel!
+    @IBOutlet weak var googleButton: UIButton!
     
-    lazy private var pipeline: SpeechPipeline = {
-        
-//        let configuration: GoogleConfiguration = GoogleConfiguration()
-        let wakeConfiguration: WKWordConfiguration = WKWordConfiguration()
-        
-        return try! SpeechPipeline(.wakeword,
-                                   configuration: wakeConfiguration,
-                                   delegate: self)
-    }()
-
+    @IBOutlet weak var appleButton: UIButton!
+    
+    @IBOutlet weak var wakeWordButton: UIButton!
+    
+    // MARK: View Life Cycle
+    
     override func viewDidLoad() {
         super.viewDidLoad()
     }
     
-    @IBAction func startRecordingAction(_ sender: Any) {
-        self.pipeline.start()
+    
+    @IBAction func googleAction(_ sender: Any) {
+    
     }
     
-    @IBAction func stopRecordingAction(_ sender: Any) {
-        self.pipeline.stop()
-    }
-}
-
-extension ViewController: SpeechRecognizer {
     
-    func didRecognize(_ result: SPSpeechContext) {
-        self.resultsLabel.text = result.transcript
+    @IBAction func appleAxction(_ sender: Any) {
     }
     
-    func didFinish(_ error: Error?) {
-        print("didFinish \(String(describing: error))")
-        self.stopRecordingButton.isEnabled.toggle()
-        self.startRecordingButton.isEnabled.toggle()
-    }
     
-    func didStart() {
-        
-        self.stopRecordingButton.isEnabled.toggle()
-        self.startRecordingButton.isEnabled.toggle()
+    @IBAction func wakeWordAction(_ sender: Any) {
     }
 }
 
