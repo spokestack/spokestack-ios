@@ -391,8 +391,6 @@ extension WakeWordSpeechRecognizer {
         let frameCount: Int = (self.fftFrame.count / 2)
         var components: Array<Float> = []
         components.reserveCapacity(frameCount)
-
-        print("components first count \(components.count)")
         
         /// Populate the components
     
@@ -455,7 +453,7 @@ extension WakeWordSpeechRecognizer {
     
     private func detect() -> Void {
         
-        print("detec is being fired off")
+        print("detect is being fired off")
 
         /// Transfer the mel filterbank window to the detector model's inputs
         
@@ -487,7 +485,7 @@ extension WakeWordSpeechRecognizer {
             repeat {
                 
                 let predictionFloat: Float = predictions.detect_outputs__0[indexIncrement].floatValue
-                print("is the prediction float [[[ \(predictionFloat) ]]]")
+                print("what is the detect float value: [[[ \(predictionFloat) ]]]")
 
                 do {
                     
