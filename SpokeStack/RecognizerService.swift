@@ -8,8 +8,8 @@
 
 import Foundation
 
-@objc public enum RecognizerService: Int {
-    case google
+public enum RecognizerService {
+    case google, wakeword, apple
 }
 
 extension RecognizerService {
@@ -19,6 +19,10 @@ extension RecognizerService {
         switch self {
         case .google:
             return GoogleSpeechRecognizer.sharedInstance
+        case .wakeword:
+            return WakeWordSpeechRecognizer.sharedInstance
+        case .apple:
+            return AppleSpeechRecognizer.sharedInstance
         }
     }
 }

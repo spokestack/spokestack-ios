@@ -8,7 +8,11 @@
 
 import Foundation
 
-@objc public final class SpeechPipeline: NSObject {
+public enum SpeechPipelineError: Error {
+    case illegalState(message: String)
+}
+
+public final class SpeechPipeline {
     
     // MARK: Public (properties)
     
@@ -22,55 +26,32 @@ import Foundation
     
     private var speechRecognizerService: SpeechRecognizerService = GoogleSpeechRecognizer.sharedInstance
     
+    private var wakeWordController: WakeWordSpeechRecognizer!
+    
     // MARK: Initializers
     
     deinit {
         speechRecognizerService.delegate = nil
     }
     
-    @objc public init (_ service: RecognizerService, configuration: RecognizerConfiguration, delegate: SpeechRecognizer?) throws {
-        func didInitialize() -> Bool {
-            
-            var didInitialize: Bool = false
-            
-            switch service {
-            case .google where configuration is GoogleRecognizerConfiguration:
+    public init(_ service: RecognizerService,
+                configuration: RecognizerConfiguration,
+                delegate: SpeechRecognizer?) throws {
 
-                self.speechRecognizerService.configuration = configuration
-                
-                didInitialize = true
-                break
-            default: break
-            }
-            
-            return didInitialize
-        }
-        
         self.service = service
         self.configuration = configuration
         self.delegate = delegate
         
+        self.speechRecognizerService.configuration = configuration
         self.speechRecognizerService = service.speechRecognizerService
         self.speechRecognizerService.delegate = self.delegate
-        
-        super.init()
-        
-        if !didInitialize() {
-            
-            let errorMessage: String = """
-            The service must be google and your configuration must conform to GoogleRecognizerConfiguration.
-            Future release will support other services.
-            """
-            throw SpeechPipleError.invalidInitialization(errorMessage)
-        }
     }
     
-    @objc public func start() -> Void {
+    public func start() -> Void {
         self.speechRecognizerService.startStreaming()
     }
     
-    @objc public func stop() -> Void {
+    public func stop() -> Void {
         self.speechRecognizerService.stopStreaming()
     }
 }
-

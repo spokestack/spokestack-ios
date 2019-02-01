@@ -8,60 +8,51 @@
 
 import UIKit
 import SpokeStack
-import googleapis
-import AVFoundation
 
 class ViewController: UIViewController {
-    
-    @IBOutlet weak var startRecordingButton: UIButton!
 
-    @IBOutlet weak var stopRecordingButton: UIButton!
+    // MARK: Outlets
     
-    @IBOutlet weak var resultsLabel: UILabel!
+    @IBOutlet weak var googleButton: UIButton!
     
-    lazy private var pipeline: SpeechPipeline = {
-        
-        let configuration: GoogleRecognizerConfiguration = GoogleRecognizerConfiguration()
-        configuration.apiKey = "REPLACE_ME"
-        return try! SpeechPipeline(.google,
-                                   configuration: configuration,
-                                   delegate: self)
-    }()
-
+    @IBOutlet weak var appleButton: UIButton!
+    
+    @IBOutlet weak var wakeWordButton: UIButton!
+    
+    // MARK: View Life Cycle
+    
     override func viewDidLoad() {
-        super.viewDidLoad()
-    }
-    
-    @IBAction func startRecordingAction(_ sender: Any) {
-        self.pipeline.start()
-    }
-    
-    @IBAction func stopRecordingAction(_ sender: Any) {
-        self.pipeline.stop()
-    }
-}
-
-extension ViewController: SpeechRecognizer {
-    
-    func didRecognize(_ result: SPSpeechContext) {
-        self.resultsLabel.text = result.transcript
-    }
-    
-    func didFinish() {
         
-        self.stopRecordingButton.isEnabled.toggle()
-        self.startRecordingButton.isEnabled.toggle()
+        super.viewDidLoad()
+        self.wakeWordButton.isEnabled = false
     }
     
-    func didStart() {
-        self.stopRecordingButton.isEnabled.toggle()
-        self.startRecordingButton.isEnabled.toggle()
+    @IBAction func googleAction(_ sender: Any) {
+    
+        let googleViewController: GoogleViewController = GoogleViewController()
+        let navigationViewController: UINavigationController = UINavigationController(rootViewController: googleViewController)
+        
+        self.present(navigationViewController, animated: true, completion: nil)
+    }
+
+    @IBAction func appleAxction(_ sender: Any) {
+    
+        let appleViewController: AppleViewController = AppleViewController()
+        let navigationViewController: UINavigationController = UINavigationController(rootViewController: appleViewController)
+        
+        self.present(navigationViewController, animated: true, completion: nil)
     }
     
-    func didError(_ error: String) {
-        self.resultsLabel.text = error
-        self.stopRecordingButton.isEnabled.toggle()
-        self.startRecordingButton.isEnabled.toggle()
+    @IBAction func wakeWordAction(_ sender: Any) {
+        
+        let wakeWordViewController: WakeWordViewController = WakeWordViewController()
+        let navigationViewController: UINavigationController = UINavigationController(rootViewController: wakeWordViewController)
+        
+        self.present(navigationViewController, animated: true, completion: nil)
+    }
+    
+    @objc func dismissViewController(_ sender: Any?) -> Void {
+        self.dismiss(animated: true, completion: nil)
     }
 }
 
