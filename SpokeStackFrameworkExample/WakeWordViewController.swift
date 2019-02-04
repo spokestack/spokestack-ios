@@ -10,17 +10,6 @@ import UIKit
 import SpokeStack
 import AVFoundation
 
-struct WKWordConfiguration: WakeRecognizerConfiguration {
-    
-    var wakeWords: String {
-        return "up,dog"
-    }
-    
-    var wakePhrases: String {
-        return "up dog"
-    }
-}
-
 class WakeWordViewController: UIViewController {
     
     lazy var startRecordingButton: UIButton = {
@@ -56,7 +45,7 @@ class WakeWordViewController: UIViewController {
     
     lazy private var pipeline: SpeechPipeline = {
         
-        let wakeConfiguration: WKWordConfiguration = WKWordConfiguration()
+        let wakeConfiguration: WakewordRecognizerConfiguration = WakewordRecognizerConfiguration()
         
         return try! SpeechPipeline(.wakeword,
                                    configuration: wakeConfiguration,
@@ -106,13 +95,15 @@ class WakeWordViewController: UIViewController {
 
 extension WakeWordViewController: SpeechRecognizer {
     
+    func didError(_ error: Error) {
+        print("didError \(String(describing: error))")
+    }
+    
     func didRecognize(_ result: SPSpeechContext) {
         print("transcript \(result.transcript)")
     }
     
-    func didFinish(_ error: Error?) {
-
-        print("didFinish \(String(describing: error))")
+    func didFinish() {
         self.stopRecordingButton.isEnabled.toggle()
         self.startRecordingButton.isEnabled.toggle()
     }

@@ -10,17 +10,6 @@ import UIKit
 import SpokeStack
 import AVFoundation
 
-struct AppleWordConfiguration: WakeRecognizerConfiguration {
-    
-    var wakeWords: String {
-        return "up,dog"
-    }
-    
-    var wakePhrases: String {
-        return "up dog"
-    }
-}
-
 class AppleViewController: UIViewController {
     
     lazy var startRecordingButton: UIButton = {
@@ -56,7 +45,7 @@ class AppleViewController: UIViewController {
     
     lazy private var pipeline: SpeechPipeline = {
         
-        let appleConfiguration: AppleWordConfiguration = AppleWordConfiguration()
+        let appleConfiguration: RecognizerConfiguration = RecognizerConfiguration()
         
         return try! SpeechPipeline(.apple,
                                    configuration: appleConfiguration,
@@ -91,10 +80,12 @@ class AppleViewController: UIViewController {
     }
     
     @objc func startRecordingAction(_ sender: Any) {
+        print("pipeline started")
         self.pipeline.start()
     }
     
     @objc func stopRecordingAction(_ sender: Any) {
+        print("pipeline finished")
         self.pipeline.stop()
     }
     
@@ -104,20 +95,22 @@ class AppleViewController: UIViewController {
 }
 
 extension AppleViewController: SpeechRecognizer {
-    
-    func didRecognize(_ result: SPSpeechContext) {
-        print("transcript \(result.transcript)")
+    func didError(_ error: Error) {
+        print("didFinish \(String(describing: error))")
     }
     
-    func didFinish(_ error: Error?) {
-        
-        print("didFinish \(String(describing: error))")
+    func didRecognize(_ result: SPSpeechContext) {
+        print("didRecognize transcript \(result.transcript)")
+    }
+    
+    func didFinish() {
+        print("didFinish")
         self.stopRecordingButton.isEnabled.toggle()
         self.startRecordingButton.isEnabled.toggle()
     }
     
     func didStart() {
-        
+        print("didStart")
         self.stopRecordingButton.isEnabled.toggle()
         self.startRecordingButton.isEnabled.toggle()
     }

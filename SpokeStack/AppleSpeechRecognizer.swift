@@ -15,7 +15,8 @@ class AppleSpeechRecognizer: NSObject, SpeechRecognizerService {
     
     static let sharedInstance: AppleSpeechRecognizer = AppleSpeechRecognizer()
     
-    var configuration: RecognizerConfiguration = StandardWakeWordConfiguration()
+    var configuration: RecognizerConfiguration = RecognizerConfiguration()
+    private var wakewordConfiguration: WakewordRecognizerConfiguration = WakewordRecognizerConfiguration()
     
     weak var delegate: SpeechRecognizer?
     
@@ -31,10 +32,6 @@ class AppleSpeechRecognizer: NSObject, SpeechRecognizerService {
     
     private let audioEngine: AVAudioEngine = AVAudioEngine()
     
-    private var wakeWordConfiguration: WakeRecognizerConfiguration {
-        return self.configuration as! WakeRecognizerConfiguration
-    }
-    
     // MARK: Initializers
     
     deinit {
@@ -42,9 +39,13 @@ class AppleSpeechRecognizer: NSObject, SpeechRecognizerService {
     }
     
     override init() {
-        
         super.init()
-        self.setup()
+        do {
+            try audioSession.setCategory(.playAndRecord, mode: .spokenAudio, options: .defaultToSpeaker)
+            try audioSession.setActive(true, options: .notifyOthersOnDeactivation)
+        } catch let error {
+            print("audioSession properties weren't set because of an error. \(error)")
+        }
     }
     
     // MARK: SpeechRecognizerService
@@ -68,23 +69,6 @@ class AppleSpeechRecognizer: NSObject, SpeechRecognizerService {
         recognitionTask = nil
     }
     
-    // MARK: Private (methods)
-    
-    private func setup() -> Void {
-        
-        /// AVAudioSession setup
-        
-        do {
-            
-            try audioSession.setCategory(.record, mode: .spokenAudio, options: .defaultToSpeaker)
-            try audioSession.setActive(true, options: .notifyOthersOnDeactivation)
-            
-        } catch let error {
-            
-            print("audioSession properties weren't set because of an error. \(error)")
-        }
-    }
-    
     private func prepareAudio() -> Void {
         
         /// Speech Recognizer
@@ -97,7 +81,7 @@ class AppleSpeechRecognizer: NSObject, SpeechRecognizerService {
         }
         
         recognitionRequest.shouldReportPartialResults = true
-        let phrases: Array<String> = self.wakeWordConfiguration.wakePhrases.components(separatedBy: ",")
+        let phrases: Array<String> = self.wakewordConfiguration.wakePhrases.components(separatedBy: ",")
 
         self.recognitionTask = self.speechRecognizer.recognitionTask(with: recognitionRequest, resultHandler: {[weak self] result, error in
             
@@ -126,7 +110,7 @@ class AppleSpeechRecognizer: NSObject, SpeechRecognizerService {
                     let context: SPSpeechContext = SPSpeechContext(transcript: finalTranscript.formattedString, confidence: confidence)
     
                     strongSelf.delegate?.didRecognize(context)
-                    strongSelf.delegate?.didFinish(nil)
+                    strongSelf.delegate?.didFinish()
                 }
             }
             
@@ -139,7 +123,7 @@ class AppleSpeechRecognizer: NSObject, SpeechRecognizerService {
             }
         })
         
-        let buffer: Int = (self.wakeWordConfiguration.sampleRate / 1000) * self.wakeWordConfiguration.frameWidth
+        let buffer: Int = (self.wakewordConfiguration.sampleRate / 1000) * self.wakewordConfiguration.frameWidth
         let recordingFormat = inputNode.outputFormat(forBus: 0)
         
         inputNode.installTap(onBus: 0, bufferSize: AVAudioFrameCount(buffer), format: recordingFormat) {[weak self] buffer, when in

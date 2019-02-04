@@ -9,7 +9,7 @@
 import Foundation
 
 public enum RecognizerService {
-    case google, wakeword, apple
+    case google, apple, wakeword
 }
 
 extension RecognizerService {
@@ -19,10 +19,10 @@ extension RecognizerService {
         switch self {
         case .google:
             return GoogleSpeechRecognizer.sharedInstance
-        case .wakeword:
-            return WakeWordSpeechRecognizer.sharedInstance
         case .apple:
             return AppleSpeechRecognizer.sharedInstance
+        case .wakeword:
+            return AppleWakewordRecognizer.sharedInstance
         }
     }
 }

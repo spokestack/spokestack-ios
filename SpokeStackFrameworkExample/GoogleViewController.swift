@@ -10,13 +10,6 @@ import UIKit
 import SpokeStack
 import AVFoundation
 
-struct GoogleConfiguration: GoogleRecognizerConfiguration {
-    
-    var apiKey: String {
-        return "REPLACE_ME"
-    }
-}
-
 class GoogleViewController: UIViewController {
     
     lazy var startRecordingButton: UIButton = {
@@ -52,7 +45,8 @@ class GoogleViewController: UIViewController {
     
     lazy private var pipeline: SpeechPipeline = {
         
-        let googleConfiguration: GoogleConfiguration = GoogleConfiguration()
+        let googleConfiguration: GoogleRecognizerConfiguration = GoogleRecognizerConfiguration()
+        googleConfiguration.apiKey = "AIzaSyBIgfSXeu0qQRKruau6eKKroOlfEo-ixsU"
         
         return try! SpeechPipeline(.google,
                                    configuration: googleConfiguration,
@@ -103,13 +97,15 @@ class GoogleViewController: UIViewController {
 
 extension GoogleViewController: SpeechRecognizer {
     
+    func didError(_ error: Error) {
+        print("didFinish \(String(describing: error))")
+    }
+    
     func didRecognize(_ result: SPSpeechContext) {
         print("transcript \(result.transcript)")
     }
     
-    func didFinish(_ error: Error?) {
-        
-        print("didFinish \(String(describing: error))")
+    func didFinish() {
         self.stopRecordingButton.isEnabled.toggle()
         self.startRecordingButton.isEnabled.toggle()
     }

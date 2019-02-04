@@ -80,14 +80,13 @@
 		01D3249C216BB10D0055FD45 /* grpc.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01D322FE216BB10D0055FD45 /* grpc.framework */; };
 		01D3249D216BB10D0055FD45 /* grpc.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01D322FE216BB10D0055FD45 /* grpc.framework */; };
 		01DE0FEF216BFEE2007C23A7 /* gRPCCertificates.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 01D322B0216BB10C0055FD45 /* gRPCCertificates.bundle */; };
+		59365948220889EE00C0365F /* AppleWakewordRecognizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59365947220889EE00C0365F /* AppleWakewordRecognizer.swift */; };
 		5967108E21F7AE6B00CBFC88 /* AppleSpeechRecognizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5967108D21F7AE6B00CBFC88 /* AppleSpeechRecognizer.swift */; };
 		59A0D5C02204E786003709C3 /* AppleViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59A0D5BD2204E786003709C3 /* AppleViewController.swift */; };
 		59A0D5C12204E786003709C3 /* GoogleViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59A0D5BE2204E786003709C3 /* GoogleViewController.swift */; };
 		59A0D5C22204E786003709C3 /* WakeWordViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59A0D5BF2204E786003709C3 /* WakeWordViewController.swift */; };
 		59A0D5C42204E799003709C3 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 59A0D5C32204E799003709C3 /* Assets.xcassets */; };
-		59A0D5C72204E8E4003709C3 /* WakeRecognizerConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59A0D5C52204E8E4003709C3 /* WakeRecognizerConfiguration.swift */; };
-		59A0D5C82204E8E4003709C3 /* SampleWakeRecognizerConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59A0D5C62204E8E4003709C3 /* SampleWakeRecognizerConfiguration.swift */; };
-		59A0D5CA2204E922003709C3 /* StandardWakeWordConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59A0D5C92204E922003709C3 /* StandardWakeWordConfiguration.swift */; };
+		59A0D5C72204E8E4003709C3 /* WakewordRecognizerConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59A0D5C52204E8E4003709C3 /* WakewordRecognizerConfiguration.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -195,14 +194,13 @@
 		01D322FA216BB10C0055FD45 /* nanopb.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = nanopb.framework; sourceTree = "<group>"; };
 		01D322FC216BB10D0055FD45 /* Protobuf.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Protobuf.framework; sourceTree = "<group>"; };
 		01D322FE216BB10D0055FD45 /* grpc.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = grpc.framework; sourceTree = "<group>"; };
+		59365947220889EE00C0365F /* AppleWakewordRecognizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppleWakewordRecognizer.swift; sourceTree = "<group>"; };
 		5967108D21F7AE6B00CBFC88 /* AppleSpeechRecognizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppleSpeechRecognizer.swift; sourceTree = "<group>"; };
 		59A0D5BD2204E786003709C3 /* AppleViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppleViewController.swift; sourceTree = "<group>"; };
 		59A0D5BE2204E786003709C3 /* GoogleViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GoogleViewController.swift; sourceTree = "<group>"; };
 		59A0D5BF2204E786003709C3 /* WakeWordViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WakeWordViewController.swift; sourceTree = "<group>"; };
 		59A0D5C32204E799003709C3 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		59A0D5C52204E8E4003709C3 /* WakeRecognizerConfiguration.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WakeRecognizerConfiguration.swift; sourceTree = "<group>"; };
-		59A0D5C62204E8E4003709C3 /* SampleWakeRecognizerConfiguration.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SampleWakeRecognizerConfiguration.swift; sourceTree = "<group>"; };
-		59A0D5C92204E922003709C3 /* StandardWakeWordConfiguration.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StandardWakeWordConfiguration.swift; sourceTree = "<group>"; };
+		59A0D5C52204E8E4003709C3 /* WakewordRecognizerConfiguration.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WakewordRecognizerConfiguration.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -332,7 +330,6 @@
 		01D31F59216BAF710055FD45 /* Configurations */ = {
 			isa = PBXGroup;
 			children = (
-				59A0D5C92204E922003709C3 /* StandardWakeWordConfiguration.swift */,
 				011C193A216BCBCA00DB36FD /* StandardGoogleRecognitionConfiguration.swift */,
 				01D31F5B216BAF950055FD45 /* StandardRecognizerConfiguration.swift */,
 			);
@@ -386,8 +383,7 @@
 		01D31F7D216BAFF40055FD45 /* Configurations */ = {
 			isa = PBXGroup;
 			children = (
-				59A0D5C62204E8E4003709C3 /* SampleWakeRecognizerConfiguration.swift */,
-				59A0D5C52204E8E4003709C3 /* WakeRecognizerConfiguration.swift */,
+				59A0D5C52204E8E4003709C3 /* WakewordRecognizerConfiguration.swift */,
 				01D31F7E216BB0000055FD45 /* GoogleRecognizerConfiguration.swift */,
 				01D31F7F216BB0000055FD45 /* RecognizerConfiguration.swift */,
 			);
@@ -399,6 +395,7 @@
 			children = (
 				01D31F85216BB0110055FD45 /* GoogleSpeechRecognizer.swift */,
 				5967108D21F7AE6B00CBFC88 /* AppleSpeechRecognizer.swift */,
+				59365947220889EE00C0365F /* AppleWakewordRecognizer.swift */,
 			);
 			name = Recognizers;
 			sourceTree = "<group>";
@@ -676,20 +673,19 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				59365948220889EE00C0365F /* AppleWakewordRecognizer.swift in Sources */,
 				01D31F6F216BAFD90055FD45 /* SPSpeechContext.swift in Sources */,
-				59A0D5C72204E8E4003709C3 /* WakeRecognizerConfiguration.swift in Sources */,
+				59A0D5C72204E8E4003709C3 /* WakewordRecognizerConfiguration.swift in Sources */,
 				01D31F77216BAFEF0055FD45 /* SpeechRecognizer.swift in Sources */,
 				01D31F8E216BB0370055FD45 /* Typealiases.swift in Sources */,
 				01D31F66216BAFB50055FD45 /* Error.swift in Sources */,
 				01D31F6A216BAFC60055FD45 /* SpeechPipeline.swift in Sources */,
 				01D31F80216BB0000055FD45 /* GoogleRecognizerConfiguration.swift in Sources */,
 				01D31F7B216BAFEF0055FD45 /* SpeechRecognizerService.swift in Sources */,
-				59A0D5C82204E8E4003709C3 /* SampleWakeRecognizerConfiguration.swift in Sources */,
 				01D31F71216BAFD90055FD45 /* RecognizerService.swift in Sources */,
 				5967108E21F7AE6B00CBFC88 /* AppleSpeechRecognizer.swift in Sources */,
 				01D31F82216BB0000055FD45 /* RecognizerConfiguration.swift in Sources */,
 				01D31F62216BAFA40055FD45 /* AudioController.swift in Sources */,
-				59A0D5CA2204E922003709C3 /* StandardWakeWordConfiguration.swift in Sources */,
 				011C193B216BCBCA00DB36FD /* StandardGoogleRecognitionConfiguration.swift in Sources */,
 				01D31F8A216BB0220055FD45 /* Results.swift in Sources */,
 				01D31F79216BAFEF0055FD45 /* AudioControllerDelegate.swift in Sources */,
@@ -764,10 +760,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
 				DEVELOPMENT_TEAM = S55ZL97588;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/SpokeStack.framework/Frameworks",
-				);
+				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				INFOPLIST_FILE = SpokeStackFrameworkExample/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -789,10 +782,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
 				DEVELOPMENT_TEAM = S55ZL97588;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/SpokeStack.framework/Frameworks",
-				);
+				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				INFOPLIST_FILE = SpokeStackFrameworkExample/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",

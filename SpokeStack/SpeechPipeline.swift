@@ -8,10 +8,6 @@
 
 import Foundation
 
-public enum SpeechPipelineError: Error {
-    case illegalState(message: String)
-}
-
 public final class SpeechPipeline {
     
     // MARK: Public (properties)
@@ -25,8 +21,6 @@ public final class SpeechPipeline {
     // MARK: Private (properties)
     
     private var speechRecognizerService: SpeechRecognizerService = GoogleSpeechRecognizer.sharedInstance
-    
-    private var wakeWordController: WakeWordSpeechRecognizer!
     
     // MARK: Initializers
     

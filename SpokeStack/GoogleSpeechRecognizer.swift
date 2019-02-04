@@ -106,7 +106,8 @@ public class GoogleSpeechRecognizer: SpeechRecognizerService {
                                                             eventHandler: {[weak self] done, response, error in
                                                                 
                                                                 guard let strongSelf = self, error == nil else {
-                                                                    self?.delegate?.didError(error?.localizedDescription ?? "no error description provided")
+                                                                    self?.delegate?.didError(error ?? SpeechRecognizerError.unknownCause("no error description provided"))
+                                                                    self?.delegate?.didFinish()
                                                                     return
                                                                 }
                                                                 
@@ -159,7 +160,7 @@ extension GoogleSpeechRecognizer: AudioControllerDelegate {
     
     func setupFailed(_ error: String) {
         self.streaming = false
-        self.delegate?.didError(error)
+        self.delegate?.didError(SpeechRecognizerError.failed(error))
     }
     
     func processSampleData(_ data: Data) -> Void {
