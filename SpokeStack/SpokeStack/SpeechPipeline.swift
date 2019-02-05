@@ -24,9 +24,7 @@ public final class SpeechPipeline {
     
     // MARK: Private (properties)
     
-    private var speechRecognizerService: SpeechRecognizerService = GoogleSpeechRecognizer.sharedInstance
-    
-    private var wakeWordController: WakeWordSpeechRecognizer!
+    private var speechRecognizerService: SpeechRecognizerService
     
     // MARK: Initializers
     
@@ -42,8 +40,8 @@ public final class SpeechPipeline {
         self.configuration = configuration
         self.delegate = delegate
         
-        self.speechRecognizerService.configuration = configuration
         self.speechRecognizerService = service.speechRecognizerService
+        self.speechRecognizerService.configuration = configuration
         self.speechRecognizerService.delegate = self.delegate
     }
     
