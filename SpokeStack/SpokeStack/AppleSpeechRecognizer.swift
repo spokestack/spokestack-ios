@@ -122,7 +122,11 @@ class AppleSpeechRecognizer: NSObject, SpeechRecognizerService {
                     isFinal = true
                     
                     let finalTranscript: SFTranscription = result!.bestTranscription
-                    let confidence: Float = finalTranscript.segments.last?.confidence ?? 0.0
+
+                    let confidence: Float = result?.transcriptions.first?.segments.sorted(by: { (a, b) -> Bool in
+                        a.confidence <= b.confidence
+                    }).first?.confidence ?? 0.0
+
                     let context: SPSpeechContext = SPSpeechContext(transcript: finalTranscript.formattedString, confidence: confidence)
     
                     strongSelf.delegate?.didRecognize(context)
