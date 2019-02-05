@@ -19,6 +19,26 @@ struct WKWordConfiguration: WakeRecognizerConfiguration {
     var wakePhrases: String {
         return "up dog"
     }
+    
+    var frameWidth: Int {
+        return 20
+    }
+    
+    var wakeActionMin: Int {
+        return 600
+    }
+    
+    var wakeSmoothLength: Int {
+        return 50
+    }
+    
+    var wakePhraseLength: Int {
+        return 2000
+    }
+    
+    var preEmphasis: Float {
+        return 0.97
+    }
 }
 
 class WakeWordViewController: UIViewController {
