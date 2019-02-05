@@ -22,9 +22,7 @@ class ViewController: UIViewController {
     // MARK: View Life Cycle
     
     override func viewDidLoad() {
-        
         super.viewDidLoad()
-        self.wakeWordButton.isEnabled = false
     }
     
     @IBAction func googleAction(_ sender: Any) {
