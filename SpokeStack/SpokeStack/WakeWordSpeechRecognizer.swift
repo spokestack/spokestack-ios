@@ -64,6 +64,10 @@ public class WakeWordSpeechRecognizer: SpeechRecognizerService {
     
     private var rmsValue: Float = 0.0
     
+    private var preEmphasis: Float = 0.0
+    
+    private var prevSample: Float = 0.0
+    
     /// STFL / MEL Filterbank Configuration
     
     private var fft: FFT!
@@ -262,8 +266,13 @@ public class WakeWordSpeechRecognizer: SpeechRecognizerService {
 
         /// Update the rms normalization factors
         /// Maintain an ewma of the rms signal energy for speech samples
+        
+        // TODO: Need to verify that the audio "isSpeech"
+        /// https://github.com/pylon/spokestack-android/blob/master/src/main/java/com/pylon/spokestack/wakeword/WakewordTrigger.java#L391
+        if self.rmsValue > 0 {
 
-        self.rmsValue = self.rmsAlpha * self.rms(buffer) + (1 - self.rmsAlpha) * self.rmsValue
+            self.rmsValue = self.rmsAlpha * self.rms(buffer) + (1 - self.rmsAlpha) * self.rmsValue
+        }
 
         /// Process all samples in the frame
         
@@ -278,6 +287,14 @@ public class WakeWordSpeechRecognizer: SpeechRecognizerService {
 
             sample = sample * (self.rmsTarget / self.rmsValue)
             sample = max(-1.0, min(sample, 1.0))
+            
+            /// Run a pre-emphasis filter to balance high frequencies
+            /// and eliminate any dc energy
+
+            var nextSample: Float = sample
+            sample -= self.preEmphasis * self.prevSample
+            
+            self.prevSample = nextSample
 
             /// Process the sample
             /// Write it to the sample sliding window
@@ -298,8 +315,10 @@ public class WakeWordSpeechRecognizer: SpeechRecognizerService {
             }
 
             if self.sampleWindow.isFull {
-
+                
+                // TODO: Check for "isSpeech" before analyze
                 self.analyze()
+                
                 self.sampleWindow.rewind().seek(self.hopLength)
             }
         }
@@ -359,7 +378,7 @@ public class WakeWordSpeechRecognizer: SpeechRecognizerService {
 extension WakeWordSpeechRecognizer {
     
     private func analyze() -> Void {
-        
+
         /// Apply the windowing function to the current sample window
         
         for (index, _) in self.fftFrame.enumerated() {
@@ -490,15 +509,15 @@ extension WakeWordSpeechRecognizer {
             
             /// DEBUG
             
-            for i in 0..<predictions.detect_outputs__0.shape[0].intValue {
-                print(
-                    """
-                    loop test \(predictions.detect_outputs__0[i].floatValue.isFinite)
-                    value \(predictions.detect_outputs__0[i].floatValue)
-                    shape \(predictions.detect_outputs__0.shape)")
-                    """
-                )
-            }
+//            for i in 0..<predictions.detect_outputs__0.shape[0].intValue {
+//                print(
+//                    """
+//                    loop test \(predictions.detect_outputs__0[i].floatValue.isFinite)
+//                    value \(predictions.detect_outputs__0[i].floatValue)
+//                    shape \(predictions.detect_outputs__0.shape)")
+//                    """
+//                )
+//            }
             
             /// END DEBUG
             
