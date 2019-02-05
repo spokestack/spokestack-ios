@@ -30,7 +30,12 @@ public class WakeWordSpeechRecognizer: SpeechRecognizerService {
     
     // MARK: SpeechRecognizerService (properties)
     
-    public var configuration: RecognizerConfiguration = StandardWakeWordConfiguration()
+    public var configuration: RecognizerConfiguration = StandardWakeWordConfiguration() {
+        
+        didSet {
+            self.setupWordsAndPhrases()
+        }
+    }
     
     public weak var delegate: SpeechRecognizer?
     
@@ -131,51 +136,10 @@ public class WakeWordSpeechRecognizer: SpeechRecognizerService {
     // MARK: Private (methods)
     
     private func setup() -> Void {
-
-        /// Parse the configured list of keywords
-        /// Allocate an additional slot for the non-keyword class at 0
         
-        let wakeWords: Array<String> = self.wakeWordConfiguration.wakeWords.components(separatedBy: ",")
-        self.words = Array(repeating: "", count: wakeWords.count + 1)
+        /// Words and phrasing
         
-        for (index, _) in self.words.enumerated() {
-            
-            let indexOffset: Int = index + 1
-            
-            if indexOffset < self.words.count {
-                self.words[indexOffset] = wakeWords[indexOffset - 1]
-            }
-        }
-        
-        /// Parse the keyword phrase configuration
-        
-        var wakePhrases: Array<String> = self.wakeWordConfiguration.wakePhrases.components(separatedBy: ",")
-        self.phrases = TwoDimensionArray<Int>.init(repeating: [0], count: wakePhrases.count)
-        
-        for (index, _) in wakePhrases.enumerated() {
-            
-            let wakePhrase: String = wakePhrases[index]
-            let wakePhraseArray: Array<String> = wakePhrase.components(separatedBy: " ")
-            
-            /// Allocate an additional (null) slot at the end of each phrase,
-            /// which forces the phraser to continue detection until the end
-            /// of the final keyword in each phrase
-            
-            self.phrases[index] = Array<Int>.init(repeating: 0, count: wakePhrases.count + 1)
-            
-            for (j, _) in wakePhraseArray.enumerated() {
-
-                guard let k: Int = wakeWords.index(of: wakePhraseArray[j]) else {
-                    
-                    assertionFailure("wake-phrases")
-                    return
-                }
-
-                if j < self.phrases[index].count {
-                    self.phrases[index][j] = k + 1
-                }
-            }
-        }
+        self.setupWordsAndPhrases()
         
         /// Fetch signal normalization config
         
@@ -243,6 +207,54 @@ public class WakeWordSpeechRecognizer: SpeechRecognizerService {
         
         self.minActive = self.wakeWordConfiguration.wakeActionMin / frameWidth
         self.maxActive = self.wakeWordConfiguration.wakeActionMax / frameWidth
+    }
+    
+    private func setupWordsAndPhrases() -> Void {
+        
+        /// Parse the configured list of keywords
+        /// Allocate an additional slot for the non-keyword class at 0
+        
+        let wakeWords: Array<String> = self.wakeWordConfiguration.wakeWords.components(separatedBy: ",")
+        self.words = Array(repeating: "", count: wakeWords.count + 1)
+        
+        for (index, _) in self.words.enumerated() {
+            
+            let indexOffset: Int = index + 1
+            
+            if indexOffset < self.words.count {
+                self.words[indexOffset] = wakeWords[indexOffset - 1]
+            }
+        }
+        
+        /// Parse the keyword phrase configuration
+        
+        var wakePhrases: Array<String> = self.wakeWordConfiguration.wakePhrases.components(separatedBy: ",")
+        self.phrases = TwoDimensionArray<Int>.init(repeating: [0], count: wakePhrases.count)
+        
+        for (index, _) in wakePhrases.enumerated() {
+            
+            let wakePhrase: String = wakePhrases[index]
+            let wakePhraseArray: Array<String> = wakePhrase.components(separatedBy: " ")
+            
+            /// Allocate an additional (null) slot at the end of each phrase,
+            /// which forces the phraser to continue detection until the end
+            /// of the final keyword in each phrase
+            
+            self.phrases[index] = Array<Int>.init(repeating: 0, count: wakePhrases.count + 1)
+            
+            for (j, _) in wakePhraseArray.enumerated() {
+                
+                guard let k: Int = wakeWords.index(of: wakePhraseArray[j]) else {
+                    
+                    assertionFailure("wake-phrases")
+                    return
+                }
+                
+                if j < self.phrases[index].count {
+                    self.phrases[index][j] = k + 1
+                }
+            }
+        }
     }
     
     private func process(_ buffer: AVAudioPCMBuffer) -> Void {
@@ -438,7 +450,7 @@ extension WakeWordSpeechRecognizer {
                 let result = String(describing: predictions.melspec_outputs__0[i])
                 try? self.frameWindow.write(predictions.melspec_outputs__0[i].floatValue)
                 
-//                print("what is my result from filter \(result)")
+                print("what is my result from filter \(result)")
             }
             
             /// Detect
@@ -464,8 +476,20 @@ extension WakeWordSpeechRecognizer {
                 fatalError("Unexpected runtime error. MLMultiArray")
         }
         
-        for index in 0..<ModelConstants.numOfMelOutputs {
-            multiArray[index] = NSNumber(value: index)
+        var frameWindowIndex: Int = 0
+        
+        while !self.frameWindow.isEmpty {
+
+            do {
+                print("what is the frameWindowIndex \(frameWindowIndex)")
+                multiArray[frameWindowIndex] = NSNumber(value: try self.frameWindow.read())
+
+            } catch let readException {
+
+                fatalError("There is an error reading the framewindow \(String(describing: self.frameWindow)) and exception\(readException)")
+            }
+
+            frameWindowIndex += 1
         }
         
         /// Run against CoreML
@@ -592,17 +616,16 @@ extension WakeWordSpeechRecognizer {
         /// in the current phrase window
         
         var index: Int = 0
-        var max: Float = -Float.greatestFiniteMagnitude
         
         repeat {
+            
+            var max: Float = -Float.greatestFiniteMagnitude
             
             for (subindex, _) in self.words.enumerated() {
 
                 do {
 
                     let value: Float = try self.phraseWindow.read()
-                    
-//                    print("value in the phrase \(value)")
                     
                     if value > max {
                     
@@ -619,7 +642,7 @@ extension WakeWordSpeechRecognizer {
                     fatalError("Error occured while phrase \(#line)")
                 }
             }
-            
+
             index += 1
 
         } while !self.phraseWindow.isEmpty
@@ -637,7 +660,7 @@ extension WakeWordSpeechRecognizer {
                 
                 if word == phrase[match] {
                     
-                    match -= 1
+                    match += 1
                     if match == phrase.count {
                        
                         print("match == phrase count \(match) and phrase \(phrase)")
@@ -651,6 +674,7 @@ extension WakeWordSpeechRecognizer {
 
             if match == phrase.count {
                 print("match does == phrase count before activate")
+                // TODO: Pass delegate method to indicate ACTIVE
                 self.activeLength = 1
                 break
             }
