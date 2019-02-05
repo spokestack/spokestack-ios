@@ -22,7 +22,7 @@ public class WakeWordSpeechRecognizer: SpeechRecognizerService {
     public var configuration: RecognizerConfiguration = StandardWakeWordConfiguration() {
         
         didSet {
-            self.setupWordsAndPhrases()
+            self.setup()
         }
     }
     
@@ -106,9 +106,7 @@ public class WakeWordSpeechRecognizer: SpeechRecognizerService {
         audioEngineController.delegate = nil
     }
     
-    public init() {
-        self.setup()
-    }
+    public init() {}
     
     // MARK: Public (methods)
     
@@ -141,6 +139,7 @@ public class WakeWordSpeechRecognizer: SpeechRecognizerService {
         self.rmsTarget = self.wakeWordConfiguration.rmsTarget
         self.rmsAlpha = self.wakeWordConfiguration.rmsAlpha
         self.rmsValue = self.rmsTarget
+        self.preEmphasis = self.wakeWordConfiguration.preEmphasis
         
         /// Fetch and validate stft/mel spectrogram configuration
         
@@ -269,8 +268,7 @@ public class WakeWordSpeechRecognizer: SpeechRecognizerService {
         
         // TODO: Need to verify that the audio "isSpeech"
         /// https://github.com/pylon/spokestack-android/blob/master/src/main/java/com/pylon/spokestack/wakeword/WakewordTrigger.java#L391
-        if self.rmsValue > 0 {
-
+        if self.rmsAlpha > 0 {
             self.rmsValue = self.rmsAlpha * self.rms(buffer) + (1 - self.rmsAlpha) * self.rmsValue
         }
 
@@ -291,7 +289,7 @@ public class WakeWordSpeechRecognizer: SpeechRecognizerService {
             /// Run a pre-emphasis filter to balance high frequencies
             /// and eliminate any dc energy
 
-            var nextSample: Float = sample
+            let nextSample: Float = sample
             sample -= self.preEmphasis * self.prevSample
             
             self.prevSample = nextSample
@@ -472,8 +470,6 @@ extension WakeWordSpeechRecognizer {
     }
     
     private func detect() -> Void {
-        
-        print("detect is being fired off")
 
         /// Transfer the mel filterbank window to the detector model's inputs
         
@@ -531,7 +527,13 @@ extension WakeWordSpeechRecognizer {
             repeat {
                 
                 let predictionFloat: Float = predictions.detect_outputs__0[indexIncrement].floatValue
-                print("what is the detect float value: [[[ \(predictionFloat) ]]]")
+                print(
+                """
+                =====================================================
+                Detect Model Output Value value: \(predictionFloat) for shape \(indexIncrement)")
+                =====================================================
+                """
+                )
 
                 do {
                     
