@@ -11,17 +11,6 @@ import AVFoundation
 import CoreML
 import Speech
 
-private struct ModelConstants {
-    
-    static let numOfBatches = 1
-    
-    static let numOfFrames = 1
-    
-    static let numOfFFTComponents = 257
-    
-    static let numOfMelOutputs = 40
-}
-
 public class WakeWordSpeechRecognizer: SpeechRecognizerService {
     
     // MARK: Public (properties)
@@ -64,6 +53,8 @@ public class WakeWordSpeechRecognizer: SpeechRecognizerService {
     private var phraseSum: Array<Float> = []
     
     private var phraseArg: Array<Int> = []
+    
+    private var phraseMax: Array<Float> = []
     
     /// Audio Signal Normalization
     
@@ -199,6 +190,7 @@ public class WakeWordSpeechRecognizer: SpeechRecognizerService {
         /// any allocation within the frame loop
         
         self.phraseSum = Array(repeating: 0.0, count: self.words.count)
+        self.phraseMax = Array(repeating: 0.0, count: self.words.count)
         self.phraseArg = Array(repeating: 0, count: phraseLength)
         
         /// Configure the wakeword activation lengths
@@ -360,6 +352,7 @@ public class WakeWordSpeechRecognizer: SpeechRecognizerService {
         self.frameWindow.reset().fill(0)
         self.smoothWindow.reset().fill(0)
         self.phraseWindow.reset().fill(0)
+        self.phraseMax = Array(repeating: 0.0, count: self.words.count)
     }
 }
 
@@ -445,12 +438,8 @@ extension WakeWordSpeechRecognizer {
             
             self.frameWindow.rewind().seek(self.melWidth)
             
-            for i in 0..<ModelConstants.numOfMelOutputs {
-                
-                let result = String(describing: predictions.melspec_outputs__0[i])
+            for i in 0..<multiArray.shape[0].intValue {
                 try? self.frameWindow.write(predictions.melspec_outputs__0[i].floatValue)
-                
-                print("what is my result from filter \(result)")
             }
             
             /// Detect
@@ -481,7 +470,7 @@ extension WakeWordSpeechRecognizer {
         while !self.frameWindow.isEmpty {
 
             do {
-                print("what is the frameWindowIndex \(frameWindowIndex)")
+
                 multiArray[frameWindowIndex] = NSNumber(value: try self.frameWindow.read())
 
             } catch let readException {
@@ -498,6 +487,20 @@ extension WakeWordSpeechRecognizer {
             
             let input: WakeWordDetectInput = WakeWordDetectInput(melspec_inputs__0: multiArray)
             let predictions: WakeWordDetectOutput = try self.wwdetect.prediction(input: input)
+            
+            /// DEBUG
+            
+            for i in 0..<predictions.detect_outputs__0.shape[0].intValue {
+                print(
+                    """
+                    loop test \(predictions.detect_outputs__0[i].floatValue.isFinite)
+                    value \(predictions.detect_outputs__0[i].floatValue)
+                    shape \(predictions.detect_outputs__0.shape)")
+                    """
+                )
+            }
+            
+            /// END DEBUG
             
             /// Transfer the classifier's outputs to the posterior smoothing window
             
@@ -587,15 +590,13 @@ extension WakeWordSpeechRecognizer {
         
         let total: Int = self.smoothWindow.capacity / self.words.count
         self.phraseWindow.rewind().seek(self.words.count)
-
+        
         for (index, _) in self.words.enumerated() {
             
             do {
                 
                 let windowValue: Float = self.phraseSum[index] / Float(total)
                 try self.phraseWindow.write(windowValue)
-                
-                print("windowValue \(windowValue)")
 
             } catch SpeechPipelineError.illegalState(let message) {
                 
@@ -619,18 +620,19 @@ extension WakeWordSpeechRecognizer {
         
         repeat {
             
-            var max: Float = -Float.greatestFiniteMagnitude
+            var maxFloat: Float = -Float.greatestFiniteMagnitude
             
             for (subindex, _) in self.words.enumerated() {
 
                 do {
 
                     let value: Float = try self.phraseWindow.read()
+                    self.phraseMax[subindex] = max(value, self.phraseMax[subindex])
                     
-                    if value > max {
+                    if value > maxFloat {
                     
                         self.phraseArg[index] = subindex
-                        max = value
+                        maxFloat = value
                     }
 
                 } catch SpeechPipelineError.illegalState(let message) {
