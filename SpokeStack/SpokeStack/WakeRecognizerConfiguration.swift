@@ -24,6 +24,8 @@ public protocol WakeRecognizerConfiguration: RecognizerConfiguration {
     
     var rmsAlpha: Float { get }
     
+    var preEmphasis: Float { get }
+    
     var fftWindowSize: Int { get }
     
     var fftHopLength: Int { get }
@@ -55,6 +57,10 @@ extension WakeRecognizerConfiguration {
     
     public var rmsAlpha: Float {
         return 0.1
+    }
+    
+    public var preEmphasis: Float {
+        return 0.0
     }
     
     public var fftWindowSize: Int {
