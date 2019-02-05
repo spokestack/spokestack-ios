@@ -103,9 +103,9 @@ final class AudioEngineController {
 
             if status == .haveData {
              
-                DispatchQueue.main.async {
+//                DispatchQueue.main.async {
                     strongSelf.delegate?.didReceive(converted16BitBuffer)
-                }
+//                }
             }
         })
         
