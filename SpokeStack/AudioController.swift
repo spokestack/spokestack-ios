@@ -87,7 +87,7 @@ class AudioController {
     
     // MARK: Public (methods)
     
-    func startStreaming() -> Void {
+    func startStreaming(context: SpeechContext) -> Void {
 
         /// Prepare
         
@@ -106,7 +106,7 @@ class AudioController {
         }
     }
     
-    func stopStreaming() -> Void {
+    func stopStreaming(context: SpeechContext) -> Void {
         self.stop()
     }
     

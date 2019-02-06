@@ -14,7 +14,7 @@ protocol SpeechRecognizerService: AnyObject {
     
     var delegate: SpeechRecognizer? { get set }
     
-    func startStreaming() -> Void
+    func startStreaming(context: SpeechContext) -> Void
     
-    func stopStreaming() -> Void
+    func stopStreaming(context: SpeechContext) -> Void
 }

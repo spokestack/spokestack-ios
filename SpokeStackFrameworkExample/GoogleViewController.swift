@@ -48,9 +48,12 @@ class GoogleViewController: UIViewController {
         let googleConfiguration: GoogleRecognizerConfiguration = GoogleRecognizerConfiguration()
         googleConfiguration.apiKey = "AIzaSyBIgfSXeu0qQRKruau6eKKroOlfEo-ixsU"
         
-        return try! SpeechPipeline(.google,
-                                   configuration: googleConfiguration,
-                                   delegate: self)
+        return try! SpeechPipeline(.googleSpeech,
+                                   speechConfiguration: googleConfiguration,
+                                   speechDelegate: self,
+                                   wakewordService: .appleWakeword,
+                                   wakewordConfiguration: WakewordConfiguration(),
+                                   wakewordDelegate: self)
     }()
     
     override func loadView() {
@@ -95,13 +98,21 @@ class GoogleViewController: UIViewController {
     }
 }
 
-extension GoogleViewController: SpeechRecognizer {
+extension GoogleViewController: SpeechRecognizer, WakewordRecognizer {
+    func activate() {
+        
+    }
+    
+    func deactivate() {
+        
+    }
+    
     
     func didError(_ error: Error) {
         print("didFinish \(String(describing: error))")
     }
     
-    func didRecognize(_ result: SPSpeechContext) {
+    func didRecognize(_ result: SpeechContext) {
         print("transcript \(result.transcript)")
     }
     

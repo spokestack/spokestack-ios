@@ -12,4 +12,5 @@ import Foundation
     
     public var sampleRate = 16000
     public var languageLocale = "en-US"
+    public var frameWidth: Int = 10
 }

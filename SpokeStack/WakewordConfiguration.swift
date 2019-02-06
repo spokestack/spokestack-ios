@@ -8,16 +8,14 @@
 
 import Foundation
 
-@objc public class WakewordRecognizerConfiguration: RecognizerConfiguration {
+@objc public class WakewordConfiguration: NSObject {
     
     public var wakeWords: String = "up, dog"
     
     public var wakePhrases: String = "up dog"
     
     public var wakeSmoothLength: Int = 300
-    
-    public var frameWidth: Int = 10
-    
+        
     public var fftWindowType: String = "hann"
     
     public var rmsTarget: Float = 0.08
@@ -37,4 +35,11 @@ import Foundation
     public var wakeActionMin: Int = 500
     
     public var wakeActionMax: Int = 5000
+    
+    public var sampleRate = 16000
+    
+    public var languageLocale = "en-US"
+    
+    public var frameWidth: Int = 10
+
 }

@@ -11,28 +11,21 @@ import Speech
 
 class AppleSpeechRecognizer: NSObject, SpeechRecognizerService {
     
-    // MARK: Public (properties)
+    // MARK: public properties
     
     static let sharedInstance: AppleSpeechRecognizer = AppleSpeechRecognizer()
-    
     var configuration: RecognizerConfiguration = RecognizerConfiguration()
-    private var wakewordConfiguration: WakewordRecognizerConfiguration = WakewordRecognizerConfiguration()
-    
     weak var delegate: SpeechRecognizer?
     
-    // MARK: Private (properties)
+    // MARK: private properties
     
     private let audioSession: AVAudioSession = AVAudioSession.sharedInstance()
-    
     private let speechRecognizer: SFSpeechRecognizer = SFSpeechRecognizer(locale: NSLocale.current)!
-    
     private var recognitionRequest: SFSpeechAudioBufferRecognitionRequest?
-    
     private var recognitionTask: SFSpeechRecognitionTask?
-    
     private let audioEngine: AVAudioEngine = AVAudioEngine()
     
-    // MARK: Initializers
+    // MARK: initializers
     
     deinit {
         speechRecognizer.delegate = nil
@@ -44,109 +37,77 @@ class AppleSpeechRecognizer: NSObject, SpeechRecognizerService {
             try audioSession.setCategory(.playAndRecord, mode: .spokenAudio, options: .defaultToSpeaker)
             try audioSession.setActive(true, options: .notifyOthersOnDeactivation)
         } catch let error {
-            print("audioSession properties weren't set because of an error. \(error)")
+            self.delegate?.didError(error)
         }
     }
     
-    // MARK: SpeechRecognizerService
+    // MARK: SpeechRecognizerService implementation
     
-    func startStreaming() {
-        
-        self.prepareAudio()
-        self.startAudioEngine()
+    func startStreaming(context: SpeechContext) {
+        do {
+            try self.prepareRecognition(context: context)
+            audioEngine.prepare()
+            try audioEngine.start()
+        } catch let error {
+            self.delegate?.didError(error)
+        }
     }
     
-    func stopStreaming() {
-     
-        /// Stop the audio engine and tear down
-        
-        recognitionTask?.cancel()
-        recognitionRequest?.endAudio()
-        speechRecognizer.delegate = nil
+    func stopStreaming(context: SpeechContext) {
         audioEngine.stop()
-        
+        self.audioEngine.inputNode.removeTap(onBus: 0)
+        //recognitionTask?.cancel()
+        recognitionRequest?.endAudio()
         recognitionRequest = nil
         recognitionTask = nil
     }
     
-    private func prepareAudio() -> Void {
-        
-        /// Speech Recognizer
-        
+    private func prepareRecognition(context: SpeechContext) throws -> Void {
         self.recognitionRequest = SFSpeechAudioBufferRecognitionRequest()
-        let inputNode: AVAudioInputNode = self.audioEngine.inputNode
-        
         guard let recognitionRequest = self.recognitionRequest else {
-            fatalError("Unable to create an SFSpeechAudioBufferRecognitionRequest object")
+            throw SpeechRecognizerError.unknownCause("Unable to create an SFSpeechAudioBufferRecognitionRequest object")
         }
-        
         recognitionRequest.shouldReportPartialResults = true
-        let phrases: Array<String> = self.wakewordConfiguration.wakePhrases.components(separatedBy: ",")
-
-        self.recognitionTask = self.speechRecognizer.recognitionTask(with: recognitionRequest, resultHandler: {[weak self] result, error in
-            
+        
+        // MARK: AVAudioEngine
+        
+        let buffer: Int = (self.configuration.sampleRate / 1000) * self.configuration.frameWidth
+        let recordingFormat = self.audioEngine.inputNode.outputFormat(forBus: 0)
+        self.audioEngine.inputNode.installTap(
+            onBus: 0,
+            bufferSize: AVAudioFrameCount(buffer),
+            format: recordingFormat)
+        {[weak self] buffer, when in
             guard let strongSelf = self else {
                 return
             }
-            
-            var isFinal: Bool = false
-            
-            if result != nil {
-                
-                let foundResult: Bool = !phrases.filter({
-                    result!.bestTranscription.formattedString.lowercased().contains($0.lowercased())
-                }).isEmpty
-                
-                print("returned \(String(describing: result))")
-                
-                if foundResult {
-                    
-                    strongSelf.recognitionTask?.cancel()
-                    print("found it \(String(describing: result?.bestTranscription.formattedString))")
-                    isFinal = true
-                    
-                    let finalTranscript: SFTranscription = result!.bestTranscription
-                    let confidence: Float = finalTranscript.segments.last?.confidence ?? 0.0
-                    let context: SPSpeechContext = SPSpeechContext(transcript: finalTranscript.formattedString, confidence: confidence)
-    
-                    strongSelf.delegate?.didRecognize(context)
-                    strongSelf.delegate?.didFinish()
-                }
-            }
-            
-            if error != nil || isFinal {
-                
-                strongSelf.audioEngine.stop()
-                inputNode.removeTap(onBus: 0)
-                
-                strongSelf.stopStreaming()
-            }
-        })
-        
-        let buffer: Int = (self.wakewordConfiguration.sampleRate / 1000) * self.wakewordConfiguration.frameWidth
-        let recordingFormat = inputNode.outputFormat(forBus: 0)
-        
-        inputNode.installTap(onBus: 0, bufferSize: AVAudioFrameCount(buffer), format: recordingFormat) {[weak self] buffer, when in
-            
-            guard let strongSelf = self else {
-                return
-            }
-            
             strongSelf.recognitionRequest?.append(buffer)
         }
         
-        self.audioEngine.prepare()
-    }
-    
-    private func startAudioEngine() -> Void {
-
-        do {
-            
-            try audioEngine.start()
-            
-        } catch {
-            
-            print("audioEngine couldn't start because of an error.")
-        }
+        // MARK: recognitionTask
+        
+        self.recognitionTask = self.speechRecognizer.recognitionTask(
+            with: recognitionRequest,
+            resultHandler: {[weak self] result, error in
+                guard let strongSelf = self else {
+                    return
+                }
+                if let e = error {
+                    strongSelf.delegate?.didError(e)
+                    //strongSelf.stopStreaming(context: context)
+                }
+                if let r = result {
+                    let confidence = r.transcriptions.first?.segments.sorted(
+                        by: { (a, b) -> Bool in
+                            a.confidence <= b.confidence }).first?.confidence ?? 0.0
+                    context.transcript = r.bestTranscription.formattedString
+                    context.confidence = confidence
+                    strongSelf.delegate?.didRecognize(context)
+                    if r.isFinal {
+                        strongSelf.delegate?.didFinish()
+                        strongSelf.stopStreaming(context: context)
+                    }
+                }
+        })
     }
 }

@@ -69,6 +69,8 @@ public class GoogleSpeechRecognizer: SpeechRecognizerService {
         return recognizer
     }()
     
+    private var context: SpeechContext = SpeechContext()
+    
     // MARK: Initializers
     
     public init() {
@@ -77,15 +79,16 @@ public class GoogleSpeechRecognizer: SpeechRecognizerService {
     
     // MARK: SpeechRecognizerService
     
-    public func startStreaming() -> Void {
+    public func startStreaming(context: SpeechContext) -> Void {
+        self.context = context
         self.audioData = NSMutableData()
-        AudioController.shared.startStreaming()
+        AudioController.shared.startStreaming(context: context)
         self.delegate?.didStart()
     }
     
-    public func stopStreaming() -> Void {
-        
-        AudioController.shared.stopStreaming()
+    public func stopStreaming(context: SpeechContext) -> Void {
+        self.context = context
+        AudioController.shared.stopStreaming(context: context)
         
         if !self.streaming {
             return
@@ -120,24 +123,23 @@ public class GoogleSpeechRecognizer: SpeechRecognizerService {
                                                                     }
                                                                     
                                                                     if finished {
-                                                                        let context: SPSpeechContext = SPSpeechContext(transcript: alt.transcript, confidence: alt.confidence)
-                                                                        strongSelf.delegate?.didRecognize(context)
+                                                                        strongSelf.context.transcript = alt.transcript
+                                                                        strongSelf.context.confidence = alt.confidence
+                                                                        strongSelf.delegate?.didRecognize(strongSelf.context)
                                                                         strongSelf.delegate?.didFinish()
-                                                                        strongSelf.stopStreaming()
+                                                                        strongSelf.stopStreaming(context: strongSelf.context)
                                                                     }
                                                                 }
                                                                 
             })
             
-            /// authenticate using an API key obtained from the Google Cloud Console
+            // authenticate using an API key obtained from the Google Cloud Console
             
             self.call.requestHeaders.setObject(NSString(string: self.googleConfiguration.apiKey),
                                                forKey:NSString(string:"X-Goog-Api-Key"))
-            
-            /// if the API key has a bundle ID restriction, specify the bundle ID like this
-            
-//            self.call.requestHeaders.setObject(NSString(string:Bundle.main.bundleIdentifier!),
-//                                               forKey:NSString(string:"X-Ios-Bundle-Identifier"))
+            // if the API key has a bundle ID restriction, specify the bundle ID like this
+            //self.call.requestHeaders.setObject(NSString(string:Bundle.main.bundleIdentifier!),
+            // forKey:NSString(string:"X-Ios-Bundle-Identifier"))
             
             self.call.start()
             self.streaming = true

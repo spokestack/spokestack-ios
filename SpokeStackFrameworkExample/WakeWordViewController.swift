@@ -43,13 +43,16 @@ class WakeWordViewController: UIViewController {
         return button
     }()
     
-    lazy private var pipeline: SpeechPipeline = {
+    lazy public var pipeline: SpeechPipeline = {
         
-        let wakeConfiguration: WakewordRecognizerConfiguration = WakewordRecognizerConfiguration()
+        let wakeConfiguration: WakewordConfiguration = WakewordConfiguration()
         
-        return try! SpeechPipeline(.wakeword,
-                                   configuration: wakeConfiguration,
-                                   delegate: self)
+        return try! SpeechPipeline(.appleSpeech,
+                                   speechConfiguration: RecognizerConfiguration(),
+                                   speechDelegate: self,
+                                   wakewordService: .appleWakeword,
+                                   wakewordConfiguration: WakewordConfiguration(),
+                                   wakewordDelegate: self)
     }()
     
     override func loadView() {
@@ -81,7 +84,9 @@ class WakeWordViewController: UIViewController {
     }
     
     @objc func startRecordingAction(_ sender: Any) {
-        self.pipeline.start()
+        if (!self.pipeline.context.isActive) {
+            self.pipeline.start()
+        }
     }
     
     @objc func stopRecordingAction(_ sender: Any) {
@@ -93,23 +98,32 @@ class WakeWordViewController: UIViewController {
     }
 }
 
-extension WakeWordViewController: SpeechRecognizer {
+extension WakeWordViewController: SpeechRecognizer, WakewordRecognizer {
+    func activate() {
+        print("activate")
+        pipeline.activate()
+    }
+    
+    func deactivate() {
+        print("deactivate")
+    }
     
     func didError(_ error: Error) {
         print("didError \(String(describing: error))")
     }
     
-    func didRecognize(_ result: SPSpeechContext) {
-        print("transcript \(result.transcript)")
+    func didRecognize(_ result: SpeechContext) {
+        print("didRecognize \(result.transcript)")
     }
     
     func didFinish() {
+        print("didFinish")
         self.stopRecordingButton.isEnabled.toggle()
         self.startRecordingButton.isEnabled.toggle()
     }
     
     func didStart() {
-        
+        print("didStart")
         self.stopRecordingButton.isEnabled.toggle()
         self.startRecordingButton.isEnabled.toggle()
     }

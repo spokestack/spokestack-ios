@@ -47,9 +47,12 @@ class AppleViewController: UIViewController {
         
         let appleConfiguration: RecognizerConfiguration = RecognizerConfiguration()
         
-        return try! SpeechPipeline(.apple,
-                                   configuration: appleConfiguration,
-                                   delegate: self)
+        return try! SpeechPipeline(.appleSpeech,
+                                   speechConfiguration: appleConfiguration,
+                                   speechDelegate: self,
+                                   wakewordService: .appleWakeword,
+                                   wakewordConfiguration: WakewordConfiguration(),
+                                   wakewordDelegate: self)
     }()
     
     override func loadView() {
@@ -94,12 +97,20 @@ class AppleViewController: UIViewController {
     }
 }
 
-extension AppleViewController: SpeechRecognizer {
+extension AppleViewController: SpeechRecognizer, WakewordRecognizer {
+    func activate() {
+        
+    }
+    
+    func deactivate() {
+        
+    }
+    
     func didError(_ error: Error) {
         print("didFinish \(String(describing: error))")
     }
     
-    func didRecognize(_ result: SPSpeechContext) {
+    func didRecognize(_ result: SpeechContext) {
         print("didRecognize transcript \(result.transcript)")
     }
     

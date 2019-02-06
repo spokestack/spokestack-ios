@@ -24,7 +24,7 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         
         super.viewDidLoad()
-        self.wakeWordButton.isEnabled = false
+        self.wakeWordButton.isEnabled = true
     }
     
     @IBAction func googleAction(_ sender: Any) {
