@@ -28,6 +28,7 @@ public class AppleWakewordRecognizer: NSObject, WakewordRecognizerService {
     private var recognitionRequest: SFSpeechAudioBufferRecognitionRequest?
     private var recognitionTask: SFSpeechRecognitionTask?
     private let audioEngine: AVAudioEngine = AVAudioEngine()
+    private var dispatchWorker: DispatchWorkItem?
     
     // MARK: NSObject implementations
     
@@ -95,6 +96,13 @@ public class AppleWakewordRecognizer: NSObject, WakewordRecognizerService {
             strongSelf.recognitionRequest?.append(buffer)
         }
         
+        // MARK: Automatically restart wakeword task if it goes over Apple's 1 minute listening limit
+        self.dispatchWorker = DispatchWorkItem {
+            self.stopStreaming(context: context)
+            self.startStreaming(context: context)
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(self.configuration.wakeActiveMax), execute: self.dispatchWorker!)
+        
         // MARK: recognitionTask
         
         self.recognitionTask = self.speechRecognizer.recognitionTask(
@@ -120,6 +128,7 @@ public class AppleWakewordRecognizer: NSObject, WakewordRecognizerService {
                                 .contains($0.lowercased())})
                         .isEmpty
                 if wakewordDetected {
+                    strongSelf.dispatchWorker?.cancel()
                     strongSelf.stopStreaming(context: context)
                     strongSelf.delegate?.activate()
                 }

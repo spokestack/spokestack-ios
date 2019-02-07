@@ -13,40 +13,30 @@ import AVFoundation
 class WakeWordViewController: UIViewController {
     
     lazy var startRecordingButton: UIButton = {
-        
         let button: UIButton = UIButton(frame: .zero)
-        
         button.translatesAutoresizingMaskIntoConstraints = false
         button.setTitle("Start Recording", for: .normal)
         button.addTarget(self,
                          action: #selector(WakeWordViewController.startRecordingAction(_:)),
                          for: .touchUpInside)
-        
         button.setTitleColor(.blue, for: .normal)
-        
+        button.isEnabled = true
         return button
     }()
     
     var stopRecordingButton: UIButton = {
-        
         let button: UIButton = UIButton(frame: .zero)
-        
         button.translatesAutoresizingMaskIntoConstraints = false
         button.setTitle("Stop Recording", for: .normal)
         button.addTarget(self,
                          action: #selector(WakeWordViewController.stopRecordingAction(_:)),
                          for: .touchUpInside)
-        
         button.setTitleColor(.blue, for: .normal)
-        
-        
+        button.isEnabled = false
         return button
     }()
     
     lazy public var pipeline: SpeechPipeline = {
-        
-        let wakeConfiguration: WakewordConfiguration = WakewordConfiguration()
-        
         return try! SpeechPipeline(.appleSpeech,
                                    speechConfiguration: RecognizerConfiguration(),
                                    speechDelegate: self,
@@ -56,11 +46,9 @@ class WakeWordViewController: UIViewController {
     }()
     
     override func loadView() {
-        
         super.loadView()
         self.view.backgroundColor = .white
         self.title = "WakeWord"
-        
         let doneBarButtonItem: UIBarButtonItem = UIBarButtonItem(barButtonSystemItem: .done,
                                                                  target: self,
                                                                  action: #selector(WakeWordViewController.dismissViewController(_:)))
@@ -87,10 +75,14 @@ class WakeWordViewController: UIViewController {
         if (!self.pipeline.context.isActive) {
             self.pipeline.start()
         }
+        self.stopRecordingButton.isEnabled.toggle()
+        self.startRecordingButton.isEnabled.toggle()
     }
     
     @objc func stopRecordingAction(_ sender: Any) {
         self.pipeline.stop()
+        self.stopRecordingButton.isEnabled.toggle()
+        self.startRecordingButton.isEnabled.toggle()
     }
     
     @objc func dismissViewController(_ sender: Any?) -> Void {
@@ -101,7 +93,7 @@ class WakeWordViewController: UIViewController {
 extension WakeWordViewController: SpeechRecognizer, WakewordRecognizer {
     func activate() {
         print("activate")
-        pipeline.activate()
+        self.pipeline.activate()
     }
     
     func deactivate() {
@@ -109,7 +101,9 @@ extension WakeWordViewController: SpeechRecognizer, WakewordRecognizer {
     }
     
     func didError(_ error: Error) {
-        print("didError \(String(describing: error))")
+        if !error.localizedDescription.starts(with: "The operation couldn’t be completed. (kAFAssistantErrorDomain error 216.)") {
+            print("didError: " + error.localizedDescription)
+        }
     }
     
     func didRecognize(_ result: SpeechContext) {
@@ -118,14 +112,15 @@ extension WakeWordViewController: SpeechRecognizer, WakewordRecognizer {
     
     func didFinish() {
         print("didFinish")
-        self.stopRecordingButton.isEnabled.toggle()
-        self.startRecordingButton.isEnabled.toggle()
+        if (!self.pipeline.context.isActive) {
+            self.pipeline.start()
+        } else {
+            self.pipeline.activate()
+        }
     }
     
     func didStart() {
         print("didStart")
-        self.stopRecordingButton.isEnabled.toggle()
-        self.startRecordingButton.isEnabled.toggle()
     }
 }
 

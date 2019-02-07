@@ -66,14 +66,10 @@ public final class SpeechPipeline {
     }
     
     public func start() -> Void {
-        if !self.context.isActive {
-            self.wakewordRecognizerService.startStreaming(context: self.context)
-        }
+        self.wakewordRecognizerService.startStreaming(context: self.context)
     }
     
     public func stop() -> Void {
-        if self.context.isActive {
-            self.wakewordRecognizerService.stopStreaming(context: self.context)
-        }
+        self.wakewordRecognizerService.stopStreaming(context: self.context)
     }
 }

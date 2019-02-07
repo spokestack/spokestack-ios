@@ -24,6 +24,7 @@ class AppleSpeechRecognizer: NSObject, SpeechRecognizerService {
     private var recognitionRequest: SFSpeechAudioBufferRecognitionRequest?
     private var recognitionTask: SFSpeechRecognitionTask?
     private let audioEngine: AVAudioEngine = AVAudioEngine()
+    private var dispatchWorker: DispatchWorkItem?
     
     // MARK: initializers
     
@@ -56,7 +57,7 @@ class AppleSpeechRecognizer: NSObject, SpeechRecognizerService {
     func stopStreaming(context: SpeechContext) {
         audioEngine.stop()
         self.audioEngine.inputNode.removeTap(onBus: 0)
-        //recognitionTask?.cancel()
+        recognitionTask?.cancel()
         recognitionRequest?.endAudio()
         recognitionRequest = nil
         recognitionTask = nil
@@ -92,6 +93,7 @@ class AppleSpeechRecognizer: NSObject, SpeechRecognizerService {
                 guard let strongSelf = self else {
                     return
                 }
+                strongSelf.dispatchWorker?.cancel()
                 if let e = error {
                     strongSelf.delegate?.didError(e)
                     //strongSelf.stopStreaming(context: context)
@@ -102,11 +104,12 @@ class AppleSpeechRecognizer: NSObject, SpeechRecognizerService {
                             a.confidence <= b.confidence }).first?.confidence ?? 0.0
                     context.transcript = r.bestTranscription.formattedString
                     context.confidence = confidence
-                    strongSelf.delegate?.didRecognize(context)
-                    if r.isFinal {
-                        strongSelf.delegate?.didFinish()
+                    strongSelf.dispatchWorker = DispatchWorkItem {
+                        strongSelf.delegate?.didRecognize(context)
                         strongSelf.stopStreaming(context: context)
+                        strongSelf.delegate?.didFinish()
                     }
+                    DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + .milliseconds(strongSelf.configuration.vadFallDelay), execute: strongSelf.dispatchWorker!)
                 }
         })
     }
