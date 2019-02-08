@@ -20,6 +20,7 @@
 		014EFA512203A7900004D176 /* AppleViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 014EFA502203A7900004D176 /* AppleViewController.swift */; };
 		014EFA532203A79A0004D176 /* WakeWordViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 014EFA522203A79A0004D176 /* WakeWordViewController.swift */; };
 		014EFA552203A7A60004D176 /* GoogleViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 014EFA542203A7A60004D176 /* GoogleViewController.swift */; };
+		01663B29220B277100361812 /* up_dog.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 01663B28220B277100361812 /* up_dog.m4a */; };
 		0167942D21C30FE600BE457E /* AVAudioPCMBuffer+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0167942C21C30FE600BE457E /* AVAudioPCMBuffer+Extensions.swift */; };
 		0181E33D21E7D440004B3D7B /* AppleSpeechRecognizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0181E33C21E7D440004B3D7B /* AppleSpeechRecognizer.swift */; };
 		0181E33F21E7F0D3004B3D7B /* StandardWakeWordConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0181E33E21E7F0D3004B3D7B /* StandardWakeWordConfiguration.swift */; };
@@ -181,6 +182,7 @@
 		014EFA502203A7900004D176 /* AppleViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppleViewController.swift; sourceTree = "<group>"; };
 		014EFA522203A79A0004D176 /* WakeWordViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WakeWordViewController.swift; sourceTree = "<group>"; };
 		014EFA542203A7A60004D176 /* GoogleViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoogleViewController.swift; sourceTree = "<group>"; };
+		01663B28220B277100361812 /* up_dog.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = up_dog.m4a; sourceTree = "<group>"; };
 		0167942C21C30FE600BE457E /* AVAudioPCMBuffer+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AVAudioPCMBuffer+Extensions.swift"; sourceTree = "<group>"; };
 		0181E33C21E7D440004B3D7B /* AppleSpeechRecognizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppleSpeechRecognizer.swift; sourceTree = "<group>"; };
 		0181E33E21E7F0D3004B3D7B /* StandardWakeWordConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StandardWakeWordConfiguration.swift; sourceTree = "<group>"; };
@@ -329,6 +331,7 @@
 		01D31F3D216BAF260055FD45 /* SpokeStack */ = {
 			isa = PBXGroup;
 			children = (
+				01663B28220B277100361812 /* up_dog.m4a */,
 				01D31F59216BAF710055FD45 /* Configurations */,
 				01D31F60216BAF9A0055FD45 /* Controllers */,
 				01D31F64216BAFAA0055FD45 /* Errors */,
@@ -692,6 +695,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				01663B29220B277100361812 /* up_dog.m4a in Resources */,
 				01D3246E216BB10D0055FD45 /* gRPCCertificates.bundle in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

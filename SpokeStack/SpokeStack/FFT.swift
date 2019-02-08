@@ -21,15 +21,13 @@ final class FFT {
     
     private var log2Size: Int
     
-    private var window: Array<Float> = []
+//    private var window: Array<Float> = []
     
     private var fftSetup: FFTSetup
     
-    private var hasPerformedFFT: Bool = false
-    
     private var complexBuffer: DSPSplitComplex!
 
-    private var magnitudes: Array<Float> = []
+//    private var magnitudes: Array<Float> = []
     
     // MARK: Initializers
     
@@ -64,30 +62,27 @@ final class FFT {
     
     // MARK: Public (methods)
 
-    func forward(_ buffers: Array<Float>) {
+    func forward(_ buffers: Array<Float>) -> Void {
         
         var analysisBuffer = buffers
         
-        if self.window.isEmpty {
-            
-            self.window = [Float](repeating: 0.0, count: size)
-            vDSP_hann_window(&self.window, UInt(size), Int32(vDSP_HANN_NORM))
-        }
-        
+//        if self.window.isEmpty {
+//
+//            self.window = [Float](repeating: 0.0, count: size)
+//            vDSP_hann_window(&self.window, UInt(size), Int32(vDSP_HANN_NORM))
+//        }
+
         /// Apply the window
-        
-        vDSP_vmul(buffers, 1, self.window, 1, &analysisBuffer, 1, UInt(buffers.count))
+
+//        vDSP_vmul(buffers, 1, self.window, 1, &analysisBuffer, 1, UInt(buffers.count))
         
         var reals: Array<Float> = []
         var imags: Array<Float> = []
 
         for (idx, element) in analysisBuffer.enumerated() {
             
-            if idx % 2 == 0 {
-                reals.append(element)
-            } else {
-                imags.append(element)
-            }
+            reals.append(element)
+            imags.append(0)
         }
         
         self.complexBuffer = DSPSplitComplex(realp: UnsafeMutablePointer(mutating: reals),
@@ -99,9 +94,8 @@ final class FFT {
         
         /// Store and square (for better visualization & conversion to db) the magnitudes
         
-        self.magnitudes = [Float](repeating: 0.0, count: self.halfSize)
-        vDSP_zvmags(&(self.complexBuffer!), 1, &self.magnitudes, 1, UInt(self.halfSize))
-        
-        self.hasPerformedFFT = true
+//        self.magnitudes = [Float](repeating: 0.0, count: self.halfSize)
+        vDSP_zvmags(&(self.complexBuffer!), 1, &analysisBuffer, 1, UInt(self.halfSize))
+//        analysisBuffer.append(contentsOf: self.magnitudes)
     }
 }

@@ -24,7 +24,7 @@ extension AVAudioPCMBuffer {
     var spstk_data: Data {
         
         let count: Int = Int(self.frameLength)
-        let data = Data(bytes: self.spstk_int16Audio, count: count)
+        let data = Data(bytes: self.spstk_float32Audio, count: count)
 
         return data
     }

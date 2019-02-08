@@ -13,4 +13,8 @@ protocol AudioControllerDelegate: AnyObject {
     func setupFailed(_ error: String) -> Void
     
     func processSampleData(_ data: Data) -> Void
+    
+    func didStart(_ engineController: AudioController) -> Void
+    
+    func didStop(_ engineController: AudioController) -> Void
 }

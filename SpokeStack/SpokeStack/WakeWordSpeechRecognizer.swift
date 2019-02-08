@@ -100,10 +100,15 @@ public class WakeWordSpeechRecognizer: SpeechRecognizerService {
     
     private var audioEngineController: AudioEngineController!
     
+    private let audioController: AudioController = AudioController.shared
+    
     // MARK: Initializers
     
     deinit {
+        
         audioEngineController.delegate = nil
+        audioController.delegate = nil
+        
     }
     
     public init() {}
@@ -111,19 +116,25 @@ public class WakeWordSpeechRecognizer: SpeechRecognizerService {
     // MARK: Public (methods)
     
     public func startStreaming() -> Void {
-
-        let buffer: Int = (self.wakeWordConfiguration.sampleRate / 1000) * self.wakeWordConfiguration.frameWidth
-
-        self.audioEngineController = AudioEngineController(buffer)
-        self.audioEngineController.delegate = self
-
-        try? self.audioEngineController.startRecording()
+        
+//        let buffer: Int = (self.wakeWordConfiguration.sampleRate / 1000) * self.wakeWordConfiguration.frameWidth
+        self.audioController.sampleRate = self.wakeWordConfiguration.sampleRate
+        self.audioController.delegate = self
+        self.audioController.startStreaming()
+        
+//
+//        self.audioEngineController = AudioEngineController(buffer)
+//        self.audioEngineController.delegate = self
+//
+//        try? self.audioEngineController.startRecording()
     }
     
     public func stopStreaming() -> Void {
 
-        self.audioEngineController.stopRecording()
-        self.audioEngineController.delegate = nil
+//        self.audioEngineController.stopRecording()
+//        self.audioEngineController.delegate = nil
+        self.audioController.stopStreaming()
+        self.audioController.delegate = nil
     }
     
     // MARK: Private (methods)
@@ -252,16 +263,29 @@ public class WakeWordSpeechRecognizer: SpeechRecognizerService {
         }
     }
     
-    private func process(_ buffer: AVAudioPCMBuffer) -> Void {
+//    private func process(_ buffer: AVAudioPCMBuffer) -> Void {
+//
+//        // TODO: Need to handle "state"
+//        //
+//        // See: https://github.com/pylon/spokestack-android/blob/a5b1e4cf194b10e209c1b740c2e9655989b24cb9/src/main/java/com/pylon/spokestack/wakeword/WakewordTrigger.java#L370
+//
+////        self.sample(buffer.spstk_16BitAudioData, buffer: buffer)
+//    }
+    
+    ////
+    
+    private func process(_ data: Data) -> Void {
         
         // TODO: Need to handle "state"
         //
         // See: https://github.com/pylon/spokestack-android/blob/a5b1e4cf194b10e209c1b740c2e9655989b24cb9/src/main/java/com/pylon/spokestack/wakeword/WakewordTrigger.java#L370
-        
-        self.sample(buffer.spstk_16BitAudioData, buffer: buffer)
+
+        self.sample(data)
     }
     
-    private func sample(_ data: Data, buffer: AVAudioPCMBuffer) -> Void {
+    ////
+    
+    private func sample(_ data: Data) -> Void {
 
         /// Update the rms normalization factors
         /// Maintain an ewma of the rms signal energy for speech samples
@@ -269,7 +293,7 @@ public class WakeWordSpeechRecognizer: SpeechRecognizerService {
         // TODO: Need to verify that the audio "isSpeech"
         /// https://github.com/pylon/spokestack-android/blob/master/src/main/java/com/pylon/spokestack/wakeword/WakewordTrigger.java#L391
         if self.rmsAlpha > 0 {
-            self.rmsValue = self.rmsAlpha * self.rms(buffer) + (1 - self.rmsAlpha) * self.rmsValue
+            self.rmsValue = self.rmsAlpha * self.rms(data) + (1 - self.rmsAlpha) * self.rmsValue
         }
 
         /// Process all samples in the frame
@@ -339,19 +363,24 @@ public class WakeWordSpeechRecognizer: SpeechRecognizerService {
         return window
     }
 
-    private func rms(_ buffer: AVAudioPCMBuffer) -> Float {
+    private func rms(_ data: Data) -> Float {
 
         var sum: Float = 0
         var count: Int = 0
-        
-        for audio in buffer.spstk_int16Audio {
 
-            let sample: Float = Float(audio) / Float(Int16.max)
+        /// Process all samples in the frame
+        
+        let dataElements: Array<Int16> = data.elements()
+        var newDataIterator = dataElements.makeIterator()
+        
+        while let num = newDataIterator.next() {
+            
+            let sample: Float = Float(num) / Float(Int16.max)
             
             sum += sample * sample
             count += 1
         }
-        
+
         let rms: Float = Float(sqrt(sum / Float(count)))
         return rms
     }
@@ -396,12 +425,14 @@ extension WakeWordSpeechRecognizer {
         }
         
         /// Compute the stft
-        
+
         self.fft.forward(self.fftFrame)
         self.filter()
     }
     
     private func filter() -> Void {
+        
+        precondition(!self.fftFrame.isEmpty, "FFT Frame can't be empty")
 
         /// Decode the FFT outputs into the filter model's input
         /// Compute the nagitude (abs) of each complex stft component
@@ -409,31 +440,7 @@ extension WakeWordSpeechRecognizer {
         /// and are stored in the first of the first two positions of the stft
         /// output. The remaining components contact real / imaginary parts
         
-        
-        let frameCount: Int = (self.fftFrame.count / 2)
-        var components: Array<Float> = []
-        components.reserveCapacity(frameCount)
-        
-        /// Populate the components
-    
-        let firstComponent: Float = self.fftFrame.first!
-        components.append(firstComponent)
-    
-        var i: Int = 1
-        repeat {
-            
-            let re: Float = self.fftFrame[i * 2 + 0]
-            let im: Float = self.fftFrame[i * 2 + 1]
-            let ab: Float = sqrt(re * re + im * im)
-            
-            components.append(ab)
-            
-            i += 1
-            
-        } while i < frameCount
-    
-        let lastComponent: Float = self.fftFrame[1]
-        components.append(lastComponent)
+        let frameCount: Int = (self.fftFrame.count / 2) + 1
 
         /// Run the predictions
     
@@ -442,10 +449,12 @@ extension WakeWordSpeechRecognizer {
                 fatalError("Unexpected runtime error. MLMultiArray")
         }
 
-        for (index, value) in components.enumerated() {
-            multiArray[index] = NSNumber(value: value)
+        /// Breaks
+        
+        for i in 0..<frameCount {
+            multiArray[i] = NSNumber(value: self.fftFrame[i])
         }
-    
+
         do {
         
             let input: WakeWordFilterInput = WakeWordFilterInput(linspec_inputs__0: multiArray)
@@ -527,13 +536,13 @@ extension WakeWordSpeechRecognizer {
             repeat {
                 
                 let predictionFloat: Float = predictions.detect_outputs__0[indexIncrement].floatValue
-                print(
-                """
-                =====================================================
-                Detect Model Output Value value: \(predictionFloat) for shape \(indexIncrement)")
-                =====================================================
-                """
-                )
+//                print(
+//                """
+//                =====================================================
+//                Detect Model Output Value value: \(predictionFloat) for shape \(indexIncrement)")
+//                =====================================================
+//                """
+//                )
 
                 do {
                     
@@ -560,7 +569,7 @@ extension WakeWordSpeechRecognizer {
 extension WakeWordSpeechRecognizer: AudioEngineControllerDelegate {
     
     func didReceive(_ buffer: AVAudioPCMBuffer) {
-        self.process(buffer)
+//        self.process(buffer)
     }
     
     func didStart(_ engineController: AudioEngineController) {
@@ -705,3 +714,21 @@ extension WakeWordSpeechRecognizer {
     }
 }
 
+extension WakeWordSpeechRecognizer: AudioControllerDelegate {
+    
+    func didStart(_ engineController: AudioController) {
+        print("audioEngine did start")
+    }
+    
+    func didStop(_ engineController: AudioController) {
+        print("audioEngine did stop")
+    }
+    
+    func setupFailed(_ error: String) -> Void {
+        fatalError(error)
+    }
+    
+    func processSampleData(_ data: Data) -> Void {
+        self.process(data)
+    }
+}

@@ -71,6 +71,10 @@ public class GoogleSpeechRecognizer: SpeechRecognizerService {
     
     // MARK: Initializers
     
+    deinit {
+        AudioController.shared.delegate = nil
+    }
+    
     public init() {
         AudioController.shared.delegate = self
     }
@@ -164,6 +168,10 @@ public class GoogleSpeechRecognizer: SpeechRecognizerService {
 }
 
 extension GoogleSpeechRecognizer: AudioControllerDelegate {
+    
+    func didStart(_ engineController: AudioController) {}
+    
+    func didStop(_ engineController: AudioController) {}
     
     func setupFailed(_ error: String) {
         
