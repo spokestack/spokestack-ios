@@ -46,7 +46,7 @@ class GoogleViewController: UIViewController {
     lazy private var pipeline: SpeechPipeline = {
         
         let googleConfiguration: GoogleRecognizerConfiguration = GoogleRecognizerConfiguration()
-        googleConfiguration.apiKey = "AIzaSyBIgfSXeu0qQRKruau6eKKroOlfEo-ixsU"
+        googleConfiguration.apiKey = "REPLACE_ME"
         
         return try! SpeechPipeline(.googleSpeech,
                                    speechConfiguration: googleConfiguration,
