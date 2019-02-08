@@ -51,7 +51,6 @@ public class AppleWakewordRecognizer: NSObject, WakewordRecognizerService {
     
     func startStreaming(context: SpeechContext) {
         do {
-            context.isActive = true
             try self.prepareRecognition(context: context)
             audioEngine.prepare()
             try audioEngine.start()

@@ -49,6 +49,7 @@ class AppleSpeechRecognizer: NSObject, SpeechRecognizerService {
             try self.prepareRecognition(context: context)
             audioEngine.prepare()
             try audioEngine.start()
+            context.isActive = true
         } catch let error {
             self.delegate?.didError(error)
         }
@@ -61,6 +62,7 @@ class AppleSpeechRecognizer: NSObject, SpeechRecognizerService {
         recognitionRequest?.endAudio()
         recognitionRequest = nil
         recognitionTask = nil
+        context.isActive = false
     }
     
     private func prepareRecognition(context: SpeechContext) throws -> Void {
