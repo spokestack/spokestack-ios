@@ -98,8 +98,6 @@ public class WakeWordSpeechRecognizer: SpeechRecognizerService {
     
     private var activeLength: Int = 0
     
-    private var audioEngineController: AudioEngineController!
-    
     private let audioController: AudioController = AudioController.shared
     
     // MARK: Initializers
@@ -117,22 +115,15 @@ public class WakeWordSpeechRecognizer: SpeechRecognizerService {
     
     public func startStreaming() -> Void {
         
-//        let buffer: Int = (self.wakeWordConfiguration.sampleRate / 1000) * self.wakeWordConfiguration.frameWidth
+        let buffer: TimeInterval = TimeInterval((self.wakeWordConfiguration.sampleRate / 1000) * self.wakeWordConfiguration.frameWidth)
         self.audioController.sampleRate = self.wakeWordConfiguration.sampleRate
+        self.audioController.bufferDuration = buffer
         self.audioController.delegate = self
         self.audioController.startStreaming()
-        
-//
-//        self.audioEngineController = AudioEngineController(buffer)
-//        self.audioEngineController.delegate = self
-//
-//        try? self.audioEngineController.startRecording()
     }
     
     public func stopStreaming() -> Void {
 
-//        self.audioEngineController.stopRecording()
-//        self.audioEngineController.delegate = nil
         self.audioController.stopStreaming()
         self.audioController.delegate = nil
     }
@@ -262,18 +253,7 @@ public class WakeWordSpeechRecognizer: SpeechRecognizerService {
             }
         }
     }
-    
-//    private func process(_ buffer: AVAudioPCMBuffer) -> Void {
-//
-//        // TODO: Need to handle "state"
-//        //
-//        // See: https://github.com/pylon/spokestack-android/blob/a5b1e4cf194b10e209c1b740c2e9655989b24cb9/src/main/java/com/pylon/spokestack/wakeword/WakewordTrigger.java#L370
-//
-////        self.sample(buffer.spstk_16BitAudioData, buffer: buffer)
-//    }
-    
-    ////
-    
+
     private func process(_ data: Data) -> Void {
         
         // TODO: Need to handle "state"
@@ -282,8 +262,6 @@ public class WakeWordSpeechRecognizer: SpeechRecognizerService {
 
         self.sample(data)
     }
-    
-    ////
     
     private func sample(_ data: Data) -> Void {
 
@@ -412,7 +390,9 @@ extension WakeWordSpeechRecognizer {
             
             do {
                 
-                self.fftFrame[index] = try self.sampleWindow.read() * self.fftWindow[index]
+                let sample: Float = try self.sampleWindow.read()
+//                print("\(sample)")
+                self.fftFrame[index] = sample * self.fftWindow[index]
                 
             } catch SpeechPipelineError.illegalState(let message) {
                 
@@ -426,13 +406,15 @@ extension WakeWordSpeechRecognizer {
         
         /// Compute the stft
 
-        self.fft.forward(self.fftFrame)
+        self.fft.forward(&self.fftFrame)
         self.filter()
     }
     
     private func filter() -> Void {
         
         precondition(!self.fftFrame.isEmpty, "FFT Frame can't be empty")
+        
+//        print("frames \(self.fftFrame)")
 
         /// Decode the FFT outputs into the filter model's input
         /// Compute the nagitude (abs) of each complex stft component
@@ -443,37 +425,39 @@ extension WakeWordSpeechRecognizer {
         let frameCount: Int = (self.fftFrame.count / 2) + 1
 
         /// Run the predictions
-    
+
         guard let multiArray = try? MLMultiArray(shape: [257,1,1], dataType: .float32) else {
-                
+
                 fatalError("Unexpected runtime error. MLMultiArray")
         }
 
-        /// Breaks
-        
         for i in 0..<frameCount {
-            multiArray[i] = NSNumber(value: self.fftFrame[i])
+
+            let floatValue: Float = sqrtf(self.fftFrame[i])
+//            print("FFT Frame Value \(floatValue)")
+            multiArray[i] = NSNumber(value: floatValue)
         }
 
         do {
-        
+
             let input: WakeWordFilterInput = WakeWordFilterInput(linspec_inputs__0: multiArray)
             let predictions: WakeWordFilterOutput = try self.wwfilter.prediction(input: input)
-            
+
             /// Copy the current mel frame into the mel window
-            
+
             self.frameWindow.rewind().seek(self.melWidth)
-            
-            for i in 0..<multiArray.shape[0].intValue {
+
+            for i in 0..<predictions.melspec_outputs__0.shape[2].intValue {
+                print("\(predictions.melspec_outputs__0[i].floatValue)")
                 try? self.frameWindow.write(predictions.melspec_outputs__0[i].floatValue)
             }
-            
+
             /// Detect
-            
+
             self.detect()
-            
+
         } catch let modelFilterError {
-            
+
             fatalError("modelFilterError is thrown \(modelFilterError)")
         }
     }
@@ -566,23 +550,28 @@ extension WakeWordSpeechRecognizer {
     }
 }
 
-extension WakeWordSpeechRecognizer: AudioEngineControllerDelegate {
+extension WakeWordSpeechRecognizer: AudioControllerDelegate {
     
-    func didReceive(_ buffer: AVAudioPCMBuffer) {
-//        self.process(buffer)
+    func didStart(_ engineController: AudioController) {
+        print("audioEngine did start")
     }
     
-    func didStart(_ engineController: AudioEngineController) {
-        print("it did start")
-    }
-    
-    func didStop(_ engineController: AudioEngineController) {
+    func didStop(_ engineController: AudioController) {
+        print("audioEngine did stop")
         
         /// "close"
         
         /// Reset
         
         self.reset()
+    }
+    
+    func setupFailed(_ error: String) -> Void {
+        fatalError(error)
+    }
+    
+    func processSampleData(_ data: Data) -> Void {
+        self.process(data)
     }
 }
 
@@ -714,21 +703,3 @@ extension WakeWordSpeechRecognizer {
     }
 }
 
-extension WakeWordSpeechRecognizer: AudioControllerDelegate {
-    
-    func didStart(_ engineController: AudioController) {
-        print("audioEngine did start")
-    }
-    
-    func didStop(_ engineController: AudioController) {
-        print("audioEngine did stop")
-    }
-    
-    func setupFailed(_ error: String) -> Void {
-        fatalError(error)
-    }
-    
-    func processSampleData(_ data: Data) -> Void {
-        self.process(data)
-    }
-}
