@@ -11,7 +11,7 @@ import Foundation
 @objc public class GoogleRecognizerConfiguration: RecognizerConfiguration {
     
     @objc public var host = "speech.googleapis.com"
-    @objc public var apiKey = "12344"
+    @objc public var apiKey = "REPLACE_ME"
     @objc public var enableWordTimeOffsets = true
     @objc public var maxAlternatives: Int32 = 30
     @objc public var singleUtterance = false

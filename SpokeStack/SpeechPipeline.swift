@@ -8,69 +8,68 @@
 
 import Foundation
 
-@objc public final class SpeechPipeline: NSObject {
+public final class SpeechPipeline {
     
     // MARK: Public (properties)
     
-    public private (set) var service: RecognizerService
-    
-    public private (set) var configuration: RecognizerConfiguration
-    
-    public weak var delegate: SpeechRecognizer?
+    public private (set) var speechService: RecognizerService
+    public private (set) var speechConfiguration: RecognizerConfiguration
+    public weak var speechDelegate: SpeechRecognizer?
+    public private (set) var wakewordService: WakewordService
+    public private (set) var wakewordConfiguration: WakewordConfiguration
+    public weak var wakewordDelegate: WakewordRecognizer?
+    public let context: SpeechContext = SpeechContext()
+
     
     // MARK: Private (properties)
     
-    private var speechRecognizerService: SpeechRecognizerService = GoogleSpeechRecognizer.sharedInstance
+    private var speechRecognizerService: SpeechRecognizerService
+    private var wakewordRecognizerService: WakewordRecognizerService
     
     // MARK: Initializers
     
     deinit {
         speechRecognizerService.delegate = nil
+        wakewordRecognizerService.delegate = nil
     }
     
-    @objc public init (_ service: RecognizerService, configuration: RecognizerConfiguration, delegate: SpeechRecognizer?) throws {
-        func didInitialize() -> Bool {
-            
-            var didInitialize: Bool = false
-            
-            switch service {
-            case .google where configuration is GoogleRecognizerConfiguration:
+    public init(_ speechService: RecognizerService,
+                speechConfiguration: RecognizerConfiguration,
+                speechDelegate: SpeechRecognizer?,
+                wakewordService: WakewordService,
+                wakewordConfiguration: WakewordConfiguration,
+                wakewordDelegate: WakewordRecognizer?) throws {
 
-                self.speechRecognizerService.configuration = configuration
-                
-                didInitialize = true
-                break
-            default: break
-            }
-            
-            return didInitialize
-        }
+        self.speechService = speechService
+        self.speechConfiguration = speechConfiguration
+        self.speechDelegate = speechDelegate
         
-        self.service = service
-        self.configuration = configuration
-        self.delegate = delegate
+        self.speechRecognizerService = speechService.speechRecognizerService
+        self.speechRecognizerService.configuration = speechConfiguration
+        self.speechRecognizerService.delegate = self.speechDelegate
         
-        self.speechRecognizerService = service.speechRecognizerService
-        self.speechRecognizerService.delegate = self.delegate
+        self.wakewordService = wakewordService
+        self.wakewordConfiguration = wakewordConfiguration
+        self.wakewordDelegate = wakewordDelegate
         
-        super.init()
-        
-        if !didInitialize() {
-            
-            let errorMessage: String = """
-            The service must be google and your configuration must conform to GoogleRecognizerConfiguration.
-            Future release will support other services.
-            """
-            throw SpeechPipleError.invalidInitialization(errorMessage)
-        }
+        self.wakewordRecognizerService = wakewordService.wakewordRecognizerService
+        self.wakewordRecognizerService.configuration = wakewordConfiguration
+        self.wakewordRecognizerService.delegate = self.wakewordDelegate
     }
     
-    @objc public func start() -> Void {
-        self.speechRecognizerService.startStreaming()
+    public func activate() -> Void {
+        self.speechRecognizerService.startStreaming(context: self.context)
     }
     
-    @objc public func stop() -> Void {
-        self.speechRecognizerService.stopStreaming()
+    public func deactivate() -> Void {
+        self.speechRecognizerService.stopStreaming(context: self.context)
+    }
+    
+    public func start() -> Void {
+        self.wakewordRecognizerService.startStreaming(context: self.context)
+    }
+    
+    public func stop() -> Void {
+        self.wakewordRecognizerService.stopStreaming(context: self.context)
     }
 }
-

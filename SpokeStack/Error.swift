@@ -8,11 +8,16 @@
 
 import Foundation
 
-enum AudioError: Error {
+public enum AudioError: Error {
     case general(String)
     case audioSessionSetup(String)
 }
 
-public enum SpeechPipleError: Error {
-    case invalidInitialization(String)
+public enum SpeechPipelineError: Error {
+    case illegalState(message: String)
+}
+
+public enum SpeechRecognizerError: Error {
+    case unknownCause(String)
+    case failed(String)
 }
