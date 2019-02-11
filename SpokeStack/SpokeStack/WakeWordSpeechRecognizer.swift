@@ -103,10 +103,7 @@ public class WakeWordSpeechRecognizer: SpeechRecognizerService {
     // MARK: Initializers
     
     deinit {
-        
-        audioEngineController.delegate = nil
         audioController.delegate = nil
-        
     }
     
     public init() {}
