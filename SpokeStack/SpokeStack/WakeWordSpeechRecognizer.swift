@@ -124,7 +124,7 @@ public class WakeWordSpeechRecognizer: SpeechRecognizerService {
         self.audioController.stopStreaming()
         self.audioController.delegate = nil
         
-        try! AVAudioSession.sharedInstance().setActive(false, options: [])
+        try? AVAudioSession.sharedInstance().setActive(false, options: [])
     }
     
     // MARK: Private (methods)
@@ -390,7 +390,6 @@ extension WakeWordSpeechRecognizer {
             do {
                 
                 let sample: Float = try self.sampleWindow.read()
-//                print("\(sample)")
                 self.fftFrame[index] = sample * self.fftWindow[index]
                 
             } catch SpeechPipelineError.illegalState(let message) {
@@ -412,8 +411,6 @@ extension WakeWordSpeechRecognizer {
     private func filter() -> Void {
         
         precondition(!self.fftFrame.isEmpty, "FFT Frame can't be empty")
-        
-//        print("frames \(self.fftFrame)")
 
         /// Decode the FFT outputs into the filter model's input
         /// Compute the nagitude (abs) of each complex stft component
@@ -432,8 +429,7 @@ extension WakeWordSpeechRecognizer {
 
         for i in 0..<frameCount {
 
-            let floatValue: Float = sqrtf(self.fftFrame[i])
-//            print("FFT Frame Value \(floatValue)")
+            let floatValue: Float = self.fftFrame[i]
             multiArray[i] = NSNumber(value: floatValue)
         }
 
@@ -447,7 +443,6 @@ extension WakeWordSpeechRecognizer {
             self.frameWindow.rewind().seek(self.melWidth)
 
             for i in 0..<predictions.melspec_outputs__0.shape[2].intValue {
-                print("\(predictions.melspec_outputs__0[i].floatValue)")
                 try? self.frameWindow.write(predictions.melspec_outputs__0[i].floatValue)
             }
 
@@ -495,20 +490,6 @@ extension WakeWordSpeechRecognizer {
             let input: WakeWordDetectInput = WakeWordDetectInput(melspec_inputs__0: multiArray)
             let predictions: WakeWordDetectOutput = try self.wwdetect.prediction(input: input)
             
-            /// DEBUG
-            
-//            for i in 0..<predictions.detect_outputs__0.shape[0].intValue {
-//                print(
-//                    """
-//                    loop test \(predictions.detect_outputs__0[i].floatValue.isFinite)
-//                    value \(predictions.detect_outputs__0[i].floatValue)
-//                    shape \(predictions.detect_outputs__0.shape)")
-//                    """
-//                )
-//            }
-            
-            /// END DEBUG
-            
             /// Transfer the classifier's outputs to the posterior smoothing window
             
             self.smoothWindow.rewind().seek(self.words.count)
@@ -519,13 +500,6 @@ extension WakeWordSpeechRecognizer {
             repeat {
                 
                 let predictionFloat: Float = predictions.detect_outputs__0[indexIncrement].floatValue
-//                print(
-//                """
-//                =====================================================
-//                Detect Model Output Value value: \(predictionFloat) for shape \(indexIncrement)")
-//                =====================================================
-//                """
-//                )
 
                 do {
                     
