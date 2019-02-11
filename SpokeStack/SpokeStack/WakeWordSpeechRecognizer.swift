@@ -120,9 +120,11 @@ public class WakeWordSpeechRecognizer: SpeechRecognizerService {
     }
     
     public func stopStreaming() -> Void {
-
+        
         self.audioController.stopStreaming()
         self.audioController.delegate = nil
+        
+        try! AVAudioSession.sharedInstance().setActive(false, options: [])
     }
     
     // MARK: Private (methods)
