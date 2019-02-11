@@ -56,7 +56,7 @@ extension WakeRecognizerConfiguration {
     }
     
     public var rmsAlpha: Float {
-        return 0.1
+        return 0.0
     }
     
     public var preEmphasis: Float {
