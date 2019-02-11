@@ -46,9 +46,7 @@ func recordingCallback(
     }
     
     let data: Data = Data(bytes: buffers[0].mData!, count: Int(buffers[0].mDataByteSize))
-//    let dataElements: Array<Int16> = data.elements()
-//    print("audio \(dataElements)")
-    
+
     AudioController.shared.delegate?.processSampleData(data)
     
     return noErr
