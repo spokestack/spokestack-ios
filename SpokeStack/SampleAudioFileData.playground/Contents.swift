@@ -21,14 +21,6 @@ do {
 
     print("floatArray \(floatArray)")
 
-
-//    let logName: String = testFileName + "_" + UUID().uuidString + ".txt"
-//    let sharedDocumentURL: URL = playgroundSharedDataDirectory
-//    let logContents: String = floatArray.compactMap({ String($0) }).joined(separator:",")
-//    let newFileUrl: URL = sharedDocumentURL.appendingPathComponent(logName)
-//
-//    try logContents.write(to: newFileUrl, atomically: true, encoding: .utf8)
-
 } catch let error {
 
     print("error \(error)")
