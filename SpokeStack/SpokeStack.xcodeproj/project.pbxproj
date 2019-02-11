@@ -7,30 +7,23 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0104CB4121F781C40020A3C4 /* WakeWordFilter.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = 0104CB4021F781C30020A3C4 /* WakeWordFilter.mlmodel */; };
+		0112624821B9C6F000B85563 /* FFT.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0112624721B9C6F000B85563 /* FFT.swift */; };
 		011C1920216BCA3200DB36FD /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 011C191F216BCA3200DB36FD /* AppDelegate.swift */; };
 		011C1922216BCA3200DB36FD /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 011C1921216BCA3200DB36FD /* ViewController.swift */; };
 		011C1925216BCA3200DB36FD /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 011C1923216BCA3200DB36FD /* Main.storyboard */; };
 		011C1927216BCA3200DB36FD /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 011C1926216BCA3200DB36FD /* Assets.xcassets */; };
 		011C192A216BCA3200DB36FD /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 011C1928216BCA3200DB36FD /* LaunchScreen.storyboard */; };
 		011C193B216BCBCA00DB36FD /* StandardGoogleRecognitionConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 011C193A216BCBCA00DB36FD /* StandardGoogleRecognitionConfiguration.swift */; };
-		011C1943216BDBE000DB36FD /* SpokeStack.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01D31F3B216BAF260055FD45 /* SpokeStack.framework */; };
-		011C1944216BDBE000DB36FD /* SpokeStack.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 01D31F3B216BAF260055FD45 /* SpokeStack.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		01A715AF216BE69800975604 /* openssl.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01D322F4216BB10C0055FD45 /* openssl.framework */; };
-		01A715B0216BE69800975604 /* openssl.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 01D322F4216BB10C0055FD45 /* openssl.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		01A715B1216BE69800975604 /* googleapis.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01D322AD216BB10C0055FD45 /* googleapis.framework */; };
-		01A715B2216BE69800975604 /* googleapis.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 01D322AD216BB10C0055FD45 /* googleapis.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		01A715B3216BE69800975604 /* GRPCClient.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01D322AF216BB10C0055FD45 /* GRPCClient.framework */; };
-		01A715B4216BE69800975604 /* GRPCClient.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 01D322AF216BB10C0055FD45 /* GRPCClient.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		01A715B5216BE69800975604 /* grpc.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01D322FE216BB10D0055FD45 /* grpc.framework */; };
-		01A715B6216BE69800975604 /* grpc.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 01D322FE216BB10D0055FD45 /* grpc.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		01A715B7216BE69800975604 /* ProtoRPC.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01D322AB216BB10C0055FD45 /* ProtoRPC.framework */; };
-		01A715B8216BE69800975604 /* ProtoRPC.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 01D322AB216BB10C0055FD45 /* ProtoRPC.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		01A715B9216BE69800975604 /* RxLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01D322A9216BB10C0055FD45 /* RxLibrary.framework */; };
-		01A715BA216BE69800975604 /* RxLibrary.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 01D322A9216BB10C0055FD45 /* RxLibrary.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		01A715BB216BE69800975604 /* nanopb.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01D322FA216BB10C0055FD45 /* nanopb.framework */; };
-		01A715BC216BE69800975604 /* nanopb.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 01D322FA216BB10C0055FD45 /* nanopb.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		01A715BD216BE69800975604 /* Protobuf.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01D322FC216BB10D0055FD45 /* Protobuf.framework */; };
-		01A715BE216BE69800975604 /* Protobuf.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 01D322FC216BB10D0055FD45 /* Protobuf.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		011DA81021DD188B001345C7 /* WakeWordDetect.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = 011DA80E21DD188A001345C7 /* WakeWordDetect.mlmodel */; };
+		012CBD6E21B855580091322B /* RingBuffer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 012CBD6D21B855580091322B /* RingBuffer.swift */; };
+		014EFA512203A7900004D176 /* AppleViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 014EFA502203A7900004D176 /* AppleViewController.swift */; };
+		014EFA532203A79A0004D176 /* WakeWordViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 014EFA522203A79A0004D176 /* WakeWordViewController.swift */; };
+		014EFA552203A7A60004D176 /* GoogleViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 014EFA542203A7A60004D176 /* GoogleViewController.swift */; };
+		0167942D21C30FE600BE457E /* AVAudioPCMBuffer+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0167942C21C30FE600BE457E /* AVAudioPCMBuffer+Extensions.swift */; };
+		0181E33D21E7D440004B3D7B /* AppleSpeechRecognizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0181E33C21E7D440004B3D7B /* AppleSpeechRecognizer.swift */; };
+		0181E33F21E7F0D3004B3D7B /* StandardWakeWordConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0181E33E21E7F0D3004B3D7B /* StandardWakeWordConfiguration.swift */; };
+		0193DD4621B7766900288EB1 /* SampleWakeRecognizerConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0193DD4521B7766900288EB1 /* SampleWakeRecognizerConfiguration.swift */; };
 		01AC1539216BB6CE001B9146 /* openssl.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 01D322F4216BB10C0055FD45 /* openssl.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		01AC153A216BB6CE001B9146 /* googleapis.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 01D322AD216BB10C0055FD45 /* googleapis.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		01AC153B216BB6CE001B9146 /* GRPCClient.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 01D322AF216BB10C0055FD45 /* GRPCClient.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -39,6 +32,18 @@
 		01AC153E216BB6CE001B9146 /* RxLibrary.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 01D322A9216BB10C0055FD45 /* RxLibrary.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		01AC153F216BB6CE001B9146 /* nanopb.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 01D322FA216BB10C0055FD45 /* nanopb.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		01AC1540216BB6CE001B9146 /* Protobuf.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 01D322FC216BB10D0055FD45 /* Protobuf.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		01B2B42721ADC32A00289890 /* SpokeStack.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01D31F3B216BAF260055FD45 /* SpokeStack.framework */; };
+		01B2B42821ADC33000289890 /* SpokeStack.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 01D31F3B216BAF260055FD45 /* SpokeStack.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		01B2B42A21ADC7E200289890 /* openssl.framework in Copy the Google Dependencies */ = {isa = PBXBuildFile; fileRef = 01D322F4216BB10C0055FD45 /* openssl.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		01B2B42B21ADC7E200289890 /* googleapis.framework in Copy the Google Dependencies */ = {isa = PBXBuildFile; fileRef = 01D322AD216BB10C0055FD45 /* googleapis.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		01B2B42C21ADC7E200289890 /* GRPCClient.framework in Copy the Google Dependencies */ = {isa = PBXBuildFile; fileRef = 01D322AF216BB10C0055FD45 /* GRPCClient.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		01B2B42D21ADC7E200289890 /* grpc.framework in Copy the Google Dependencies */ = {isa = PBXBuildFile; fileRef = 01D322FE216BB10D0055FD45 /* grpc.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		01B2B42E21ADC7E200289890 /* ProtoRPC.framework in Copy the Google Dependencies */ = {isa = PBXBuildFile; fileRef = 01D322AB216BB10C0055FD45 /* ProtoRPC.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		01B2B42F21ADC7E200289890 /* RxLibrary.framework in Copy the Google Dependencies */ = {isa = PBXBuildFile; fileRef = 01D322A9216BB10C0055FD45 /* RxLibrary.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		01B2B43021ADC7E200289890 /* nanopb.framework in Copy the Google Dependencies */ = {isa = PBXBuildFile; fileRef = 01D322FA216BB10C0055FD45 /* nanopb.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		01B2B43121ADC7E200289890 /* Protobuf.framework in Copy the Google Dependencies */ = {isa = PBXBuildFile; fileRef = 01D322FC216BB10D0055FD45 /* Protobuf.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		01BADDEA21B6DB1D00515701 /* WakeRecognizerConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01BADDE921B6DB1D00515701 /* WakeRecognizerConfiguration.swift */; };
+		01BADDEC21B6E59C00515701 /* WakeWordSpeechRecognizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01BADDEB21B6E59C00515701 /* WakeWordSpeechRecognizer.swift */; };
 		01D31F45216BAF260055FD45 /* SpokeStack.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01D31F3B216BAF260055FD45 /* SpokeStack.framework */; };
 		01D31F4A216BAF260055FD45 /* SpokeStackTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01D31F49216BAF260055FD45 /* SpokeStackTests.swift */; };
 		01D31F4C216BAF260055FD45 /* SpokeStack.h in Headers */ = {isa = PBXBuildFile; fileRef = 01D31F3E216BAF260055FD45 /* SpokeStack.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -88,6 +93,7 @@
 		01D3249B216BB10D0055FD45 /* Protobuf.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01D322FC216BB10D0055FD45 /* Protobuf.framework */; };
 		01D3249C216BB10D0055FD45 /* grpc.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01D322FE216BB10D0055FD45 /* grpc.framework */; };
 		01D3249D216BB10D0055FD45 /* grpc.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01D322FE216BB10D0055FD45 /* grpc.framework */; };
+		01D489E721D42A070030D015 /* Data+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01D489E621D42A070030D015 /* Data+Extensions.swift */; };
 		01DE0FEF216BFEE2007C23A7 /* gRPCCertificates.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 01D322B0216BB10C0055FD45 /* gRPCCertificates.bundle */; };
 /* End PBXBuildFile section */
 
@@ -115,15 +121,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				011C1944216BDBE000DB36FD /* SpokeStack.framework in Embed Frameworks */,
-				01A715BA216BE69800975604 /* RxLibrary.framework in Embed Frameworks */,
-				01A715BC216BE69800975604 /* nanopb.framework in Embed Frameworks */,
-				01A715B2216BE69800975604 /* googleapis.framework in Embed Frameworks */,
-				01A715B0216BE69800975604 /* openssl.framework in Embed Frameworks */,
-				01A715B8216BE69800975604 /* ProtoRPC.framework in Embed Frameworks */,
-				01A715B4216BE69800975604 /* GRPCClient.framework in Embed Frameworks */,
-				01A715B6216BE69800975604 /* grpc.framework in Embed Frameworks */,
-				01A715BE216BE69800975604 /* Protobuf.framework in Embed Frameworks */,
+				01B2B42821ADC33000289890 /* SpokeStack.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -146,9 +144,29 @@
 			name = "Copy Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		01B2B42921ADC7AC00289890 /* Copy the Google Dependencies */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				01B2B42A21ADC7E200289890 /* openssl.framework in Copy the Google Dependencies */,
+				01B2B42B21ADC7E200289890 /* googleapis.framework in Copy the Google Dependencies */,
+				01B2B42C21ADC7E200289890 /* GRPCClient.framework in Copy the Google Dependencies */,
+				01B2B42D21ADC7E200289890 /* grpc.framework in Copy the Google Dependencies */,
+				01B2B42E21ADC7E200289890 /* ProtoRPC.framework in Copy the Google Dependencies */,
+				01B2B42F21ADC7E200289890 /* RxLibrary.framework in Copy the Google Dependencies */,
+				01B2B43021ADC7E200289890 /* nanopb.framework in Copy the Google Dependencies */,
+				01B2B43121ADC7E200289890 /* Protobuf.framework in Copy the Google Dependencies */,
+			);
+			name = "Copy the Google Dependencies";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		0104CB4021F781C30020A3C4 /* WakeWordFilter.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = WakeWordFilter.mlmodel; sourceTree = "<group>"; };
+		0112624721B9C6F000B85563 /* FFT.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFT.swift; sourceTree = "<group>"; };
 		011C191D216BCA3200DB36FD /* SpokeStackFrameworkExample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SpokeStackFrameworkExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		011C191F216BCA3200DB36FD /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		011C1921216BCA3200DB36FD /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -157,13 +175,24 @@
 		011C1929216BCA3200DB36FD /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		011C192B216BCA3200DB36FD /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		011C193A216BCBCA00DB36FD /* StandardGoogleRecognitionConfiguration.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StandardGoogleRecognitionConfiguration.swift; sourceTree = "<group>"; };
+		011DA80E21DD188A001345C7 /* WakeWordDetect.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = WakeWordDetect.mlmodel; sourceTree = "<group>"; };
+		012CBD6D21B855580091322B /* RingBuffer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RingBuffer.swift; sourceTree = "<group>"; };
+		014EFA502203A7900004D176 /* AppleViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppleViewController.swift; sourceTree = "<group>"; };
+		014EFA522203A79A0004D176 /* WakeWordViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WakeWordViewController.swift; sourceTree = "<group>"; };
+		014EFA542203A7A60004D176 /* GoogleViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoogleViewController.swift; sourceTree = "<group>"; };
+		0167942C21C30FE600BE457E /* AVAudioPCMBuffer+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AVAudioPCMBuffer+Extensions.swift"; sourceTree = "<group>"; };
+		0181E33C21E7D440004B3D7B /* AppleSpeechRecognizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppleSpeechRecognizer.swift; sourceTree = "<group>"; };
+		0181E33E21E7F0D3004B3D7B /* StandardWakeWordConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StandardWakeWordConfiguration.swift; sourceTree = "<group>"; };
+		0193DD4521B7766900288EB1 /* SampleWakeRecognizerConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SampleWakeRecognizerConfiguration.swift; sourceTree = "<group>"; };
+		01BADDE921B6DB1D00515701 /* WakeRecognizerConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WakeRecognizerConfiguration.swift; sourceTree = "<group>"; };
+		01BADDEB21B6E59C00515701 /* WakeWordSpeechRecognizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WakeWordSpeechRecognizer.swift; sourceTree = "<group>"; };
 		01D31F3B216BAF260055FD45 /* SpokeStack.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = SpokeStack.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		01D31F3E216BAF260055FD45 /* SpokeStack.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SpokeStack.h; sourceTree = "<group>"; };
 		01D31F3F216BAF260055FD45 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		01D31F44216BAF260055FD45 /* SpokeStackTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SpokeStackTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		01D31F49216BAF260055FD45 /* SpokeStackTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpokeStackTests.swift; sourceTree = "<group>"; };
 		01D31F4B216BAF260055FD45 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		01D31F57216BAF680055FD45 /* SpokeStackConfig.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = SpokeStackConfig.xcconfig; sourceTree = "<group>"; };
+		01D31F57216BAF680055FD45 /* SpokeStackiOSConfig.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = SpokeStackiOSConfig.xcconfig; sourceTree = "<group>"; };
 		01D31F5B216BAF950055FD45 /* StandardRecognizerConfiguration.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StandardRecognizerConfiguration.swift; sourceTree = "<group>"; };
 		01D31F61216BAFA40055FD45 /* AudioController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AudioController.swift; sourceTree = "<group>"; };
 		01D31F65216BAFB50055FD45 /* Error.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Error.swift; sourceTree = "<group>"; };
@@ -187,6 +216,7 @@
 		01D322FA216BB10C0055FD45 /* nanopb.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = nanopb.framework; sourceTree = "<group>"; };
 		01D322FC216BB10D0055FD45 /* Protobuf.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Protobuf.framework; sourceTree = "<group>"; };
 		01D322FE216BB10D0055FD45 /* grpc.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = grpc.framework; sourceTree = "<group>"; };
+		01D489E621D42A070030D015 /* Data+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Data+Extensions.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -194,15 +224,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				011C1943216BDBE000DB36FD /* SpokeStack.framework in Frameworks */,
-				01A715B9216BE69800975604 /* RxLibrary.framework in Frameworks */,
-				01A715BB216BE69800975604 /* nanopb.framework in Frameworks */,
-				01A715B1216BE69800975604 /* googleapis.framework in Frameworks */,
-				01A715AF216BE69800975604 /* openssl.framework in Frameworks */,
-				01A715B7216BE69800975604 /* ProtoRPC.framework in Frameworks */,
-				01A715B3216BE69800975604 /* GRPCClient.framework in Frameworks */,
-				01A715B5216BE69800975604 /* grpc.framework in Frameworks */,
-				01A715BD216BE69800975604 /* Protobuf.framework in Frameworks */,
+				01B2B42721ADC32A00289890 /* SpokeStack.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -250,14 +272,35 @@
 		011C191E216BCA3200DB36FD /* SpokeStackFrameworkExample */ = {
 			isa = PBXGroup;
 			children = (
+				011C192B216BCA3200DB36FD /* Info.plist */,
 				011C191F216BCA3200DB36FD /* AppDelegate.swift */,
+				014EFA502203A7900004D176 /* AppleViewController.swift */,
+				014EFA542203A7A60004D176 /* GoogleViewController.swift */,
 				011C1921216BCA3200DB36FD /* ViewController.swift */,
-				011C1923216BCA3200DB36FD /* Main.storyboard */,
+				014EFA522203A79A0004D176 /* WakeWordViewController.swift */,
 				011C1926216BCA3200DB36FD /* Assets.xcassets */,
 				011C1928216BCA3200DB36FD /* LaunchScreen.storyboard */,
-				011C192B216BCA3200DB36FD /* Info.plist */,
+				011C1923216BCA3200DB36FD /* Main.storyboard */,
 			);
 			path = SpokeStackFrameworkExample;
+			sourceTree = "<group>";
+		};
+		0167942B21C30FAE00BE457E /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				0167942C21C30FE600BE457E /* AVAudioPCMBuffer+Extensions.swift */,
+				01D489E621D42A070030D015 /* Data+Extensions.swift */,
+			);
+			name = Extensions;
+			sourceTree = "<group>";
+		};
+		0184FFF821B0ED3500D4A650 /* Machine Learning */ = {
+			isa = PBXGroup;
+			children = (
+				0104CB4021F781C30020A3C4 /* WakeWordFilter.mlmodel */,
+				011DA80E21DD188A001345C7 /* WakeWordDetect.mlmodel */,
+			);
+			name = "Machine Learning";
 			sourceTree = "<group>";
 		};
 		01D31F31216BAF260055FD45 = {
@@ -284,10 +327,12 @@
 		01D31F3D216BAF260055FD45 /* SpokeStack */ = {
 			isa = PBXGroup;
 			children = (
-				01D31F90216BB09E0055FD45 /* Externals */,
 				01D31F59216BAF710055FD45 /* Configurations */,
 				01D31F60216BAF9A0055FD45 /* Controllers */,
 				01D31F64216BAFAA0055FD45 /* Errors */,
+				0167942B21C30FAE00BE457E /* Extensions */,
+				01D31F90216BB09E0055FD45 /* Externals */,
+				0184FFF821B0ED3500D4A650 /* Machine Learning */,
 				01D31F68216BAFBC0055FD45 /* Managers */,
 				01D31F6C216BAFCD0055FD45 /* Models */,
 				01D31F73216BAFE20055FD45 /* Protocols */,
@@ -321,7 +366,7 @@
 		01D31F56216BAF5C0055FD45 /* XConfigs */ = {
 			isa = PBXGroup;
 			children = (
-				01D31F57216BAF680055FD45 /* SpokeStackConfig.xcconfig */,
+				01D31F57216BAF680055FD45 /* SpokeStackiOSConfig.xcconfig */,
 			);
 			name = XConfigs;
 			sourceTree = "<group>";
@@ -331,6 +376,7 @@
 			children = (
 				011C193A216BCBCA00DB36FD /* StandardGoogleRecognitionConfiguration.swift */,
 				01D31F5B216BAF950055FD45 /* StandardRecognizerConfiguration.swift */,
+				0181E33E21E7F0D3004B3D7B /* StandardWakeWordConfiguration.swift */,
 			);
 			name = Configurations;
 			sourceTree = "<group>";
@@ -362,7 +408,9 @@
 		01D31F6C216BAFCD0055FD45 /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				0112624721B9C6F000B85563 /* FFT.swift */,
 				01D31F6E216BAFD90055FD45 /* RecognizerService.swift */,
+				012CBD6D21B855580091322B /* RingBuffer.swift */,
 				01D31F6D216BAFD90055FD45 /* SPSpeechContext.swift */,
 			);
 			name = Models;
@@ -384,6 +432,8 @@
 			children = (
 				01D31F7E216BB0000055FD45 /* GoogleRecognizerConfiguration.swift */,
 				01D31F7F216BB0000055FD45 /* RecognizerConfiguration.swift */,
+				0193DD4521B7766900288EB1 /* SampleWakeRecognizerConfiguration.swift */,
+				01BADDE921B6DB1D00515701 /* WakeRecognizerConfiguration.swift */,
 			);
 			name = Configurations;
 			sourceTree = "<group>";
@@ -391,7 +441,9 @@
 		01D31F84216BB0070055FD45 /* Recognizers */ = {
 			isa = PBXGroup;
 			children = (
+				0181E33C21E7D440004B3D7B /* AppleSpeechRecognizer.swift */,
 				01D31F85216BB0110055FD45 /* GoogleSpeechRecognizer.swift */,
+				01BADDEB21B6E59C00515701 /* WakeWordSpeechRecognizer.swift */,
 			);
 			name = Recognizers;
 			sourceTree = "<group>";
@@ -530,6 +582,7 @@
 				011C191A216BCA3200DB36FD /* Frameworks */,
 				011C191B216BCA3200DB36FD /* Resources */,
 				011C1947216BDBE000DB36FD /* Embed Frameworks */,
+				01B2B42921ADC7AC00289890 /* Copy the Google Dependencies */,
 			);
 			buildRules = (
 			);
@@ -657,6 +710,9 @@
 			files = (
 				011C1922216BCA3200DB36FD /* ViewController.swift in Sources */,
 				011C1920216BCA3200DB36FD /* AppDelegate.swift in Sources */,
+				014EFA532203A79A0004D176 /* WakeWordViewController.swift in Sources */,
+				014EFA512203A7900004D176 /* AppleViewController.swift in Sources */,
+				014EFA552203A7A60004D176 /* GoogleViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -667,14 +723,25 @@
 				01D31F6F216BAFD90055FD45 /* SPSpeechContext.swift in Sources */,
 				01D31F77216BAFEF0055FD45 /* SpeechRecognizer.swift in Sources */,
 				01D31F8E216BB0370055FD45 /* Typealiases.swift in Sources */,
+				011DA81021DD188B001345C7 /* WakeWordDetect.mlmodel in Sources */,
 				01D31F66216BAFB50055FD45 /* Error.swift in Sources */,
 				01D31F6A216BAFC60055FD45 /* SpeechPipeline.swift in Sources */,
+				012CBD6E21B855580091322B /* RingBuffer.swift in Sources */,
 				01D31F80216BB0000055FD45 /* GoogleRecognizerConfiguration.swift in Sources */,
+				01BADDEA21B6DB1D00515701 /* WakeRecognizerConfiguration.swift in Sources */,
+				0181E33D21E7D440004B3D7B /* AppleSpeechRecognizer.swift in Sources */,
+				0104CB4121F781C40020A3C4 /* WakeWordFilter.mlmodel in Sources */,
 				01D31F7B216BAFEF0055FD45 /* SpeechRecognizerService.swift in Sources */,
+				01D489E721D42A070030D015 /* Data+Extensions.swift in Sources */,
+				0112624821B9C6F000B85563 /* FFT.swift in Sources */,
 				01D31F71216BAFD90055FD45 /* RecognizerService.swift in Sources */,
 				01D31F82216BB0000055FD45 /* RecognizerConfiguration.swift in Sources */,
 				01D31F62216BAFA40055FD45 /* AudioController.swift in Sources */,
+				0167942D21C30FE600BE457E /* AVAudioPCMBuffer+Extensions.swift in Sources */,
+				0193DD4621B7766900288EB1 /* SampleWakeRecognizerConfiguration.swift in Sources */,
 				011C193B216BCBCA00DB36FD /* StandardGoogleRecognitionConfiguration.swift in Sources */,
+				01BADDEC21B6E59C00515701 /* WakeWordSpeechRecognizer.swift in Sources */,
+				0181E33F21E7F0D3004B3D7B /* StandardWakeWordConfiguration.swift in Sources */,
 				01D31F8A216BB0220055FD45 /* Results.swift in Sources */,
 				01D31F79216BAFEF0055FD45 /* AudioControllerDelegate.swift in Sources */,
 				01D31F5E216BAF950055FD45 /* StandardRecognizerConfiguration.swift in Sources */,
@@ -741,23 +808,14 @@
 /* Begin XCBuildConfiguration section */
 		011C192D216BCA3200DB36FD /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 01D31F57216BAF680055FD45 /* SpokeStackConfig.xcconfig */;
+			baseConfigurationReference = 01D31F57216BAF680055FD45 /* SpokeStackiOSConfig.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
+				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
 				DEVELOPMENT_TEAM = XM4VAKDQL9;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/Frameworks/BoringSSL-GRPC",
-					"$(PROJECT_DIR)/Frameworks/googleapis",
-					"$(PROJECT_DIR)/Frameworks/gRPC",
-					"$(PROJECT_DIR)/Frameworks/gRPC-Core",
-					"$(PROJECT_DIR)/Frameworks/gRPC-ProtoRPC",
-					"$(PROJECT_DIR)/Frameworks/gRPC-RxLibrary",
-					"$(PROJECT_DIR)/Frameworks/nanopb",
-					"$(PROJECT_DIR)/Frameworks/Protobuf",
-				);
+				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				INFOPLIST_FILE = SpokeStackFrameworkExample/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -772,23 +830,14 @@
 		};
 		011C192E216BCA3200DB36FD /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 01D31F57216BAF680055FD45 /* SpokeStackConfig.xcconfig */;
+			baseConfigurationReference = 01D31F57216BAF680055FD45 /* SpokeStackiOSConfig.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
+				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
 				DEVELOPMENT_TEAM = XM4VAKDQL9;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/Frameworks/BoringSSL-GRPC",
-					"$(PROJECT_DIR)/Frameworks/googleapis",
-					"$(PROJECT_DIR)/Frameworks/gRPC",
-					"$(PROJECT_DIR)/Frameworks/gRPC-Core",
-					"$(PROJECT_DIR)/Frameworks/gRPC-ProtoRPC",
-					"$(PROJECT_DIR)/Frameworks/gRPC-RxLibrary",
-					"$(PROJECT_DIR)/Frameworks/nanopb",
-					"$(PROJECT_DIR)/Frameworks/Protobuf",
-				);
+				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				INFOPLIST_FILE = SpokeStackFrameworkExample/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -925,11 +974,12 @@
 		};
 		01D31F50216BAF260055FD45 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 01D31F57216BAF680055FD45 /* SpokeStackConfig.xcconfig */;
+			baseConfigurationReference = 01D31F57216BAF680055FD45 /* SpokeStackiOSConfig.xcconfig */;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Automatic;
+				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
 				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = XM4VAKDQL9;
 				DYLIB_COMPATIBILITY_VERSION = 1;
@@ -952,6 +1002,26 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
+				);
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-framework",
+					"\"GRPCClient\"",
+					"-framework",
+					"\"ProtoRPC\"",
+					"-framework",
+					"\"Protobuf\"",
+					"-framework",
+					"\"RxLibrary\"",
+					"-framework",
+					"\"googleapis\"",
+					"-framework",
+					"\"grpc\"",
+					"-framework",
+					"\"nanopb\"",
+					"-framework",
+					"\"openssl\"",
+					"-ObjC",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.pylon.SpokeStack;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
@@ -964,11 +1034,12 @@
 		};
 		01D31F51216BAF260055FD45 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 01D31F57216BAF680055FD45 /* SpokeStackConfig.xcconfig */;
+			baseConfigurationReference = 01D31F57216BAF680055FD45 /* SpokeStackiOSConfig.xcconfig */;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Automatic;
+				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
 				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = XM4VAKDQL9;
 				DYLIB_COMPATIBILITY_VERSION = 1;
@@ -992,6 +1063,26 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-framework",
+					"\"GRPCClient\"",
+					"-framework",
+					"\"ProtoRPC\"",
+					"-framework",
+					"\"Protobuf\"",
+					"-framework",
+					"\"RxLibrary\"",
+					"-framework",
+					"\"googleapis\"",
+					"-framework",
+					"\"grpc\"",
+					"-framework",
+					"\"nanopb\"",
+					"-framework",
+					"\"openssl\"",
+					"-ObjC",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.pylon.SpokeStack;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
@@ -1002,7 +1093,7 @@
 		};
 		01D31F53216BAF260055FD45 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 01D31F57216BAF680055FD45 /* SpokeStackConfig.xcconfig */;
+			baseConfigurationReference = 01D31F57216BAF680055FD45 /* SpokeStackiOSConfig.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
@@ -1033,7 +1124,7 @@
 		};
 		01D31F54216BAF260055FD45 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 01D31F57216BAF680055FD45 /* SpokeStackConfig.xcconfig */;
+			baseConfigurationReference = 01D31F57216BAF680055FD45 /* SpokeStackiOSConfig.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;

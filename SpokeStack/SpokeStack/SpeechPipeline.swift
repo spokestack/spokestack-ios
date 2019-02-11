@@ -8,6 +8,10 @@
 
 import Foundation
 
+public enum SpeechPipelineError: Error {
+    case illegalState(message: String)
+}
+
 public final class SpeechPipeline {
     
     // MARK: Public (properties)
@@ -20,7 +24,7 @@ public final class SpeechPipeline {
     
     // MARK: Private (properties)
     
-    private var speechRecognizerService: SpeechRecognizerService = GoogleSpeechRecognizer.sharedInstance
+    private var speechRecognizerService: SpeechRecognizerService
     
     // MARK: Initializers
     
@@ -28,40 +32,17 @@ public final class SpeechPipeline {
         speechRecognizerService.delegate = nil
     }
     
-    public init<RC: RecognizerConfiguration>(_ service: RecognizerService, configuration: RC, delegate: SpeechRecognizer?) throws {
-        
-        func didInitialize() -> Bool {
-            
-            var didInitialize: Bool = false
-            
-            switch service {
-            case .google where configuration is GoogleRecognizerConfiguration:
+    public init(_ service: RecognizerService,
+                configuration: RecognizerConfiguration,
+                delegate: SpeechRecognizer?) throws {
 
-                self.speechRecognizerService.configuration = configuration
-                
-                didInitialize = true
-                break
-            default: break
-            }
-            
-            return didInitialize
-        }
-        
-        self.speechRecognizerService = service.speechRecognizerService
-        self.speechRecognizerService.delegate = self.delegate
-        
         self.service = service
         self.configuration = configuration
         self.delegate = delegate
         
-        if !didInitialize() {
-            
-            let errorMessage: String = """
-            The service must be google and your configuration must conform to GoogleRecognizerConfiguration.
-            Future release will support other services.
-            """
-            throw SpeechPipleError.invalidInitialzation(errorMessage)
-        }
+        self.speechRecognizerService = service.speechRecognizerService
+        self.speechRecognizerService.configuration = configuration
+        self.speechRecognizerService.delegate = self.delegate
     }
     
     public func start() -> Void {
@@ -72,4 +53,3 @@ public final class SpeechPipeline {
         self.speechRecognizerService.stopStreaming()
     }
 }
-

@@ -17,6 +17,10 @@ func recordingCallback(
     inNumberFrames: UInt32,
     ioData: UnsafeMutablePointer<AudioBufferList>?) -> OSStatus {
     
+    guard let remoteIOUnit: AudioComponentInstance = AudioController.shared.remoteIOUnit else {
+        return kAudioServicesSystemSoundUnspecifiedError
+    }
+    
     var status: OSStatus = noErr
     let channelCount: UInt32 = 1
     
@@ -31,7 +35,7 @@ func recordingCallback(
     
     /// get the recorded samples
     
-    status = AudioUnitRender(AudioController.shared.remoteIOUnit!,
+    status = AudioUnitRender(remoteIOUnit,
                              ioActionFlags,
                              inTimeStamp,
                              inBusNumber,
@@ -40,12 +44,10 @@ func recordingCallback(
     if (status != noErr) {
         return status
     }
-
-    let data: Data = Data(bytes: buffers[0].mData!, count: Int(buffers[0].mDataByteSize))
     
-    DispatchQueue.main.async {
-        AudioController.shared.delegate?.processSampleData(data)
-    }
+    let data: Data = Data(bytes: buffers[0].mData!, count: Int(buffers[0].mDataByteSize))
+
+    AudioController.shared.delegate?.processSampleData(data)
     
     return noErr
 }
@@ -82,7 +84,10 @@ class AudioController {
     // MARK: Initializers
     
     deinit {
-        AudioComponentInstanceDispose(remoteIOUnit!)
+        
+        if let ioUnit: AudioComponentInstance = self.remoteIOUnit {
+            AudioComponentInstanceDispose(ioUnit)
+        }
     }
     
     // MARK: Public (methods)

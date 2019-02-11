@@ -2,6 +2,9 @@
 <Workspace
    version = "1.0">
    <FileRef
+      location = "group:SampleAudioFileData.playground">
+   </FileRef>
+   <FileRef
       location = "group:SpokeStack.xcodeproj">
    </FileRef>
 </Workspace>

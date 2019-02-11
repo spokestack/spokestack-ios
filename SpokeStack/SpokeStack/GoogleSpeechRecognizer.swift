@@ -71,6 +71,10 @@ public class GoogleSpeechRecognizer: SpeechRecognizerService {
     
     // MARK: Initializers
     
+    deinit {
+        AudioController.shared.delegate = nil
+    }
+    
     public init() {
         AudioController.shared.delegate = self
     }
@@ -108,8 +112,10 @@ public class GoogleSpeechRecognizer: SpeechRecognizerService {
                                                             eventHandler: {[weak self] done, response, error in
                                                                 
                                                                 guard let strongSelf = self, error == nil else {
+                                                                    print("is there an error from the streaming \(String(describing: error))")
                                                                     
-                                                                    self?.delegate?.didFinish()
+                                                                    self?.stopStreaming()
+                                                                    self?.delegate?.didFinish(error)
                                                                     return
                                                                 }
                                                                 
@@ -127,7 +133,7 @@ public class GoogleSpeechRecognizer: SpeechRecognizerService {
                                                                         let context: SPSpeechContext = SPSpeechContext(transcript: alt.transcript, confidence: alt.confidence)
                                                                         
                                                                         strongSelf.delegate?.didRecognize(context)
-                                                                        strongSelf.delegate?.didFinish()
+                                                                        strongSelf.delegate?.didFinish(nil)
                                                                         strongSelf.stopStreaming()
                                                                     }
                                                                 }
@@ -163,10 +169,14 @@ public class GoogleSpeechRecognizer: SpeechRecognizerService {
 
 extension GoogleSpeechRecognizer: AudioControllerDelegate {
     
+    func didStart(_ engineController: AudioController) {}
+    
+    func didStop(_ engineController: AudioController) {}
+    
     func setupFailed(_ error: String) {
         
         self.streaming = false
-        self.delegate?.didFinish()
+        self.delegate?.didFinish(nil)
     }
     
     func processSampleData(_ data: Data) -> Void {
@@ -174,14 +184,17 @@ extension GoogleSpeechRecognizer: AudioControllerDelegate {
         /// Convert to model and pass back to delegate
         
         self.audioData.append(data)
+        print("audioData \(String(describing: self.audioData))")
         
         /// We recommend sending samples in 100ms chunks
         
         let chunkSize: Int = Int(0.1 * Double(AudioController.shared.sampleRate) * 2)
+        print("chunkSize \(chunkSize) and audio.length \(self.audioData.length)")
         
         if self.audioData.length > chunkSize {
-            
+            print("about to analyize data \(String(describing: self.audioData))")
             self.analyzeAudioData(self.audioData)
+            print("reset the audioData")
             self.audioData = NSMutableData()
         }
     }
