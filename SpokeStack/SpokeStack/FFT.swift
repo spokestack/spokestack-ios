@@ -21,13 +21,9 @@ final class FFT {
     
     private var log2Size: Int
     
-//    private var window: Array<Float> = []
-    
     private var fftSetup: FFTSetup
     
     private var complexBuffer: DSPSplitComplex!
-
-//    private var magnitudes: Array<Float> = []
     
     // MARK: Initializers
     
@@ -61,32 +57,15 @@ final class FFT {
     }
     
     // MARK: Public (methods)
-
-    func forward(_ buffers: Array<Float>) -> Void {
+    
+    func forward(_ buffer: inout Array<Float>) -> Void {
         
-        var analysisBuffer = buffers
+        /// Pack the sample values into the FFT complex buffer
         
-//        if self.window.isEmpty {
-//
-//            self.window = [Float](repeating: 0.0, count: size)
-//            vDSP_hann_window(&self.window, UInt(size), Int32(vDSP_HANN_NORM))
-//        }
-
-        /// Apply the window
-
-//        vDSP_vmul(buffers, 1, self.window, 1, &analysisBuffer, 1, UInt(buffers.count))
-        
-        var reals: Array<Float> = []
-        var imags: Array<Float> = []
-
-        for (idx, element) in analysisBuffer.enumerated() {
-            
-            reals.append(element)
-            imags.append(0)
+        for i in 0..<self.halfSize {
+            self.complexBuffer.realp[i] = buffer[2 * i + 0]
+            self.complexBuffer.imagp[i] = buffer[2 * i + 1]
         }
-        
-        self.complexBuffer = DSPSplitComplex(realp: UnsafeMutablePointer(mutating: reals),
-                                             imagp: UnsafeMutablePointer(mutating: imags))
         
         /// Perform a forward FFT
         
@@ -94,8 +73,14 @@ final class FFT {
         
         /// Store and square (for better visualization & conversion to db) the magnitudes
         
-//        self.magnitudes = [Float](repeating: 0.0, count: self.halfSize)
-        vDSP_zvmags(&(self.complexBuffer!), 1, &analysisBuffer, 1, UInt(self.halfSize))
-//        analysisBuffer.append(contentsOf: self.magnitudes)
+        vDSP_zvmags(&(self.complexBuffer!), 1, &buffer, 1, UInt(self.halfSize))
+        
+        buffer[0] = self.complexBuffer.realp[0] * self.complexBuffer.realp[0]
+        buffer[self.halfSize] = self.complexBuffer.imagp[0] * self.complexBuffer.imagp[0]
+        
+        for i in 0..<self.halfSize + 1 {
+            buffer[i] = sqrt(buffer[i]) / 2
+        }
     }
 }
+
