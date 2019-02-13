@@ -19,6 +19,8 @@ class ViewController: UIViewController {
     
     @IBOutlet weak var wakeWordButton: UIButton!
     
+    @IBOutlet weak var appleWakewordButton: UIButton!
+    
     // MARK: View Life Cycle
     
     override func viewDidLoad() {
@@ -44,6 +46,15 @@ class ViewController: UIViewController {
     @IBAction func wakeWordAction(_ sender: Any) {
         
         let wakeWordViewController: WakeWordViewController = WakeWordViewController()
+        let navigationViewController: UINavigationController = UINavigationController(rootViewController: wakeWordViewController)
+        
+        self.present(navigationViewController, animated: true, completion: nil)
+    }
+    
+    
+    @IBAction func appleWakewordAction(_ sender: Any) {
+        
+        let wakeWordViewController: AppleWakeWordViewController = AppleWakeWordViewController()
         let navigationViewController: UINavigationController = UINavigationController(rootViewController: wakeWordViewController)
         
         self.present(navigationViewController, animated: true, completion: nil)

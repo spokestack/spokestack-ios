@@ -35,11 +35,19 @@
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ewK-ye-p0o">
-                                <rect key="frame" x="151" y="168" width="72" height="30"/>
+                                <rect key="frame" x="122" y="168" width="130" height="30"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <state key="normal" title="Wakeword"/>
+                                <state key="normal" title="CoreML Wakeword"/>
                                 <connections>
                                     <action selector="wakeWordAction:" destination="BYZ-38-t0r" eventType="touchUpInside" id="PBl-wH-ng0"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="32J-G3-KGJ">
+                                <rect key="frame" x="130" y="215" width="115" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="Apple Wakeword"/>
+                                <connections>
+                                    <action selector="appleWakewordAction:" destination="BYZ-38-t0r" eventType="touchUpInside" id="LFA-ws-pYK"/>
                                 </connections>
                             </button>
                         </subviews>
@@ -48,6 +56,7 @@
                     </view>
                     <connections>
                         <outlet property="appleButton" destination="N81-j7-Wc3" id="Fa8-H3-fS1"/>
+                        <outlet property="appleWakewordButton" destination="32J-G3-KGJ" id="mtv-pe-E9d"/>
                         <outlet property="googleButton" destination="yvX-aI-Obz" id="U0H-Yy-BdO"/>
                         <outlet property="wakeWordButton" destination="ewK-ye-p0o" id="7Im-BS-1yf"/>
                     </connections>

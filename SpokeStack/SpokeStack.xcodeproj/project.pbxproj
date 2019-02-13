@@ -22,6 +22,11 @@
 		014EFA552203A7A60004D176 /* GoogleViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 014EFA542203A7A60004D176 /* GoogleViewController.swift */; };
 		0167942D21C30FE600BE457E /* AVAudioPCMBuffer+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0167942C21C30FE600BE457E /* AVAudioPCMBuffer+Extensions.swift */; };
 		0170B3AA2214644C00E38D2A /* WakewordRecognizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0170B3A92214644C00E38D2A /* WakewordRecognizer.swift */; };
+		0170B3AC221469E700E38D2A /* WakewordService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0170B3AB221469E700E38D2A /* WakewordService.swift */; };
+		0170B3AE22146F1400E38D2A /* WakewordRecognizerService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0170B3AD22146F1400E38D2A /* WakewordRecognizerService.swift */; };
+		0170B3B022146F7A00E38D2A /* AppleWakewordRecognizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0170B3AF22146F7A00E38D2A /* AppleWakewordRecognizer.swift */; };
+		0170B3B2221470B700E38D2A /* SFSpeechRecognitionResult+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0170B3B1221470B700E38D2A /* SFSpeechRecognitionResult+Extensions.swift */; };
+		0170B3B42214760B00E38D2A /* AppleWakeWordViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0170B3B32214760B00E38D2A /* AppleWakeWordViewController.swift */; };
 		0181E33D21E7D440004B3D7B /* AppleSpeechRecognizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0181E33C21E7D440004B3D7B /* AppleSpeechRecognizer.swift */; };
 		0181E33F21E7F0D3004B3D7B /* StandardWakeWordConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0181E33E21E7F0D3004B3D7B /* StandardWakeWordConfiguration.swift */; };
 		0193DD4621B7766900288EB1 /* SampleWakeRecognizerConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0193DD4521B7766900288EB1 /* SampleWakeRecognizerConfiguration.swift */; };
@@ -183,6 +188,11 @@
 		014EFA542203A7A60004D176 /* GoogleViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoogleViewController.swift; sourceTree = "<group>"; };
 		0167942C21C30FE600BE457E /* AVAudioPCMBuffer+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AVAudioPCMBuffer+Extensions.swift"; sourceTree = "<group>"; };
 		0170B3A92214644C00E38D2A /* WakewordRecognizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WakewordRecognizer.swift; sourceTree = "<group>"; };
+		0170B3AB221469E700E38D2A /* WakewordService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WakewordService.swift; sourceTree = "<group>"; };
+		0170B3AD22146F1400E38D2A /* WakewordRecognizerService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WakewordRecognizerService.swift; sourceTree = "<group>"; };
+		0170B3AF22146F7A00E38D2A /* AppleWakewordRecognizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppleWakewordRecognizer.swift; sourceTree = "<group>"; };
+		0170B3B1221470B700E38D2A /* SFSpeechRecognitionResult+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SFSpeechRecognitionResult+Extensions.swift"; sourceTree = "<group>"; };
+		0170B3B32214760B00E38D2A /* AppleWakeWordViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppleWakeWordViewController.swift; sourceTree = "<group>"; };
 		0181E33C21E7D440004B3D7B /* AppleSpeechRecognizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppleSpeechRecognizer.swift; sourceTree = "<group>"; };
 		0181E33E21E7F0D3004B3D7B /* StandardWakeWordConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StandardWakeWordConfiguration.swift; sourceTree = "<group>"; };
 		0193DD4521B7766900288EB1 /* SampleWakeRecognizerConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SampleWakeRecognizerConfiguration.swift; sourceTree = "<group>"; };
@@ -277,6 +287,7 @@
 				011C192B216BCA3200DB36FD /* Info.plist */,
 				011C191F216BCA3200DB36FD /* AppDelegate.swift */,
 				014EFA502203A7900004D176 /* AppleViewController.swift */,
+				0170B3B32214760B00E38D2A /* AppleWakeWordViewController.swift */,
 				014EFA542203A7A60004D176 /* GoogleViewController.swift */,
 				011C1921216BCA3200DB36FD /* ViewController.swift */,
 				014EFA522203A79A0004D176 /* WakeWordViewController.swift */,
@@ -292,6 +303,7 @@
 			children = (
 				0167942C21C30FE600BE457E /* AVAudioPCMBuffer+Extensions.swift */,
 				01D489E621D42A070030D015 /* Data+Extensions.swift */,
+				0170B3B1221470B700E38D2A /* SFSpeechRecognitionResult+Extensions.swift */,
 			);
 			name = Extensions;
 			sourceTree = "<group>";
@@ -414,6 +426,7 @@
 				01D31F6E216BAFD90055FD45 /* RecognizerService.swift */,
 				012CBD6D21B855580091322B /* RingBuffer.swift */,
 				01D31F6D216BAFD90055FD45 /* SpeechContext.swift */,
+				0170B3AB221469E700E38D2A /* WakewordService.swift */,
 			);
 			name = Models;
 			sourceTree = "<group>";
@@ -421,11 +434,12 @@
 		01D31F73216BAFE20055FD45 /* Protocols */ = {
 			isa = PBXGroup;
 			children = (
-				01D31F7D216BAFF40055FD45 /* Configurations */,
 				01D31F75216BAFEF0055FD45 /* AudioControllerDelegate.swift */,
 				01D31F74216BAFEF0055FD45 /* SpeechRecognizer.swift */,
 				01D31F76216BAFEF0055FD45 /* SpeechRecognizerService.swift */,
 				0170B3A92214644C00E38D2A /* WakewordRecognizer.swift */,
+				0170B3AD22146F1400E38D2A /* WakewordRecognizerService.swift */,
+				01D31F7D216BAFF40055FD45 /* Configurations */,
 			);
 			name = Protocols;
 			sourceTree = "<group>";
@@ -445,6 +459,7 @@
 			isa = PBXGroup;
 			children = (
 				0181E33C21E7D440004B3D7B /* AppleSpeechRecognizer.swift */,
+				0170B3AF22146F7A00E38D2A /* AppleWakewordRecognizer.swift */,
 				01D31F85216BB0110055FD45 /* GoogleSpeechRecognizer.swift */,
 				01BADDEB21B6E59C00515701 /* WakeWordSpeechRecognizer.swift */,
 			);
@@ -716,6 +731,7 @@
 				014EFA532203A79A0004D176 /* WakeWordViewController.swift in Sources */,
 				014EFA512203A7900004D176 /* AppleViewController.swift in Sources */,
 				014EFA552203A7A60004D176 /* GoogleViewController.swift in Sources */,
+				0170B3B42214760B00E38D2A /* AppleWakeWordViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -723,13 +739,17 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0170B3B022146F7A00E38D2A /* AppleWakewordRecognizer.swift in Sources */,
 				01D31F6F216BAFD90055FD45 /* SpeechContext.swift in Sources */,
+				0170B3AC221469E700E38D2A /* WakewordService.swift in Sources */,
 				01D31F77216BAFEF0055FD45 /* SpeechRecognizer.swift in Sources */,
 				01D31F8E216BB0370055FD45 /* Typealiases.swift in Sources */,
 				011DA81021DD188B001345C7 /* WakeWordDetect.mlmodel in Sources */,
 				01D31F66216BAFB50055FD45 /* Error.swift in Sources */,
+				0170B3AE22146F1400E38D2A /* WakewordRecognizerService.swift in Sources */,
 				01D31F6A216BAFC60055FD45 /* SpeechPipeline.swift in Sources */,
 				012CBD6E21B855580091322B /* RingBuffer.swift in Sources */,
+				0170B3B2221470B700E38D2A /* SFSpeechRecognitionResult+Extensions.swift in Sources */,
 				01D31F80216BB0000055FD45 /* GoogleRecognizerConfiguration.swift in Sources */,
 				01BADDEA21B6DB1D00515701 /* WakeRecognizerConfiguration.swift in Sources */,
 				0181E33D21E7D440004B3D7B /* AppleSpeechRecognizer.swift in Sources */,
