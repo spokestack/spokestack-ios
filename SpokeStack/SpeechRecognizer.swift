@@ -8,7 +8,7 @@
 
 import Foundation
 
-public protocol SpeechRecognizer: AnyObject {
+@objc public protocol SpeechRecognizer: AnyObject {
     
     func didStart() -> Void
     

@@ -8,7 +8,7 @@
 
 import Foundation
 
-public enum WakewordService {
+@objc public enum WakewordService: Int {
     case appleWakeword
 }
 
