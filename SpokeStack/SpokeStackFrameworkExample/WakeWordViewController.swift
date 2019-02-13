@@ -144,3 +144,22 @@ extension WakeWordViewController: SpeechRecognizer {
     }
 }
 
+extension WakeWordViewController: WakewordRecognizer {
+    
+    func activate() {
+        print("activate")
+        self.pipeline.activate()
+    }
+    
+    func deactivate() {
+        print("deactivate")
+    }
+    
+    func didError(_ error: Error) {
+        
+        if !error.localizedDescription.starts(with: "The operation couldn’t be completed. (kAFAssistantErrorDomain error 216.)") {
+            print("didError: " + error.localizedDescription)
+        }
+    }
+}
+
