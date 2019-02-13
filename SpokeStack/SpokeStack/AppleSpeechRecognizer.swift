@@ -127,7 +127,7 @@ class AppleSpeechRecognizer: NSObject, SpeechRecognizerService {
                         a.confidence <= b.confidence
                     }).first?.confidence ?? 0.0
 
-                    let context: SPSpeechContext = SPSpeechContext(transcript: finalTranscript.formattedString, confidence: confidence)
+                    let context: SpeechContext = SpeechContext(transcript: finalTranscript.formattedString, confidence: confidence)
     
                     strongSelf.delegate?.didRecognize(context)
                     strongSelf.delegate?.didFinish(nil)

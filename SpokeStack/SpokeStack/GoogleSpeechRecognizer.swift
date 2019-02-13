@@ -130,7 +130,7 @@ public class GoogleSpeechRecognizer: SpeechRecognizerService {
                                                                     
                                                                     if finished {
                                                                         
-                                                                        let context: SPSpeechContext = SPSpeechContext(transcript: alt.transcript, confidence: alt.confidence)
+                                                                        let context: SpeechContext = SpeechContext(transcript: alt.transcript, confidence: alt.confidence)
                                                                         
                                                                         strongSelf.delegate?.didRecognize(context)
                                                                         strongSelf.delegate?.didFinish(nil)

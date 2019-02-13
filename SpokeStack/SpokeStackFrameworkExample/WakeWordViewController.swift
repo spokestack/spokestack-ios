@@ -126,7 +126,7 @@ class WakeWordViewController: UIViewController {
 
 extension WakeWordViewController: SpeechRecognizer {
     
-    func didRecognize(_ result: SPSpeechContext) {
+    func didRecognize(_ result: SpeechContext) {
         print("transcript \(result.transcript)")
     }
     

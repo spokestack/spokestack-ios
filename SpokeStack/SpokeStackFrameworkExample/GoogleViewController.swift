@@ -103,7 +103,7 @@ class GoogleViewController: UIViewController {
 
 extension GoogleViewController: SpeechRecognizer {
     
-    func didRecognize(_ result: SPSpeechContext) {
+    func didRecognize(_ result: SpeechContext) {
         print("transcript \(result.transcript)")
     }
     
