@@ -8,7 +8,7 @@
 
 import Foundation
 
-public final class SpeechPipeline {
+@objc public final class SpeechPipeline: NSObject {
     
     // MARK: Public (properties)
     
@@ -40,12 +40,12 @@ public final class SpeechPipeline {
         wakewordRecognizerService.delegate = nil
     }
     
-    public init(_ speechService: RecognizerService,
-                speechConfiguration: RecognizerConfiguration,
-                speechDelegate: SpeechRecognizer?,
-                wakewordService: WakewordService,
-                wakewordConfiguration: WakewordConfiguration,
-                wakewordDelegate: WakewordRecognizer?) throws {
+    @objc public init(_ speechService: RecognizerService,
+                      speechConfiguration: RecognizerConfiguration,
+                      speechDelegate: SpeechRecognizer?,
+                      wakewordService: WakewordService,
+                      wakewordConfiguration: WakewordConfiguration,
+                      wakewordDelegate: WakewordRecognizer?) throws {
         
         self.speechService = speechService
         self.speechConfiguration = speechConfiguration
@@ -66,19 +66,19 @@ public final class SpeechPipeline {
     
     // MARK: Public (methods)
     
-    public func activate() -> Void {
+    @objc public func activate() -> Void {
         self.speechRecognizerService.startStreaming(context: self.context)
     }
     
-    public func deactivate() -> Void {
+    @objc public func deactivate() -> Void {
         self.speechRecognizerService.stopStreaming(context: self.context)
     }
     
-    public func start() -> Void {
+    @objc public func start() -> Void {
         self.wakewordRecognizerService.startStreaming(context: self.context)
     }
     
-    public func stop() -> Void {
+    @objc public func stop() -> Void {
         self.wakewordRecognizerService.stopStreaming(context: self.context)
     }
 }

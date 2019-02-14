@@ -8,7 +8,7 @@
 
 import Foundation
 
-public protocol WakewordRecognizer: AnyObject {
+@objc public protocol WakewordRecognizer: AnyObject {
     
     func activate() -> Void
     
