@@ -11,22 +11,17 @@ import AVFoundation
 import CoreML
 import Speech
 
-public class WakeWordSpeechRecognizer: SpeechRecognizerService {
-    
+public class WakeWordSpeechRecognizer: NSObject, WakewordRecognizerService {
+
     // MARK: Public (properties)
     
     static let sharedInstance: WakeWordSpeechRecognizer = WakeWordSpeechRecognizer()
     
     // MARK: SpeechRecognizerService (properties)
+
+    public var configuration: WakewordConfiguration = WakewordConfiguration()
     
-    public var configuration: RecognizerConfiguration = StandardWakeWordConfiguration() {
-        
-        didSet {
-            self.setup()
-        }
-    }
-    
-    public weak var delegate: SpeechRecognizer?
+    public weak var delegate: WakewordRecognizer?
     
     // MARK: Internal (properties)
     
@@ -40,8 +35,8 @@ public class WakeWordSpeechRecognizer: SpeechRecognizerService {
     
     private var wwdetect: WakeWordDetect = WakeWordDetect()
     
-    private var wakeWordConfiguration: WakeRecognizerConfiguration {
-        return self.configuration as! WakeRecognizerConfiguration
+    private var wakeWordConfiguration: WakewordConfiguration {
+        return self.configuration
     }
     
     /// Keyword / phrase configuration and preallocated buffers
@@ -106,11 +101,19 @@ public class WakeWordSpeechRecognizer: SpeechRecognizerService {
         audioController.delegate = nil
     }
     
-    public init() {}
+    public override init() {
+        
+        super.init()
+        self.setup()
+    }
     
-    // MARK: Public (methods)
+    // MARK: Internal (methods)
     
-    public func startStreaming() -> Void {
+    func startStreaming(context: SpeechContext) -> Void {
+        
+        /// Words and phrasing
+        
+        self.setupWordsAndPhrases()
         
         let buffer: TimeInterval = TimeInterval((self.wakeWordConfiguration.sampleRate / 1000) * self.wakeWordConfiguration.frameWidth)
         self.audioController.sampleRate = self.wakeWordConfiguration.sampleRate
@@ -119,7 +122,7 @@ public class WakeWordSpeechRecognizer: SpeechRecognizerService {
         self.audioController.startStreaming()
     }
     
-    public func stopStreaming() -> Void {
+    func stopStreaming(context: SpeechContext) -> Void {
         
         self.audioController.stopStreaming()
         self.audioController.delegate = nil
@@ -130,10 +133,6 @@ public class WakeWordSpeechRecognizer: SpeechRecognizerService {
     // MARK: Private (methods)
     
     private func setup() -> Void {
-        
-        /// Words and phrasing
-        
-        self.setupWordsAndPhrases()
         
         /// Fetch signal normalization config
         
@@ -316,8 +315,8 @@ public class WakeWordSpeechRecognizer: SpeechRecognizerService {
             if self.sampleWindow.isFull {
                 
                 // TODO: Check for "isSpeech" before analyze
+
                 self.analyze()
-                
                 self.sampleWindow.rewind().seek(self.hopLength)
             }
         }
@@ -523,31 +522,6 @@ extension WakeWordSpeechRecognizer {
     }
 }
 
-extension WakeWordSpeechRecognizer: AudioControllerDelegate {
-    
-    func didStart(_ engineController: AudioController) {
-        print("audioEngine did start")
-    }
-    
-    func didStop(_ engineController: AudioController) {
-        print("audioEngine did stop")
-        
-        /// "close"
-        
-        /// Reset
-        
-        self.reset()
-    }
-    
-    func setupFailed(_ error: String) -> Void {
-        fatalError(error)
-    }
-    
-    func processSampleData(_ data: Data) -> Void {
-        self.process(data)
-    }
-}
-
 extension WakeWordSpeechRecognizer {
     
     private func smooth() -> Void {
@@ -676,3 +650,27 @@ extension WakeWordSpeechRecognizer {
     }
 }
 
+extension WakeWordSpeechRecognizer: AudioControllerDelegate {
+    
+    func didStart(_ engineController: AudioController) {
+        print("audioEngine did start")
+    }
+    
+    func didStop(_ engineController: AudioController) {
+        print("audioEngine did stop")
+        
+        /// "close"
+        
+        /// Reset
+        
+        self.reset()
+    }
+    
+    func setupFailed(_ error: String) -> Void {
+        fatalError(error)
+    }
+    
+    func processSampleData(_ data: Data) -> Void {
+        self.process(data)
+    }
+}

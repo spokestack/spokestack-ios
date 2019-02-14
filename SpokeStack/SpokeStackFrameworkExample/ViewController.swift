@@ -17,8 +17,6 @@ class ViewController: UIViewController {
     
     @IBOutlet weak var appleButton: UIButton!
     
-    @IBOutlet weak var wakeWordButton: UIButton!
-    
     @IBOutlet weak var appleWakewordButton: UIButton!
     
     // MARK: View Life Cycle
@@ -34,14 +32,6 @@ class ViewController: UIViewController {
         
         self.present(navigationViewController, animated: true, completion: nil)
     }
-
-    @IBAction func appleAxction(_ sender: Any) {
-    
-        let appleViewController: AppleViewController = AppleViewController()
-        let navigationViewController: UINavigationController = UINavigationController(rootViewController: appleViewController)
-        
-        self.present(navigationViewController, animated: true, completion: nil)
-    }
     
     @IBAction func wakeWordAction(_ sender: Any) {
         
@@ -50,7 +40,6 @@ class ViewController: UIViewController {
         
         self.present(navigationViewController, animated: true, completion: nil)
     }
-    
     
     @IBAction func appleWakewordAction(_ sender: Any) {
         

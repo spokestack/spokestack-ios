@@ -17,7 +17,7 @@ class AppleWakeWordViewController: UIViewController {
         button.translatesAutoresizingMaskIntoConstraints = false
         button.setTitle("Start Recording", for: .normal)
         button.addTarget(self,
-                         action: #selector(WakeWordViewController.startRecordingAction(_:)),
+                         action: #selector(AppleWakeWordViewController.startRecordingAction(_:)),
                          for: .touchUpInside)
         button.setTitleColor(.blue, for: .normal)
         button.isEnabled = true
@@ -29,7 +29,7 @@ class AppleWakeWordViewController: UIViewController {
         button.translatesAutoresizingMaskIntoConstraints = false
         button.setTitle("Stop Recording", for: .normal)
         button.addTarget(self,
-                         action: #selector(WakeWordViewController.stopRecordingAction(_:)),
+                         action: #selector(AppleWakeWordViewController.stopRecordingAction(_:)),
                          for: .touchUpInside)
         button.setTitleColor(.blue, for: .normal)
         button.isEnabled = false
@@ -45,6 +45,8 @@ class AppleWakeWordViewController: UIViewController {
                                    wakewordDelegate: self)
     }()
     
+    // MARK:
+    
     override func loadView() {
         
         super.loadView()
@@ -52,7 +54,7 @@ class AppleWakeWordViewController: UIViewController {
         self.title = "Apple WakeWord"
         let doneBarButtonItem: UIBarButtonItem = UIBarButtonItem(barButtonSystemItem: .done,
                                                                  target: self,
-                                                                 action: #selector(WakeWordViewController.dismissViewController(_:)))
+                                                                 action: #selector(AppleWakeWordViewController.dismissViewController(_:)))
         self.navigationItem.rightBarButtonItem = doneBarButtonItem
     }
     
@@ -91,7 +93,7 @@ class AppleWakeWordViewController: UIViewController {
     }
 }
 
-extension WakeWordViewController: SpeechRecognizer, WakewordRecognizer {
+extension AppleWakeWordViewController: SpeechRecognizer, WakewordRecognizer {
     func activate() {
         print("activate")
         self.pipeline.activate()

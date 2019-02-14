@@ -19,7 +19,7 @@ extension WakewordService {
         switch self {
         case .appleWakeword:
             return AppleWakewordRecognizer.sharedInstance
-        case .wakeword
+        case .wakeword:
             return WakeWordSpeechRecognizer.sharedInstance
         }
     }

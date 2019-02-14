@@ -80,11 +80,15 @@ public class AppleWakewordRecognizer: NSObject, WakewordRecognizerService {
     
     private func setup() -> Void {
         
-        phrases = self.configuration.wakePhrases.components(separatedBy: ",")
+        self.phrases = self.configuration.wakePhrases.components(separatedBy: ",")
+        
         do {
+        
             try audioSession.setCategory(.playAndRecord, mode: .spokenAudio, options: .defaultToSpeaker)
             try audioSession.setActive(true, options: .notifyOthersOnDeactivation)
+
         } catch let error {
+
             self.delegate?.didError(error)
         }
     }
