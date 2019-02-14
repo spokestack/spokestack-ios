@@ -37,6 +37,8 @@ public class WakeWordSpeechRecognizer: NSObject, WakewordRecognizerService {
     
     private var dispatchWorker: DispatchWorkItem?
     
+    private var speechContext: SpeechContext?
+    
     /// Keyword / phrase configuration and preallocated buffers
     
     private var words: Array<String> = []
@@ -97,6 +99,7 @@ public class WakeWordSpeechRecognizer: NSObject, WakewordRecognizerService {
     
     deinit {
         audioController.delegate = nil
+        speechContext = nil
     }
     
     public override init() {
@@ -108,6 +111,18 @@ public class WakeWordSpeechRecognizer: NSObject, WakewordRecognizerService {
     // MARK: Internal (methods)
     
     func startStreaming(context: SpeechContext) -> Void {
+        
+        self.speechContext = context
+        
+        /// Automatically restart wakeword task if it goes over Apple's 1
+        /// minute listening limit
+        
+        self.dispatchWorker = DispatchWorkItem {
+            self.stopStreaming(context: context)
+            self.startStreaming(context: context)
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(self.configuration.wakeActiveMax),
+                                      execute: self.dispatchWorker!)
         
         /// Words and phrasing
         
@@ -122,9 +137,9 @@ public class WakeWordSpeechRecognizer: NSObject, WakewordRecognizerService {
     
     func stopStreaming(context: SpeechContext) -> Void {
         
-        self.audioController.stopStreaming()
         self.audioController.delegate = nil
-        
+        self.audioController.stopStreaming()
+
         try? AVAudioSession.sharedInstance().setActive(false, options: [])
     }
     
@@ -252,14 +267,38 @@ public class WakeWordSpeechRecognizer: NSObject, WakewordRecognizerService {
 
     private func process(_ data: Data) -> Void {
         
-        // TODO: Need to handle "state"
-        //
-        // See: https://github.com/pylon/spokestack-android/blob/a5b1e4cf194b10e209c1b740c2e9655989b24cb9/src/main/java/com/pylon/spokestack/wakeword/WakewordTrigger.java#L370
+        // TODO: Handle vad rise / fall
+        // https://github.com/pylon/spokestack-android/blob/master/src/main/java/com/pylon/spokestack/wakeword/WakewordTrigger.java#L366
+        
+        guard let context: SpeechContext = self.speechContext else {
+            self.delegate?.didError(SpeechPipelineError.illegalState("The speech context can't be nil"))
+            return
+        }
 
-        self.sample(data)
+        if !context.isActive {
+            
+            /// Run the current frame through the detector pipeline
+            /// activate if a keyword phrase was detected
+
+            self.sample(data, context: context)
+
+        } else {
+            
+            /// Continue this wakeword (or external) activation
+            /// until a vad deactivation or timeout
+            
+            self.activeLength += 1
+            
+            if self.activeLength > self.minActive {
+                
+                if self.activeLength > self.maxActive {
+                    self.deactivate(context)
+                }
+            }
+        }
     }
     
-    private func sample(_ data: Data) -> Void {
+    private func sample(_ data: Data, context: SpeechContext) -> Void {
 
         /// Update the rms normalization factors
         /// Maintain an ewma of the rms signal energy for speech samples
@@ -314,7 +353,7 @@ public class WakeWordSpeechRecognizer: NSObject, WakewordRecognizerService {
                 
                 // TODO: Check for "isSpeech" before analyze
 
-                self.analyze()
+                self.analyze(context)
                 self.sampleWindow.rewind().seek(self.hopLength)
             }
         }
@@ -374,11 +413,39 @@ public class WakeWordSpeechRecognizer: NSObject, WakewordRecognizerService {
         self.phraseWindow.reset().fill(0)
         self.phraseMax = Array(repeating: 0.0, count: self.words.count)
     }
+    
+    private func activate(_ context: SpeechContext) -> Void {
+        
+        if !context.isActive {
+            
+            context.isActive = true
+            
+            self.activeLength = 1
+            self.delegate?.activate()
+            
+            self.dispatchWorker?.cancel()
+            self.stopStreaming(context: context)
+        }
+    }
+    
+    private func deactivate(_ context: SpeechContext) -> Void {
+
+        if context.isActive {
+            
+            context.isActive = false
+            
+            self.delegate?.deactivate()
+            self.activeLength = 0
+            
+            self.dispatchWorker?.cancel()
+            self.stopStreaming(context: context)
+        }
+    }
 }
 
 extension WakeWordSpeechRecognizer {
     
-    private func analyze() -> Void {
+    private func analyze(_ context: SpeechContext) -> Void {
 
         /// Apply the windowing function to the current sample window
         
@@ -402,10 +469,10 @@ extension WakeWordSpeechRecognizer {
         /// Compute the stft
 
         self.fft.forward(&self.fftFrame)
-        self.filter()
+        self.filter(context)
     }
     
-    private func filter() -> Void {
+    private func filter(_ context: SpeechContext) -> Void {
         
         precondition(!self.fftFrame.isEmpty, "FFT Frame can't be empty")
 
@@ -445,7 +512,7 @@ extension WakeWordSpeechRecognizer {
 
             /// Detect
 
-            self.detect()
+            self.detect(context)
 
         } catch let modelFilterError {
 
@@ -453,7 +520,7 @@ extension WakeWordSpeechRecognizer {
         }
     }
     
-    private func detect() -> Void {
+    private func detect(_ context: SpeechContext) -> Void {
 
         /// Transfer the mel filterbank window to the detector model's inputs
         
@@ -516,13 +583,13 @@ extension WakeWordSpeechRecognizer {
             fatalError("modelDetectError is thrown \(modelDetectError)")
         }
         
-        self.smooth()
+        self.smooth(context)
     }
 }
 
 extension WakeWordSpeechRecognizer {
     
-    private func smooth() -> Void {
+    private func smooth(_ context: SpeechContext) -> Void {
         
         /// Sum the per-class posteriors across the smoothing window
         
@@ -572,10 +639,10 @@ extension WakeWordSpeechRecognizer {
             }
         }
         
-        self.phrase()
+        self.phrase(context)
     }
     
-    private func phrase() -> Void {
+    private func phrase(_ context: SpeechContext) -> Void {
         
         /// Compute the argmax (winning class) of each smoothed output
         /// in the current phrase window
@@ -640,8 +707,7 @@ extension WakeWordSpeechRecognizer {
 
             if match == phrase.count {
                 print("match does == phrase count before activate")
-                // TODO: Pass delegate method to indicate ACTIVE
-                self.activeLength = 1
+                self.activate(context)
                 break
             }
         }
@@ -656,9 +722,7 @@ extension WakeWordSpeechRecognizer: AudioControllerDelegate {
     
     func didStop(_ engineController: AudioController) {
         print("audioEngine did stop")
-        
-        /// "close"
-        
+
         /// Reset
         
         self.reset()
