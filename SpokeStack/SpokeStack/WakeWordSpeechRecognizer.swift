@@ -35,9 +35,7 @@ public class WakeWordSpeechRecognizer: NSObject, WakewordRecognizerService {
     
     private var wwdetect: WakeWordDetect = WakeWordDetect()
     
-    private var wakeWordConfiguration: WakewordConfiguration {
-        return self.configuration
-    }
+    private var dispatchWorker: DispatchWorkItem?
     
     /// Keyword / phrase configuration and preallocated buffers
     
@@ -115,8 +113,8 @@ public class WakeWordSpeechRecognizer: NSObject, WakewordRecognizerService {
         
         self.setupWordsAndPhrases()
         
-        let buffer: TimeInterval = TimeInterval((self.wakeWordConfiguration.sampleRate / 1000) * self.wakeWordConfiguration.frameWidth)
-        self.audioController.sampleRate = self.wakeWordConfiguration.sampleRate
+        let buffer: TimeInterval = TimeInterval((self.configuration.sampleRate / 1000) * self.configuration.frameWidth)
+        self.audioController.sampleRate = self.configuration.sampleRate
         self.audioController.bufferDuration = buffer
         self.audioController.delegate = self
         self.audioController.startStreaming()
@@ -136,18 +134,18 @@ public class WakeWordSpeechRecognizer: NSObject, WakewordRecognizerService {
         
         /// Fetch signal normalization config
         
-        self.rmsTarget = self.wakeWordConfiguration.rmsTarget
-        self.rmsAlpha = self.wakeWordConfiguration.rmsAlpha
+        self.rmsTarget = self.configuration.rmsTarget
+        self.rmsAlpha = self.configuration.rmsAlpha
         self.rmsValue = self.rmsTarget
-        self.preEmphasis = self.wakeWordConfiguration.preEmphasis
+        self.preEmphasis = self.configuration.preEmphasis
         
         /// Fetch and validate stft/mel spectrogram configuration
         
-        let sampleRate: Int = self.wakeWordConfiguration.sampleRate
-        let windowSize: Int = self.wakeWordConfiguration.fftWindowSize
-        self.hopLength = self.wakeWordConfiguration.fftHopLength * sampleRate / 1000
+        let sampleRate: Int = self.configuration.sampleRate
+        let windowSize: Int = self.configuration.fftWindowSize
+        self.hopLength = self.configuration.fftHopLength * sampleRate / 1000
         
-        let windowType: String = self.wakeWordConfiguration.fftWindowType
+        let windowType: String = self.configuration.fftWindowType
         
         if windowSize % 2 != 0 {
             
@@ -155,8 +153,8 @@ public class WakeWordSpeechRecognizer: NSObject, WakewordRecognizerService {
             return
         }
         
-        let melLength: Int = self.wakeWordConfiguration.melFrameLength * sampleRate / 1000 / self.hopLength
-        self.melWidth = self.wakeWordConfiguration.melFrameWidth
+        let melLength: Int = self.configuration.melFrameLength * sampleRate / 1000 / self.hopLength
+        self.melWidth = self.configuration.melFrameWidth
         
         /// Allocate the stft window and FFT/frame buffer
         
@@ -172,8 +170,8 @@ public class WakeWordSpeechRecognizer: NSObject, WakewordRecognizerService {
         
         /// fetch smoothing/phrasing window lengths
         
-        let smoothLength: Int = self.wakeWordConfiguration.wakeSmoothLength * sampleRate / 1000 / self.hopLength
-        let phraseLength: Int = self.wakeWordConfiguration.wakePhraseLength * sampleRate / 1000 / self.hopLength
+        let smoothLength: Int = self.configuration.wakeSmoothLength * sampleRate / 1000 / self.hopLength
+        let phraseLength: Int = self.configuration.wakePhraseLength * sampleRate / 1000 / self.hopLength
         
         /// Allocate sliding windows
         /// Fill all buffers (except samples) with zero, in order to
@@ -198,10 +196,10 @@ public class WakeWordSpeechRecognizer: NSObject, WakewordRecognizerService {
         
         /// Configure the wakeword activation lengths
         
-        let frameWidth: Int = self.wakeWordConfiguration.frameWidth
+        let frameWidth: Int = self.configuration.frameWidth
         
-        self.minActive = self.wakeWordConfiguration.wakeActionMin / frameWidth
-        self.maxActive = self.wakeWordConfiguration.wakeActionMax / frameWidth
+        self.minActive = self.configuration.wakeActionMin / frameWidth
+        self.maxActive = self.configuration.wakeActionMax / frameWidth
     }
     
     private func setupWordsAndPhrases() -> Void {
@@ -209,7 +207,7 @@ public class WakeWordSpeechRecognizer: NSObject, WakewordRecognizerService {
         /// Parse the configured list of keywords
         /// Allocate an additional slot for the non-keyword class at 0
         
-        let wakeWords: Array<String> = self.wakeWordConfiguration.wakeWords.components(separatedBy: ",")
+        let wakeWords: Array<String> = self.configuration.wakeWords.components(separatedBy: ",")
         self.words = Array(repeating: "", count: wakeWords.count + 1)
         
         for (index, _) in self.words.enumerated() {
@@ -223,7 +221,7 @@ public class WakeWordSpeechRecognizer: NSObject, WakewordRecognizerService {
         
         /// Parse the keyword phrase configuration
         
-        var wakePhrases: Array<String> = self.wakeWordConfiguration.wakePhrases.components(separatedBy: ",")
+        var wakePhrases: Array<String> = self.configuration.wakePhrases.components(separatedBy: ",")
         self.phrases = TwoDimensionArray<Int>.init(repeating: [0], count: wakePhrases.count)
         
         for (index, _) in wakePhrases.enumerated() {
