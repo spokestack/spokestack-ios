@@ -46,6 +46,13 @@ class WakeWordViewController: UIViewController {
     lazy private var pipeline: SpeechPipeline = {
         
         let wakeConfiguration: WakewordConfiguration = WakewordConfiguration()
+        
+        wakeConfiguration.preEmphasis = 0.97
+        wakeConfiguration.wakePhraseLength = 2000
+        wakeConfiguration.wakeSmoothLength = 50
+        wakeConfiguration.wakeActiveMin = 600
+        wakeConfiguration.frameWidth = 20
+        wakeConfiguration.wakeWords = "up,dog"
 
         return try! SpeechPipeline(.appleSpeech,
                                    speechConfiguration: RecognizerConfiguration(),
@@ -106,7 +113,7 @@ class WakeWordViewController: UIViewController {
 extension WakeWordViewController: SpeechRecognizer, WakewordRecognizer {
     
     func activate() {
-        print("activate")
+        print("activate *******")
         self.pipeline.activate()
     }
     
@@ -137,23 +144,3 @@ extension WakeWordViewController: SpeechRecognizer, WakewordRecognizer {
         print("didStart")
     }
 }
-
-//extension WakeWordViewController: WakewordRecognizer {
-//
-//    func activate() {
-//        print("activate")
-//        self.pipeline.activate()
-//    }
-//
-//    func deactivate() {
-//        print("deactivate")
-//    }
-//
-//    func didError(_ error: Error) {
-//
-//        if !error.localizedDescription.starts(with: "The operation couldn’t be completed. (kAFAssistantErrorDomain error 216.)") {
-//            print("didError: " + error.localizedDescription)
-//        }
-//    }
-//}
-
