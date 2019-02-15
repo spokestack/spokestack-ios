@@ -19,7 +19,11 @@ public class WakeWordSpeechRecognizer: NSObject, WakewordRecognizerService {
     
     // MARK: SpeechRecognizerService (properties)
 
-    public var configuration: WakewordConfiguration = WakewordConfiguration()
+    public var configuration: WakewordConfiguration = WakewordConfiguration() {
+        didSet {
+            self.setup()
+        }
+    }
     
     public weak var delegate: WakewordRecognizer?
     
@@ -103,9 +107,7 @@ public class WakeWordSpeechRecognizer: NSObject, WakewordRecognizerService {
     }
     
     public override init() {
-        
         super.init()
-        self.setup()
     }
     
     // MARK: Internal (methods)
@@ -123,10 +125,6 @@ public class WakeWordSpeechRecognizer: NSObject, WakewordRecognizerService {
         }
         DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(self.configuration.wakeActiveMax),
                                       execute: self.dispatchWorker!)
-        
-        /// Words and phrasing
-        
-        self.setupWordsAndPhrases()
         
         let buffer: TimeInterval = TimeInterval((self.configuration.sampleRate / 1000) * self.configuration.frameWidth)
         self.audioController.sampleRate = self.configuration.sampleRate
@@ -188,6 +186,10 @@ public class WakeWordSpeechRecognizer: NSObject, WakewordRecognizerService {
         let smoothLength: Int = self.configuration.wakeSmoothLength * sampleRate / 1000 / self.hopLength
         let phraseLength: Int = self.configuration.wakePhraseLength * sampleRate / 1000 / self.hopLength
         
+        /// Words and phrasing
+        
+        self.setupWordsAndPhrases()
+        
         /// Allocate sliding windows
         /// Fill all buffers (except samples) with zero, in order to
         /// Minimize detection delay caused by buffering
@@ -196,7 +198,7 @@ public class WakeWordSpeechRecognizer: NSObject, WakewordRecognizerService {
         self.frameWindow = RingBuffer(melLength * self.melWidth)
         self.smoothWindow = RingBuffer(smoothLength * self.words.count)
         self.phraseWindow = RingBuffer(phraseLength * self.words.count)
-        
+        print("smoothWindow capacity inital \(self.smoothWindow.capacity)")
         self.frameWindow.fill(0)
         self.smoothWindow.fill(0)
         self.phraseWindow.fill(0)
@@ -213,8 +215,8 @@ public class WakeWordSpeechRecognizer: NSObject, WakewordRecognizerService {
         
         let frameWidth: Int = self.configuration.frameWidth
         
-        self.minActive = self.configuration.wakeActionMin / frameWidth
-        self.maxActive = self.configuration.wakeActionMax / frameWidth
+        self.minActive = self.configuration.wakeActiveMin / frameWidth
+        self.maxActive = self.configuration.wakeActiveMax / frameWidth
     }
     
     private func setupWordsAndPhrases() -> Void {
@@ -224,7 +226,7 @@ public class WakeWordSpeechRecognizer: NSObject, WakewordRecognizerService {
         
         let wakeWords: Array<String> = self.configuration.wakeWords.components(separatedBy: ",")
         self.words = Array(repeating: "", count: wakeWords.count + 1)
-        print("wakeWords \(self.words)")
+
         for (index, _) in self.words.enumerated() {
             
             let indexOffset: Int = index + 1
@@ -278,12 +280,16 @@ public class WakeWordSpeechRecognizer: NSObject, WakewordRecognizerService {
 
         if !context.isActive {
             
+            print("The context is not active so sample begins")
+            
             /// Run the current frame through the detector pipeline
             /// activate if a keyword phrase was detected
 
             self.sample(data, context: context)
 
         } else {
+            
+            print("The context is active so stop everything")
             
             /// Continue this wakeword (or external) activation
             /// until a vad deactivation or timeout
@@ -421,11 +427,14 @@ public class WakeWordSpeechRecognizer: NSObject, WakewordRecognizerService {
             
             context.isActive = true
             
-            self.activeLength = 1
-            self.delegate?.activate()
             
             self.dispatchWorker?.cancel()
-            self.stopStreaming(context: context)
+            self.activeLength = 1
+            
+            DispatchQueue.main.async {
+                self.stopStreaming(context: context)
+                self.delegate?.activate()
+            }
         }
     }
     
@@ -435,11 +444,13 @@ public class WakeWordSpeechRecognizer: NSObject, WakewordRecognizerService {
             
             context.isActive = false
             
-            self.delegate?.deactivate()
-            self.activeLength = 0
-            
             self.dispatchWorker?.cancel()
             self.stopStreaming(context: context)
+            
+            self.activeLength = 0
+            DispatchQueue.main.async {
+                self.delegate?.deactivate()
+            }
         }
     }
 }
@@ -562,13 +573,26 @@ extension WakeWordSpeechRecognizer {
             let resultCount: Int = predictions.detect_outputs__0.count
             var indexIncrement: Int = 0
             
+            print("what is the result cound for detect \(resultCount) and self.smoothWindow \(self.smoothWindow.capacity)")
+            
             repeat {
                 
                 let predictionFloat: Float = predictions.detect_outputs__0[indexIncrement].floatValue
+                print(
+                """
+                Function \(#function)
+                What is the prediction float value \(predictionFloat)
+                Index \(indexIncrement)
+                """
+                )
 
                 do {
                     
                     try self.smoothWindow.write(predictionFloat)
+                    
+                } catch RingBufferStateError.illegalState(let message) {
+                    
+                    fatalError(message)
                     
                 } catch {
                   
