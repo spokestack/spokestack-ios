@@ -224,7 +224,7 @@ public class WakeWordSpeechRecognizer: NSObject, WakewordRecognizerService {
         
         let wakeWords: Array<String> = self.configuration.wakeWords.components(separatedBy: ",")
         self.words = Array(repeating: "", count: wakeWords.count + 1)
-        
+        print("wakeWords \(self.words)")
         for (index, _) in self.words.enumerated() {
             
             let indexOffset: Int = index + 1
@@ -249,6 +249,7 @@ public class WakeWordSpeechRecognizer: NSObject, WakewordRecognizerService {
             /// of the final keyword in each phrase
             
             self.phrases[index] = Array<Int>.init(repeating: 0, count: wakePhrases.count + 1)
+            print("wakePhraseArray \(wakePhraseArray)")
             
             for (j, _) in wakePhraseArray.enumerated() {
                 
