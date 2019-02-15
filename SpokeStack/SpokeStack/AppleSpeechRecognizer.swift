@@ -40,14 +40,14 @@ class AppleSpeechRecognizer: NSObject, SpeechRecognizerService {
     }
     
     override init() {
-        
         super.init()
-        self.setup()
     }
     
     // MARK: SpeechRecognizerService implementation
     
     func startStreaming(context: SpeechContext) {
+        
+        self.setup()
         
         do {
         
@@ -132,7 +132,7 @@ class AppleSpeechRecognizer: NSObject, SpeechRecognizerService {
                 }
                 
                 if let r = result {
-                
+                    print("what is the ASR result \(r.bestTranscription.formattedString)")
                     let confidence = r.spstk_confidence
                     context.transcript = r.bestTranscription.formattedString
                     context.confidence = confidence
