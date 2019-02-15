@@ -15,7 +15,7 @@ class ViewController: UIViewController {
     
     @IBOutlet weak var googleButton: UIButton!
     
-    @IBOutlet weak var appleButton: UIButton!
+    @IBOutlet weak var wakeWordButton: UIButton!
     
     @IBOutlet weak var appleWakewordButton: UIButton!
     
