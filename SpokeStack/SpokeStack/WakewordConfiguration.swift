@@ -10,7 +10,7 @@ import Foundation
 
 @objc public class WakewordConfiguration: NSObject {
     
-    public var wakeWords: String = "up, dog"
+    public var wakeWords: String = "up,dog"
     
     public var wakePhrases: String = "up dog"
     
