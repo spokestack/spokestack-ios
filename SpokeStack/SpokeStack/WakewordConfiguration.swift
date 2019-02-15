@@ -10,7 +10,7 @@ import Foundation
 
 @objc public class WakewordConfiguration: NSObject {
     
-    public var wakeWords: String = "up,dog"
+    public var wakeWords: String = "up, dog"
     
     public var wakePhrases: String = "up dog"
     
@@ -20,7 +20,7 @@ import Foundation
     
     public var rmsTarget: Float = 0.08
     
-    public var rmsAlpha: Float = 0.1
+    public var rmsAlpha: Float = 0.0
     
     public var fftWindowSize: Int = 512
     
@@ -32,17 +32,15 @@ import Foundation
     
     public var wakePhraseLength: Int = 500
     
-    public var wakeActionMin: Int = 500
+    public var wakeActiveMin: Int = 500
     
-    public var wakeActionMax: Int = 5000
+    public var wakeActiveMax: Int = 5000
     
     public var sampleRate = 16000
     
     public var languageLocale = "en-US"
     
     public var frameWidth: Int = 10
-    
-    public var wakeActiveMax: Int = 50000
     
     public var preEmphasis: Float = 0.0
 }
