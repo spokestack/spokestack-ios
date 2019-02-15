@@ -49,7 +49,7 @@
                     <connections>
                         <outlet property="appleWakewordButton" destination="32J-G3-KGJ" id="mtv-pe-E9d"/>
                         <outlet property="googleButton" destination="yvX-aI-Obz" id="U0H-Yy-BdO"/>
-                        <outlet property="wakeWordButton" destination="ewK-ye-p0o" id="7Im-BS-1yf"/>
+                        <outlet property="wakeWordButton" destination="ewK-ye-p0o" id="trX-ni-j2Z"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
