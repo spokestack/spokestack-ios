@@ -47,8 +47,6 @@ class AppleSpeechRecognizer: NSObject, SpeechRecognizerService {
     
     func startStreaming(context: SpeechContext) {
         
-        self.setup()
-        
         do {
         
             try self.prepareRecognition(context: context)
