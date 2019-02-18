@@ -10,13 +10,6 @@ import UIKit
 import SpokeStack
 import AVFoundation
 
-struct GoogleConfiguration: GoogleRecognizerConfiguration {
-    
-    var apiKey: String {
-        return "REPLACE_ME"
-    }
-}
-
 class GoogleViewController: UIViewController {
     
     lazy var startRecordingButton: UIButton = {
@@ -52,11 +45,15 @@ class GoogleViewController: UIViewController {
     
     lazy private var pipeline: SpeechPipeline = {
         
-        let googleConfiguration: GoogleConfiguration = GoogleConfiguration()
+        let googleConfiguration: GoogleRecognizerConfiguration = GoogleRecognizerConfiguration()
+        googleConfiguration.apiKey = "REPLACE_ME"
         
-        return try! SpeechPipeline(.google,
-                                   configuration: googleConfiguration,
-                                   delegate: self)
+        return try! SpeechPipeline(.googleSpeech,
+                                   speechConfiguration: googleConfiguration,
+                                   speechDelegate: self,
+                                   wakewordService: .appleWakeword,
+                                   wakewordConfiguration: WakewordConfiguration(),
+                                   wakewordDelegate: self)
     }()
     
     override func loadView() {
@@ -101,15 +98,25 @@ class GoogleViewController: UIViewController {
     }
 }
 
-extension GoogleViewController: SpeechRecognizer {
+extension GoogleViewController: SpeechRecognizer, WakewordRecognizer {
+    func activate() {
+        
+    }
     
-    func didRecognize(_ result: SPSpeechContext) {
+    func deactivate() {
+        
+    }
+    
+    
+    func didError(_ error: Error) {
+        print("didFinish \(String(describing: error))")
+    }
+    
+    func didRecognize(_ result: SpeechContext) {
         print("transcript \(result.transcript)")
     }
     
-    func didFinish(_ error: Error?) {
-        
-        print("didFinish \(String(describing: error))")
+    func didFinish() {
         self.stopRecordingButton.isEnabled.toggle()
         self.startRecordingButton.isEnabled.toggle()
     }

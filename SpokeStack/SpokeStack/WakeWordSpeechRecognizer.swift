@@ -11,22 +11,21 @@ import AVFoundation
 import CoreML
 import Speech
 
-public class WakeWordSpeechRecognizer: SpeechRecognizerService {
-    
+public class WakeWordSpeechRecognizer: NSObject, WakewordRecognizerService {
+
     // MARK: Public (properties)
     
     static let sharedInstance: WakeWordSpeechRecognizer = WakeWordSpeechRecognizer()
     
     // MARK: SpeechRecognizerService (properties)
-    
-    public var configuration: RecognizerConfiguration = StandardWakeWordConfiguration() {
-        
+
+    public var configuration: WakewordConfiguration = WakewordConfiguration() {
         didSet {
             self.setup()
         }
     }
     
-    public weak var delegate: SpeechRecognizer?
+    public weak var delegate: WakewordRecognizer?
     
     // MARK: Internal (properties)
     
@@ -40,9 +39,9 @@ public class WakeWordSpeechRecognizer: SpeechRecognizerService {
     
     private var wwdetect: WakeWordDetect = WakeWordDetect()
     
-    private var wakeWordConfiguration: WakeRecognizerConfiguration {
-        return self.configuration as! WakeRecognizerConfiguration
-    }
+    private var dispatchWorker: DispatchWorkItem?
+    
+    private var speechContext: SpeechContext?
     
     /// Keyword / phrase configuration and preallocated buffers
     
@@ -104,51 +103,62 @@ public class WakeWordSpeechRecognizer: SpeechRecognizerService {
     
     deinit {
         audioController.delegate = nil
+        speechContext = nil
     }
     
-    public init() {}
-    
-    // MARK: Public (methods)
-    
-    public func startStreaming() -> Void {
+    public override init() {
         
-        let buffer: TimeInterval = TimeInterval((self.wakeWordConfiguration.sampleRate / 1000) * self.wakeWordConfiguration.frameWidth)
-        self.audioController.sampleRate = self.wakeWordConfiguration.sampleRate
+        super.init()
+        
+        let buffer: TimeInterval = TimeInterval((self.configuration.sampleRate / 1000) * self.configuration.frameWidth)
+        self.audioController.sampleRate = self.configuration.sampleRate
         self.audioController.bufferDuration = buffer
+    }
+    
+    // MARK: Internal (methods)
+    
+    func startStreaming(context: SpeechContext) -> Void {
+        
+        self.speechContext = context
+        
+        /// Automatically restart wakeword task if it goes over Apple's 1
+        /// minute listening limit
+        
+        self.dispatchWorker = DispatchWorkItem {[weak self] in
+            self?.stopStreaming(context: context)
+            self?.startStreaming(context: context)
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(self.configuration.wakeActiveMax),
+                                      execute: self.dispatchWorker!)
+        
         self.audioController.delegate = self
         self.audioController.startStreaming()
     }
     
-    public func stopStreaming() -> Void {
+    func stopStreaming(context: SpeechContext) -> Void {
         
-        self.audioController.stopStreaming()
         self.audioController.delegate = nil
-        
-        try? AVAudioSession.sharedInstance().setActive(false, options: [])
+        self.audioController.stopStreaming()
     }
     
     // MARK: Private (methods)
     
     private func setup() -> Void {
         
-        /// Words and phrasing
-        
-        self.setupWordsAndPhrases()
-        
         /// Fetch signal normalization config
         
-        self.rmsTarget = self.wakeWordConfiguration.rmsTarget
-        self.rmsAlpha = self.wakeWordConfiguration.rmsAlpha
+        self.rmsTarget = self.configuration.rmsTarget
+        self.rmsAlpha = self.configuration.rmsAlpha
         self.rmsValue = self.rmsTarget
-        self.preEmphasis = self.wakeWordConfiguration.preEmphasis
+        self.preEmphasis = self.configuration.preEmphasis
         
         /// Fetch and validate stft/mel spectrogram configuration
         
-        let sampleRate: Int = self.wakeWordConfiguration.sampleRate
-        let windowSize: Int = self.wakeWordConfiguration.fftWindowSize
-        self.hopLength = self.wakeWordConfiguration.fftHopLength * sampleRate / 1000
+        let sampleRate: Int = self.configuration.sampleRate
+        let windowSize: Int = self.configuration.fftWindowSize
+        self.hopLength = self.configuration.fftHopLength * sampleRate / 1000
         
-        let windowType: String = self.wakeWordConfiguration.fftWindowType
+        let windowType: String = self.configuration.fftWindowType
         
         if windowSize % 2 != 0 {
             
@@ -156,8 +166,8 @@ public class WakeWordSpeechRecognizer: SpeechRecognizerService {
             return
         }
         
-        let melLength: Int = self.wakeWordConfiguration.melFrameLength * sampleRate / 1000 / self.hopLength
-        self.melWidth = self.wakeWordConfiguration.melFrameWidth
+        let melLength: Int = self.configuration.melFrameLength * sampleRate / 1000 / self.hopLength
+        self.melWidth = self.configuration.melFrameWidth
         
         /// Allocate the stft window and FFT/frame buffer
         
@@ -173,8 +183,12 @@ public class WakeWordSpeechRecognizer: SpeechRecognizerService {
         
         /// fetch smoothing/phrasing window lengths
         
-        let smoothLength: Int = self.wakeWordConfiguration.wakeSmoothLength * sampleRate / 1000 / self.hopLength
-        let phraseLength: Int = self.wakeWordConfiguration.wakePhraseLength * sampleRate / 1000 / self.hopLength
+        let smoothLength: Int = self.configuration.wakeSmoothLength * sampleRate / 1000 / self.hopLength
+        let phraseLength: Int = self.configuration.wakePhraseLength * sampleRate / 1000 / self.hopLength
+        
+        /// Words and phrasing
+        
+        self.setupWordsAndPhrases()
         
         /// Allocate sliding windows
         /// Fill all buffers (except samples) with zero, in order to
@@ -184,7 +198,7 @@ public class WakeWordSpeechRecognizer: SpeechRecognizerService {
         self.frameWindow = RingBuffer(melLength * self.melWidth)
         self.smoothWindow = RingBuffer(smoothLength * self.words.count)
         self.phraseWindow = RingBuffer(phraseLength * self.words.count)
-        
+        print("smoothWindow capacity inital \(self.smoothWindow.capacity)")
         self.frameWindow.fill(0)
         self.smoothWindow.fill(0)
         self.phraseWindow.fill(0)
@@ -199,10 +213,10 @@ public class WakeWordSpeechRecognizer: SpeechRecognizerService {
         
         /// Configure the wakeword activation lengths
         
-        let frameWidth: Int = self.wakeWordConfiguration.frameWidth
+        let frameWidth: Int = self.configuration.frameWidth
         
-        self.minActive = self.wakeWordConfiguration.wakeActionMin / frameWidth
-        self.maxActive = self.wakeWordConfiguration.wakeActionMax / frameWidth
+        self.minActive = self.configuration.wakeActiveMin / frameWidth
+        self.maxActive = self.configuration.wakeActiveMax / frameWidth
     }
     
     private func setupWordsAndPhrases() -> Void {
@@ -210,9 +224,9 @@ public class WakeWordSpeechRecognizer: SpeechRecognizerService {
         /// Parse the configured list of keywords
         /// Allocate an additional slot for the non-keyword class at 0
         
-        let wakeWords: Array<String> = self.wakeWordConfiguration.wakeWords.components(separatedBy: ",")
+        let wakeWords: Array<String> = self.configuration.wakeWords.components(separatedBy: ",")
         self.words = Array(repeating: "", count: wakeWords.count + 1)
-        
+
         for (index, _) in self.words.enumerated() {
             
             let indexOffset: Int = index + 1
@@ -224,7 +238,7 @@ public class WakeWordSpeechRecognizer: SpeechRecognizerService {
         
         /// Parse the keyword phrase configuration
         
-        var wakePhrases: Array<String> = self.wakeWordConfiguration.wakePhrases.components(separatedBy: ",")
+        var wakePhrases: Array<String> = self.configuration.wakePhrases.components(separatedBy: ",")
         self.phrases = TwoDimensionArray<Int>.init(repeating: [0], count: wakePhrases.count)
         
         for (index, _) in wakePhrases.enumerated() {
@@ -237,6 +251,7 @@ public class WakeWordSpeechRecognizer: SpeechRecognizerService {
             /// of the final keyword in each phrase
             
             self.phrases[index] = Array<Int>.init(repeating: 0, count: wakePhrases.count + 1)
+            print("wakePhraseArray \(wakePhraseArray)")
             
             for (j, _) in wakePhraseArray.enumerated() {
                 
@@ -255,14 +270,40 @@ public class WakeWordSpeechRecognizer: SpeechRecognizerService {
 
     private func process(_ data: Data) -> Void {
         
-        // TODO: Need to handle "state"
-        //
-        // See: https://github.com/pylon/spokestack-android/blob/a5b1e4cf194b10e209c1b740c2e9655989b24cb9/src/main/java/com/pylon/spokestack/wakeword/WakewordTrigger.java#L370
+        // TODO: Handle vad rise / fall
+        // https://github.com/pylon/spokestack-android/blob/master/src/main/java/com/pylon/spokestack/wakeword/WakewordTrigger.java#L366
+        
+        guard let context: SpeechContext = self.speechContext else {
+            self.delegate?.didError(SpeechPipelineError.illegalState("The speech context can't be nil"))
+            return
+        }
 
-        self.sample(data)
+        if !context.isActive {
+            
+            /// Run the current frame through the detector pipeline
+            /// activate if a keyword phrase was detected
+
+            self.sample(data, context: context)
+
+        } else {
+            
+            print("The context is active so stop everything")
+            
+            /// Continue this wakeword (or external) activation
+            /// until a vad deactivation or timeout
+            
+            self.activeLength += 1
+            
+            if self.activeLength > self.minActive {
+                
+                if self.activeLength > self.maxActive {
+                    self.deactivate(context)
+                }
+            }
+        }
     }
     
-    private func sample(_ data: Data) -> Void {
+    private func sample(_ data: Data, context: SpeechContext) -> Void {
 
         /// Update the rms normalization factors
         /// Maintain an ewma of the rms signal energy for speech samples
@@ -316,8 +357,8 @@ public class WakeWordSpeechRecognizer: SpeechRecognizerService {
             if self.sampleWindow.isFull {
                 
                 // TODO: Check for "isSpeech" before analyze
-                self.analyze()
-                
+
+                self.analyze(context)
                 self.sampleWindow.rewind().seek(self.hopLength)
             }
         }
@@ -377,11 +418,53 @@ public class WakeWordSpeechRecognizer: SpeechRecognizerService {
         self.phraseWindow.reset().fill(0)
         self.phraseMax = Array(repeating: 0.0, count: self.words.count)
     }
+    
+    private func activate(_ context: SpeechContext) -> Void {
+        
+        if !context.isActive {
+            
+            context.isActive = true
+            
+            
+            self.dispatchWorker?.cancel()
+            self.activeLength = 1
+            
+            DispatchQueue.main.async {[weak self] in
+                
+                guard let strongSelf = self else {
+                    return
+                }
+                
+                strongSelf.stopStreaming(context: context)
+                strongSelf.delegate?.activate()
+            }
+        }
+    }
+    
+    private func deactivate(_ context: SpeechContext) -> Void {
+
+        if context.isActive {
+            
+            context.isActive = false
+            
+            self.dispatchWorker?.cancel()
+            self.stopStreaming(context: context)
+            
+            self.activeLength = 0
+            
+            DispatchQueue.main.async {[weak self] in
+                guard let strongSelf = self else {
+                    return
+                }
+                strongSelf.delegate?.deactivate()
+            }
+        }
+    }
 }
 
 extension WakeWordSpeechRecognizer {
     
-    private func analyze() -> Void {
+    private func analyze(_ context: SpeechContext) -> Void {
 
         /// Apply the windowing function to the current sample window
         
@@ -405,10 +488,10 @@ extension WakeWordSpeechRecognizer {
         /// Compute the stft
 
         self.fft.forward(&self.fftFrame)
-        self.filter()
+        self.filter(context)
     }
     
-    private func filter() -> Void {
+    private func filter(_ context: SpeechContext) -> Void {
         
         precondition(!self.fftFrame.isEmpty, "FFT Frame can't be empty")
 
@@ -448,7 +531,7 @@ extension WakeWordSpeechRecognizer {
 
             /// Detect
 
-            self.detect()
+            self.detect(context)
 
         } catch let modelFilterError {
 
@@ -456,7 +539,7 @@ extension WakeWordSpeechRecognizer {
         }
     }
     
-    private func detect() -> Void {
+    private func detect(_ context: SpeechContext) -> Void {
 
         /// Transfer the mel filterbank window to the detector model's inputs
         
@@ -500,10 +583,13 @@ extension WakeWordSpeechRecognizer {
             repeat {
                 
                 let predictionFloat: Float = predictions.detect_outputs__0[indexIncrement].floatValue
-
                 do {
                     
                     try self.smoothWindow.write(predictionFloat)
+                    
+                } catch RingBufferStateError.illegalState(let message) {
+                    
+                    fatalError(message)
                     
                 } catch {
                   
@@ -519,38 +605,13 @@ extension WakeWordSpeechRecognizer {
             fatalError("modelDetectError is thrown \(modelDetectError)")
         }
         
-        self.smooth()
-    }
-}
-
-extension WakeWordSpeechRecognizer: AudioControllerDelegate {
-    
-    func didStart(_ engineController: AudioController) {
-        print("audioEngine did start")
-    }
-    
-    func didStop(_ engineController: AudioController) {
-        print("audioEngine did stop")
-        
-        /// "close"
-        
-        /// Reset
-        
-        self.reset()
-    }
-    
-    func setupFailed(_ error: String) -> Void {
-        fatalError(error)
-    }
-    
-    func processSampleData(_ data: Data) -> Void {
-        self.process(data)
+        self.smooth(context)
     }
 }
 
 extension WakeWordSpeechRecognizer {
     
-    private func smooth() -> Void {
+    private func smooth(_ context: SpeechContext) -> Void {
         
         /// Sum the per-class posteriors across the smoothing window
         
@@ -600,10 +661,10 @@ extension WakeWordSpeechRecognizer {
             }
         }
         
-        self.phrase()
+        self.phrase(context)
     }
     
-    private func phrase() -> Void {
+    private func phrase(_ context: SpeechContext) -> Void {
         
         /// Compute the argmax (winning class) of each smoothed output
         /// in the current phrase window
@@ -656,8 +717,6 @@ extension WakeWordSpeechRecognizer {
                     
                     match += 1
                     if match == phrase.count {
-                       
-                        print("match == phrase count \(match) and phrase \(phrase)")
                         break
                     }
                 }
@@ -667,12 +726,32 @@ extension WakeWordSpeechRecognizer {
             /// So start the activation counter
 
             if match == phrase.count {
-                print("match does == phrase count before activate")
-                // TODO: Pass delegate method to indicate ACTIVE
-                self.activeLength = 1
+                self.activate(context)
                 break
             }
         }
     }
 }
 
+extension WakeWordSpeechRecognizer: AudioControllerDelegate {
+    
+    func didStart(_ engineController: AudioController) {
+        print("audioEngine did start")
+    }
+    
+    func didStop(_ engineController: AudioController) {
+        print("audioEngine did stop")
+
+        /// Reset
+        
+        self.reset()
+    }
+    
+    func setupFailed(_ error: String) -> Void {
+        fatalError(error)
+    }
+    
+    func processSampleData(_ data: Data) -> Void {
+        self.process(data)
+    }
+}

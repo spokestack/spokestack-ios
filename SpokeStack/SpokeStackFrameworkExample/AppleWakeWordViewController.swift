@@ -10,72 +10,56 @@ import UIKit
 import SpokeStack
 import AVFoundation
 
-struct AppleWordConfiguration: WakeRecognizerConfiguration {
-    
-    var wakeWords: String {
-        return "up,dog"
-    }
-    
-    var wakePhrases: String {
-        return "up dog"
-    }
-}
-
-class AppleViewController: UIViewController {
+class AppleWakeWordViewController: UIViewController {
     
     lazy var startRecordingButton: UIButton = {
-        
         let button: UIButton = UIButton(frame: .zero)
-        
         button.translatesAutoresizingMaskIntoConstraints = false
         button.setTitle("Start Recording", for: .normal)
         button.addTarget(self,
-                         action: #selector(AppleViewController.startRecordingAction(_:)),
+                         action: #selector(AppleWakeWordViewController.startRecordingAction(_:)),
                          for: .touchUpInside)
-        
         button.setTitleColor(.blue, for: .normal)
-        
+        button.isEnabled = true
         return button
     }()
     
     var stopRecordingButton: UIButton = {
-        
         let button: UIButton = UIButton(frame: .zero)
-        
         button.translatesAutoresizingMaskIntoConstraints = false
         button.setTitle("Stop Recording", for: .normal)
         button.addTarget(self,
-                         action: #selector(AppleViewController.stopRecordingAction(_:)),
+                         action: #selector(AppleWakeWordViewController.stopRecordingAction(_:)),
                          for: .touchUpInside)
-        
         button.setTitleColor(.blue, for: .normal)
-        
-        
+        button.isEnabled = false
         return button
     }()
     
-    lazy private var pipeline: SpeechPipeline = {
-        
-        let appleConfiguration: AppleWordConfiguration = AppleWordConfiguration()
-        
-        return try! SpeechPipeline(.apple,
-                                   configuration: appleConfiguration,
-                                   delegate: self)
+    lazy public var pipeline: SpeechPipeline = {
+        return try! SpeechPipeline(.appleSpeech,
+                                   speechConfiguration: RecognizerConfiguration(),
+                                   speechDelegate: self,
+                                   wakewordService: .appleWakeword,
+                                   wakewordConfiguration: WakewordConfiguration(),
+                                   wakewordDelegate: self)
     }()
+    
+    // MARK:
     
     override func loadView() {
         
         super.loadView()
         self.view.backgroundColor = .white
-        self.title = "Apple"
-        
+        self.title = "Apple WakeWord"
         let doneBarButtonItem: UIBarButtonItem = UIBarButtonItem(barButtonSystemItem: .done,
                                                                  target: self,
-                                                                 action: #selector(AppleViewController.dismissViewController(_:)))
+                                                                 action: #selector(AppleWakeWordViewController.dismissViewController(_:)))
         self.navigationItem.rightBarButtonItem = doneBarButtonItem
     }
     
     override func viewDidLoad() {
+        
         super.viewDidLoad()
         
         self.view.addSubview(self.startRecordingButton)
@@ -91,11 +75,17 @@ class AppleViewController: UIViewController {
     }
     
     @objc func startRecordingAction(_ sender: Any) {
-        self.pipeline.start()
+        if (!self.pipeline.context.isActive) {
+            self.pipeline.start()
+        }
+        self.stopRecordingButton.isEnabled.toggle()
+        self.startRecordingButton.isEnabled.toggle()
     }
     
     @objc func stopRecordingAction(_ sender: Any) {
         self.pipeline.stop()
+        self.stopRecordingButton.isEnabled.toggle()
+        self.startRecordingButton.isEnabled.toggle()
     }
     
     @objc func dismissViewController(_ sender: Any?) -> Void {
@@ -103,23 +93,37 @@ class AppleViewController: UIViewController {
     }
 }
 
-extension AppleViewController: SpeechRecognizer {
-    
-    func didRecognize(_ result: SPSpeechContext) {
-        print("transcript \(result.transcript)")
+extension AppleWakeWordViewController: SpeechRecognizer, WakewordRecognizer {
+    func activate() {
+        print("activate")
+        self.pipeline.activate()
     }
     
-    func didFinish(_ error: Error?) {
-        
-        print("didFinish \(String(describing: error))")
-        self.stopRecordingButton.isEnabled.toggle()
-        self.startRecordingButton.isEnabled.toggle()
+    func deactivate() {
+        print("deactivate")
+    }
+    
+    func didError(_ error: Error) {
+        if !error.localizedDescription.starts(with: "The operation couldn’t be completed. (kAFAssistantErrorDomain error 216.)") {
+            print("didError: " + error.localizedDescription)
+        }
+    }
+    
+    func didRecognize(_ result: SpeechContext) {
+        print("didRecognize \(result.transcript)")
+    }
+    
+    func didFinish() {
+        print("didFinish")
+        if (!self.pipeline.context.isActive) {
+            self.pipeline.start()
+        } else {
+            self.pipeline.activate()
+        }
     }
     
     func didStart() {
-        
-        self.stopRecordingButton.isEnabled.toggle()
-        self.startRecordingButton.isEnabled.toggle()
+        print("didStart")
     }
 }
 

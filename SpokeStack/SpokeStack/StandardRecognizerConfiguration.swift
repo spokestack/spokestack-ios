@@ -8,9 +8,5 @@
 
 import Foundation
 
-public struct StandardRecognizerConfiguration {
-    public init() {}
-}
-
-extension StandardRecognizerConfiguration: RecognizerConfiguration {}
+public class StandardRecognizerConfiguration: RecognizerConfiguration {}
 

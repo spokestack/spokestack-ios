@@ -8,11 +8,13 @@
 
 import Foundation
 
-public protocol SpeechRecognizer: AnyObject {
+@objc public protocol SpeechRecognizer: AnyObject {
     
     func didStart() -> Void
     
-    func didRecognize(_ result: SPSpeechContext) -> Void
+    func didRecognize(_ result: SpeechContext) -> Void
     
-    func didFinish(_ error: Error?) -> Void
+    func didFinish() -> Void
+    
+    func didError(_ error: Error) -> Void
 }

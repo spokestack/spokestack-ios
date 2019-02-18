@@ -13,6 +13,12 @@ enum AudioError: Error {
     case audioSessionSetup(String)
 }
 
-public enum SpeechPipleError: Error {
-    case invalidInitialzation(String)
+public enum SpeechPipelineError: Error {
+    case invalidInitialization(String)
+    case illegalState(String)
+}
+
+public enum SpeechRecognizerError: Error {
+    case unknownCause(String)
+    case failed(String)
 }
