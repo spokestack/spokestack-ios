@@ -8,8 +8,4 @@
 
 import Foundation
 
-struct StandardGoogleRecognitionConfiguration {
-    public init() {}
-}
-
-extension StandardGoogleRecognitionConfiguration: GoogleRecognizerConfiguration {}
+@objc public class StandardGoogleRecognitionConfiguration: StandardRecognizerConfiguration {}

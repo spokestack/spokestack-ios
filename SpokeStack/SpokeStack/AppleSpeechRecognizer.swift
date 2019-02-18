@@ -15,7 +15,7 @@ class AppleSpeechRecognizer: NSObject, SpeechRecognizerService {
     
     static let sharedInstance: AppleSpeechRecognizer = AppleSpeechRecognizer()
     
-    var configuration: RecognizerConfiguration = StandardWakeWordConfiguration()
+    var configuration: RecognizerConfiguration = RecognizerConfiguration()
     
     weak var delegate: SpeechRecognizer?
     
@@ -25,148 +25,105 @@ class AppleSpeechRecognizer: NSObject, SpeechRecognizerService {
     
     private let speechRecognizer: SFSpeechRecognizer = SFSpeechRecognizer(locale: NSLocale.current)!
     
-    private var recognitionRequest: SFSpeechAudioBufferRecognitionRequest?
+    private var recognitionRequest: SFSpeechAudioBufferRecognitionRequest = SFSpeechAudioBufferRecognitionRequest()
     
     private var recognitionTask: SFSpeechRecognitionTask?
     
     private let audioEngine: AVAudioEngine = AVAudioEngine()
     
-    private var wakeWordConfiguration: WakeRecognizerConfiguration {
-        return self.configuration as! WakeRecognizerConfiguration
-    }
+    private var dispatchWorker: DispatchWorkItem?
     
-    // MARK: Initializers
+    // MARK: initializers
     
     deinit {
         speechRecognizer.delegate = nil
     }
     
     override init() {
-        
         super.init()
-        self.setup()
     }
     
-    // MARK: SpeechRecognizerService
+    // MARK: SpeechRecognizerService implementation
     
-    func startStreaming() {
+    func startStreaming(context: SpeechContext) {
         
-        self.prepareAudio()
-        self.startAudioEngine()
+        do {
+        
+            try self.prepareRecognition(context: context)
+            self.audioEngine.prepare()
+            
+            try self.audioEngine.start()
+            context.isActive = true
+
+        } catch let error {
+            self.delegate?.didError(error)
+        }
     }
     
-    func stopStreaming() {
+    func stopStreaming(context: SpeechContext) {
+        
+        self.audioEngine.stop()
+        self.audioEngine.inputNode.removeTap(onBus: 0)
+        
+        self.recognitionTask?.cancel()
+        self.recognitionRequest.endAudio()
+        self.recognitionTask = nil
      
-        /// Stop the audio engine and tear down
-        
-        recognitionTask?.cancel()
-        recognitionRequest?.endAudio()
-        speechRecognizer.delegate = nil
-        audioEngine.stop()
-        
-        recognitionRequest = nil
-        recognitionTask = nil
+        context.isActive = false
     }
     
     // MARK: Private (methods)
     
-    private func setup() -> Void {
+    private func prepareRecognition(context: SpeechContext) throws -> Void {
+                
+        self.recognitionRequest.shouldReportPartialResults = true
         
-        /// AVAudioSession setup
+        // MARK: AVAudioEngine
         
-        do {
-            
-            try audioSession.setCategory(.record, mode: .spokenAudio, options: .defaultToSpeaker)
-            try audioSession.setActive(true, options: .notifyOthersOnDeactivation)
-            
-        } catch let error {
-            
-            print("audioSession properties weren't set because of an error. \(error)")
-        }
-    }
-    
-    private func prepareAudio() -> Void {
+        let buffer: Int = (self.configuration.sampleRate / 1000) * self.configuration.frameWidth
+        let recordingFormat = self.audioEngine.inputNode.outputFormat(forBus: 0)
         
-        /// Speech Recognizer
-        
-        self.recognitionRequest = SFSpeechAudioBufferRecognitionRequest()
-        let inputNode: AVAudioInputNode = self.audioEngine.inputNode
-        
-        guard let recognitionRequest = self.recognitionRequest else {
-            fatalError("Unable to create an SFSpeechAudioBufferRecognitionRequest object")
-        }
-        
-        recognitionRequest.shouldReportPartialResults = true
-        let phrases: Array<String> = self.wakeWordConfiguration.wakePhrases.components(separatedBy: ",")
-
-        self.recognitionTask = self.speechRecognizer.recognitionTask(with: recognitionRequest, resultHandler: {[weak self] result, error in
-            
+        self.audioEngine.inputNode.installTap(
+            onBus: 0,
+            bufferSize: AVAudioFrameCount(buffer),
+            format: recordingFormat) {[weak self] buffer, _ in
             guard let strongSelf = self else {
                 return
             }
-            
-            var isFinal: Bool = false
-            
-            if result != nil {
-                
-                let foundResult: Bool = !phrases.filter({
-                    result!.bestTranscription.formattedString.lowercased().contains($0.lowercased())
-                }).isEmpty
-                
-                print("returned \(String(describing: result))")
-                
-                if foundResult {
-                    
-                    strongSelf.recognitionTask?.cancel()
-                    print("found it \(String(describing: result?.bestTranscription.formattedString))")
-                    isFinal = true
-                    
-                    let finalTranscript: SFTranscription = result!.bestTranscription
+            strongSelf.recognitionRequest.append(buffer)
+        }
+        
+        // MARK: recognitionTask
+        
+        self.recognitionTask = self.speechRecognizer.recognitionTask(
+            with: recognitionRequest,
+            resultHandler: {[weak self] result, error in
 
-                    let confidence: Float = result?.transcriptions.first?.segments.sorted(by: { (a, b) -> Bool in
-                        a.confidence <= b.confidence
-                    }).first?.confidence ?? 0.0
-
-                    let context: SPSpeechContext = SPSpeechContext(transcript: finalTranscript.formattedString, confidence: confidence)
-    
-                    strongSelf.delegate?.didRecognize(context)
-                    strongSelf.delegate?.didFinish(nil)
+                guard let strongSelf = self else {
+                    return
                 }
-            }
-            
-            if error != nil || isFinal {
-                
-                strongSelf.audioEngine.stop()
-                inputNode.removeTap(onBus: 0)
-                
-                strongSelf.stopStreaming()
-            }
-        })
-        
-        let buffer: Int = (self.wakeWordConfiguration.sampleRate / 1000) * self.wakeWordConfiguration.frameWidth
-        let recordingFormat = inputNode.outputFormat(forBus: 0)
-        
-        inputNode.installTap(onBus: 0, bufferSize: AVAudioFrameCount(buffer), format: recordingFormat) {[weak self] buffer, when in
-            
-            guard let strongSelf = self else {
-                return
-            }
-            
-            strongSelf.recognitionRequest?.append(buffer)
-        }
-        
-        self.audioEngine.prepare()
-    }
-    
-    private func startAudioEngine() -> Void {
 
-        do {
-            
-            try audioEngine.start()
-            
-        } catch {
-            
-            print("audioEngine couldn't start because of an error.")
-        }
+                strongSelf.dispatchWorker?.cancel()
+
+                if let e = error {
+                    strongSelf.delegate?.didError(e)
+                }
+
+                if let r = result {
+                    print("what is the ASR result \(r.bestTranscription.formattedString)")
+                    let confidence = r.spstk_confidence
+                    context.transcript = r.bestTranscription.formattedString
+                    context.confidence = confidence
+
+                    strongSelf.dispatchWorker = DispatchWorkItem {
+                        strongSelf.delegate?.didRecognize(context)
+                        strongSelf.stopStreaming(context: context)
+                        strongSelf.delegate?.didFinish()
+                    }
+
+                    DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + .milliseconds(strongSelf.configuration.vadFallDelay),
+                                                  execute: strongSelf.dispatchWorker!)
+                }
+        })
     }
 }
