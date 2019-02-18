@@ -41,13 +41,17 @@ func recordingCallback(
                              inBusNumber,
                              inNumberFrames,
                              UnsafeMutablePointer<AudioBufferList>(&bufferList))
-    if (status != noErr) {
+    if status != noErr {
         return status
     }
     
-    let data: Data = Data(bytes: buffers[0].mData!, count: Int(buffers[0].mDataByteSize))
-
-    AudioController.shared.delegate?.processSampleData(data)
+    if buffers[0].mData != nil {
+        
+        let data: Data = Data(bytes: buffers[0].mData!, count: Int(buffers[0].mDataByteSize))
+        DispatchQueue.main.async {
+            AudioController.shared.delegate?.processSampleData(data)
+        }
+    }
     
     return noErr
 }
@@ -90,33 +94,38 @@ class AudioController {
         }
     }
     
-    // MARK: Public (methods)
-    
-    func startStreaming() -> Void {
-
-        /// Prepare
+    init() {
         
         do {
-        
+            
             try self.prepare()
-            self.start()
-
+            
         } catch AudioError.audioSessionSetup(let message) {
-        
+            
             self.delegate?.setupFailed(message)
             
         } catch AudioError.general(let message) {
-        
+            
             self.delegate?.setupFailed(message)
             
         } catch {
-        
+            
             self.delegate?.setupFailed("An unknown error occured setting the stream")
         }
     }
     
+    // MARK: Public (methods)
+    
+    func startStreaming() -> Void {
+
+        self.start()
+        self.delegate?.didStart(self)
+    }
+    
     func stopStreaming() -> Void {
+        
         self.stop()
+        self.delegate?.didStop(self)
     }
     
     // MARK: Private (methods)
@@ -141,7 +150,8 @@ class AudioController {
         
         do {
         
-            try AVAudioSession.sharedInstance().setCategory(.playAndRecord, mode: .spokenAudio, options: .defaultToSpeaker)
+            try session.setActive(false, options: .notifyOthersOnDeactivation)
+            try session.setCategory(.playAndRecord, mode: .spokenAudio, options: .defaultToSpeaker)
             try session.setPreferredIOBufferDuration(self.bufferDuration)
             try session.setActive(true, options: .notifyOthersOnDeactivation)
 
@@ -157,11 +167,8 @@ class AudioController {
 
         /// Get the RemoteIO unit
         
-        guard let remoteIOComponent: AudioComponent = AudioComponentFindNext(nil, &audioComponentDescription) else {
-            throw AudioError.general("Failed to find the next audio component")
-        }
-        
-        status = AudioComponentInstanceNew(remoteIOComponent, &remoteIOUnit)
+        let remoteIOComponent = AudioComponentFindNext(nil, &audioComponentDescription)
+        status = AudioComponentInstanceNew(remoteIOComponent!, &remoteIOUnit)
         
         if status != noErr {
             return status

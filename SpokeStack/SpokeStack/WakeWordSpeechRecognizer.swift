@@ -107,7 +107,12 @@ public class WakeWordSpeechRecognizer: NSObject, WakewordRecognizerService {
     }
     
     public override init() {
+        
         super.init()
+        
+        let buffer: TimeInterval = TimeInterval((self.configuration.sampleRate / 1000) * self.configuration.frameWidth)
+        self.audioController.sampleRate = self.configuration.sampleRate
+        self.audioController.bufferDuration = buffer
     }
     
     // MARK: Internal (methods)
@@ -119,16 +124,13 @@ public class WakeWordSpeechRecognizer: NSObject, WakewordRecognizerService {
         /// Automatically restart wakeword task if it goes over Apple's 1
         /// minute listening limit
         
-        self.dispatchWorker = DispatchWorkItem {
-            self.stopStreaming(context: context)
-            self.startStreaming(context: context)
+        self.dispatchWorker = DispatchWorkItem {[weak self] in
+            self?.stopStreaming(context: context)
+            self?.startStreaming(context: context)
         }
         DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(self.configuration.wakeActiveMax),
                                       execute: self.dispatchWorker!)
         
-        let buffer: TimeInterval = TimeInterval((self.configuration.sampleRate / 1000) * self.configuration.frameWidth)
-        self.audioController.sampleRate = self.configuration.sampleRate
-        self.audioController.bufferDuration = buffer
         self.audioController.delegate = self
         self.audioController.startStreaming()
     }
@@ -137,8 +139,6 @@ public class WakeWordSpeechRecognizer: NSObject, WakewordRecognizerService {
         
         self.audioController.delegate = nil
         self.audioController.stopStreaming()
-
-        try? AVAudioSession.sharedInstance().setActive(false, options: [])
     }
     
     // MARK: Private (methods)
@@ -279,8 +279,6 @@ public class WakeWordSpeechRecognizer: NSObject, WakewordRecognizerService {
         }
 
         if !context.isActive {
-            
-            print("The context is not active so sample begins")
             
             /// Run the current frame through the detector pipeline
             /// activate if a keyword phrase was detected
@@ -431,9 +429,14 @@ public class WakeWordSpeechRecognizer: NSObject, WakewordRecognizerService {
             self.dispatchWorker?.cancel()
             self.activeLength = 1
             
-            DispatchQueue.main.async {
-                self.stopStreaming(context: context)
-                self.delegate?.activate()
+            DispatchQueue.main.async {[weak self] in
+                
+                guard let strongSelf = self else {
+                    return
+                }
+                
+                strongSelf.stopStreaming(context: context)
+                strongSelf.delegate?.activate()
             }
         }
     }
@@ -448,8 +451,12 @@ public class WakeWordSpeechRecognizer: NSObject, WakewordRecognizerService {
             self.stopStreaming(context: context)
             
             self.activeLength = 0
-            DispatchQueue.main.async {
-                self.delegate?.deactivate()
+            
+            DispatchQueue.main.async {[weak self] in
+                guard let strongSelf = self else {
+                    return
+                }
+                strongSelf.delegate?.deactivate()
             }
         }
     }
@@ -573,19 +580,9 @@ extension WakeWordSpeechRecognizer {
             let resultCount: Int = predictions.detect_outputs__0.count
             var indexIncrement: Int = 0
             
-            print("what is the result cound for detect \(resultCount) and self.smoothWindow \(self.smoothWindow.capacity)")
-            
             repeat {
                 
                 let predictionFloat: Float = predictions.detect_outputs__0[indexIncrement].floatValue
-                print(
-                """
-                Function \(#function)
-                What is the prediction float value \(predictionFloat)
-                Index \(indexIncrement)
-                """
-                )
-
                 do {
                     
                     try self.smoothWindow.write(predictionFloat)
@@ -720,8 +717,6 @@ extension WakeWordSpeechRecognizer {
                     
                     match += 1
                     if match == phrase.count {
-                       
-                        print("match == phrase count \(match) and phrase \(phrase)")
                         break
                     }
                 }
@@ -731,7 +726,6 @@ extension WakeWordSpeechRecognizer {
             /// So start the activation counter
 
             if match == phrase.count {
-                print("match does == phrase count before activate")
                 self.activate(context)
                 break
             }

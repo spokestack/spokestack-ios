@@ -25,7 +25,7 @@ class AppleSpeechRecognizer: NSObject, SpeechRecognizerService {
     
     private let speechRecognizer: SFSpeechRecognizer = SFSpeechRecognizer(locale: NSLocale.current)!
     
-    private var recognitionRequest: SFSpeechAudioBufferRecognitionRequest?
+    private var recognitionRequest: SFSpeechAudioBufferRecognitionRequest = SFSpeechAudioBufferRecognitionRequest()
     
     private var recognitionTask: SFSpeechRecognitionTask?
     
@@ -68,8 +68,7 @@ class AppleSpeechRecognizer: NSObject, SpeechRecognizerService {
         self.audioEngine.inputNode.removeTap(onBus: 0)
         
         self.recognitionTask?.cancel()
-        self.recognitionRequest?.endAudio()
-        self.recognitionRequest = nil
+        self.recognitionRequest.endAudio()
         self.recognitionTask = nil
      
         context.isActive = false
@@ -77,27 +76,9 @@ class AppleSpeechRecognizer: NSObject, SpeechRecognizerService {
     
     // MARK: Private (methods)
     
-    private func setup() -> Void {
-        
-        do {
-            
-            try audioSession.setCategory(.playAndRecord, mode: .spokenAudio, options: .defaultToSpeaker)
-            try audioSession.setActive(true, options: .notifyOthersOnDeactivation)
-            
-        } catch let error {
-            self.delegate?.didError(error)
-        }
-    }
-    
     private func prepareRecognition(context: SpeechContext) throws -> Void {
-        
-        self.recognitionRequest = SFSpeechAudioBufferRecognitionRequest()
-        
-        guard let recognitionRequest = self.recognitionRequest else {
-            throw SpeechRecognizerError.unknownCause("Unable to create an SFSpeechAudioBufferRecognitionRequest object")
-        }
-        
-        recognitionRequest.shouldReportPartialResults = true
+                
+        self.recognitionRequest.shouldReportPartialResults = true
         
         // MARK: AVAudioEngine
         
@@ -111,7 +92,7 @@ class AppleSpeechRecognizer: NSObject, SpeechRecognizerService {
             guard let strongSelf = self else {
                 return
             }
-            strongSelf.recognitionRequest?.append(buffer)
+            strongSelf.recognitionRequest.append(buffer)
         }
         
         // MARK: recognitionTask
@@ -119,30 +100,29 @@ class AppleSpeechRecognizer: NSObject, SpeechRecognizerService {
         self.recognitionTask = self.speechRecognizer.recognitionTask(
             with: recognitionRequest,
             resultHandler: {[weak self] result, error in
-                
+
                 guard let strongSelf = self else {
                     return
                 }
-                
+
                 strongSelf.dispatchWorker?.cancel()
-                
+
                 if let e = error {
                     strongSelf.delegate?.didError(e)
-                    //strongSelf.stopStreaming(context: context)
                 }
-                
+
                 if let r = result {
                     print("what is the ASR result \(r.bestTranscription.formattedString)")
                     let confidence = r.spstk_confidence
                     context.transcript = r.bestTranscription.formattedString
                     context.confidence = confidence
-                    
+
                     strongSelf.dispatchWorker = DispatchWorkItem {
                         strongSelf.delegate?.didRecognize(context)
                         strongSelf.stopStreaming(context: context)
                         strongSelf.delegate?.didFinish()
                     }
-                    
+
                     DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + .milliseconds(strongSelf.configuration.vadFallDelay),
                                                   execute: strongSelf.dispatchWorker!)
                 }
