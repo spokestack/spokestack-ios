@@ -21,12 +21,12 @@ class AppleSpeechRecognizer: NSObject, SpeechRecognizerService {
     
     private let audioSession: AVAudioSession = AVAudioSession.sharedInstance()
     private let speechRecognizer: SFSpeechRecognizer = SFSpeechRecognizer(locale: NSLocale.current)!
-    private var recognitionRequest: SFSpeechAudioBufferRecognitionRequest?
+    private var recognitionRequest: SFSpeechAudioBufferRecognitionRequest = SFSpeechAudioBufferRecognitionRequest()
     private var recognitionTask: SFSpeechRecognitionTask?
     private let audioEngine: AVAudioEngine = AVAudioEngine()
     private var dispatchWorker: DispatchWorkItem?
     
-    // MARK: initializers
+    // MARK: NSObject methods
     
     deinit {
         speechRecognizer.delegate = nil
@@ -34,12 +34,6 @@ class AppleSpeechRecognizer: NSObject, SpeechRecognizerService {
     
     override init() {
         super.init()
-        do {
-            try audioSession.setCategory(.playAndRecord, mode: .spokenAudio, options: .defaultToSpeaker)
-            try audioSession.setActive(true, options: .notifyOthersOnDeactivation)
-        } catch let error {
-            self.delegate?.didError(error)
-        }
     }
     
     // MARK: SpeechRecognizerService implementation
@@ -47,8 +41,8 @@ class AppleSpeechRecognizer: NSObject, SpeechRecognizerService {
     func startStreaming(context: SpeechContext) {
         do {
             try self.prepareRecognition(context: context)
-            audioEngine.prepare()
-            try audioEngine.start()
+            self.audioEngine.prepare()
+            try self.audioEngine.start()
             context.isActive = true
         } catch let error {
             self.delegate?.didError(error)
@@ -56,26 +50,22 @@ class AppleSpeechRecognizer: NSObject, SpeechRecognizerService {
     }
     
     func stopStreaming(context: SpeechContext) {
-        audioEngine.stop()
+        self.audioEngine.stop()
         self.audioEngine.inputNode.removeTap(onBus: 0)
-        recognitionTask?.cancel()
-        recognitionRequest?.endAudio()
-        recognitionRequest = nil
-        recognitionTask = nil
+        self.recognitionTask?.cancel()
+        self.recognitionRequest.endAudio()
+        self.recognitionTask = nil
         context.isActive = false
     }
     
     private func prepareRecognition(context: SpeechContext) throws -> Void {
-        self.recognitionRequest = SFSpeechAudioBufferRecognitionRequest()
-        guard let recognitionRequest = self.recognitionRequest else {
-            throw SpeechRecognizerError.unknownCause("Unable to create an SFSpeechAudioBufferRecognitionRequest object")
-        }
-        recognitionRequest.shouldReportPartialResults = true
+        self.recognitionRequest.shouldReportPartialResults = true
         
         // MARK: AVAudioEngine
         
         let buffer: Int = (self.configuration.sampleRate / 1000) * self.configuration.frameWidth
         let recordingFormat = self.audioEngine.inputNode.outputFormat(forBus: 0)
+        self.audioEngine.inputNode.removeTap(onBus: 0) // a belt-and-suspenders approach to fixing https://github.com/wenkesj/react-native-voice/issues/46
         self.audioEngine.inputNode.installTap(
             onBus: 0,
             bufferSize: AVAudioFrameCount(buffer),
@@ -84,7 +74,7 @@ class AppleSpeechRecognizer: NSObject, SpeechRecognizerService {
             guard let strongSelf = self else {
                 return
             }
-            strongSelf.recognitionRequest?.append(buffer)
+            strongSelf.recognitionRequest.append(buffer)
         }
         
         // MARK: recognitionTask
@@ -106,10 +96,10 @@ class AppleSpeechRecognizer: NSObject, SpeechRecognizerService {
                             a.confidence <= b.confidence }).first?.confidence ?? 0.0
                     context.transcript = r.bestTranscription.formattedString
                     context.confidence = confidence
-                    strongSelf.dispatchWorker = DispatchWorkItem {
-                        strongSelf.delegate?.didRecognize(context)
-                        strongSelf.stopStreaming(context: context)
-                        strongSelf.delegate?.didFinish()
+                    strongSelf.dispatchWorker = DispatchWorkItem {[weak self] in
+                        self?.delegate?.didRecognize(context)
+                        self?.stopStreaming(context: context)
+                        self?.delegate?.didFinish()
                     }
                     DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + .milliseconds(strongSelf.configuration.vadFallDelay), execute: strongSelf.dispatchWorker!)
                 }

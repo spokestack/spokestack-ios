@@ -16,7 +16,9 @@ func recordingCallback(
     inBusNumber: UInt32,
     inNumberFrames: UInt32,
     ioData: UnsafeMutablePointer<AudioBufferList>?) -> OSStatus {
-    
+    guard let remoteIOUnit: AudioComponentInstance = AudioController.shared.remoteIOUnit else {
+        return kAudioServicesSystemSoundUnspecifiedError
+    }
     var status: OSStatus = noErr
     let channelCount: UInt32 = 1
     
@@ -31,13 +33,13 @@ func recordingCallback(
     
     /// get the recorded samples
     
-    status = AudioUnitRender(AudioController.shared.remoteIOUnit!,
+    status = AudioUnitRender(remoteIOUnit,
                              ioActionFlags,
                              inTimeStamp,
                              inBusNumber,
                              inNumberFrames,
                              UnsafeMutablePointer<AudioBufferList>(&bufferList))
-    if (status != noErr) {
+    if status != noErr {
         return status
     }
 
@@ -83,35 +85,36 @@ class AudioController {
     
     deinit {
         AudioComponentInstanceDispose(remoteIOUnit!)
+        if let ioUnit: AudioComponentInstance = self.remoteIOUnit {
+            AudioComponentInstanceDispose(ioUnit)
+        }
     }
-    
-    // MARK: Public (methods)
-    
-    func startStreaming(context: SpeechContext) -> Void {
 
-        /// Prepare
-        
+    init() {
         do {
             try self.prepare()
             self.start()
-
         } catch AudioError.audioSessionSetup(let message) {
             self.delegate?.setupFailed(message)
-            
         } catch AudioError.general(let message) {
             self.delegate?.setupFailed(message)
-            
         } catch {
             self.delegate?.setupFailed("An unknown error occured setting the stream")
         }
+    }
+
+    // MARK: Public functions
+
+    func startStreaming(context: SpeechContext) -> Void {
+        self.start()
     }
     
     func stopStreaming(context: SpeechContext) -> Void {
         self.stop()
     }
-    
-    // MARK: Private (methods)
-    
+
+    // MARK: Private functions
+
     @discardableResult
     private func start() -> OSStatus {
         return AudioOutputUnitStart(remoteIOUnit!)
@@ -124,44 +127,37 @@ class AudioController {
     
     @discardableResult
     private func prepare() throws -> OSStatus {
-        
         var status: OSStatus = noErr
         let session: AVAudioSession = AVAudioSession.sharedInstance()
         
-        /// AVSession setup
+        // MARK: AVSession setup
         
         do {
-            try AVAudioSession.sharedInstance().setCategory(AVAudioSession.Category.playAndRecord, mode:  AVAudioSession.Mode.spokenAudio, options: .defaultToSpeaker)
+            try session.setActive(false, options: .notifyOthersOnDeactivation)
+            try session.setCategory(.playAndRecord, mode: .spokenAudio, options: .defaultToSpeaker)
             try session.setPreferredIOBufferDuration(self.bufferDuration)
             try session.setActive(true, options: .notifyOthersOnDeactivation)
-
         } catch {
-            
             throw AudioError.audioSessionSetup(error.localizedDescription)
         }
         
-        /// Session Sample Rate
+        // MARK: Session Sample Rate
 
         var sampleRate = session.sampleRate
         sampleRate = Double(self.sampleRate)
 
-        /// Get the RemoteIO unit
+        // MARK: prepare RemoteIO unit component
         
-        guard let remoteIOComponent: AudioComponent = AudioComponentFindNext(nil, &audioComponentDescription) else {
-            throw AudioError.general("Failed to find the next audio component")
-        }
-        
-        status = AudioComponentInstanceNew(remoteIOComponent, &remoteIOUnit)
-        
+        let remoteIOComponent = AudioComponentFindNext(nil, &audioComponentDescription)
+        status = AudioComponentInstanceNew(remoteIOComponent!, &remoteIOUnit)
         if status != noErr {
             return status
         }
-        
+
+        // MARK: Configure the RemoteIO unit for input
+
         let bus1: AudioUnitElement = 1
         var oneFlag: UInt32 = 1
-        
-        /// Configure the RemoteIO unit for input
-
         status = AudioUnitSetProperty(self.remoteIOUnit!,
                                       kAudioOutputUnitProperty_EnableIO,
                                       kAudioUnitScope_Input,
@@ -172,10 +168,9 @@ class AudioController {
             return status
         }
         
-        /// Set format for mic input (bus 1) on RemoteIO's output scope
+        // MARK: set format for mic input (bus 1) on RemoteIO unit's output scope
 
         var asbd: AudioStreamBasicDescription = AudioStreamBasicDescription()
-
         asbd.mSampleRate = sampleRate
         asbd.mFormatID = kAudioFormatLinearPCM
         asbd.mFormatFlags = kAudioFormatFlagIsSignedInteger | kAudioFormatFlagIsPacked
@@ -184,7 +179,6 @@ class AudioController {
         asbd.mBytesPerFrame = 2
         asbd.mChannelsPerFrame = 1
         asbd.mBitsPerChannel = 16
-        
         status = AudioUnitSetProperty(self.remoteIOUnit!,
                                       kAudioUnitProperty_StreamFormat,
                                       kAudioUnitScope_Output,
@@ -195,10 +189,9 @@ class AudioController {
             return status
         }
         
-        /// Set the recording callback
+        // MARK: Set the recording callback
         
         var callbackStruct: AURenderCallbackStruct = AURenderCallbackStruct()
-        
         callbackStruct.inputProc = recordingCallback
         callbackStruct.inputProcRefCon = nil
         status = AudioUnitSetProperty(self.remoteIOUnit!,
@@ -211,7 +204,7 @@ class AudioController {
             return status
         }
         
-        /// Initialize the RemoteIO unit
+        // MARK: Initialize the RemoteIO unit
         
         return AudioUnitInitialize(self.remoteIOUnit!)
     }
