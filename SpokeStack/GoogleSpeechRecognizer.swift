@@ -82,13 +82,11 @@ public class GoogleSpeechRecognizer: SpeechRecognizerService {
     public func startStreaming(context: SpeechContext) -> Void {
         self.context = context
         self.audioData = NSMutableData()
-        AudioController.shared.startStreaming(context: context)
         self.delegate?.didStart()
     }
     
     public func stopStreaming(context: SpeechContext) -> Void {
         self.context = context
-        AudioController.shared.stopStreaming(context: context)
         
         if !self.streaming {
             return

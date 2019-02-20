@@ -66,6 +66,10 @@ class AudioController {
     
     // MARK: Private (properties)
     
+    var priorAudioSessionCategory: AVAudioSession.Category?
+    var priorAudioSessionMode: AVAudioSession.Mode?
+    var priorAudioSessionCategoryOptions: AVAudioSession.CategoryOptions?
+
     fileprivate var remoteIOUnit: AudioComponentInstance?
     
     lazy private var audioComponentDescription: AudioComponentDescription = {
@@ -92,8 +96,8 @@ class AudioController {
 
     init() {
         do {
-            try self.prepare()
-            self.start()
+            try self.beginAudioSession()
+            self.prepareRemoteIOUnit()
         } catch AudioError.audioSessionSetup(let message) {
             self.delegate?.setupFailed(message)
         } catch AudioError.general(let message) {
@@ -106,11 +110,70 @@ class AudioController {
     // MARK: Public functions
 
     func startStreaming(context: SpeechContext) -> Void {
-        self.start()
+        do {
+            try self.beginAudioSession()
+            self.start()
+        } catch AudioError.audioSessionSetup(let message) {
+            self.delegate?.setupFailed(message)
+        } catch AudioError.general(let message) {
+            self.delegate?.setupFailed(message)
+        } catch {
+            self.delegate?.setupFailed("An unknown error occured setting the stream")
+        }
     }
-    
+
     func stopStreaming(context: SpeechContext) -> Void {
-        self.stop()
+        do {
+            self.stop()
+            try self.endAudioSession()
+        } catch AudioError.audioSessionSetup(let message) {
+            self.delegate?.setupFailed(message)
+        } catch {
+            self.delegate?.setupFailed("An unknown error occured setting the stream")
+        }
+    }
+
+    func beginAudioSession() throws {
+        // TODO: https://developer.apple.com/documentation/avfoundation/avaudiosession/responding_to_audio_session_route_changes
+        let session: AVAudioSession = AVAudioSession.sharedInstance()
+        self.priorAudioSessionCategory = session.category
+        self.priorAudioSessionMode = session.mode
+        self.priorAudioSessionCategoryOptions = session.categoryOptions
+        do {
+            try session.setActive(false, options: .notifyOthersOnDeactivation)
+            try session.setCategory(.playAndRecord, mode: .spokenAudio, options: self.determineAudioSessionCategoryOptions())
+            try session.setPreferredIOBufferDuration(self.bufferDuration)
+            try session.setActive(true, options: .notifyOthersOnDeactivation)
+        } catch {
+            throw AudioError.audioSessionSetup(error.localizedDescription)
+        }
+    }
+
+    func endAudioSession() throws {
+        let session: AVAudioSession = AVAudioSession.sharedInstance()
+        do {
+            if !(session.category == self.priorAudioSessionCategory) {
+                try session.setCategory(self.priorAudioSessionCategory!, mode: self.priorAudioSessionMode!, options: self.priorAudioSessionCategoryOptions!)
+            }
+            try session.setActive(true, options: .notifyOthersOnDeactivation)
+        } catch {
+            throw AudioError.audioSessionSetup(error.localizedDescription)
+        }
+    }
+
+    func determineAudioSessionCategoryOptions() -> AVAudioSession.CategoryOptions {
+        let session: AVAudioSession = AVAudioSession.sharedInstance()
+        for description in session.currentRoute.outputs {
+            if (description.portType == AVAudioSession.Port.headphones)
+                || (description.portType == AVAudioSession.Port.bluetoothLE)
+                || (description.portType == AVAudioSession.Port.bluetoothHFP)
+                || (description.portType == AVAudioSession.Port.bluetoothA2DP)
+                || (description.portType == AVAudioSession.Port.headsetMic) {
+                // TODO: this is cribbing from the issues that led to the PR at https://github.com/wenkesj/react-native-voice/pull/103/files. Are other category options needed? Inputs vs outputs?
+                return AVAudioSession.CategoryOptions.allowBluetoothA2DP
+            }
+        }
+        return AVAudioSession.CategoryOptions.defaultToSpeaker
     }
 
     // MARK: Private functions
@@ -126,28 +189,11 @@ class AudioController {
     }
     
     @discardableResult
-    private func prepare() throws -> OSStatus {
-        var status: OSStatus = noErr
-        let session: AVAudioSession = AVAudioSession.sharedInstance()
+    private func prepareRemoteIOUnit() -> OSStatus {
         
-        // MARK: AVSession setup
-        
-        do {
-            try session.setActive(false, options: .notifyOthersOnDeactivation)
-            try session.setCategory(.playAndRecord, mode: .spokenAudio, options: .defaultToSpeaker)
-            try session.setPreferredIOBufferDuration(self.bufferDuration)
-            try session.setActive(true, options: .notifyOthersOnDeactivation)
-        } catch {
-            throw AudioError.audioSessionSetup(error.localizedDescription)
-        }
-        
-        // MARK: Session Sample Rate
-
-        var sampleRate = session.sampleRate
-        sampleRate = Double(self.sampleRate)
-
         // MARK: prepare RemoteIO unit component
-        
+
+        var status: OSStatus = noErr
         let remoteIOComponent = AudioComponentFindNext(nil, &audioComponentDescription)
         status = AudioComponentInstanceNew(remoteIOComponent!, &remoteIOUnit)
         if status != noErr {
@@ -169,9 +215,8 @@ class AudioController {
         }
         
         // MARK: set format for mic input (bus 1) on RemoteIO unit's output scope
-
         var asbd: AudioStreamBasicDescription = AudioStreamBasicDescription()
-        asbd.mSampleRate = sampleRate
+        asbd.mSampleRate = Double(self.sampleRate)
         asbd.mFormatID = kAudioFormatLinearPCM
         asbd.mFormatFlags = kAudioFormatFlagIsSignedInteger | kAudioFormatFlagIsPacked
         asbd.mBytesPerPacket = 2
