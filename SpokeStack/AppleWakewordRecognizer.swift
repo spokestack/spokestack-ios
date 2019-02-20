@@ -25,12 +25,12 @@ public class AppleWakewordRecognizer: NSObject, WakewordRecognizerService {
     
     private let audioSession: AVAudioSession = AVAudioSession.sharedInstance()
     private let speechRecognizer: SFSpeechRecognizer = SFSpeechRecognizer(locale: NSLocale.current)!
-    private var recognitionRequest: SFSpeechAudioBufferRecognitionRequest?
+    private var recognitionRequest: SFSpeechAudioBufferRecognitionRequest = SFSpeechAudioBufferRecognitionRequest()
     private var recognitionTask: SFSpeechRecognitionTask?
     private let audioEngine: AVAudioEngine = AVAudioEngine()
     private var dispatchWorker: DispatchWorkItem?
     
-    // MARK: NSObject implementations
+    // MARK: NSObject methods
     
     deinit {
         speechRecognizer.delegate = nil
@@ -39,12 +39,6 @@ public class AppleWakewordRecognizer: NSObject, WakewordRecognizerService {
     public override init() {
         super.init()
         phrases = self.configuration.wakePhrases.components(separatedBy: ",")
-        do {
-            try audioSession.setCategory(.playAndRecord, mode: .spokenAudio, options: .defaultToSpeaker)
-            try audioSession.setActive(true, options: .notifyOthersOnDeactivation)
-        } catch let error {
-            self.delegate?.didError(error)
-        }
     }
     
     // MARK: SpeechRecognizerService implementation
@@ -63,8 +57,7 @@ public class AppleWakewordRecognizer: NSObject, WakewordRecognizerService {
         audioEngine.stop()
         self.audioEngine.inputNode.removeTap(onBus: 0)
         recognitionTask?.cancel()
-        recognitionRequest?.endAudio()
-        recognitionRequest = nil
+        recognitionRequest.endAudio()
         recognitionTask = nil
     }
     
@@ -74,16 +67,13 @@ public class AppleWakewordRecognizer: NSObject, WakewordRecognizerService {
 
         // MARK: recognitionRequest
 
-        self.recognitionRequest = SFSpeechAudioBufferRecognitionRequest()
-        guard let recognitionRequest = self.recognitionRequest else {
-            throw SpeechRecognizerError.unknownCause("Unable to create an SFSpeechAudioBufferRecognitionRequest object")
-        }
         recognitionRequest.shouldReportPartialResults = true
         
         // MARK: AVAudioEngine
         
         let buffer: Int = (self.configuration.sampleRate / 1000) * self.configuration.frameWidth
         let recordingFormat = self.audioEngine.inputNode.outputFormat(forBus: 0)
+        self.audioEngine.inputNode.removeTap(onBus: 0) // a belt-and-suspenders approach to fixing https://github.com/wenkesj/react-native-voice/issues/46
         self.audioEngine.inputNode.installTap(
             onBus: 0,
             bufferSize: AVAudioFrameCount(buffer),
@@ -92,13 +82,13 @@ public class AppleWakewordRecognizer: NSObject, WakewordRecognizerService {
             guard let strongSelf = self else {
                 return
             }
-            strongSelf.recognitionRequest?.append(buffer)
+            strongSelf.recognitionRequest.append(buffer)
         }
         
         // MARK: Automatically restart wakeword task if it goes over Apple's 1 minute listening limit
-        self.dispatchWorker = DispatchWorkItem {
-            self.stopStreaming(context: context)
-            self.startStreaming(context: context)
+        self.dispatchWorker = DispatchWorkItem {[weak self] in
+            self?.stopStreaming(context: context)
+            self?.startStreaming(context: context)
         }
         DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(self.configuration.wakeActiveMax), execute: self.dispatchWorker!)
         
