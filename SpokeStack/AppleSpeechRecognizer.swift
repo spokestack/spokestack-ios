@@ -21,7 +21,7 @@ class AppleSpeechRecognizer: NSObject, SpeechRecognizerService {
     
     private let audioSession: AVAudioSession = AVAudioSession.sharedInstance()
     private let speechRecognizer: SFSpeechRecognizer = SFSpeechRecognizer(locale: NSLocale.current)!
-    private var recognitionRequest: SFSpeechAudioBufferRecognitionRequest = SFSpeechAudioBufferRecognitionRequest()
+    private var recognitionRequest: SFSpeechAudioBufferRecognitionRequest?
     private var recognitionTask: SFSpeechRecognitionTask?
     private let audioEngine: AVAudioEngine = AVAudioEngine()
     private var dispatchWorker: DispatchWorkItem?
@@ -30,10 +30,13 @@ class AppleSpeechRecognizer: NSObject, SpeechRecognizerService {
     
     deinit {
         speechRecognizer.delegate = nil
+        recognitionRequest = nil
     }
     
     override init() {
         super.init()
+        recognitionRequest = SFSpeechAudioBufferRecognitionRequest()
+        recognitionRequest?.shouldReportPartialResults = true
     }
     
     // MARK: SpeechRecognizerService implementation
@@ -53,13 +56,14 @@ class AppleSpeechRecognizer: NSObject, SpeechRecognizerService {
         self.audioEngine.stop()
         self.audioEngine.inputNode.removeTap(onBus: 0)
         self.recognitionTask?.cancel()
-        self.recognitionRequest.endAudio()
+        self.recognitionRequest?.endAudio()
         self.recognitionTask = nil
         context.isActive = false
     }
     
+    // MARK: private functions
+
     private func prepareRecognition(context: SpeechContext) throws -> Void {
-        self.recognitionRequest.shouldReportPartialResults = true
         
         // MARK: AVAudioEngine
         
@@ -74,13 +78,13 @@ class AppleSpeechRecognizer: NSObject, SpeechRecognizerService {
             guard let strongSelf = self else {
                 return
             }
-            strongSelf.recognitionRequest.append(buffer)
+            strongSelf.recognitionRequest?.append(buffer)
         }
         
         // MARK: recognitionTask
         
         self.recognitionTask = self.speechRecognizer.recognitionTask(
-            with: recognitionRequest,
+            with: recognitionRequest!,
             resultHandler: {[weak self] result, error in
                 guard let strongSelf = self else {
                     return
