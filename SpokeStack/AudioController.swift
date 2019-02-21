@@ -9,6 +9,8 @@
 import Foundation
 import AVFoundation
 
+let audioProcessingQueue: DispatchQueue = DispatchQueue(label: "com.pylon.audio.callback")
+
 func recordingCallback(
     inRefCon: UnsafeMutableRawPointer,
     ioActionFlags: UnsafeMutablePointer<AudioUnitRenderActionFlags>,
@@ -45,7 +47,7 @@ func recordingCallback(
 
     let data: Data = Data(bytes: buffers[0].mData!, count: Int(buffers[0].mDataByteSize))
     
-    DispatchQueue.main.async {
+    audioProcessingQueue.sync {
         AudioController.shared.delegate?.processSampleData(data)
     }
     
