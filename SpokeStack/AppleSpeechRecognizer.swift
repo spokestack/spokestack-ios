@@ -57,6 +57,7 @@ class AppleSpeechRecognizer: NSObject, SpeechRecognizerService {
     
     func stopStreaming(context: SpeechContext) {
         print("AppleSpeechRecognizer stopStreaming")
+        dispatchWorker?.cancel()
         self.audioEngine.stop()
         self.audioEngine.inputNode.removeTap(onBus: 0)
         self.recognitionTask?.cancel()
@@ -70,7 +71,7 @@ class AppleSpeechRecognizer: NSObject, SpeechRecognizerService {
     private func prepareRecognition(context: SpeechContext) throws -> Void {
         
         // MARK: AVAudioEngine
-        print("AppleSpeechRecognizer AVAudioEngine start")
+
         let buffer: Int = (self.configuration.sampleRate / 1000) * self.configuration.frameWidth
         let recordingFormat = self.audioEngine.inputNode.outputFormat(forBus: 0)
         self.audioEngine.inputNode.removeTap(onBus: 0) // a belt-and-suspenders approach to fixing https://github.com/wenkesj/react-native-voice/issues/46
@@ -84,7 +85,6 @@ class AppleSpeechRecognizer: NSObject, SpeechRecognizerService {
             }
             strongSelf.recognitionRequest?.append(buffer)
         }
-        print("AppleSpeechRecognizer AVAudioEngine end")
         
         // MARK: recognitionTask
         

@@ -35,15 +35,12 @@ public class AppleWakewordRecognizer: NSObject, WakewordRecognizerService {
     deinit {
         print("AppleWakewordRecognizer deinit")
         speechRecognizer.delegate = nil
-        recognitionRequest = nil
     }
     
     public override init() {
         super.init()
         print("AppleWakewordRecognizer init")
-        recognitionRequest = SFSpeechAudioBufferRecognitionRequest()
-        recognitionRequest?.shouldReportPartialResults = true
-        phrases = self.configuration.wakePhrases.components(separatedBy: ",")
+        phrases = configuration.wakePhrases.components(separatedBy: ",")
     }
     
     // MARK: SpeechRecognizerService implementation
@@ -51,8 +48,13 @@ public class AppleWakewordRecognizer: NSObject, WakewordRecognizerService {
     func startStreaming(context: SpeechContext) {
         print("AppleWakewordRecognizer startStreaming")
         do {
-            try self.prepareRecognition(context: context)
-            audioEngine.prepare()
+            self.prepareAudioEngine()
+            self.dispatchWorker = DispatchWorkItem {[weak self] in
+                self?.stopRecognition()
+                self?.startRecognition(context: context)
+            }
+            self.startRecognition(context: context)
+            self.audioEngine.prepare()
             try audioEngine.start()
         } catch let error {
             self.delegate?.didError(error)
@@ -61,19 +63,16 @@ public class AppleWakewordRecognizer: NSObject, WakewordRecognizerService {
     
     func stopStreaming(context: SpeechContext) {
         print("AppleWakewordRecognizer stopStreaming")
-        audioEngine.stop()
+        self.stopRecognition()
+        self.dispatchWorker?.cancel()
+        self.dispatchWorker = nil
+        self.audioEngine.stop()
         self.audioEngine.inputNode.removeTap(onBus: 0)
-        recognitionTask?.cancel()
-        recognitionRequest?.endAudio()
-        recognitionTask = nil
     }
     
     // MARK: private functions
     
-    private func prepareRecognition(context: SpeechContext) throws -> Void {
-        
-        // MARK: AVAudioEngine
-        
+    private func prepareAudioEngine() {
         let buffer: Int = (self.configuration.sampleRate / 1000) * self.configuration.frameWidth
         let recordingFormat = self.audioEngine.inputNode.outputFormat(forBus: 0)
         self.audioEngine.inputNode.removeTap(onBus: 0) // a belt-and-suspenders approach to fixing https://github.com/wenkesj/react-native-voice/issues/46
@@ -87,20 +86,36 @@ public class AppleWakewordRecognizer: NSObject, WakewordRecognizerService {
             }
             strongSelf.recognitionRequest?.append(buffer)
         }
-        
-        // MARK: Automatically restart wakeword task if it goes over Apple's 1 minute listening limit
-        self.dispatchWorker = DispatchWorkItem {[weak self] in
-            self?.stopStreaming(context: context)
-            self?.startStreaming(context: context)
+    }
+    
+    private func startRecognition(context: SpeechContext) {
+        print("AppleWakewordRecognizer startRecognition")
+        do {
+            self.recognitionRequest = SFSpeechAudioBufferRecognitionRequest()
+            self.recognitionRequest?.shouldReportPartialResults = true
+            try self.createRecognitionTask(context: context)
+            
+            // Automatically restart wakeword task if it goes over Apple's 1 minute listening limit
+            DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(self.configuration.wakeActiveMax), execute: self.dispatchWorker!)
+        } catch let error {
+            self.delegate?.didError(error)
         }
-        DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(self.configuration.wakeActiveMax), execute: self.dispatchWorker!)
-        
-        // MARK: recognitionTask
-        
+    }
+    
+    private func stopRecognition() {
+        print("AppleWakewordRecognizer stopRecognition")
+        self.recognitionTask?.cancel()
+        self.recognitionTask = nil
+        self.recognitionRequest?.endAudio()
+        self.recognitionRequest = nil
+    }
+    
+    private func createRecognitionTask(context: SpeechContext) throws -> Void {
+        print("AppleWakewordRecognizer createRecognitionTask")
         self.recognitionTask = self.speechRecognizer.recognitionTask(
             with: recognitionRequest!,
             resultHandler: {[weak self] result, error in
-                print("AppleWakewordRecognizer recognitionTask")
+                print("AppleWakewordRecognizer recognitionTask resultHandler")
                 guard let strongSelf = self else {
                     return
                 }
@@ -122,8 +137,7 @@ public class AppleWakewordRecognizer: NSObject, WakewordRecognizerService {
                                     .contains($0.lowercased())})
                             .isEmpty
                     if wakewordDetected {
-                        strongSelf.dispatchWorker?.cancel()
-                        strongSelf.stopStreaming(context: context)
+                        print("AppleWakewordRecognizer wakeword detected")
                         strongSelf.delegate?.activate()
                     }
                 }

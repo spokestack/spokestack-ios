@@ -58,6 +58,7 @@ import Foundation
     }
     
     @objc public func activate() -> Void {
+        self.wakewordRecognizerService.stopStreaming(context: self.context)
         self.speechRecognizerService.startStreaming(context: self.context)
     }
     
