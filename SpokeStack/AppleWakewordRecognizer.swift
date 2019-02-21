@@ -10,42 +10,42 @@ import Foundation
 import Speech
 
 public class AppleWakewordRecognizer: NSObject, WakewordRecognizerService {
-
+    
     // MARK: public properties
-
+    
     static let sharedInstance: AppleWakewordRecognizer = AppleWakewordRecognizer()
     public var configuration: WakewordConfiguration = WakewordConfiguration()
     public weak var delegate: WakewordRecognizer?
-
+    
     // MARK: wakeword properties
-
+    
     private var phrases: Array<String> = []
-
+    
     // MARK: recognition properties
-
+    
     private let audioSession: AVAudioSession = AVAudioSession.sharedInstance()
     private let speechRecognizer: SFSpeechRecognizer = SFSpeechRecognizer(locale: NSLocale.current)!
     private var recognitionRequest: SFSpeechAudioBufferRecognitionRequest?
     private var recognitionTask: SFSpeechRecognitionTask?
     private let audioEngine: AVAudioEngine = AVAudioEngine()
     private var dispatchWorker: DispatchWorkItem?
-
+    
     // MARK: NSObject methods
-
+    
     deinit {
         speechRecognizer.delegate = nil
         recognitionRequest = nil
     }
-
+    
     public override init() {
         super.init()
         recognitionRequest = SFSpeechAudioBufferRecognitionRequest()
         recognitionRequest?.shouldReportPartialResults = true
         phrases = self.configuration.wakePhrases.components(separatedBy: ",")
     }
-
+    
     // MARK: SpeechRecognizerService implementation
-
+    
     func startStreaming(context: SpeechContext) {
         do {
             try self.prepareRecognition(context: context)
@@ -55,7 +55,7 @@ public class AppleWakewordRecognizer: NSObject, WakewordRecognizerService {
             self.delegate?.didError(error)
         }
     }
-
+    
     func stopStreaming(context: SpeechContext) {
         audioEngine.stop()
         self.audioEngine.inputNode.removeTap(onBus: 0)
@@ -63,13 +63,13 @@ public class AppleWakewordRecognizer: NSObject, WakewordRecognizerService {
         recognitionRequest?.endAudio()
         recognitionTask = nil
     }
-
+    
     // MARK: private functions
-
+    
     private func prepareRecognition(context: SpeechContext) throws -> Void {
-
+        
         // MARK: AVAudioEngine
-
+        
         let buffer: Int = (self.configuration.sampleRate / 1000) * self.configuration.frameWidth
         let recordingFormat = self.audioEngine.inputNode.outputFormat(forBus: 0)
         self.audioEngine.inputNode.removeTap(onBus: 0) // a belt-and-suspenders approach to fixing https://github.com/wenkesj/react-native-voice/issues/46

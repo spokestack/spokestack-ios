@@ -62,11 +62,10 @@ class AppleSpeechRecognizer: NSObject, SpeechRecognizerService {
     }
     
     // MARK: private functions
-
+    
     private func prepareRecognition(context: SpeechContext) throws -> Void {
         
         // MARK: AVAudioEngine
-        
         let buffer: Int = (self.configuration.sampleRate / 1000) * self.configuration.frameWidth
         let recordingFormat = self.audioEngine.inputNode.outputFormat(forBus: 0)
         self.audioEngine.inputNode.removeTap(onBus: 0) // a belt-and-suspenders approach to fixing https://github.com/wenkesj/react-native-voice/issues/46
@@ -83,30 +82,32 @@ class AppleSpeechRecognizer: NSObject, SpeechRecognizerService {
         
         // MARK: recognitionTask
         
-        self.recognitionTask = self.speechRecognizer.recognitionTask(
-            with: recognitionRequest!,
-            resultHandler: {[weak self] result, error in
-                guard let strongSelf = self else {
-                    return
-                }
-                strongSelf.dispatchWorker?.cancel()
-                if let e = error {
-                    strongSelf.delegate?.didError(e)
-                    //strongSelf.stopStreaming(context: context)
-                }
-                if let r = result {
-                    let confidence = r.transcriptions.first?.segments.sorted(
-                        by: { (a, b) -> Bool in
-                            a.confidence <= b.confidence }).first?.confidence ?? 0.0
-                    context.transcript = r.bestTranscription.formattedString
-                    context.confidence = confidence
-                    strongSelf.dispatchWorker = DispatchWorkItem {[weak self] in
-                        self?.delegate?.didRecognize(context)
-                        self?.stopStreaming(context: context)
-                        self?.delegate?.didFinish()
+        if (self.recognitionTask == nil) {
+            self.recognitionTask = self.speechRecognizer.recognitionTask(
+                with: recognitionRequest!,
+                resultHandler: {[weak self] result, error in
+                    guard let strongSelf = self else {
+                        return
                     }
-                    DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + .milliseconds(strongSelf.configuration.vadFallDelay), execute: strongSelf.dispatchWorker!)
-                }
-        })
+                    strongSelf.dispatchWorker?.cancel()
+                    if let e = error {
+                        strongSelf.delegate?.didError(e)
+                        //strongSelf.stopStreaming(context: context)
+                    }
+                    if let r = result {
+                        let confidence = r.transcriptions.first?.segments.sorted(
+                            by: { (a, b) -> Bool in
+                                a.confidence <= b.confidence }).first?.confidence ?? 0.0
+                        context.transcript = r.bestTranscription.formattedString
+                        context.confidence = confidence
+                        strongSelf.dispatchWorker = DispatchWorkItem {[weak self] in
+                            self?.delegate?.didRecognize(context)
+                            self?.stopStreaming(context: context)
+                            self?.delegate?.didFinish()
+                        }
+                        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + .milliseconds(strongSelf.configuration.vadFallDelay), execute: strongSelf.dispatchWorker!)
+                    }
+            })
+        }
     }
 }
