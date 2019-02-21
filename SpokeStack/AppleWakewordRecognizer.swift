@@ -33,12 +33,14 @@ public class AppleWakewordRecognizer: NSObject, WakewordRecognizerService {
     // MARK: NSObject methods
     
     deinit {
+        print("AppleWakewordRecognizer deinit")
         speechRecognizer.delegate = nil
         recognitionRequest = nil
     }
     
     public override init() {
         super.init()
+        print("AppleWakewordRecognizer init")
         recognitionRequest = SFSpeechAudioBufferRecognitionRequest()
         recognitionRequest?.shouldReportPartialResults = true
         phrases = self.configuration.wakePhrases.components(separatedBy: ",")
@@ -47,6 +49,7 @@ public class AppleWakewordRecognizer: NSObject, WakewordRecognizerService {
     // MARK: SpeechRecognizerService implementation
     
     func startStreaming(context: SpeechContext) {
+        print("AppleWakewordRecognizer startStreaming")
         do {
             try self.prepareRecognition(context: context)
             audioEngine.prepare()
@@ -57,6 +60,7 @@ public class AppleWakewordRecognizer: NSObject, WakewordRecognizerService {
     }
     
     func stopStreaming(context: SpeechContext) {
+        print("AppleWakewordRecognizer stopStreaming")
         audioEngine.stop()
         self.audioEngine.inputNode.removeTap(onBus: 0)
         recognitionTask?.cancel()
@@ -96,6 +100,7 @@ public class AppleWakewordRecognizer: NSObject, WakewordRecognizerService {
         self.recognitionTask = self.speechRecognizer.recognitionTask(
             with: recognitionRequest!,
             resultHandler: {[weak self] result, error in
+                print("AppleWakewordRecognizer recognitionTask")
                 guard let strongSelf = self else {
                     return
                 }
@@ -106,6 +111,7 @@ public class AppleWakewordRecognizer: NSObject, WakewordRecognizerService {
                     strongSelf.delegate?.didError(e)
                 }
                 if let r = result {
+                    print("AppleWakewordRecognizer hears " + r.bestTranscription.formattedString)
                     let wakewordDetected: Bool =
                         !strongSelf.phrases
                             .filter({
