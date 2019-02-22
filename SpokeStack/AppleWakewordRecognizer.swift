@@ -49,10 +49,6 @@ public class AppleWakewordRecognizer: NSObject, WakewordRecognizerService {
         print("AppleWakewordRecognizer startStreaming")
         do {
             self.prepareAudioEngine()
-            self.dispatchWorker = DispatchWorkItem {[weak self] in
-                self?.stopRecognition()
-                self?.startRecognition(context: context)
-            }
             self.startRecognition(context: context)
             self.audioEngine.prepare()
             try audioEngine.start()
@@ -97,6 +93,11 @@ public class AppleWakewordRecognizer: NSObject, WakewordRecognizerService {
             try self.createRecognitionTask(context: context)
             
             // Automatically restart wakeword task if it goes over Apple's 1 minute listening limit
+            self.dispatchWorker = DispatchWorkItem {[weak self] in
+                print("AppleWakewordRecognizer dispatchWorker")
+                self?.stopRecognition()
+                self?.startRecognition(context: context)
+            }
             DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(self.configuration.wakeActiveMax), execute: self.dispatchWorker!)
         } catch let error {
             self.delegate?.didError(error)
