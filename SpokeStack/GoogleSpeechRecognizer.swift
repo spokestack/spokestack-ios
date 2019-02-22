@@ -108,7 +108,7 @@ public class GoogleSpeechRecognizer: SpeechRecognizerService {
                                                                 
                                                                 guard let strongSelf = self, error == nil else {
                                                                     self?.delegate?.didError(error ?? SpeechRecognizerError.unknownCause("no error description provided"))
-                                                                    self?.delegate?.didFinish()
+                                                                    self?.delegate?.deactivate()
                                                                     return
                                                                 }
                                                                 
@@ -124,7 +124,7 @@ public class GoogleSpeechRecognizer: SpeechRecognizerService {
                                                                         strongSelf.context.transcript = alt.transcript
                                                                         strongSelf.context.confidence = alt.confidence
                                                                         strongSelf.delegate?.didRecognize(strongSelf.context)
-                                                                        strongSelf.delegate?.didFinish()
+                                                                        strongSelf.delegate?.deactivate()
                                                                         strongSelf.stopStreaming(context: strongSelf.context)
                                                                     }
                                                                 }

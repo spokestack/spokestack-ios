@@ -14,7 +14,7 @@ import Foundation
     
     func didRecognize(_ result: SpeechContext) -> Void
     
-    func didFinish() -> Void
+    func deactivate() -> Void
     
     func didError(_ error: Error) -> Void
 }

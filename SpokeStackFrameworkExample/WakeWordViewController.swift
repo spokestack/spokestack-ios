@@ -98,6 +98,7 @@ extension WakeWordViewController: SpeechRecognizer, WakewordRecognizer {
     
     func deactivate() {
         print("deactivate")
+        self.pipeline.deactivate()
     }
     
     func didError(_ error: Error) {
@@ -108,11 +109,6 @@ extension WakeWordViewController: SpeechRecognizer, WakewordRecognizer {
     
     func didRecognize(_ result: SpeechContext) {
         print("didRecognize \(result.transcript)")
-    }
-    
-    func didFinish() {
-        print("didFinish")
-        self.pipeline.deactivate()
     }
     
     func didStart() {
