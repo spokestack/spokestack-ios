@@ -64,11 +64,11 @@ import Foundation
     
     @objc public func deactivate() -> Void {
         self.speechRecognizerService.stopStreaming(context: self.context)
+        self.wakewordRecognizerService.startStreaming(context: self.context)
     }
     
     @objc public func start() -> Void {
         AudioController.shared.startStreaming(context: self.context)
-        self.speechRecognizerService.stopStreaming(context: self.context)
         self.wakewordRecognizerService.startStreaming(context: self.context)
     }
     

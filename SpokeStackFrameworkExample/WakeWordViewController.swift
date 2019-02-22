@@ -112,11 +112,7 @@ extension WakeWordViewController: SpeechRecognizer, WakewordRecognizer {
     
     func didFinish() {
         print("didFinish")
-        if (self.pipeline.context.isActive) {
-            self.pipeline.activate()
-        } else {
-            self.pipeline.start()
-        }
+        self.pipeline.deactivate()
     }
     
     func didStart() {
