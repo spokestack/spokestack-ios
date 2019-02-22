@@ -19,7 +19,6 @@ class AppleSpeechRecognizer: NSObject, SpeechRecognizerService {
     
     // MARK: private properties
     
-    private let audioSession: AVAudioSession = AVAudioSession.sharedInstance()
     private let speechRecognizer: SFSpeechRecognizer = SFSpeechRecognizer(locale: NSLocale.current)!
     private var recognitionRequest: SFSpeechAudioBufferRecognitionRequest?
     private var recognitionTask: SFSpeechRecognitionTask?
