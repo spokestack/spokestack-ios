@@ -96,7 +96,27 @@ class AppleSpeechRecognizer: NSObject, SpeechRecognizerService {
                 }
                 strongSelf.dispatchWorker?.cancel()
                 if let e = error {
-                    strongSelf.delegate?.didError(e)
+                    if let nse: NSError = error as NSError? {
+                        if nse.domain == "kAFAssistantErrorDomain" {
+                            switch nse.code {
+                            case 203: // request timed out, retry
+                                print("AppleSpeechRecognizer createRecognitionTask resultHandler error 203")
+                                context.isActive = false
+                                strongSelf.delegate?.didFinish()
+                                break
+                            case 209: // ¯\_(ツ)_/¯
+                                print("AppleSpeechRecognizer createRecognitionTask resultHandler error 209")
+                                break
+                            case 216: // Apple internal error: https://stackoverflow.com/questions/53037789/sfspeechrecognizer-216-error-with-multiple-requests?noredirect=1&lq=1)
+                                print("AppleSpeechRecognizer createRecognitionTask resultHandler error 216")
+                                break
+                            default:
+                                strongSelf.delegate?.didError(e)
+                            }
+                        }
+                    } else {
+                        strongSelf.delegate?.didError(e)
+                    }
                 }
                 if let r = result {
                     print("AppleSpeechRecognizer result " + r.bestTranscription.formattedString)

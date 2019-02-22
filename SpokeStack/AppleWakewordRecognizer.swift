@@ -121,10 +121,24 @@ public class AppleWakewordRecognizer: NSObject, WakewordRecognizerService {
                     return
                 }
                 if let e = error {
-                    /*
-                     A `Error Domain=kAFAssistantErrorDomain Code=216 "(null)"` (although sometimes it’s a `209` instead of `216`) happens in this `recognitionTask` callback that occurs _after_ `stopStreaming`. I’ve verified that `stopStreaming` does everything it’s supposed to in the order it’s supposed to. The error doesn’t seem to affect anything (and other people report the same https://stackoverflow.com/questions/53037789/sfspeechrecognizer-216-error-with-multiple-requests?noredirect=1&lq=1)
-                     */
-                    strongSelf.delegate?.didError(e)
+                    if let nse: NSError = error as NSError? {
+                        if nse.domain == "kAFAssistantErrorDomain" {
+                            switch nse.code {
+                            case 203: // request timed out, retry
+                                strongSelf.stopRecognition()
+                                strongSelf.startRecognition(context: context)
+                                break
+                            case 209: // ¯\_(ツ)_/¯
+                                break
+                            case 216: // Apple internal error: https://stackoverflow.com/questions/53037789/sfspeechrecognizer-216-error-with-multiple-requests?noredirect=1&lq=1)
+                                break
+                            default:
+                                strongSelf.delegate?.didError(e)
+                            }
+                        }
+                    } else {
+                        strongSelf.delegate?.didError(e)
+                    }
                 }
                 if let r = result {
                     print("AppleWakewordRecognizer hears " + r.bestTranscription.formattedString)
