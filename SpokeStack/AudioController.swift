@@ -90,6 +90,7 @@ class AudioController {
     // MARK: Initializers
     
     deinit {
+        print("AudioController deinit")
         AudioComponentInstanceDispose(remoteIOUnit!)
         if let ioUnit: AudioComponentInstance = self.remoteIOUnit {
             AudioComponentInstanceDispose(ioUnit)
@@ -97,6 +98,7 @@ class AudioController {
     }
 
     init() {
+        print("AudioController init")
         do {
             try self.beginAudioSession()
             self.prepareRemoteIOUnit()
@@ -112,6 +114,7 @@ class AudioController {
     // MARK: Public functions
 
     func startStreaming(context: SpeechContext) -> Void {
+        print("AudioController startStreaming")
         do {
             try self.beginAudioSession()
             self.start()
@@ -125,6 +128,7 @@ class AudioController {
     }
 
     func stopStreaming(context: SpeechContext) -> Void {
+        print("AudioController stopStreaming")
         do {
             self.stop()
             try self.endAudioSession()
