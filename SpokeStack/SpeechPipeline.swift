@@ -58,6 +58,7 @@ import Foundation
     }
     
     @objc public func activate() -> Void {
+        self.wakewordRecognizerService.stopStreaming(context: self.context)
         self.speechRecognizerService.startStreaming(context: self.context)
     }
     
@@ -67,12 +68,13 @@ import Foundation
     
     @objc public func start() -> Void {
         AudioController.shared.startStreaming(context: self.context)
+        self.speechRecognizerService.stopStreaming(context: self.context)
         self.wakewordRecognizerService.startStreaming(context: self.context)
     }
     
     @objc public func stop() -> Void {
-        self.wakewordRecognizerService.stopStreaming(context: self.context)
         self.speechRecognizerService.stopStreaming(context: self.context)
+        self.wakewordRecognizerService.stopStreaming(context: self.context)
         AudioController.shared.stopStreaming(context: self.context)
     }
 }

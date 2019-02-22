@@ -31,14 +31,11 @@ class AppleSpeechRecognizer: NSObject, SpeechRecognizerService {
     deinit {
         print("AppleSpeechRecognizer deinit")
         speechRecognizer.delegate = nil
-        recognitionRequest = nil
     }
     
     override init() {
         print("AppleSpeechRecognizer init")
         super.init()
-        recognitionRequest = SFSpeechAudioBufferRecognitionRequest()
-        recognitionRequest?.shouldReportPartialResults = true
     }
     
     // MARK: SpeechRecognizerService implementation
@@ -46,10 +43,13 @@ class AppleSpeechRecognizer: NSObject, SpeechRecognizerService {
     func startStreaming(context: SpeechContext) {
         print("AppleSpeechRecognizer startStreaming")
         do {
-            try self.prepareRecognition(context: context)
+            context.isActive = true
+            self.prepareAudioEngine()
+            self.recognitionRequest = SFSpeechAudioBufferRecognitionRequest()
+            self.recognitionRequest?.shouldReportPartialResults = true
+            try self.createRecognitionTask(context: context)
             self.audioEngine.prepare()
             try self.audioEngine.start()
-            context.isActive = true
         } catch let error {
             self.delegate?.didError(error)
         }
@@ -57,20 +57,20 @@ class AppleSpeechRecognizer: NSObject, SpeechRecognizerService {
     
     func stopStreaming(context: SpeechContext) {
         print("AppleSpeechRecognizer stopStreaming")
+        self.recognitionTask?.cancel()
+        self.recognitionTask = nil
+        self.recognitionRequest?.endAudio()
+        self.recognitionRequest = nil
+        dispatchWorker?.cancel()
         self.audioEngine.stop()
         self.audioEngine.inputNode.removeTap(onBus: 0)
-        self.recognitionTask?.cancel()
-        self.recognitionRequest?.endAudio()
-        self.recognitionTask = nil
         context.isActive = false
     }
     
     // MARK: private functions
     
-    private func prepareRecognition(context: SpeechContext) throws -> Void {
-        
-        // MARK: AVAudioEngine
-        print("AppleSpeechRecognizer AVAudioEngine start")
+    private func prepareAudioEngine() {
+        print("AppleSpeechRecognizer prepareAudioEngine")
         let buffer: Int = (self.configuration.sampleRate / 1000) * self.configuration.frameWidth
         let recordingFormat = self.audioEngine.inputNode.outputFormat(forBus: 0)
         self.audioEngine.inputNode.removeTap(onBus: 0) // a belt-and-suspenders approach to fixing https://github.com/wenkesj/react-native-voice/issues/46
@@ -84,39 +84,54 @@ class AppleSpeechRecognizer: NSObject, SpeechRecognizerService {
             }
             strongSelf.recognitionRequest?.append(buffer)
         }
-        print("AppleSpeechRecognizer AVAudioEngine end")
-        
-        // MARK: recognitionTask
-        
-        if (self.recognitionTask == nil) {
-            print("AppleSpeechRecognizer recognitionTask is nil")
-            self.recognitionTask = self.speechRecognizer.recognitionTask(
-                with: recognitionRequest!,
-                resultHandler: {[weak self] result, error in
-                    print("AppleSpeechRecognizer recognitionTask")
-                    guard let strongSelf = self else {
-                        return
-                    }
-                    strongSelf.dispatchWorker?.cancel()
-                    if let e = error {
-                        strongSelf.delegate?.didError(e)
-                        //strongSelf.stopStreaming(context: context)
-                    }
-                    if let r = result {
-                        print("AppleSpeechRecognizer result " + r.bestTranscription.formattedString)
-                        let confidence = r.transcriptions.first?.segments.sorted(
-                            by: { (a, b) -> Bool in
-                                a.confidence <= b.confidence }).first?.confidence ?? 0.0
-                        context.transcript = r.bestTranscription.formattedString
-                        context.confidence = confidence
-                        strongSelf.dispatchWorker = DispatchWorkItem {[weak self] in
-                            self?.delegate?.didRecognize(context)
-                            self?.stopStreaming(context: context)
-                            self?.delegate?.didFinish()
+    }
+    
+    private func createRecognitionTask(context: SpeechContext) throws -> Void {
+        self.recognitionTask = self.speechRecognizer.recognitionTask(
+            with: recognitionRequest!,
+            resultHandler: {[weak self] result, error in
+                print("AppleSpeechRecognizer createRecognitionTask resultHandler")
+                guard let strongSelf = self else {
+                    return
+                }
+                strongSelf.dispatchWorker?.cancel()
+                if let e = error {
+                    if let nse: NSError = error as NSError? {
+                        if nse.domain == "kAFAssistantErrorDomain" {
+                            switch nse.code {
+                            case 203: // request timed out, retry
+                                print("AppleSpeechRecognizer createRecognitionTask resultHandler error 203")
+                                context.isActive = false
+                                strongSelf.delegate?.didFinish()
+                                break
+                            case 209: // ¯\_(ツ)_/¯
+                                print("AppleSpeechRecognizer createRecognitionTask resultHandler error 209")
+                                break
+                            case 216: // Apple internal error: https://stackoverflow.com/questions/53037789/sfspeechrecognizer-216-error-with-multiple-requests?noredirect=1&lq=1)
+                                print("AppleSpeechRecognizer createRecognitionTask resultHandler error 216")
+                                break
+                            default:
+                                strongSelf.delegate?.didError(e)
+                            }
                         }
-                        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + .milliseconds(strongSelf.configuration.vadFallDelay), execute: strongSelf.dispatchWorker!)
+                    } else {
+                        strongSelf.delegate?.didError(e)
                     }
-            })
-        }
+                }
+                if let r = result {
+                    print("AppleSpeechRecognizer result " + r.bestTranscription.formattedString)
+                    let confidence = r.transcriptions.first?.segments.sorted(
+                        by: { (a, b) -> Bool in
+                            a.confidence <= b.confidence }).first?.confidence ?? 0.0
+                    context.transcript = r.bestTranscription.formattedString
+                    context.confidence = confidence
+                    strongSelf.dispatchWorker = DispatchWorkItem {[weak self] in
+                        context.isActive = false
+                        self?.delegate?.didRecognize(context)
+                        self?.delegate?.didFinish()
+                    }
+                    DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + .milliseconds(strongSelf.configuration.vadFallDelay), execute: strongSelf.dispatchWorker!)
+                }
+        })
     }
 }
