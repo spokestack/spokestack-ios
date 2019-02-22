@@ -97,7 +97,6 @@ class AppleSpeechRecognizer: NSObject, SpeechRecognizerService {
                 strongSelf.dispatchWorker?.cancel()
                 if let e = error {
                     strongSelf.delegate?.didError(e)
-                    //strongSelf.stopStreaming(context: context)
                 }
                 if let r = result {
                     print("AppleSpeechRecognizer result " + r.bestTranscription.formattedString)
