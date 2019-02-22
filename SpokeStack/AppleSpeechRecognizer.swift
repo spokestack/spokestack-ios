@@ -126,6 +126,7 @@ class AppleSpeechRecognizer: NSObject, SpeechRecognizerService {
                     context.transcript = r.bestTranscription.formattedString
                     context.confidence = confidence
                     strongSelf.dispatchWorker = DispatchWorkItem {[weak self] in
+                        print("AppleSpeechRecognizer dispatchWorker")
                         context.isActive = false
                         self?.delegate?.didRecognize(context)
                         self?.delegate?.didFinish()
