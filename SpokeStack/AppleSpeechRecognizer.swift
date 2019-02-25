@@ -19,7 +19,6 @@ class AppleSpeechRecognizer: NSObject, SpeechRecognizerService {
     
     // MARK: private properties
     
-    private let audioSession: AVAudioSession = AVAudioSession.sharedInstance()
     private let speechRecognizer: SFSpeechRecognizer = SFSpeechRecognizer(locale: NSLocale.current)!
     private var recognitionRequest: SFSpeechAudioBufferRecognitionRequest?
     private var recognitionTask: SFSpeechRecognitionTask?
@@ -102,7 +101,7 @@ class AppleSpeechRecognizer: NSObject, SpeechRecognizerService {
                             case 203: // request timed out, retry
                                 print("AppleSpeechRecognizer createRecognitionTask resultHandler error 203")
                                 context.isActive = false
-                                strongSelf.delegate?.didFinish()
+                                strongSelf.delegate?.deactivate()
                                 break
                             case 209: // ¯\_(ツ)_/¯
                                 print("AppleSpeechRecognizer createRecognitionTask resultHandler error 209")
@@ -129,7 +128,7 @@ class AppleSpeechRecognizer: NSObject, SpeechRecognizerService {
                         print("AppleSpeechRecognizer dispatchWorker")
                         context.isActive = false
                         self?.delegate?.didRecognize(context)
-                        self?.delegate?.didFinish()
+                        self?.delegate?.deactivate()
                     }
                     DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + .milliseconds(strongSelf.configuration.vadFallDelay), execute: strongSelf.dispatchWorker!)
                 }

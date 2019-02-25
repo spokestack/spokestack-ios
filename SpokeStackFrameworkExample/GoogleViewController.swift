@@ -104,21 +104,16 @@ extension GoogleViewController: SpeechRecognizer, WakewordRecognizer {
     }
     
     func deactivate() {
-        
+        self.stopRecordingButton.isEnabled.toggle()
+        self.startRecordingButton.isEnabled.toggle()
     }
     
-    
     func didError(_ error: Error) {
-        print("didFinish \(String(describing: error))")
+        print("didError \(String(describing: error))")
     }
     
     func didRecognize(_ result: SpeechContext) {
         print("transcript \(result.transcript)")
-    }
-    
-    func didFinish() {
-        self.stopRecordingButton.isEnabled.toggle()
-        self.startRecordingButton.isEnabled.toggle()
     }
     
     func didStart() {

@@ -140,6 +140,7 @@ class AudioController {
     }
 
     func beginAudioSession() throws {
+        print("AudioController beginAudioSession")
         // TODO: https://developer.apple.com/documentation/avfoundation/avaudiosession/responding_to_audio_session_route_changes
         let session: AVAudioSession = AVAudioSession.sharedInstance()
         self.priorAudioSessionCategory = session.category
@@ -156,12 +157,13 @@ class AudioController {
     }
 
     func endAudioSession() throws {
+        print("AudioController endAudioSession")
         let session: AVAudioSession = AVAudioSession.sharedInstance()
         do {
             if !(session.category == self.priorAudioSessionCategory) {
                 try session.setCategory(self.priorAudioSessionCategory!, mode: self.priorAudioSessionMode!, options: self.priorAudioSessionCategoryOptions!)
             }
-            try session.setActive(true, options: .notifyOthersOnDeactivation)
+            try session.setActive(false, options: .notifyOthersOnDeactivation)
         } catch {
             throw AudioError.audioSessionSetup(error.localizedDescription)
         }
