@@ -118,6 +118,11 @@ public class AppleWakewordRecognizer: NSObject, WakewordRecognizerService {
             resultHandler: {[weak self] result, error in
                 print("AppleWakewordRecognizer recognitionTask resultHandler")
                 guard let strongSelf = self else {
+                    print("AppleWakewordRecognizer recognitionTask resultHandler strongSelf is nil")
+                    return
+                }
+                guard let delegate = strongSelf.delegate else {
+                    print("AppleWakewordRecognizer recognitionTask resultHandler delegate is nil")
                     return
                 }
                 if let e = error {
@@ -133,11 +138,11 @@ public class AppleWakewordRecognizer: NSObject, WakewordRecognizerService {
                             case 216: // Apple internal error: https://stackoverflow.com/questions/53037789/sfspeechrecognizer-216-error-with-multiple-requests?noredirect=1&lq=1)
                                 break
                             default:
-                                strongSelf.delegate?.didError(e)
+                                delegate.didError(e)
                             }
                         }
                     } else {
-                        strongSelf.delegate?.didError(e)
+                        delegate.didError(e)
                     }
                 }
                 if let r = result {
@@ -153,7 +158,7 @@ public class AppleWakewordRecognizer: NSObject, WakewordRecognizerService {
                             .isEmpty
                     if wakewordDetected {
                         print("AppleWakewordRecognizer wakeword detected")
-                        strongSelf.delegate?.activate()
+                        delegate.activate()
                     }
                 }
         })

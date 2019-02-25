@@ -58,21 +58,26 @@ import Foundation
     }
     
     @objc public func activate() -> Void {
+        print("Apple SpeechPipeline activate")
         self.wakewordRecognizerService.stopStreaming(context: self.context)
         self.speechRecognizerService.startStreaming(context: self.context)
     }
     
     @objc public func deactivate() -> Void {
+        print("Apple SpeechPipeline deactivate")
         self.speechRecognizerService.stopStreaming(context: self.context)
         self.wakewordRecognizerService.startStreaming(context: self.context)
     }
     
     @objc public func start() -> Void {
+        self.stop()
+        print("Apple SpeechPipeline start")
         AudioController.shared.startStreaming(context: self.context)
         self.wakewordRecognizerService.startStreaming(context: self.context)
     }
     
     @objc public func stop() -> Void {
+        print("Apple SpeechPipeline stop")
         self.speechRecognizerService.stopStreaming(context: self.context)
         self.wakewordRecognizerService.stopStreaming(context: self.context)
         AudioController.shared.stopStreaming(context: self.context)

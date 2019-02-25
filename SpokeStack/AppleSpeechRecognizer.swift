@@ -91,6 +91,11 @@ class AppleSpeechRecognizer: NSObject, SpeechRecognizerService {
             resultHandler: {[weak self] result, error in
                 print("AppleSpeechRecognizer createRecognitionTask resultHandler")
                 guard let strongSelf = self else {
+                    print("AppleSpeechRecognizer recognitionTask resultHandler strongSelf is nil")
+                    return
+                }
+                guard let delegate = strongSelf.delegate else {
+                    print("AppleSpeechRecognizer recognitionTask resultHandler delegate is nil")
                     return
                 }
                 strongSelf.dispatchWorker?.cancel()
@@ -101,7 +106,7 @@ class AppleSpeechRecognizer: NSObject, SpeechRecognizerService {
                             case 203: // request timed out, retry
                                 print("AppleSpeechRecognizer createRecognitionTask resultHandler error 203")
                                 context.isActive = false
-                                strongSelf.delegate?.deactivate()
+                                delegate.deactivate()
                                 break
                             case 209: // ¯\_(ツ)_/¯
                                 print("AppleSpeechRecognizer createRecognitionTask resultHandler error 209")
@@ -110,11 +115,11 @@ class AppleSpeechRecognizer: NSObject, SpeechRecognizerService {
                                 print("AppleSpeechRecognizer createRecognitionTask resultHandler error 216")
                                 break
                             default:
-                                strongSelf.delegate?.didError(e)
+                                delegate.didError(e)
                             }
                         }
                     } else {
-                        strongSelf.delegate?.didError(e)
+                        delegate.didError(e)
                     }
                 }
                 if let r = result {

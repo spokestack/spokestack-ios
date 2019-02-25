@@ -116,26 +116,26 @@ class AudioController {
     func startStreaming(context: SpeechContext) -> Void {
         print("AudioController startStreaming")
         do {
+            try self.start()
             try self.beginAudioSession()
-            self.start()
         } catch AudioError.audioSessionSetup(let message) {
             self.delegate?.setupFailed(message)
         } catch AudioError.general(let message) {
             self.delegate?.setupFailed(message)
         } catch {
-            self.delegate?.setupFailed("An unknown error occured setting the stream")
+            self.delegate?.setupFailed("An unknown error occured starting the stream")
         }
     }
 
     func stopStreaming(context: SpeechContext) -> Void {
         print("AudioController stopStreaming")
         do {
-            self.stop()
+            try self.stop()
             try self.endAudioSession()
         } catch AudioError.audioSessionSetup(let message) {
             self.delegate?.setupFailed(message)
         } catch {
-            self.delegate?.setupFailed("An unknown error occured setting the stream")
+            self.delegate?.setupFailed("An unknown error occured ending the stream")
         }
     }
 
@@ -187,13 +187,23 @@ class AudioController {
     // MARK: Private functions
 
     @discardableResult
-    private func start() -> OSStatus {
-        return AudioOutputUnitStart(remoteIOUnit!)
+    private func start() throws -> OSStatus {
+        var status: OSStatus = noErr
+        status = AudioOutputUnitStart(remoteIOUnit!)
+        if status != noErr {
+            throw AudioError.audioSessionSetup("AudioOutputUnitStart returned " + status.description)
+        }
+        return status
     }
     
     @discardableResult
-    private func stop() -> OSStatus {
-        return AudioOutputUnitStop(remoteIOUnit!)
+    private func stop() throws -> OSStatus {
+        var status: OSStatus = noErr
+        status = AudioOutputUnitStop(remoteIOUnit!)
+        if status != noErr {
+            throw AudioError.audioSessionSetup("AudioOutputUnitStop returned " + status.description)
+        }
+        return status
     }
     
     @discardableResult
