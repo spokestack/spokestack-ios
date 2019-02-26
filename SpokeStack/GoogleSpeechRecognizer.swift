@@ -17,7 +17,7 @@ public class GoogleSpeechRecognizer: SpeechRecognizerService {
     
     // MARK: SpeechRecognizerService (properties)
     
-    public var configuration: RecognizerConfiguration = StandardGoogleRecognitionConfiguration()
+    public var configuration: RecognizerConfiguration?
     
     public weak var delegate: SpeechRecognizer?
     

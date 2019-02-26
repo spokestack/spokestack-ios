@@ -10,7 +10,7 @@ import Foundation
 
 protocol SpeechRecognizerService: AnyObject {
     
-    var configuration: RecognizerConfiguration { get set }
+    var configuration: RecognizerConfiguration? { get set }
     
     var delegate: SpeechRecognizer? { get set }
     

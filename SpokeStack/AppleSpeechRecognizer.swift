@@ -14,7 +14,7 @@ class AppleSpeechRecognizer: NSObject, SpeechRecognizerService {
     // MARK: public properties
     
     static let sharedInstance: AppleSpeechRecognizer = AppleSpeechRecognizer()
-    var configuration: RecognizerConfiguration = RecognizerConfiguration()
+    var configuration: RecognizerConfiguration?
     weak var delegate: SpeechRecognizer?
     
     // MARK: private properties
@@ -70,7 +70,7 @@ class AppleSpeechRecognizer: NSObject, SpeechRecognizerService {
     
     private func prepareAudioEngine() {
         print("AppleSpeechRecognizer prepareAudioEngine")
-        let buffer: Int = (self.configuration.sampleRate / 1000) * self.configuration.frameWidth
+        let buffer: Int = (self.configuration!.sampleRate / 1000) * self.configuration!.frameWidth
         let recordingFormat = self.audioEngine.inputNode.outputFormat(forBus: 0)
         self.audioEngine.inputNode.removeTap(onBus: 0) // a belt-and-suspenders approach to fixing https://github.com/wenkesj/react-native-voice/issues/46
         self.audioEngine.inputNode.installTap(
@@ -135,7 +135,7 @@ class AppleSpeechRecognizer: NSObject, SpeechRecognizerService {
                         self?.delegate?.didRecognize(context)
                         self?.delegate?.deactivate()
                     }
-                    DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + .milliseconds(strongSelf.configuration.vadFallDelay), execute: strongSelf.dispatchWorker!)
+                    DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + .milliseconds(strongSelf.configuration!.vadFallDelay), execute: strongSelf.dispatchWorker!)
                 }
         })
     }

@@ -14,7 +14,7 @@ public class AppleWakewordRecognizer: NSObject, WakewordRecognizerService {
     // MARK: public properties
     
     static let sharedInstance: AppleWakewordRecognizer = AppleWakewordRecognizer()
-    public var configuration: WakewordConfiguration = WakewordConfiguration()
+    public var configuration: WakewordConfiguration?
     public weak var delegate: WakewordRecognizer?
     
     // MARK: wakeword properties
@@ -39,7 +39,6 @@ public class AppleWakewordRecognizer: NSObject, WakewordRecognizerService {
     public override init() {
         super.init()
         print("AppleWakewordRecognizer init")
-        phrases = configuration.wakePhrases.components(separatedBy: ",")
     }
     
     // MARK: SpeechRecognizerService implementation
@@ -47,6 +46,7 @@ public class AppleWakewordRecognizer: NSObject, WakewordRecognizerService {
     func startStreaming(context: SpeechContext) {
         print("AppleWakewordRecognizer startStreaming")
         do {
+            phrases = configuration!.wakePhrases.components(separatedBy: ",")
             self.prepareAudioEngine()
             self.startRecognition(context: context)
             self.audioEngine.prepare()
@@ -69,7 +69,7 @@ public class AppleWakewordRecognizer: NSObject, WakewordRecognizerService {
     
     private func prepareAudioEngine() {
         print("AppleWakewordRecognizer prepareAudioEngine")
-        let buffer: Int = (self.configuration.sampleRate / 1000) * self.configuration.frameWidth
+        let buffer: Int = (self.configuration!.sampleRate / 1000) * self.configuration!.frameWidth
         let recordingFormat = self.audioEngine.inputNode.outputFormat(forBus: 0)
         self.audioEngine.inputNode.removeTap(onBus: 0) // a belt-and-suspenders approach to fixing https://github.com/wenkesj/react-native-voice/issues/46
         self.audioEngine.inputNode.installTap(
@@ -97,7 +97,7 @@ public class AppleWakewordRecognizer: NSObject, WakewordRecognizerService {
                 self?.stopRecognition()
                 self?.startRecognition(context: context)
             }
-            DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(self.configuration.wakeActiveMax), execute: self.dispatchWorker!)
+            DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(self.configuration!.wakeActiveMax), execute: self.dispatchWorker!)
         } catch let error {
             self.delegate?.didError(error)
         }
