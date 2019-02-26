@@ -12,14 +12,14 @@ import Foundation
     
     // MARK: Public (properties)
     
-    public private (set) var speechService: RecognizerService
-    public private (set) var speechConfiguration: RecognizerConfiguration
+    public private (set) var speechService: RecognizerService?
+    public private (set) var speechConfiguration: RecognizerConfiguration?
     public weak var speechDelegate: SpeechRecognizer?
-    public private (set) var wakewordService: WakewordService
-    public private (set) var wakewordConfiguration: WakewordConfiguration
+    public private (set) var wakewordService: WakewordService?
+    public private (set) var wakewordConfiguration: WakewordConfiguration?
     public weak var wakewordDelegate: WakewordRecognizer?
     public let context: SpeechContext = SpeechContext()
-
+    
     
     // MARK: Private (properties)
     
@@ -29,17 +29,18 @@ import Foundation
     // MARK: Initializers
     
     deinit {
+        print("Apple SpeechPipeline deinit")
         speechRecognizerService.delegate = nil
         wakewordRecognizerService.delegate = nil
     }
     
     @objc public init(_ speechService: RecognizerService,
-                speechConfiguration: RecognizerConfiguration,
-                speechDelegate: SpeechRecognizer?,
-                wakewordService: WakewordService,
-                wakewordConfiguration: WakewordConfiguration,
-                wakewordDelegate: WakewordRecognizer?) throws {
-
+                      speechConfiguration: RecognizerConfiguration,
+                      speechDelegate: SpeechRecognizer?,
+                      wakewordService: WakewordService,
+                      wakewordConfiguration: WakewordConfiguration,
+                      wakewordDelegate: WakewordRecognizer?) throws {
+        print("Apple SpeechPipeline init")
         self.speechService = speechService
         self.speechConfiguration = speechConfiguration
         self.speechDelegate = speechDelegate
@@ -54,6 +55,24 @@ import Foundation
         
         self.wakewordRecognizerService = wakewordService.wakewordRecognizerService
         self.wakewordRecognizerService.configuration = wakewordConfiguration
+        self.wakewordRecognizerService.delegate = self.wakewordDelegate
+    }
+    
+    @objc public func status() -> Bool {
+        guard
+            let _ = self.speechDelegate,
+            let _ = self.wakewordDelegate
+        else {
+                return true
+        }
+        return false
+    }
+    
+    @objc public func setDelegates(_ speechDelegate: SpeechRecognizer?,
+                                   wakewordDelegate: WakewordRecognizer?) -> Void {
+        self.speechDelegate = speechDelegate
+        self.wakewordDelegate = wakewordDelegate
+        self.speechRecognizerService.delegate = self.speechDelegate
         self.wakewordRecognizerService.delegate = self.wakewordDelegate
     }
     
