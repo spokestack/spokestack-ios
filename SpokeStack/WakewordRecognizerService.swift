@@ -10,7 +10,7 @@ import Foundation
 
 protocol WakewordRecognizerService: AnyObject {
     
-    var configuration: WakewordConfiguration { get set }
+    var configuration: WakewordConfiguration? { get set }
     
     var delegate: WakewordRecognizer? { get set }
     

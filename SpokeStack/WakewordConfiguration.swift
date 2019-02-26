@@ -9,8 +9,8 @@
 import Foundation
 
 @objc public class WakewordConfiguration: NSObject {
-    public var wakeWords: String = "up, dog"
-    public var wakePhrases: String = "up dog"
+    @objc public var wakeWords: String = "up, dog"
+    @objc public var wakePhrases: String = "up dog"
     public var wakeSmoothLength: Int = 300
     public var fftWindowType: String = "hann"
     public var rmsTarget: Float = 0.08
