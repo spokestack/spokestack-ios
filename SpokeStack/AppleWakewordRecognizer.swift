@@ -71,6 +71,11 @@ public class AppleWakewordRecognizer: NSObject, WakewordRecognizerService {
         print("AppleWakewordRecognizer prepareAudioEngine")
         let buffer: Int = (self.configuration!.sampleRate / 1000) * self.configuration!.frameWidth
         let recordingFormat = self.audioEngine.inputNode.outputFormat(forBus: 0)
+        if let au = self.audioEngine.inputNode.audioUnit {
+            // fix for https://forums.developer.apple.com/thread/65656
+            AudioOutputUnitStop(au)
+            AudioUnitUninitialize(au)
+        }
         self.audioEngine.inputNode.removeTap(onBus: 0) // a belt-and-suspenders approach to fixing https://github.com/wenkesj/react-native-voice/issues/46
         self.audioEngine.inputNode.installTap(
             onBus: 0,
