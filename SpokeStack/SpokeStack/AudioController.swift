@@ -9,6 +9,8 @@
 import Foundation
 import AVFoundation
 
+let audioProcessingQueue: DispatchQueue = DispatchQueue(label: "com.pylon.audio.callback")
+
 func recordingCallback(
     inRefCon: UnsafeMutableRawPointer,
     ioActionFlags: UnsafeMutablePointer<AudioUnitRenderActionFlags>,

@@ -27,6 +27,17 @@
 		0170B3B2221470B700E38D2A /* SFSpeechRecognitionResult+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0170B3B1221470B700E38D2A /* SFSpeechRecognitionResult+Extensions.swift */; };
 		0170B3B42214760B00E38D2A /* AppleWakeWordViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0170B3B32214760B00E38D2A /* AppleWakeWordViewController.swift */; };
 		0170B3B62214A2AC00E38D2A /* WakewordConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0170B3B52214A2AC00E38D2A /* WakewordConfiguration.swift */; };
+		017C00A4223008EB00F347CE /* SpeechEventDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 017C00A3223008EB00F347CE /* SpeechEventDelegate.swift */; };
+		017C00AE22300B4000F347CE /* SpokeStackVAD.h in Headers */ = {isa = PBXBuildFile; fileRef = 017C00AC22300B4000F347CE /* SpokeStackVAD.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		017C00B122300B4000F347CE /* SpokeStackVAD.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 017C00AA22300B4000F347CE /* SpokeStackVAD.framework */; };
+		017C00B222300B4000F347CE /* SpokeStackVAD.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 017C00AA22300B4000F347CE /* SpokeStackVAD.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		017C00B822300B7F00F347CE /* WITCvad.h in Headers */ = {isa = PBXBuildFile; fileRef = 017C00B622300B7F00F347CE /* WITCvad.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		017C00B922300B7F00F347CE /* WITCvad.m in Sources */ = {isa = PBXBuildFile; fileRef = 017C00B722300B7F00F347CE /* WITCvad.m */; };
+		017C00BC22300BF300F347CE /* WITVad.h in Headers */ = {isa = PBXBuildFile; fileRef = 017C00BA22300BF300F347CE /* WITVad.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		017C00BD22300BF300F347CE /* WITVad.m in Sources */ = {isa = PBXBuildFile; fileRef = 017C00BB22300BF300F347CE /* WITVad.m */; };
+		017C00BE22300C9700F347CE /* SpokeStackVAD.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 017C00AA22300B4000F347CE /* SpokeStackVAD.framework */; };
+		017C00EB2230158300F347CE /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 017C00EA2230158300F347CE /* Foundation.framework */; };
+		017C00EC2230159B00F347CE /* SpokeStackVAD.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 017C00AA22300B4000F347CE /* SpokeStackVAD.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		0181E33D21E7D440004B3D7B /* AppleSpeechRecognizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0181E33C21E7D440004B3D7B /* AppleSpeechRecognizer.swift */; };
 		01AC1539216BB6CE001B9146 /* openssl.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 01D322F4216BB10C0055FD45 /* openssl.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		01AC153A216BB6CE001B9146 /* googleapis.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 01D322AD216BB10C0055FD45 /* googleapis.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -108,6 +119,13 @@
 			remoteGlobalIDString = 01D31F3A216BAF260055FD45;
 			remoteInfo = SpokeStack;
 		};
+		017C00AF22300B4000F347CE /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 01D31F32216BAF260055FD45 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 017C00A922300B4000F347CE;
+			remoteInfo = SpokeStackVAD;
+		};
 		01D31F46216BAF260055FD45 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 01D31F32216BAF260055FD45 /* Project object */;
@@ -124,6 +142,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				017C00B222300B4000F347CE /* SpokeStackVAD.framework in Embed Frameworks */,
 				01B2B42821ADC33000289890 /* SpokeStack.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
@@ -135,6 +154,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				017C00EC2230159B00F347CE /* SpokeStackVAD.framework in Copy Frameworks */,
 				01AC1539216BB6CE001B9146 /* openssl.framework in Copy Frameworks */,
 				01AC153A216BB6CE001B9146 /* googleapis.framework in Copy Frameworks */,
 				01AC153B216BB6CE001B9146 /* GRPCClient.framework in Copy Frameworks */,
@@ -190,6 +210,15 @@
 		0170B3B1221470B700E38D2A /* SFSpeechRecognitionResult+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SFSpeechRecognitionResult+Extensions.swift"; sourceTree = "<group>"; };
 		0170B3B32214760B00E38D2A /* AppleWakeWordViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppleWakeWordViewController.swift; sourceTree = "<group>"; };
 		0170B3B52214A2AC00E38D2A /* WakewordConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WakewordConfiguration.swift; sourceTree = "<group>"; };
+		017C00A3223008EB00F347CE /* SpeechEventDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeechEventDelegate.swift; sourceTree = "<group>"; };
+		017C00AA22300B4000F347CE /* SpokeStackVAD.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = SpokeStackVAD.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		017C00AC22300B4000F347CE /* SpokeStackVAD.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SpokeStackVAD.h; sourceTree = "<group>"; };
+		017C00AD22300B4000F347CE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		017C00B622300B7F00F347CE /* WITCvad.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WITCvad.h; sourceTree = "<group>"; };
+		017C00B722300B7F00F347CE /* WITCvad.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = WITCvad.m; sourceTree = "<group>"; };
+		017C00BA22300BF300F347CE /* WITVad.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WITVad.h; sourceTree = "<group>"; };
+		017C00BB22300BF300F347CE /* WITVad.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = WITVad.m; sourceTree = "<group>"; };
+		017C00EA2230158300F347CE /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		0181E33C21E7D440004B3D7B /* AppleSpeechRecognizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppleSpeechRecognizer.swift; sourceTree = "<group>"; };
 		01BADDEB21B6E59C00515701 /* WakeWordSpeechRecognizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WakeWordSpeechRecognizer.swift; sourceTree = "<group>"; };
 		01D31F3B216BAF260055FD45 /* SpokeStack.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = SpokeStack.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -230,7 +259,16 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				017C00B122300B4000F347CE /* SpokeStackVAD.framework in Frameworks */,
 				01B2B42721ADC32A00289890 /* SpokeStack.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		017C00A722300B4000F347CE /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				017C00EB2230158300F347CE /* Foundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -238,6 +276,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				017C00BE22300C9700F347CE /* SpokeStackVAD.framework in Frameworks */,
 				01D32494216BB10D0055FD45 /* openssl.framework in Frameworks */,
 				01D32466216BB10D0055FD45 /* RxLibrary.framework in Frameworks */,
 				01D3249A216BB10D0055FD45 /* Protobuf.framework in Frameworks */,
@@ -271,6 +310,7 @@
 		011C1917216BCA1A00DB36FD /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				017C00EA2230158300F347CE /* Foundation.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -301,6 +341,19 @@
 			name = Extensions;
 			sourceTree = "<group>";
 		};
+		017C00AB22300B4000F347CE /* SpokeStackVAD */ = {
+			isa = PBXGroup;
+			children = (
+				017C00AD22300B4000F347CE /* Info.plist */,
+				017C00AC22300B4000F347CE /* SpokeStackVAD.h */,
+				017C00B622300B7F00F347CE /* WITCvad.h */,
+				017C00B722300B7F00F347CE /* WITCvad.m */,
+				017C00BA22300BF300F347CE /* WITVad.h */,
+				017C00BB22300BF300F347CE /* WITVad.m */,
+			);
+			path = SpokeStackVAD;
+			sourceTree = "<group>";
+		};
 		0184FFF821B0ED3500D4A650 /* Machine Learning */ = {
 			isa = PBXGroup;
 			children = (
@@ -314,6 +367,7 @@
 			isa = PBXGroup;
 			children = (
 				011C191E216BCA3200DB36FD /* SpokeStackFrameworkExample */,
+				017C00AB22300B4000F347CE /* SpokeStackVAD */,
 				01D31F3C216BAF260055FD45 /* Products */,
 				01D31F3D216BAF260055FD45 /* SpokeStack */,
 				01D31F48216BAF260055FD45 /* SpokeStackTests */,
@@ -327,6 +381,7 @@
 				01D31F3B216BAF260055FD45 /* SpokeStack.framework */,
 				01D31F44216BAF260055FD45 /* SpokeStackTests.xctest */,
 				011C191D216BCA3200DB36FD /* SpokeStackFrameworkExample.app */,
+				017C00AA22300B4000F347CE /* SpokeStackVAD.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -427,6 +482,7 @@
 			isa = PBXGroup;
 			children = (
 				01D31F75216BAFEF0055FD45 /* AudioControllerDelegate.swift */,
+				017C00A3223008EB00F347CE /* SpeechEventDelegate.swift */,
 				01D31F74216BAFEF0055FD45 /* SpeechRecognizer.swift */,
 				01D31F76216BAFEF0055FD45 /* SpeechRecognizerService.swift */,
 				0170B3A92214644C00E38D2A /* WakewordRecognizer.swift */,
@@ -572,6 +628,16 @@
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
+		017C00A522300B4000F347CE /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				017C00AE22300B4000F347CE /* SpokeStackVAD.h in Headers */,
+				017C00BC22300BF300F347CE /* WITVad.h in Headers */,
+				017C00B822300B7F00F347CE /* WITCvad.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		01D31F36216BAF260055FD45 /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
@@ -597,11 +663,30 @@
 			);
 			dependencies = (
 				011C1946216BDBE000DB36FD /* PBXTargetDependency */,
+				017C00B022300B4000F347CE /* PBXTargetDependency */,
 			);
 			name = SpokeStackFrameworkExample;
 			productName = SpokeStackFrameworkExample;
 			productReference = 011C191D216BCA3200DB36FD /* SpokeStackFrameworkExample.app */;
 			productType = "com.apple.product-type.application";
+		};
+		017C00A922300B4000F347CE /* SpokeStackVAD */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 017C00B322300B4000F347CE /* Build configuration list for PBXNativeTarget "SpokeStackVAD" */;
+			buildPhases = (
+				017C00A522300B4000F347CE /* Headers */,
+				017C00A622300B4000F347CE /* Sources */,
+				017C00A722300B4000F347CE /* Frameworks */,
+				017C00A822300B4000F347CE /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = SpokeStackVAD;
+			productName = SpokeStackVAD;
+			productReference = 017C00AA22300B4000F347CE /* SpokeStackVAD.framework */;
+			productType = "com.apple.product-type.framework";
 		};
 		01D31F3A216BAF260055FD45 /* SpokeStack */ = {
 			isa = PBXNativeTarget;
@@ -653,6 +738,9 @@
 					011C191C216BCA3200DB36FD = {
 						CreatedOnToolsVersion = 10.0;
 					};
+					017C00A922300B4000F347CE = {
+						CreatedOnToolsVersion = 10.1;
+					};
 					01D31F3A216BAF260055FD45 = {
 						CreatedOnToolsVersion = 10.0;
 						LastSwiftMigration = 1000;
@@ -678,6 +766,7 @@
 				01D31F3A216BAF260055FD45 /* SpokeStack */,
 				01D31F43216BAF260055FD45 /* SpokeStackTests */,
 				011C191C216BCA3200DB36FD /* SpokeStackFrameworkExample */,
+				017C00A922300B4000F347CE /* SpokeStackVAD */,
 			);
 		};
 /* End PBXProject section */
@@ -691,6 +780,13 @@
 				011C192A216BCA3200DB36FD /* LaunchScreen.storyboard in Resources */,
 				011C1927216BCA3200DB36FD /* Assets.xcassets in Resources */,
 				011C1925216BCA3200DB36FD /* Main.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		017C00A822300B4000F347CE /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -725,6 +821,15 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		017C00A622300B4000F347CE /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				017C00BD22300BF300F347CE /* WITVad.m in Sources */,
+				017C00B922300B7F00F347CE /* WITCvad.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		01D31F37216BAF260055FD45 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -752,6 +857,7 @@
 				0170B3AA2214644C00E38D2A /* WakewordRecognizer.swift in Sources */,
 				01D31F62216BAFA40055FD45 /* AudioController.swift in Sources */,
 				0167942D21C30FE600BE457E /* AVAudioPCMBuffer+Extensions.swift in Sources */,
+				017C00A4223008EB00F347CE /* SpeechEventDelegate.swift in Sources */,
 				011C193B216BCBCA00DB36FD /* StandardGoogleRecognitionConfiguration.swift in Sources */,
 				01BADDEC21B6E59C00515701 /* WakeWordSpeechRecognizer.swift in Sources */,
 				01D31F8A216BB0220055FD45 /* Results.swift in Sources */,
@@ -790,6 +896,11 @@
 			isa = PBXTargetDependency;
 			target = 01D31F3A216BAF260055FD45 /* SpokeStack */;
 			targetProxy = 011C1945216BDBE000DB36FD /* PBXContainerItemProxy */;
+		};
+		017C00B022300B4000F347CE /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 017C00A922300B4000F347CE /* SpokeStackVAD */;
+			targetProxy = 017C00AF22300B4000F347CE /* PBXContainerItemProxy */;
 		};
 		01D31F47216BAF260055FD45 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -857,6 +968,58 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.pylon.SpokeStackFrameworkExample;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 4.2;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		017C00B422300B4000F347CE /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "";
+				CODE_SIGN_STYLE = Automatic;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = XM4VAKDQL9;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				INFOPLIST_FILE = SpokeStackVAD/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 12.1;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.pylon.SpokeStackVAD;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 4.2;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		017C00B522300B4000F347CE /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "";
+				CODE_SIGN_STYLE = Automatic;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = XM4VAKDQL9;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				INFOPLIST_FILE = SpokeStackVAD/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 12.1;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.pylon.SpokeStackVAD;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -1173,6 +1336,15 @@
 			buildConfigurations = (
 				011C192D216BCA3200DB36FD /* Debug */,
 				011C192E216BCA3200DB36FD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		017C00B322300B4000F347CE /* Build configuration list for PBXNativeTarget "SpokeStackVAD" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				017C00B422300B4000F347CE /* Debug */,
+				017C00B522300B4000F347CE /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

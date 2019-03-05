@@ -10,6 +10,7 @@ import Foundation
 import AVFoundation
 import CoreML
 import Speech
+import SpokeStackVAD
 
 public class WakeWordSpeechRecognizer: NSObject, WakewordRecognizerService {
 
@@ -35,13 +36,21 @@ public class WakeWordSpeechRecognizer: NSObject, WakewordRecognizerService {
     
     // MARK: Private (properties)
     
-    private var wwfilter: WakeWordFilter = WakeWordFilter()
+    lazy private var wwfilter: WakeWordFilter = {
+        return WakeWordFilter()
+    }()
     
-    private var wwdetect: WakeWordDetect = WakeWordDetect()
+    lazy private var wwdetect: WakeWordDetect = {
+       return WakeWordDetect()
+    }()
+    
+    private var isSpeech: Bool = false
+    
+    private var vad: WITVad = WITVad()
     
     private var dispatchWorker: DispatchWorkItem?
     
-    private var speechContext: SpeechContext?
+    private var speechContext: SpeechContext = SpeechContext()
     
     /// Keyword / phrase configuration and preallocated buffers
     
@@ -102,8 +111,9 @@ public class WakeWordSpeechRecognizer: NSObject, WakewordRecognizerService {
     // MARK: Initializers
     
     deinit {
+        
         audioController.delegate = nil
-        speechContext = nil
+        vad.delegate = nil
     }
     
     public override init() {
@@ -113,6 +123,8 @@ public class WakeWordSpeechRecognizer: NSObject, WakewordRecognizerService {
         let buffer: TimeInterval = TimeInterval((self.configuration.sampleRate / 1000) * self.configuration.frameWidth)
         self.audioController.sampleRate = self.configuration.sampleRate
         self.audioController.bufferDuration = buffer
+        
+        self.vad.delegate = self
     }
     
     // MARK: Internal (methods)
@@ -270,20 +282,14 @@ public class WakeWordSpeechRecognizer: NSObject, WakewordRecognizerService {
 
     private func process(_ data: Data) -> Void {
         
-        // TODO: Handle vad rise / fall
-        // https://github.com/pylon/spokestack-android/blob/master/src/main/java/com/pylon/spokestack/wakeword/WakewordTrigger.java#L366
-        
-        guard let context: SpeechContext = self.speechContext else {
-            self.delegate?.didError(SpeechPipelineError.illegalState("The speech context can't be nil"))
-            return
-        }
+        let vadFall: Bool = self.isSpeech && !self.speechContext.isSpeech
 
-        if !context.isActive {
+        if !self.speechContext.isActive {
             
             /// Run the current frame through the detector pipeline
             /// activate if a keyword phrase was detected
 
-            self.sample(data, context: context)
+            self.sample(data, context: self.speechContext)
 
         } else {
             
@@ -296,10 +302,17 @@ public class WakeWordSpeechRecognizer: NSObject, WakewordRecognizerService {
             
             if self.activeLength > self.minActive {
                 
-                if self.activeLength > self.maxActive {
-                    self.deactivate(context)
+                if vadFall || self.activeLength > self.maxActive {
+                    self.deactivate(self.speechContext)
                 }
             }
+        }
+        
+        /// Always clear detector state on a vad deactivation
+        /// this prevents <keyword1><pause><keyword2> detection
+        
+        if vadFall {
+            self.reset()
         }
     }
     
@@ -405,6 +418,10 @@ public class WakeWordSpeechRecognizer: NSObject, WakewordRecognizerService {
     
     private func reset() -> Void {
         
+        if !self.speechContext.isActive {
+            self.trace(self.speechContext)
+        }
+        
         /// Empty the sample buffer, so that only contiguous
         /// speech samples are written to it
         
@@ -423,7 +440,7 @@ public class WakeWordSpeechRecognizer: NSObject, WakewordRecognizerService {
         
         if !context.isActive {
             
-            context.isActive = true
+            self.speechContext.isActive = true
             
             
             self.dispatchWorker?.cancel()
@@ -445,7 +462,7 @@ public class WakeWordSpeechRecognizer: NSObject, WakewordRecognizerService {
 
         if context.isActive {
             
-            context.isActive = false
+            self.speechContext.isActive = false
             
             self.dispatchWorker?.cancel()
             self.stopStreaming(context: context)
@@ -518,14 +535,18 @@ extension WakeWordSpeechRecognizer {
 
         do {
 
+            let options: MLPredictionOptions = MLPredictionOptions()
+            options.usesCPUOnly = true
+            
             let input: WakeWordFilterInput = WakeWordFilterInput(linspec_inputs__0: multiArray)
-            let predictions: WakeWordFilterOutput = try self.wwfilter.prediction(input: input)
+            let predictions: WakeWordFilterOutput = try self.wwfilter.prediction(input: input, options: options)
 
             /// Copy the current mel frame into the mel window
 
             self.frameWindow.rewind().seek(self.melWidth)
 
             for i in 0..<predictions.melspec_outputs__0.shape[2].intValue {
+                print("filter \(predictions.melspec_outputs__0[i].floatValue)")
                 try? self.frameWindow.write(predictions.melspec_outputs__0[i].floatValue)
             }
 
@@ -570,8 +591,11 @@ extension WakeWordSpeechRecognizer {
         
         do {
             
+            let options: MLPredictionOptions = MLPredictionOptions()
+            options.usesCPUOnly = true
+            
             let input: WakeWordDetectInput = WakeWordDetectInput(melspec_inputs__0: multiArray)
-            let predictions: WakeWordDetectOutput = try self.wwdetect.prediction(input: input)
+            let predictions: WakeWordDetectOutput = try self.wwdetect.prediction(input: input, options: options)
             
             /// Transfer the classifier's outputs to the posterior smoothing window
             
@@ -583,6 +607,7 @@ extension WakeWordSpeechRecognizer {
             repeat {
                 
                 let predictionFloat: Float = predictions.detect_outputs__0[indexIncrement].floatValue
+                print("detection float \(predictionFloat)")
                 do {
                     
                     try self.smoothWindow.write(predictionFloat)
@@ -660,7 +685,7 @@ extension WakeWordSpeechRecognizer {
                 fatalError("Error occured while smoothing \(#line)")
             }
         }
-        
+        print("phrase window \(self.phraseWindow.capacity)")
         self.phrase(context)
     }
     
@@ -733,6 +758,25 @@ extension WakeWordSpeechRecognizer {
     }
 }
 
+extension WakeWordSpeechRecognizer {
+    
+    private func trace(_ context: SpeechContext) -> Void {
+        
+        if context.canTrace(.info) {
+            
+            var message: String = "wake: "
+            
+            for (index, _) in self.words.enumerated() {
+                
+                let msg: String = String(format: "%s=%.2f", self.words[index], self.phraseMax[index])
+                message.append(msg)
+            }
+            
+            context.traceInfo(message)
+        }
+    }
+}
+
 extension WakeWordSpeechRecognizer: AudioControllerDelegate {
     
     func didStart(_ engineController: AudioController) {
@@ -752,6 +796,31 @@ extension WakeWordSpeechRecognizer: AudioControllerDelegate {
     }
     
     func processSampleData(_ data: Data) -> Void {
-        self.process(data)
+
+        DispatchQueue.main.async {[weak self] in
+            
+            guard let strongSelf = self else { return }
+            
+            strongSelf.speechContext.isSpeech = true
+            strongSelf.process(data)
+//            strongSelf.vad.vadSpeechFrame(data)
+        }
+    }
+}
+
+extension WakeWordSpeechRecognizer: WITVadDelegate {
+    
+    public func vadStartedTalking(_ audioData: Data!) {
+        
+        print("vad did start \(self.speechContext.isSpeech) mainThread \(Thread.isMainThread)")
+        
+        self.speechContext.isSpeech = true
+        self.process(audioData)
+    }
+    
+    public func vadStoppedTalking() {
+        
+        print("vad did stop talking \(self.speechContext.isSpeech)")
+        self.speechContext.isSpeech = false
     }
 }
