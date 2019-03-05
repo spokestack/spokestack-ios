@@ -98,6 +98,10 @@ class AppleViewController: UIViewController {
 }
 
 extension AppleViewController: SpeechRecognizer, WakewordRecognizer {
+    func timedOut() {
+        print("timedOut")
+    }
+    
     func activate() {
         
     }

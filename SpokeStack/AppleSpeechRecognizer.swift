@@ -53,7 +53,7 @@ class AppleSpeechRecognizer: NSObject, SpeechRecognizerService {
             self.wakeActveMaxWorker = DispatchWorkItem {[weak self] in
                 print("AppleSpeechRecognizer wakeActveMaxWorker")
                 context.isActive = false
-                self?.delegate?.didRecognize(context)
+                self?.delegate?.timedOut()
                 self?.delegate?.deactivate()
             }
             DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(self.configuration!.wakeActiveMax), execute: self.wakeActveMaxWorker!)

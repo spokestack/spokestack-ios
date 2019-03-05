@@ -17,4 +17,6 @@ import Foundation
     func deactivate() -> Void
     
     func didError(_ error: Error) -> Void
+    
+    func timedOut() -> Void
 }

@@ -91,6 +91,10 @@ class WakeWordViewController: UIViewController {
 }
 
 extension WakeWordViewController: SpeechRecognizer, WakewordRecognizer {
+    func timedOut() {
+        print("timedOut")
+    }
+    
     func activate() {
         print("activate")
         self.pipeline.activate()
