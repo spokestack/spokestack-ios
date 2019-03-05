@@ -14,4 +14,5 @@ import Foundation
     public var languageLocale = "en-US"
     public var frameWidth: Int = 10
     @objc public var vadFallDelay: Int = 600
+    @objc public var wakeActiveMax: Int = 5000
 }

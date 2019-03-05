@@ -97,7 +97,7 @@ public class AppleWakewordRecognizer: NSObject, WakewordRecognizerService {
                 self?.stopRecognition()
                 self?.startRecognition(context: context)
             }
-            DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(self.configuration!.wakeActiveMax), execute: self.dispatchWorker!)
+            DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(self.configuration!.wakewordRequestTimeout), execute: self.dispatchWorker!)
         } catch let error {
             self.delegate?.didError(error)
         }

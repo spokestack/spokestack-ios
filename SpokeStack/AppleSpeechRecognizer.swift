@@ -23,7 +23,8 @@ class AppleSpeechRecognizer: NSObject, SpeechRecognizerService {
     private var recognitionRequest: SFSpeechAudioBufferRecognitionRequest?
     private var recognitionTask: SFSpeechRecognitionTask?
     private let audioEngine: AVAudioEngine = AVAudioEngine()
-    private var dispatchWorker: DispatchWorkItem?
+    private var vadFallWorker: DispatchWorkItem?
+    private var wakeActveMaxWorker: DispatchWorkItem?
     
     // MARK: NSObject methods
     
@@ -49,6 +50,13 @@ class AppleSpeechRecognizer: NSObject, SpeechRecognizerService {
             try self.createRecognitionTask(context: context)
             self.audioEngine.prepare()
             try self.audioEngine.start()
+            self.wakeActveMaxWorker = DispatchWorkItem {[weak self] in
+                print("AppleSpeechRecognizer wakeActveMaxWorker")
+                context.isActive = false
+                self?.delegate?.didRecognize(context)
+                self?.delegate?.deactivate()
+            }
+            DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(self.configuration!.wakeActiveMax), execute: self.wakeActveMaxWorker!)
         } catch let error {
             self.delegate?.didError(error)
         }
@@ -60,7 +68,8 @@ class AppleSpeechRecognizer: NSObject, SpeechRecognizerService {
         self.recognitionTask = nil
         self.recognitionRequest?.endAudio()
         self.recognitionRequest = nil
-        dispatchWorker?.cancel()
+        self.vadFallWorker?.cancel()
+        self.wakeActveMaxWorker?.cancel()
         self.audioEngine.stop()
         self.audioEngine.inputNode.removeTap(onBus: 0)
         context.isActive = false
@@ -98,7 +107,7 @@ class AppleSpeechRecognizer: NSObject, SpeechRecognizerService {
                     print("AppleSpeechRecognizer recognitionTask resultHandler delegate is nil")
                     return
                 }
-                strongSelf.dispatchWorker?.cancel()
+                strongSelf.vadFallWorker?.cancel()
                 if let e = error {
                     if let nse: NSError = error as NSError? {
                         if nse.domain == "kAFAssistantErrorDomain" {
@@ -124,18 +133,19 @@ class AppleSpeechRecognizer: NSObject, SpeechRecognizerService {
                 }
                 if let r = result {
                     print("AppleSpeechRecognizer result " + r.bestTranscription.formattedString)
+                    strongSelf.wakeActveMaxWorker?.cancel()
                     let confidence = r.transcriptions.first?.segments.sorted(
                         by: { (a, b) -> Bool in
                             a.confidence <= b.confidence }).first?.confidence ?? 0.0
                     context.transcript = r.bestTranscription.formattedString
                     context.confidence = confidence
-                    strongSelf.dispatchWorker = DispatchWorkItem {[weak self] in
-                        print("AppleSpeechRecognizer dispatchWorker")
+                    strongSelf.vadFallWorker = DispatchWorkItem {[weak self] in
+                        print("AppleSpeechRecognizer vadFallWorker")
                         context.isActive = false
                         self?.delegate?.didRecognize(context)
                         self?.delegate?.deactivate()
                     }
-                    DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + .milliseconds(strongSelf.configuration!.vadFallDelay), execute: strongSelf.dispatchWorker!)
+                    DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + .milliseconds(strongSelf.configuration!.vadFallDelay), execute: strongSelf.vadFallWorker!)
                 }
         })
     }

@@ -25,5 +25,5 @@ import Foundation
     public var sampleRate = 16000
     public var languageLocale = "en-US"
     public var frameWidth: Int = 10
-    public var wakeActiveMax: Int = 50000
+    public var wakewordRequestTimeout: Int = 50000
 }
