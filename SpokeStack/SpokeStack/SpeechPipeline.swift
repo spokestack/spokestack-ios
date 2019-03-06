@@ -13,29 +13,22 @@ import Foundation
     // MARK: Public (properties)
     
     public private (set) var speechService: RecognizerService
-    
     public private (set) var speechConfiguration: RecognizerConfiguration
-    
     public weak var speechDelegate: SpeechRecognizer?
-    
     public private (set) var wakewordService: WakewordService
-    
     public private (set) var wakewordConfiguration: WakewordConfiguration
-    
     public weak var wakewordDelegate: WakewordRecognizer?
-    
     public let context: SpeechContext = SpeechContext()
+    
     
     // MARK: Private (properties)
     
     private var speechRecognizerService: SpeechRecognizerService
-   
     private var wakewordRecognizerService: WakewordRecognizerService
     
     // MARK: Initializers
     
     deinit {
-        
         speechRecognizerService.delegate = nil
         wakewordRecognizerService.delegate = nil
     }
@@ -64,9 +57,8 @@ import Foundation
         self.wakewordRecognizerService.delegate = self.wakewordDelegate
     }
     
-    // MARK: Public (methods)
-    
     @objc public func activate() -> Void {
+        self.wakewordRecognizerService.stopStreaming(context: self.context)
         self.speechRecognizerService.startStreaming(context: self.context)
     }
     
@@ -75,10 +67,16 @@ import Foundation
     }
     
     @objc public func start() -> Void {
+        
+        self.speechRecognizerService.stopStreaming(context: self.context)
         self.wakewordRecognizerService.startStreaming(context: self.context)
+        AudioController.shared.startStreaming(context: self.context)
     }
     
     @objc public func stop() -> Void {
+        
+        self.speechRecognizerService.stopStreaming(context: self.context)
         self.wakewordRecognizerService.stopStreaming(context: self.context)
+        AudioController.shared.stopStreaming(context: self.context)
     }
 }

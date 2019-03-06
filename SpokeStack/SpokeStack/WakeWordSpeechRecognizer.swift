@@ -132,6 +132,7 @@ public class WakeWordSpeechRecognizer: NSObject, WakewordRecognizerService {
     func startStreaming(context: SpeechContext) -> Void {
         
         self.speechContext = context
+        self.audioController.delegate = self
         
         /// Automatically restart wakeword task if it goes over Apple's 1
         /// minute listening limit
@@ -142,15 +143,13 @@ public class WakeWordSpeechRecognizer: NSObject, WakewordRecognizerService {
         }
         DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(self.configuration.wakeActiveMax),
                                       execute: self.dispatchWorker!)
-        
-        self.audioController.delegate = self
-        self.audioController.startStreaming()
     }
     
     func stopStreaming(context: SpeechContext) -> Void {
         
         self.audioController.delegate = nil
-        self.audioController.stopStreaming()
+        self.dispatchWorker?.cancel()
+        self.dispatchWorker = nil
     }
     
     // MARK: Private (methods)
@@ -797,14 +796,8 @@ extension WakeWordSpeechRecognizer: AudioControllerDelegate {
     
     func processSampleData(_ data: Data) -> Void {
 
-        DispatchQueue.main.async {[weak self] in
-            
-            guard let strongSelf = self else { return }
-            
-            strongSelf.speechContext.isSpeech = true
-            strongSelf.process(data)
-//            strongSelf.vad.vadSpeechFrame(data)
-        }
+        self.speechContext.isSpeech = true
+        self.process(data)
     }
 }
 

@@ -82,13 +82,11 @@ public class GoogleSpeechRecognizer: SpeechRecognizerService {
     public func startStreaming(context: SpeechContext) -> Void {
         self.context = context
         self.audioData = NSMutableData()
-        AudioController.shared.startStreaming()
         self.delegate?.didStart()
     }
     
     public func stopStreaming(context: SpeechContext) -> Void {
         self.context = context
-        AudioController.shared.stopStreaming()
         
         if !self.streaming {
             return
@@ -159,10 +157,6 @@ public class GoogleSpeechRecognizer: SpeechRecognizerService {
 }
 
 extension GoogleSpeechRecognizer: AudioControllerDelegate {
-    
-    func didStart(_ engineController: AudioController) {}
-    
-    func didStop(_ engineController: AudioController) {}
     
     func setupFailed(_ error: String) {
         self.streaming = false

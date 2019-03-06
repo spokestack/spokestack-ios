@@ -23,6 +23,7 @@ class WakeWordViewController: UIViewController {
                          for: .touchUpInside)
         
         button.setTitleColor(.blue, for: .normal)
+        button.isEnabled = true
         
         return button
     }()
@@ -38,7 +39,7 @@ class WakeWordViewController: UIViewController {
                          for: .touchUpInside)
         
         button.setTitleColor(.blue, for: .normal)
-        
+        button.isEnabled = false
         
         return button
     }()
