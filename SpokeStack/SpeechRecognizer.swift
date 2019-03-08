@@ -18,5 +18,5 @@ import Foundation
     
     func didError(_ error: Error) -> Void
     
-    func timedOut() -> Void
+    func timeout() -> Void
 }
