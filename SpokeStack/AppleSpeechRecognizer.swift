@@ -24,7 +24,7 @@ class AppleSpeechRecognizer: NSObject, SpeechRecognizerService {
     private var recognitionTask: SFSpeechRecognitionTask?
     private let audioEngine: AVAudioEngine = AVAudioEngine()
     private var vadFallWorker: DispatchWorkItem?
-    private var wakeActveMaxWorker: DispatchWorkItem?
+    private var wakeActiveMaxWorker: DispatchWorkItem?
     
     // MARK: NSObject methods
     
@@ -50,13 +50,13 @@ class AppleSpeechRecognizer: NSObject, SpeechRecognizerService {
             try self.createRecognitionTask(context: context)
             self.audioEngine.prepare()
             try self.audioEngine.start()
-            self.wakeActveMaxWorker = DispatchWorkItem {[weak self] in
-                print("AppleSpeechRecognizer wakeActveMaxWorker")
+            self.wakeActiveMaxWorker = DispatchWorkItem {[weak self] in
+                print("AppleSpeechRecognizer wakeActiveMaxWorker")
                 context.isActive = false
-                self?.delegate?.didRecognize(context)
+                self?.delegate?.timeout()
                 self?.delegate?.deactivate()
             }
-            DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(self.configuration!.wakeActiveMax), execute: self.wakeActveMaxWorker!)
+            DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(self.configuration!.wakeActiveMax), execute: self.wakeActiveMaxWorker!)
         } catch let error {
             self.delegate?.didError(error)
         }
@@ -69,7 +69,7 @@ class AppleSpeechRecognizer: NSObject, SpeechRecognizerService {
         self.recognitionRequest?.endAudio()
         self.recognitionRequest = nil
         self.vadFallWorker?.cancel()
-        self.wakeActveMaxWorker?.cancel()
+        self.wakeActiveMaxWorker?.cancel()
         self.audioEngine.stop()
         self.audioEngine.inputNode.removeTap(onBus: 0)
         context.isActive = false
@@ -133,7 +133,7 @@ class AppleSpeechRecognizer: NSObject, SpeechRecognizerService {
                 }
                 if let r = result {
                     print("AppleSpeechRecognizer result " + r.bestTranscription.formattedString)
-                    strongSelf.wakeActveMaxWorker?.cancel()
+                    strongSelf.wakeActiveMaxWorker?.cancel()
                     let confidence = r.transcriptions.first?.segments.sorted(
                         by: { (a, b) -> Bool in
                             a.confidence <= b.confidence }).first?.confidence ?? 0.0

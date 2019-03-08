@@ -99,6 +99,10 @@ class GoogleViewController: UIViewController {
 }
 
 extension GoogleViewController: SpeechRecognizer, WakewordRecognizer {
+    func timeout() {
+        print("timeout")
+    }
+    
     func activate() {
         
     }
