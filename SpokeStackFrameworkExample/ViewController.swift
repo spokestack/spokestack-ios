@@ -13,8 +13,6 @@ class ViewController: UIViewController {
 
     // MARK: Outlets
     
-    @IBOutlet weak var googleButton: UIButton!
-    
     @IBOutlet weak var appleButton: UIButton!
     
     @IBOutlet weak var wakeWordButton: UIButton!
@@ -25,14 +23,6 @@ class ViewController: UIViewController {
         
         super.viewDidLoad()
         self.wakeWordButton.isEnabled = true
-    }
-    
-    @IBAction func googleAction(_ sender: Any) {
-    
-        let googleViewController: GoogleViewController = GoogleViewController()
-        let navigationViewController: UINavigationController = UINavigationController(rootViewController: googleViewController)
-        
-        self.present(navigationViewController, animated: true, completion: nil)
     }
 
     @IBAction func appleAxction(_ sender: Any) {
