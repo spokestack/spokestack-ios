@@ -12,14 +12,4 @@ Pod::Spec.new do |s|
   s.ios.framework = 'AVFoundation'
   s.source_files = 'SpokeStack/*'
   s.exclude_files = 'SpokeStackFrameworkExample/*.*', 'SpokeStackTests/*.*', 'SpokeStack/Info.plist'
-  s.resource = 'Frameworks/gRPC/gRPCCertificates.bundle'
-  s.preserve_paths = 'Frameworks/BoringSSL-GRPC/openssl.framework', 'Frameworks/googleapis/googleapis.framework', 'Frameworks/gRPC/GRPCClient.framework', 'Frameworks/gRPC-Core/grpc.framework', 'Frameworks/gRPC-ProtoRPC/oProtoRPC.framework', 'Frameworks/gRPC-RxLibrary/RxLibrary.framework', 'Frameworks/nanopb/nanopb.framework', 'Frameworks/Protobuf/Protobuf.framework'
-
-  s.vendored_frameworks = 'Frameworks/BoringSSL-GRPC/openssl.framework', 'Frameworks/googleapis/googleapis.framework', 'Frameworks/gRPC/GRPCClient.framework', 'Frameworks/gRPC-Core/grpc.framework', 'Frameworks/gRPC-ProtoRPC/ProtoRPC.framework', 'Frameworks/gRPC-RxLibrary/RxLibrary.framework', 'Frameworks/nanopb/nanopb.framework', 'Frameworks/Protobuf/Protobuf.framework'
-  s.pod_target_xcconfig  = {
-    # SDKROOT cannot be overridden sadly, see https://github.com/CocoaPods/CocoaPods/pull/8058, https://github.com/CocoaPods/CocoaPods/issues/7972
-    # 'SDKROOT' => 'iphoneos',
-    'VALID_ARCHS' => 'armv7 armv7s arm64 arm64e',
-    'GCC_PREPROCESSOR_DEFINITIONS' => '$(inherited) GPB_USE_PROTOBUF_FRAMEWORK_IMPORTS=1 PB_FIELD_32BIT=1 PB_NO_PACKED_STRUCTS=1'
-  }
 end
