@@ -26,14 +26,6 @@
                                     <action selector="appleAxction:" destination="BYZ-38-t0r" eventType="touchUpInside" id="LVX-mL-WpS"/>
                                 </connections>
                             </button>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="yvX-aI-Obz">
-                                <rect key="frame" x="147" y="74" width="81" height="30"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <state key="normal" title="Google S2T"/>
-                                <connections>
-                                    <action selector="googleAction:" destination="BYZ-38-t0r" eventType="touchUpInside" id="T8b-3R-KA9"/>
-                                </connections>
-                            </button>
                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ewK-ye-p0o">
                                 <rect key="frame" x="151" y="168" width="72" height="30"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
@@ -48,7 +40,6 @@
                     </view>
                     <connections>
                         <outlet property="appleButton" destination="N81-j7-Wc3" id="Fa8-H3-fS1"/>
-                        <outlet property="googleButton" destination="yvX-aI-Obz" id="U0H-Yy-BdO"/>
                         <outlet property="wakeWordButton" destination="ewK-ye-p0o" id="7Im-BS-1yf"/>
                     </connections>
                 </viewController>
