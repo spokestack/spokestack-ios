@@ -71,7 +71,6 @@ public class AppleWakewordRecognizer: NSObject, WakewordRecognizerService {
         print("AppleWakewordRecognizer prepareAudioEngine")
         let buffer: Int = (self.configuration!.sampleRate / 1000) * self.configuration!.frameWidth
         let recordingFormat = self.audioEngine.inputNode.outputFormat(forBus: 0)
-        let recordingFormat = self.audioEngine.inputNode.outputFormat(forBus: 0)
         let inif = self.audioEngine.inputNode.inputFormat(forBus: 0)
         let onof = self.audioEngine.outputNode.outputFormat(forBus: 0)
         let onif = self.audioEngine.outputNode.inputFormat(forBus: 0)
