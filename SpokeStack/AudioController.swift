@@ -189,7 +189,9 @@ class AudioController {
     @discardableResult
     private func start() throws -> OSStatus {
         var status: OSStatus = noErr
-        status = AudioOutputUnitStart(remoteIOUnit!)
+        if let riou = remoteIOUnit {
+            status = AudioOutputUnitStart(riou)
+        }
         if status != noErr {
             throw AudioError.audioSessionSetup("AudioOutputUnitStart returned " + status.description)
         }
