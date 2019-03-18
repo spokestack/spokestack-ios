@@ -148,7 +148,7 @@ class AudioController {
         self.priorAudioSessionCategoryOptions = session.categoryOptions
         do {
             try session.setActive(false, options: .notifyOthersOnDeactivation)
-            try session.setCategory(.playAndRecord, mode: .spokenAudio, options: self.determineAudioSessionCategoryOptions())
+            try session.setCategory(.playAndRecord, mode: .default, options: [.duckOthers, .allowBluetooth, .allowBluetoothA2DP, .allowAirPlay, .defaultToSpeaker])
             try session.setPreferredIOBufferDuration(self.bufferDuration)
             try session.setActive(true, options: .notifyOthersOnDeactivation)
         } catch {
@@ -167,21 +167,6 @@ class AudioController {
         } catch {
             throw AudioError.audioSessionSetup(error.localizedDescription)
         }
-    }
-
-    func determineAudioSessionCategoryOptions() -> AVAudioSession.CategoryOptions {
-        let session: AVAudioSession = AVAudioSession.sharedInstance()
-        for description in session.currentRoute.outputs {
-            if (description.portType == AVAudioSession.Port.headphones)
-                || (description.portType == AVAudioSession.Port.bluetoothLE)
-                || (description.portType == AVAudioSession.Port.bluetoothHFP)
-                || (description.portType == AVAudioSession.Port.bluetoothA2DP)
-                || (description.portType == AVAudioSession.Port.headsetMic) {
-                // TODO: this is cribbing from the issues that led to the PR at https://github.com/wenkesj/react-native-voice/pull/103/files. Are other category options needed? Inputs vs outputs?
-                return AVAudioSession.CategoryOptions.allowBluetoothA2DP
-            }
-        }
-        return AVAudioSession.CategoryOptions.defaultToSpeaker
     }
 
     // MARK: Private functions
