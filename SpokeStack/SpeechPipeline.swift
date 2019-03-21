@@ -18,6 +18,7 @@ import Foundation
     public private (set) var wakewordService: WakewordService?
     public private (set) var wakewordConfiguration: WakewordConfiguration?
     public weak var wakewordDelegate: WakewordRecognizer?
+    public private (set) var pipelineDelegate: PipelineDelegate?
     public let context: SpeechContext = SpeechContext()
     
     
@@ -39,7 +40,8 @@ import Foundation
                       speechDelegate: SpeechRecognizer?,
                       wakewordService: WakewordService,
                       wakewordConfiguration: WakewordConfiguration,
-                      wakewordDelegate: WakewordRecognizer?) throws {
+                      wakewordDelegate: WakewordRecognizer?,
+                      pipelineDelegate: PipelineDelegate) throws {
         print("Apple SpeechPipeline init")
         self.speechService = speechService
         self.speechConfiguration = speechConfiguration
@@ -56,12 +58,16 @@ import Foundation
         self.wakewordRecognizerService = wakewordService.wakewordRecognizerService
         self.wakewordRecognizerService.configuration = wakewordConfiguration
         self.wakewordRecognizerService.delegate = self.wakewordDelegate
+        
+        self.pipelineDelegate = pipelineDelegate
+        self.pipelineDelegate!.didInit()
     }
     
     @objc public func status() -> Bool {
         guard
             let _ = self.speechDelegate,
-            let _ = self.wakewordDelegate
+            let _ = self.wakewordDelegate,
+            let _ = self.pipelineDelegate
         else {
                 return true
         }
@@ -93,6 +99,7 @@ import Foundation
         print("Apple SpeechPipeline start")
         AudioController.shared.startStreaming(context: self.context)
         self.wakewordRecognizerService.startStreaming(context: self.context)
+        self.pipelineDelegate?.didStart()
     }
     
     @objc public func stop() -> Void {
@@ -100,5 +107,6 @@ import Foundation
         self.speechRecognizerService.stopStreaming(context: self.context)
         self.wakewordRecognizerService.stopStreaming(context: self.context)
         AudioController.shared.stopStreaming(context: self.context)
+        self.pipelineDelegate?.didStop()
     }
 }
