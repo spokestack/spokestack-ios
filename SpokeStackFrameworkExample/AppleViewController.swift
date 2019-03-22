@@ -52,7 +52,8 @@ class AppleViewController: UIViewController {
                                    speechDelegate: self,
                                    wakewordService: .appleWakeword,
                                    wakewordConfiguration: WakewordConfiguration(),
-                                   wakewordDelegate: self)
+                                   wakewordDelegate: self,
+                                   pipelineDelegate: self)
     }()
     
     override func loadView() {
@@ -97,13 +98,23 @@ class AppleViewController: UIViewController {
     }
 }
 
-extension AppleViewController: SpeechRecognizer, WakewordRecognizer {
+extension AppleViewController: SpeechRecognizer, WakewordRecognizer, PipelineDelegate {
+    func didInit() {
+        print("didInit")
+    }
+    
+    func didStop() {
+        print("didStop")
+    }
+    
     func timeout() {
         print("timeout")
     }
     
     func activate() {
-        
+        print("activate")
+        self.stopRecordingButton.isEnabled.toggle()
+        self.startRecordingButton.isEnabled.toggle()
     }
     
     func deactivate() {

@@ -9,9 +9,7 @@
 import Foundation
 
 @objc public protocol SpeechRecognizer: AnyObject {
-    
-    func didStart() -> Void
-    
+        
     func didRecognize(_ result: SpeechContext) -> Void
     
     func deactivate() -> Void
