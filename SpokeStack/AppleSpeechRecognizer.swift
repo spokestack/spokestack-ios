@@ -111,6 +111,8 @@ class AppleSpeechRecognizer: NSObject, SpeechRecognizerService {
                     if let nse: NSError = error as NSError? {
                         if nse.domain == "kAFAssistantErrorDomain" {
                             switch nse.code {
+                            case 0..<200: // Apple retry error: https://developer.nuance.com/public/Help/DragonMobileSDKReference_iOS/Error-codes.html
+                                break
                             case 203: // request timed out, retry
                                 print("AppleSpeechRecognizer createRecognitionTask resultHandler error 203")
                                 context.isActive = false
@@ -121,6 +123,8 @@ class AppleSpeechRecognizer: NSObject, SpeechRecognizerService {
                                 break
                             case 216: // Apple internal error: https://stackoverflow.com/questions/53037789/sfspeechrecognizer-216-error-with-multiple-requests?noredirect=1&lq=1)
                                 print("AppleSpeechRecognizer createRecognitionTask resultHandler error 216")
+                                break
+                            case 300..<603: // Apple retry error: https://developer.nuance.com/public/Help/DragonMobileSDKReference_iOS/Error-codes.html
                                 break
                             default:
                                 delegate.didError(e)
