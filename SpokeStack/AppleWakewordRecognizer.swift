@@ -128,6 +128,9 @@ public class AppleWakewordRecognizer: NSObject, WakewordRecognizerService {
                     if let nse: NSError = error as NSError? {
                         if nse.domain == "kAFAssistantErrorDomain" {
                             switch nse.code {
+                            case 0..<200: // Apple retry error: https://developer.nuance.com/public/Help/DragonMobileSDKReference_iOS/Error-codes.html
+                                print("AppleWakewordRecognizer createRecognitionTask resultHandler error " + nse.code.description)
+                                break
                             case 203: // request timed out, retry
                                 strongSelf.stopRecognition()
                                 strongSelf.startRecognition(context: context)
@@ -135,6 +138,9 @@ public class AppleWakewordRecognizer: NSObject, WakewordRecognizerService {
                             case 209: // ¯\_(ツ)_/¯
                                 break
                             case 216: // Apple internal error: https://stackoverflow.com/questions/53037789/sfspeechrecognizer-216-error-with-multiple-requests?noredirect=1&lq=1)
+                                break
+                            case 300..<603: // Apple retry error: https://developer.nuance.com/public/Help/DragonMobileSDKReference_iOS/Error-codes.html
+                                print("AppleWakewordRecognizer createRecognitionTask resultHandler error " + nse.code.description)
                                 break
                             default:
                                 delegate.didError(e)
