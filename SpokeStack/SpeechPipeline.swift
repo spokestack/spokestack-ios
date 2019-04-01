@@ -95,8 +95,10 @@ import Foundation
     }
     
     @objc public func start() -> Void {
-        self.stop()
-        print("Apple SpeechPipeline start")
+        print("Apple SpeechPipeline start, context isActive " + self.context.isActive.description)
+        if (self.context.isActive) {
+            self.stop()
+        }
         AudioController.shared.startStreaming(context: self.context)
         self.wakewordRecognizerService.startStreaming(context: self.context)
         self.pipelineDelegate?.didStart()
