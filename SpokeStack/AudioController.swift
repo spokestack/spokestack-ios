@@ -146,11 +146,17 @@ class AudioController {
         self.priorAudioSessionCategory = session.category
         self.priorAudioSessionMode = session.mode
         self.priorAudioSessionCategoryOptions = session.categoryOptions
+        let sessionCategory: AVAudioSession.Category = .playAndRecord
+        let sessionOptions: AVAudioSession.CategoryOptions = [.duckOthers, .allowBluetoothA2DP, .allowAirPlay, .defaultToSpeaker]
         do {
-            try session.setActive(false, options: .notifyOthersOnDeactivation)
-            try session.setCategory(.playAndRecord, mode: .default, options: [.duckOthers, .allowBluetooth, .allowBluetoothA2DP, .allowAirPlay, .defaultToSpeaker])
+            if (!(session.category == sessionCategory) || !(session.categoryOptions == sessionOptions)) {
+                try session.setActive(false, options: .notifyOthersOnDeactivation)
+                try session.setCategory(sessionCategory, mode: .default, options: sessionOptions)
+            }
             try session.setPreferredIOBufferDuration(self.bufferDuration)
-            try session.setActive(true, options: .notifyOthersOnDeactivation)
+            if !(session.isOtherAudioPlaying) {
+                try session.setActive(true, options: .notifyOthersOnDeactivation)
+            }
         } catch {
             throw AudioError.audioSessionSetup(error.localizedDescription)
         }
@@ -163,7 +169,6 @@ class AudioController {
             if !(session.category == self.priorAudioSessionCategory) {
                 try session.setCategory(self.priorAudioSessionCategory!, mode: self.priorAudioSessionMode!, options: self.priorAudioSessionCategoryOptions!)
             }
-            try session.setActive(false, options: .notifyOthersOnDeactivation)
         } catch {
             throw AudioError.audioSessionSetup(error.localizedDescription)
         }
