@@ -60,6 +60,7 @@ import Foundation
         self.wakewordRecognizerService.delegate = self.wakewordDelegate
         
         self.pipelineDelegate = pipelineDelegate
+        AudioController.shared.pipelineDelegate = self.pipelineDelegate
         self.pipelineDelegate!.didInit()
     }
     
@@ -69,7 +70,7 @@ import Foundation
             let _ = self.wakewordDelegate,
             let _ = self.pipelineDelegate
         else {
-                return true
+            return true
         }
         return false
     }
