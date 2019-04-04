@@ -128,5 +128,10 @@ extension WakeWordViewController: SpeechRecognizer, WakewordRecognizer, Pipeline
     func didStop() {
         print("didStop")
     }
+    
+    func setupFailed(_ error: String) {
+        print("audiocontroller setup failed: " + error)
+    }
+
 }
 

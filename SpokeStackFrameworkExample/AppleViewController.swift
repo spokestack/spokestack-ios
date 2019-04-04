@@ -99,6 +99,10 @@ class AppleViewController: UIViewController {
 }
 
 extension AppleViewController: SpeechRecognizer, WakewordRecognizer, PipelineDelegate {
+    func setupFailed(_ error: String) {
+        print("setupFailed: " + error)
+    }
+    
     func didInit() {
         print("didInit")
     }

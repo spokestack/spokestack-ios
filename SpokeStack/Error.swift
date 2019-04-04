@@ -14,7 +14,7 @@ public enum AudioError: Error {
 }
 
 public enum SpeechPipelineError: Error {
-    case illegalState(message: String)
+    case illegalState(String)
 }
 
 public enum SpeechRecognizerError: Error {

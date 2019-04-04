@@ -15,4 +15,6 @@ import Foundation
     func didStart() -> Void
 
     func didStop() -> Void
+    
+    func setupFailed(_ error: String) -> Void
 }

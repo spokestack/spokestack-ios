@@ -61,6 +61,7 @@ class AudioController {
     static let shared: AudioController = AudioController()
     
     weak var delegate: AudioControllerDelegate?
+    weak var pipelineDelegate: PipelineDelegate?
     
     var sampleRate: Int = 16000
     
@@ -103,11 +104,11 @@ class AudioController {
             try self.beginAudioSession()
             self.prepareRemoteIOUnit()
         } catch AudioError.audioSessionSetup(let message) {
-            self.delegate?.setupFailed(message)
+            self.pipelineDelegate?.setupFailed(message)
         } catch AudioError.general(let message) {
-            self.delegate?.setupFailed(message)
+            self.pipelineDelegate?.setupFailed(message)
         } catch {
-            self.delegate?.setupFailed("An unknown error occured setting the stream")
+            self.pipelineDelegate?.setupFailed("An unknown error occured setting the stream")
         }
     }
 
@@ -119,11 +120,11 @@ class AudioController {
             try self.start()
             try self.beginAudioSession()
         } catch AudioError.audioSessionSetup(let message) {
-            self.delegate?.setupFailed(message)
+            self.pipelineDelegate?.setupFailed(message)
         } catch AudioError.general(let message) {
-            self.delegate?.setupFailed(message)
+            self.pipelineDelegate?.setupFailed(message)
         } catch {
-            self.delegate?.setupFailed("An unknown error occured starting the stream")
+            self.pipelineDelegate?.setupFailed("An unknown error occured starting the stream")
         }
     }
 
@@ -133,9 +134,9 @@ class AudioController {
             try self.stop()
             try self.endAudioSession()
         } catch AudioError.audioSessionSetup(let message) {
-            self.delegate?.setupFailed(message)
+            self.pipelineDelegate?.setupFailed(message)
         } catch {
-            self.delegate?.setupFailed("An unknown error occured ending the stream")
+            self.pipelineDelegate?.setupFailed("An unknown error occured ending the stream")
         }
     }
 
