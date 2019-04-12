@@ -148,13 +148,27 @@ class AudioController {
         self.priorAudioSessionMode = session.mode
         self.priorAudioSessionCategoryOptions = session.categoryOptions
         let sessionCategory: AVAudioSession.Category = .playAndRecord
-        let sessionOptions: AVAudioSession.CategoryOptions = [.duckOthers, .allowBluetoothA2DP, .allowAirPlay, .defaultToSpeaker]
+        let sessionOptions: AVAudioSession.CategoryOptions = [.allowBluetoothA2DP, .allowAirPlay, .defaultToSpeaker]
+        let sss: String = session.category.rawValue
+        let sco: String = session.categoryOptions.rawValue.description
+        let sioap: String = session.isOtherAudioPlaying.description
+        print("AudioController beginAudioSession current category: " + sss + " options: " + sco + " isOtherAudioPlaying: " + sioap + " bufferduration " + session.ioBufferDuration.description)
+        print("AudioController beginAudioSession current configuration: " + (session.category != sessionCategory).description + " " + session.categoryOptions.contains(sessionOptions).description + " " + (session.ioBufferDuration != self.bufferDuration).description)
+        let input: String = session.currentRoute.inputs.debugDescription
+        let output: String = session.currentRoute.outputs.debugDescription
+        let preferredInput: String = session.preferredInput.debugDescription
+        let outputs: String = session.outputDataSources?.debugDescription ?? "none"
+        let inputs: String = session.availableInputs?.debugDescription ?? "none"
+        print("AudioController beginAudioSession route inputs: " + inputs + " outputs: " + outputs + " preferredinput: " + preferredInput + " input: " + input + " output: " + output)
         do {
             if ((session.category != sessionCategory) || !(session.categoryOptions.contains(sessionOptions))) { // TODO: add (session.ioBufferDuration != self.bufferDuration) once mode-based wakeword is enabled
                 print("AudioController beginAudioSession setting AudioSession")
-                try session.setActive(false, options: .notifyOthersOnDeactivation)
+                // try session.setActive(false, options: .notifyOthersOnDeactivation)
                 try session.setCategory(sessionCategory, mode: .default, options: sessionOptions)
-                try session.setPreferredIOBufferDuration(self.bufferDuration)
+                // TODO: The below line implicitly disables HFP output. Investigate buffer duration versus bluetooth output settings.
+                // try session.setPreferredIOBufferDuration(self.bufferDuration)
+                // try session.setPreferredInput(AVAudioSession.Port.headsetMic)
+                // try session.setOutputDataSource(AVAudioSession.)
                 try session.setActive(true, options: .notifyOthersOnDeactivation)
             }
         } catch {
