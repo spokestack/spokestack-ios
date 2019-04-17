@@ -44,7 +44,7 @@ func recordingCallback(
     if status != noErr {
         return status
     }
-
+    
     let data: Data = Data(bytes: buffers[0].mData!, count: Int(buffers[0].mDataByteSize))
     
     audioProcessingQueue.sync {
@@ -72,7 +72,7 @@ class AudioController {
     var priorAudioSessionCategory: AVAudioSession.Category?
     var priorAudioSessionMode: AVAudioSession.Mode?
     var priorAudioSessionCategoryOptions: AVAudioSession.CategoryOptions?
-
+    
     fileprivate var remoteIOUnit: AudioComponentInstance?
     
     lazy private var audioComponentDescription: AudioComponentDescription = {
@@ -97,10 +97,14 @@ class AudioController {
             AudioComponentInstanceDispose(ioUnit)
         }
     }
-
+    
     init() {
         print("AudioController init")
         do {
+            NotificationCenter.default.addObserver(self,
+                                                   selector: #selector(audioRouteChanged),
+                                                   name: AVAudioSession.routeChangeNotification,
+                                                   object: AVAudioSession.sharedInstance())
             try self.beginAudioSession()
             self.prepareRemoteIOUnit()
         } catch AudioError.audioSessionSetup(let message) {
@@ -111,9 +115,9 @@ class AudioController {
             self.pipelineDelegate?.setupFailed("An unknown error occured setting the stream")
         }
     }
-
+    
     // MARK: Public functions
-
+    
     func startStreaming(context: SpeechContext) -> Void {
         print("AudioController startStreaming")
         do {
@@ -127,7 +131,7 @@ class AudioController {
             self.pipelineDelegate?.setupFailed("An unknown error occured starting the stream")
         }
     }
-
+    
     func stopStreaming(context: SpeechContext) -> Void {
         print("AudioController stopStreaming")
         do {
@@ -139,7 +143,7 @@ class AudioController {
             self.pipelineDelegate?.setupFailed("An unknown error occured ending the stream")
         }
     }
-
+    
     func beginAudioSession() throws {
         print("AudioController beginAudioSession")
         // TODO: https://developer.apple.com/documentation/avfoundation/avaudiosession/responding_to_audio_session_route_changes
@@ -147,19 +151,10 @@ class AudioController {
         self.priorAudioSessionCategory = session.category
         self.priorAudioSessionMode = session.mode
         self.priorAudioSessionCategoryOptions = session.categoryOptions
+        self.printAudioSessionDebug()
         let sessionCategory: AVAudioSession.Category = .playAndRecord
         let sessionOptions: AVAudioSession.CategoryOptions = [.allowBluetoothA2DP, .allowAirPlay, .defaultToSpeaker]
-        let sss: String = session.category.rawValue
-        let sco: String = session.categoryOptions.rawValue.description
-        let sioap: String = session.isOtherAudioPlaying.description
-        print("AudioController beginAudioSession current category: " + sss + " options: " + sco + " isOtherAudioPlaying: " + sioap + " bufferduration " + session.ioBufferDuration.description)
         print("AudioController beginAudioSession current configuration: " + (session.category != sessionCategory).description + " " + session.categoryOptions.contains(sessionOptions).description + " " + (session.ioBufferDuration != self.bufferDuration).description)
-        let input: String = session.currentRoute.inputs.debugDescription
-        let output: String = session.currentRoute.outputs.debugDescription
-        let preferredInput: String = session.preferredInput.debugDescription
-        let outputs: String = session.outputDataSources?.debugDescription ?? "none"
-        let inputs: String = session.availableInputs?.debugDescription ?? "none"
-        print("AudioController beginAudioSession route inputs: " + inputs + " outputs: " + outputs + " preferredinput: " + preferredInput + " input: " + input + " output: " + output)
         do {
             if ((session.category != sessionCategory) || !(session.categoryOptions.contains(sessionOptions))) { // TODO: add (session.ioBufferDuration != self.bufferDuration) once mode-based wakeword is enabled
                 print("AudioController beginAudioSession setting AudioSession")
@@ -167,15 +162,14 @@ class AudioController {
                 try session.setCategory(sessionCategory, mode: .default, options: sessionOptions)
                 // TODO: The below line implicitly disables HFP output. Investigate buffer duration versus bluetooth output settings.
                 // try session.setPreferredIOBufferDuration(self.bufferDuration)
-                // try session.setPreferredInput(AVAudioSession.Port.headsetMic)
-                // try session.setOutputDataSource(AVAudioSession.)
+                // try session.setPreferredInput(AVAudioSessionPortBluetoothA2DP)
                 try session.setActive(true, options: .notifyOthersOnDeactivation)
             }
         } catch {
             throw AudioError.audioSessionSetup(error.localizedDescription)
         }
     }
-
+    
     func endAudioSession() throws {
         print("AudioController endAudioSession")
         let session: AVAudioSession = AVAudioSession.sharedInstance()
@@ -187,9 +181,9 @@ class AudioController {
             throw AudioError.audioSessionSetup(error.localizedDescription)
         }
     }
-
+    
     // MARK: Private functions
-
+    
     @discardableResult
     private func start() throws -> OSStatus {
         var status: OSStatus = noErr
@@ -212,20 +206,70 @@ class AudioController {
         return status
     }
     
+    private func printAudioSessionDebug() {
+        let session = AVAudioSession.sharedInstance()
+        let sss: String = session.category.rawValue
+        let sco: String = session.categoryOptions.rawValue.description
+        let sioap: String = session.isOtherAudioPlaying.description
+        print("AudioController printAudioSessionDebug current category: " + sss + " options: " + sco + " isOtherAudioPlaying: " + sioap + " bufferduration " + session.ioBufferDuration.description)
+        let route_inputs: String = session.currentRoute.inputs.debugDescription
+        let route_outputs: String = session.currentRoute.outputs.debugDescription
+        let preferredInput: String = session.preferredInput.debugDescription
+        let usb_outputs: String = session.outputDataSources?.debugDescription ?? "none"
+        let inputs: String = session.availableInputs?.debugDescription ?? "none"
+        print("AudioController printAudioSessionDebug inputs: " + inputs + " preferredinput: " + preferredInput + " input: " + route_inputs + " output: " + route_outputs + " usb_outputs: " + usb_outputs)
+    }
+    
+    @objc private func audioRouteChanged(_ notification: Notification) {
+        guard let userInfo = notification.userInfo,
+            let reasonValue = userInfo[AVAudioSessionRouteChangeReasonKey] as? UInt,
+            let reason = AVAudioSession.RouteChangeReason(rawValue:reasonValue) else {
+                return
+        }
+        print("AudioController audioRouteChanged reason: " + reasonValue.description + " notification: " + userInfo.debugDescription)
+        printAudioSessionDebug()
+        let session = AVAudioSession.sharedInstance()
+        switch reason {
+        case .newDeviceAvailable:
+            print("AudioController audioRouteChanged new output: " + session.currentRoute.outputs.description)
+            guard let inputs = session.availableInputs else {
+                return
+            }
+            for input in inputs {
+                if (input.portType == AVAudioSession.Port.bluetoothHFP) {
+                    do {
+                        print("AudioController audioRouteChanged using bluetoothHFP input")
+                        try session.setPreferredInput(input)
+                    } catch {
+                        print("AudioController audioRouteChanged can't set bluetoothHFP as input")
+                    }
+                }
+            }
+        case .oldDeviceUnavailable:
+            if let previousRoute =
+                userInfo[AVAudioSessionRouteChangePreviousRouteKey] as? AVAudioSessionRouteDescription {
+                print("AudioController audioRouteChanged old output: " + previousRoute.outputs.description)
+            }
+        case .categoryChange:
+            print("AudioController audioRouteChanged new category: " + session.category.rawValue)
+        default: ()
+        }
+    }
+    
     @discardableResult
     private func prepareRemoteIOUnit() -> OSStatus {
         
         // MARK: prepare RemoteIO unit component
-
+        
         var status: OSStatus = noErr
         let remoteIOComponent = AudioComponentFindNext(nil, &audioComponentDescription)
         status = AudioComponentInstanceNew(remoteIOComponent!, &remoteIOUnit)
         if status != noErr {
             return status
         }
-
+        
         // MARK: Configure the RemoteIO unit for input
-
+        
         let bus1: AudioUnitElement = 1
         var oneFlag: UInt32 = 1
         status = AudioUnitSetProperty(self.remoteIOUnit!,
