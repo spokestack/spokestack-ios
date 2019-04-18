@@ -153,7 +153,7 @@ class AudioController {
         self.priorAudioSessionCategoryOptions = session.categoryOptions
         self.printAudioSessionDebug()
         let sessionCategory: AVAudioSession.Category = .playAndRecord
-        let sessionOptions: AVAudioSession.CategoryOptions = [.allowBluetoothA2DP, .allowAirPlay, .defaultToSpeaker]
+        let sessionOptions: AVAudioSession.CategoryOptions = [.allowBluetoothA2DP, .allowAirPlay, .defaultToSpeaker, .allowBluetooth]
         print("AudioController beginAudioSession current configuration: " + (session.category != sessionCategory).description + " " + session.categoryOptions.contains(sessionOptions).description + " " + (session.ioBufferDuration != self.bufferDuration).description)
         do {
             if ((session.category != sessionCategory) || !(session.categoryOptions.contains(sessionOptions))) { // TODO: add (session.ioBufferDuration != self.bufferDuration) once mode-based wakeword is enabled
