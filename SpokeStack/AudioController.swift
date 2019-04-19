@@ -69,10 +69,6 @@ class AudioController {
     
     // MARK: Private (properties)
     
-    var priorAudioSessionCategory: AVAudioSession.Category?
-    var priorAudioSessionMode: AVAudioSession.Mode?
-    var priorAudioSessionCategoryOptions: AVAudioSession.CategoryOptions?
-    
     fileprivate var remoteIOUnit: AudioComponentInstance?
     
     lazy private var audioComponentDescription: AudioComponentDescription = {
@@ -100,20 +96,19 @@ class AudioController {
     
     init() {
         print("AudioController init")
-        do {
-            NotificationCenter.default.addObserver(self,
-                                                   selector: #selector(audioRouteChanged),
-                                                   name: AVAudioSession.routeChangeNotification,
-                                                   object: AVAudioSession.sharedInstance())
-            try self.beginAudioSession()
-            self.prepareRemoteIOUnit()
-        } catch AudioError.audioSessionSetup(let message) {
-            self.pipelineDelegate?.setupFailed(message)
-        } catch AudioError.general(let message) {
-            self.pipelineDelegate?.setupFailed(message)
-        } catch {
-            self.pipelineDelegate?.setupFailed("An unknown error occured setting the stream")
+        switch AVAudioSession.sharedInstance().category {
+        case AVAudioSession.Category.record:
+            break
+        case AVAudioSession.Category.playAndRecord:
+            break
+        default:
+            self.pipelineDelegate?.setupFailed("Incompatible AudioSession category is set.")
         }
+        NotificationCenter.default.addObserver(self,
+                                               selector: #selector(audioRouteChanged),
+                                               name: AVAudioSession.routeChangeNotification,
+                                               object: AVAudioSession.sharedInstance())
+        self.prepareRemoteIOUnit()
     }
     
     // MARK: Public functions
@@ -122,7 +117,6 @@ class AudioController {
         print("AudioController startStreaming")
         do {
             try self.start()
-            try self.beginAudioSession()
         } catch AudioError.audioSessionSetup(let message) {
             self.pipelineDelegate?.setupFailed(message)
         } catch AudioError.general(let message) {
@@ -136,49 +130,10 @@ class AudioController {
         print("AudioController stopStreaming")
         do {
             try self.stop()
-            try self.endAudioSession()
         } catch AudioError.audioSessionSetup(let message) {
             self.pipelineDelegate?.setupFailed(message)
         } catch {
             self.pipelineDelegate?.setupFailed("An unknown error occured ending the stream")
-        }
-    }
-    
-    func beginAudioSession() throws {
-        print("AudioController beginAudioSession")
-        // TODO: https://developer.apple.com/documentation/avfoundation/avaudiosession/responding_to_audio_session_route_changes
-        let session: AVAudioSession = AVAudioSession.sharedInstance()
-        self.priorAudioSessionCategory = session.category
-        self.priorAudioSessionMode = session.mode
-        self.priorAudioSessionCategoryOptions = session.categoryOptions
-        self.printAudioSessionDebug()
-        let sessionCategory: AVAudioSession.Category = .playAndRecord
-        let sessionOptions: AVAudioSession.CategoryOptions = [.allowBluetoothA2DP, .allowAirPlay, .defaultToSpeaker, .allowBluetooth]
-        print("AudioController beginAudioSession current configuration: " + (session.category != sessionCategory).description + " " + session.categoryOptions.contains(sessionOptions).description + " " + (session.ioBufferDuration != self.bufferDuration).description)
-        do {
-            if ((session.category != sessionCategory) || !(session.categoryOptions.contains(sessionOptions))) { // TODO: add (session.ioBufferDuration != self.bufferDuration) once mode-based wakeword is enabled
-                print("AudioController beginAudioSession setting AudioSession")
-                // try session.setActive(false, options: .notifyOthersOnDeactivation)
-                try session.setCategory(sessionCategory, mode: .default, options: sessionOptions)
-                // TODO: The below line implicitly disables HFP output. Investigate buffer duration versus bluetooth output settings.
-                // try session.setPreferredIOBufferDuration(self.bufferDuration)
-                // try session.setPreferredInput(AVAudioSessionPortBluetoothA2DP)
-                try session.setActive(true, options: .notifyOthersOnDeactivation)
-            }
-        } catch {
-            throw AudioError.audioSessionSetup(error.localizedDescription)
-        }
-    }
-    
-    func endAudioSession() throws {
-        print("AudioController endAudioSession")
-        let session: AVAudioSession = AVAudioSession.sharedInstance()
-        do {
-            if !(session.category == self.priorAudioSessionCategory) {
-                try session.setCategory(self.priorAudioSessionCategory!, mode: self.priorAudioSessionMode!, options: self.priorAudioSessionCategoryOptions!)
-            }
-        } catch {
-            throw AudioError.audioSessionSetup(error.localizedDescription)
         }
     }
     
@@ -232,19 +187,6 @@ class AudioController {
         switch reason {
         case .newDeviceAvailable:
             print("AudioController audioRouteChanged new output: " + session.currentRoute.outputs.description)
-            guard let inputs = session.availableInputs else {
-                return
-            }
-            for input in inputs {
-                if (input.portType == AVAudioSession.Port.bluetoothHFP) {
-                    do {
-                        print("AudioController audioRouteChanged using bluetoothHFP input")
-                        try session.setPreferredInput(input)
-                    } catch {
-                        print("AudioController audioRouteChanged can't set bluetoothHFP as input")
-                    }
-                }
-            }
         case .oldDeviceUnavailable:
             if let previousRoute =
                 userInfo[AVAudioSessionRouteChangePreviousRouteKey] as? AVAudioSessionRouteDescription {
