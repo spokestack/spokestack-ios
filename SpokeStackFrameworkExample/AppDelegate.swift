@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import AVFoundation
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -16,6 +17,23 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
+        NotificationCenter.default.addObserver(self,
+                                               selector: #selector(audioRouteChanged),
+                                               name: AVAudioSession.routeChangeNotification,
+                                               object: AVAudioSession.sharedInstance())
+        let session: AVAudioSession = AVAudioSession.sharedInstance()
+        let sessionCategory: AVAudioSession.Category = .playAndRecord
+        let sessionOptions: AVAudioSession.CategoryOptions = [.allowBluetoothA2DP, .allowAirPlay, .defaultToSpeaker, .allowBluetooth]
+        do {
+            if ((session.category != sessionCategory) || !(session.categoryOptions.contains(sessionOptions))) { // TODO: add (session.ioBufferDuration != self.bufferDuration) once mode-based wakeword is enabled
+                try session.setCategory(sessionCategory, mode: .default, options: sessionOptions)
+                // TODO: The below line implicitly disables HFP output. Investigate buffer duration versus bluetooth output settings.
+                // try session.setPreferredIOBufferDuration(self.bufferDuration)
+                try session.setActive(true, options: .notifyOthersOnDeactivation)
+            }
+        } catch {
+            print("AppDelegate application error when setting AudioSession category")
+        }
         return true
     }
 
@@ -41,6 +59,29 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
     }
 
-
+    @objc private func audioRouteChanged(_ notification: Notification) {
+        guard let userInfo = notification.userInfo,
+            let reasonValue = userInfo[AVAudioSessionRouteChangeReasonKey] as? UInt,
+            let reason = AVAudioSession.RouteChangeReason(rawValue:reasonValue) else {
+                return
+        }
+        let session = AVAudioSession.sharedInstance()
+        switch reason {
+        case .newDeviceAvailable:
+            guard let inputs = session.availableInputs else {
+                return
+            }
+            for input in inputs {
+                if (input.portType == AVAudioSession.Port.bluetoothHFP) {
+                    do {
+                        try session.setPreferredInput(input)
+                    } catch {
+                    }
+                }
+            }
+        default:
+            break
+        }
+    }
 }
 

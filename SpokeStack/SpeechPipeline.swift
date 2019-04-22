@@ -26,6 +26,7 @@ import Foundation
     
     private var speechRecognizerService: SpeechRecognizerService
     private var wakewordRecognizerService: WakewordRecognizerService
+    private var audioController: AudioController
     
     // MARK: Initializers
     
@@ -60,7 +61,7 @@ import Foundation
         self.wakewordRecognizerService.delegate = self.wakewordDelegate
         
         self.pipelineDelegate = pipelineDelegate
-        AudioController.shared.pipelineDelegate = self.pipelineDelegate
+        self.audioController = AudioController(delegate: self.pipelineDelegate)
         self.pipelineDelegate!.didInit()
     }
     
@@ -100,7 +101,7 @@ import Foundation
         if (self.context.isActive) {
             self.stop()
         }
-        AudioController.shared.startStreaming(context: self.context)
+        self.audioController.startStreaming(context: self.context)
         self.wakewordRecognizerService.startStreaming(context: self.context)
         self.pipelineDelegate?.didStart()
     }
@@ -109,7 +110,7 @@ import Foundation
         print("Apple SpeechPipeline stop")
         self.speechRecognizerService.stopStreaming(context: self.context)
         self.wakewordRecognizerService.stopStreaming(context: self.context)
-        AudioController.shared.stopStreaming(context: self.context)
+        self.audioController.stopStreaming(context: self.context)
         self.pipelineDelegate?.didStop()
     }
 }
