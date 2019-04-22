@@ -3,7 +3,7 @@
 Spokestack provides an extensible speech recognition pipeline for the iOS
 platform. It includes a variety of built-in speech processors for Voice
 Activity Detection (VAD) and Automatic Speech Recognition (ASR) via popular
-speech recognition services, such as the Google Speech API.
+speech recognition services, such as the Apple Speech API (and potentially Google Speech API).
 
 ## Installation
 [![](https://img.shields.io/cocoapods/v/SpokeStack.svg)](https://cocoapods.org/pods/SpokeStack)
