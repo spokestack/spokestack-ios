@@ -43,7 +43,9 @@ class AudioController {
     
     deinit {
         print("AudioController deinit")
-        AudioComponentInstanceDispose(remoteIOUnit!)
+        if let riou = remoteIOUnit {
+            AudioComponentInstanceDispose(riou)
+        }
         if let ioUnit: AudioComponentInstance = self.remoteIOUnit {
             AudioComponentInstanceDispose(ioUnit)
         }
@@ -109,7 +111,9 @@ class AudioController {
     @discardableResult
     private func stop() throws -> OSStatus {
         var status: OSStatus = noErr
-        status = AudioOutputUnitStop(remoteIOUnit!)
+        if let riou = remoteIOUnit {
+            status = AudioOutputUnitStop(riou)
+        }
         if status != noErr {
             throw AudioError.audioSessionSetup("AudioOutputUnitStop returned " + status.description)
         }
