@@ -14,7 +14,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
 
-
+    var newBluetoothAvailable: Bool?
+    var usingBluetoothInput: Bool?
+    
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
         NotificationCenter.default.addObserver(self,
@@ -23,7 +25,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                                                object: AVAudioSession.sharedInstance())
         let session: AVAudioSession = AVAudioSession.sharedInstance()
         let sessionCategory: AVAudioSession.Category = .playAndRecord
-        let sessionOptions: AVAudioSession.CategoryOptions = [.allowBluetoothA2DP, .allowAirPlay, .defaultToSpeaker, .allowBluetooth]
+        let sessionOptions: AVAudioSession.CategoryOptions = [.allowBluetoothA2DP, .allowAirPlay, .defaultToSpeaker]
         do {
             if ((session.category != sessionCategory) || !(session.categoryOptions.contains(sessionOptions))) { // TODO: add (session.ioBufferDuration != self.bufferDuration) once mode-based wakeword is enabled
                 try session.setCategory(sessionCategory, mode: .default, options: sessionOptions)
@@ -65,22 +67,72 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             let reason = AVAudioSession.RouteChangeReason(rawValue:reasonValue) else {
                 return
         }
-        let session = AVAudioSession.sharedInstance()
         switch reason {
         case .newDeviceAvailable:
-            guard let inputs = session.availableInputs else {
-                return
-            }
-            for input in inputs {
-                if (input.portType == AVAudioSession.Port.bluetoothHFP) {
-                    do {
-                        try session.setPreferredInput(input)
-                    } catch {
-                    }
-                }
-            }
+            self.newBluetoothAvailable = true
+            // useBluetoothHFPInput()
+            break
+        case .oldDeviceUnavailable:
+            self.newBluetoothAvailable = false
+            self.usingBluetoothInput = false
         default:
             break
+        }
+    }
+    
+    private func useBluetoothHFPInput() {
+        print("AppDelegate useBluetoothHFPInput")
+        let session = AVAudioSession.sharedInstance()
+        guard let inputs = session.availableInputs else {
+            return
+        }
+        for input in inputs {
+            if (input.portType == AVAudioSession.Port.bluetoothHFP) {
+                do {
+                    try session.setPreferredInput(input)
+                    self.newBluetoothAvailable = false
+                } catch {
+                    print("AppDelegate useBluetoothHFPInputIfAvailable error")
+                }
+            }
+        }
+    }
+    
+    @objc public func useBluetoothHFPInputIfAvailable() {
+        print("AppDelegate useBluetoothHFPInputIfAvailable")
+        let session = AVAudioSession.sharedInstance()
+        do {
+            try session.setCategory(.playAndRecord, mode: .default, options: [.allowBluetoothA2DP, .allowAirPlay, .defaultToSpeaker, .allowBluetooth])
+            try session.setActive(true, options: .notifyOthersOnDeactivation)
+            self.useBluetoothHFPInput()
+            self.usingBluetoothInput = true
+        } catch {
+            print("AppDelegate useBluetoothHFPInputIfAvailable error when setting AudioSession category")
+        }
+    }
+    
+    @objc public func useA2DPOutputIfAvailable() {
+        print("AppDelegate useA2DPOutputIfAvailable")
+        let session = AVAudioSession.sharedInstance()
+        do {
+            try session.setCategory(.playAndRecord, mode: .default, options: [.allowBluetoothA2DP, .allowAirPlay, .defaultToSpeaker])
+            try session.setActive(true, options: .notifyOthersOnDeactivation)
+        } catch {
+            print("AppDelegate useA2DPOutputIfAvailable error when setting AudioSession category")
+        }
+    }
+    
+    @objc public func switchInputsIfAvailable() {
+        print("AppDelegate switchInputsIfAvailable")
+        if self.newBluetoothAvailable ?? false {
+            print("AppDelegate switchInputsIfAvailable newBluetoothAvailable")
+            if self.usingBluetoothInput ?? false {
+                print("AppDelegate switchInputsIfAvailable usingBluetoothInput")
+            } else {
+                self.useBluetoothHFPInputIfAvailable()
+            }
+        } else {
+            self.useA2DPOutputIfAvailable()
         }
     }
 }

@@ -36,6 +36,18 @@ class WakeWordViewController: UIViewController {
         return button
     }()
     
+    var switchButton: UIButton = {
+        let button: UIButton = UIButton(frame: .zero)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.setTitle("Switch Inputs", for: .normal)
+        button.addTarget(self,
+                         action: #selector(WakeWordViewController.switchInputs),
+                         for: .touchUpInside)
+        button.setTitleColor(.blue, for: .normal)
+        button.isEnabled = true
+        return button
+    }()
+    
     lazy public var pipeline: SpeechPipeline = {
         return try! SpeechPipeline(.appleSpeech,
                                    speechConfiguration: RecognizerConfiguration(),
@@ -62,6 +74,7 @@ class WakeWordViewController: UIViewController {
         
         self.view.addSubview(self.startRecordingButton)
         self.view.addSubview(self.stopRecordingButton)
+        self.view.addSubview(self.switchButton)
         
         self.startRecordingButton.centerYAnchor.constraint(equalTo: self.view.centerYAnchor).isActive = true
         self.startRecordingButton.leftAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.leftAnchor).isActive = true
@@ -70,6 +83,10 @@ class WakeWordViewController: UIViewController {
         self.stopRecordingButton.topAnchor.constraint(equalTo: self.startRecordingButton.bottomAnchor, constant: 50.0).isActive = true
         self.stopRecordingButton.leftAnchor.constraint(equalTo: self.startRecordingButton.leftAnchor).isActive = true
         self.stopRecordingButton.rightAnchor.constraint(equalTo: self.startRecordingButton.rightAnchor).isActive = true
+        
+        self.switchButton.topAnchor.constraint(equalTo: self.startRecordingButton.bottomAnchor, constant: 100.0).isActive = true
+        self.switchButton.leftAnchor.constraint(equalTo: self.startRecordingButton.leftAnchor).isActive = true
+        self.switchButton.rightAnchor.constraint(equalTo: self.startRecordingButton.rightAnchor).isActive = true
     }
     
     @objc func startRecordingAction(_ sender: Any) {
@@ -84,6 +101,11 @@ class WakeWordViewController: UIViewController {
         self.pipeline.stop()
         self.stopRecordingButton.isEnabled.toggle()
         self.startRecordingButton.isEnabled.toggle()
+    }
+    
+    @objc func switchInputs() {
+        let appDelegate: AppDelegate? = UIApplication.shared.delegate as? AppDelegate
+        appDelegate?.switchInputsIfAvailable()  
     }
     
     @objc func dismissViewController(_ sender: Any?) -> Void {
