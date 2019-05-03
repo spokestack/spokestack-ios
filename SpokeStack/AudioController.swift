@@ -54,14 +54,6 @@ class AudioController {
     init(delegate: PipelineDelegate?) {
         print("AudioController init")
         self.pipelineDelegate = delegate
-        switch AVAudioSession.sharedInstance().category {
-        case AVAudioSession.Category.record:
-            break
-        case AVAudioSession.Category.playAndRecord:
-            break
-        default:
-            self.pipelineDelegate?.setupFailed("Incompatible AudioSession category is set.")
-        }
         NotificationCenter.default.addObserver(self,
                                                selector: #selector(audioRouteChanged),
                                                name: AVAudioSession.routeChangeNotification,
@@ -72,6 +64,7 @@ class AudioController {
     
     func startStreaming(context: SpeechContext) -> Void {
         print("AudioController startStreaming")
+        self.checkAudioSession()
         do {
             try self.start()
         } catch AudioError.audioSessionSetup(let message) {
@@ -95,6 +88,17 @@ class AudioController {
     }
     
     // MARK: Private functions
+    
+    private func checkAudioSession() {
+        switch AVAudioSession.sharedInstance().category {
+        case AVAudioSession.Category.record:
+            break
+        case AVAudioSession.Category.playAndRecord:
+            break
+        default:
+            self.pipelineDelegate?.setupFailed("Incompatible AudioSession category is set.")
+        }
+    }
     
     @discardableResult
     private func start() throws -> OSStatus {
