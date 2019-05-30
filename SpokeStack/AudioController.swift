@@ -17,39 +17,8 @@ class AudioController {
     
     weak var delegate: AudioControllerDelegate?
     weak var pipelineDelegate: PipelineDelegate?
-    
-    var sampleRate: Int = 16000
-    
-    var bufferDuration: TimeInterval = 10
-    
-    // MARK: Private (properties)
-    
-    fileprivate var remoteIOUnit: AudioComponentInstance?
-    
-    lazy private var audioComponentDescription: AudioComponentDescription = {
-        
-        var componentDescription: AudioComponentDescription = AudioComponentDescription()
-        
-        componentDescription.componentType = kAudioUnitType_Output
-        componentDescription.componentSubType = kAudioUnitSubType_RemoteIO
-        componentDescription.componentManufacturer = kAudioUnitManufacturer_Apple
-        componentDescription.componentFlags = 0
-        componentDescription.componentFlagsMask = 0
-        
-        return componentDescription
-    }()
-    
+
     // MARK: Initializers
-    
-    deinit {
-        print("AudioController deinit")
-        if let riou = remoteIOUnit {
-            AudioComponentInstanceDispose(riou)
-        }
-        if let ioUnit: AudioComponentInstance = self.remoteIOUnit {
-            AudioComponentInstanceDispose(ioUnit)
-        }
-    }
     
     init(delegate: PipelineDelegate?) {
         print("AudioController init")
@@ -65,26 +34,10 @@ class AudioController {
     func startStreaming(context: SpeechContext) -> Void {
         print("AudioController startStreaming")
         self.checkAudioSession()
-        do {
-            try self.start()
-        } catch AudioError.audioSessionSetup(let message) {
-            self.pipelineDelegate?.setupFailed(message)
-        } catch AudioError.general(let message) {
-            self.pipelineDelegate?.setupFailed(message)
-        } catch {
-            self.pipelineDelegate?.setupFailed("An unknown error occured starting the stream")
-        }
     }
     
     func stopStreaming(context: SpeechContext) -> Void {
         print("AudioController stopStreaming")
-        do {
-            try self.stop()
-        } catch AudioError.audioSessionSetup(let message) {
-            self.pipelineDelegate?.setupFailed(message)
-        } catch {
-            self.pipelineDelegate?.setupFailed("An unknown error occured ending the stream")
-        }
     }
     
     // MARK: Private functions
@@ -98,30 +51,6 @@ class AudioController {
         default:
             self.pipelineDelegate?.setupFailed("Incompatible AudioSession category is set.")
         }
-    }
-    
-    @discardableResult
-    private func start() throws -> OSStatus {
-        var status: OSStatus = noErr
-        if let riou = remoteIOUnit {
-            status = AudioOutputUnitStart(riou)
-        }
-        if status != noErr {
-            throw AudioError.audioSessionSetup("AudioOutputUnitStart returned " + status.description)
-        }
-        return status
-    }
-    
-    @discardableResult
-    private func stop() throws -> OSStatus {
-        var status: OSStatus = noErr
-        if let riou = remoteIOUnit {
-            status = AudioOutputUnitStop(riou)
-        }
-        if status != noErr {
-            throw AudioError.audioSessionSetup("AudioOutputUnitStop returned " + status.description)
-        }
-        return status
     }
     
     private func printAudioSessionDebug() {
