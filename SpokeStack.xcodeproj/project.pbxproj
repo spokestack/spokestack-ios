@@ -50,6 +50,10 @@
 		59A0D5C42204E799003709C3 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 59A0D5C32204E799003709C3 /* Assets.xcassets */; };
 		59A0D5C72204E8E4003709C3 /* WakewordConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59A0D5C52204E8E4003709C3 /* WakewordConfiguration.swift */; };
 		59A45E4F2243ED530089D023 /* PipelineDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59A45E4E2243ED530089D023 /* PipelineDelegate.swift */; };
+		59FB0C8222A5C47B00FB9662 /* WITCvad.h in Headers */ = {isa = PBXBuildFile; fileRef = 59062F0F22A5AA9E00613AD8 /* WITCvad.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		59FB0C8322A5C48400FB9662 /* WITCvad.m in Sources */ = {isa = PBXBuildFile; fileRef = 59062F0D22A5AA9E00613AD8 /* WITCvad.m */; };
+		59FB0C8422A5C48700FB9662 /* WITVad.h in Headers */ = {isa = PBXBuildFile; fileRef = 59062F0B22A5AA9D00613AD8 /* WITVad.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		59FB0C8522A5C48B00FB9662 /* WITVad.m in Sources */ = {isa = PBXBuildFile; fileRef = 59062F0C22A5AA9D00613AD8 /* WITVad.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -108,6 +112,11 @@
 		01D31F7F216BB0000055FD45 /* RecognizerConfiguration.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RecognizerConfiguration.swift; sourceTree = "<group>"; };
 		01D31F89216BB0220055FD45 /* Results.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Results.swift; sourceTree = "<group>"; };
 		01D31F8D216BB0370055FD45 /* Typealiases.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Typealiases.swift; sourceTree = "<group>"; };
+		59062F0922A5AA8400613AD8 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		59062F0B22A5AA9D00613AD8 /* WITVad.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WITVad.h; sourceTree = "<group>"; };
+		59062F0C22A5AA9D00613AD8 /* WITVad.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = WITVad.m; sourceTree = "<group>"; };
+		59062F0D22A5AA9E00613AD8 /* WITCvad.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = WITCvad.m; sourceTree = "<group>"; };
+		59062F0F22A5AA9E00613AD8 /* WITCvad.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WITCvad.h; sourceTree = "<group>"; };
 		59365947220889EE00C0365F /* AppleWakewordRecognizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppleWakewordRecognizer.swift; sourceTree = "<group>"; };
 		593659492209DDBA00C0365F /* WakewordRecognizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WakewordRecognizer.swift; sourceTree = "<group>"; };
 		5936594B2209EA1800C0365F /* WakewordRecognizerService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WakewordRecognizerService.swift; sourceTree = "<group>"; };
@@ -169,6 +178,7 @@
 				01D31F3C216BAF260055FD45 /* Products */,
 				01D31F3D216BAF260055FD45 /* SpokeStack */,
 				01D31F48216BAF260055FD45 /* SpokeStackTests */,
+				59062F0822A5AA8400613AD8 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -185,6 +195,7 @@
 		01D31F3D216BAF260055FD45 /* SpokeStack */ = {
 			isa = PBXGroup;
 			children = (
+				59062EFD22A5AA6C00613AD8 /* VAD */,
 				01D31F59216BAF710055FD45 /* Configurations */,
 				01D31F60216BAF9A0055FD45 /* Controllers */,
 				01D31F64216BAFAA0055FD45 /* Errors */,
@@ -307,6 +318,25 @@
 			name = Typealiases;
 			sourceTree = "<group>";
 		};
+		59062EFD22A5AA6C00613AD8 /* VAD */ = {
+			isa = PBXGroup;
+			children = (
+				59062F0F22A5AA9E00613AD8 /* WITCvad.h */,
+				59062F0D22A5AA9E00613AD8 /* WITCvad.m */,
+				59062F0B22A5AA9D00613AD8 /* WITVad.h */,
+				59062F0C22A5AA9D00613AD8 /* WITVad.m */,
+			);
+			path = VAD;
+			sourceTree = "<group>";
+		};
+		59062F0822A5AA8400613AD8 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				59062F0922A5AA8400613AD8 /* Foundation.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -315,6 +345,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				01D31F4C216BAF260055FD45 /* SpokeStack.h in Headers */,
+				59FB0C8422A5C48700FB9662 /* WITVad.h in Headers */,
+				59FB0C8222A5C47B00FB9662 /* WITCvad.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -484,7 +516,9 @@
 				5936594E220A1A7A00C0365F /* WakewordService.swift in Sources */,
 				01D31F8A216BB0220055FD45 /* Results.swift in Sources */,
 				5936594A2209DDBA00C0365F /* WakewordRecognizer.swift in Sources */,
+				59FB0C8522A5C48B00FB9662 /* WITVad.m in Sources */,
 				01D31F79216BAFEF0055FD45 /* AudioControllerDelegate.swift in Sources */,
+				59FB0C8322A5C48400FB9662 /* WITCvad.m in Sources */,
 				01D31F5E216BAF950055FD45 /* StandardRecognizerConfiguration.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
