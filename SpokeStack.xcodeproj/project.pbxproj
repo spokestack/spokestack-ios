@@ -54,6 +54,12 @@
 		59FB0C8322A5C48400FB9662 /* WITCvad.m in Sources */ = {isa = PBXBuildFile; fileRef = 59062F0D22A5AA9E00613AD8 /* WITCvad.m */; };
 		59FB0C8422A5C48700FB9662 /* WITVad.h in Headers */ = {isa = PBXBuildFile; fileRef = 59062F0B22A5AA9D00613AD8 /* WITVad.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		59FB0C8522A5C48B00FB9662 /* WITVad.m in Sources */ = {isa = PBXBuildFile; fileRef = 59062F0C22A5AA9D00613AD8 /* WITVad.m */; };
+		59FB0C8822A98E1900FB9662 /* CoreMLWakewordRecognizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59FB0C8722A98E1900FB9662 /* CoreMLWakewordRecognizer.swift */; };
+		59FB0C8B22AEE4F100FB9662 /* Data+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59FB0C8A22AEE4F100FB9662 /* Data+Extensions.swift */; };
+		59FB0C8D22B0640700FB9662 /* RingBuffer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59FB0C8C22B0640700FB9662 /* RingBuffer.swift */; };
+		59FB0C8F22B0682900FB9662 /* FFT.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59FB0C8E22B0682900FB9662 /* FFT.swift */; };
+		59FB0C9322B17A9A00FB9662 /* WakeWordFilter.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = 59FB0C9222B17A9A00FB9662 /* WakeWordFilter.mlmodel */; };
+		59FB0C9522B17AA300FB9662 /* WakeWordDetect.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = 59FB0C9422B17AA300FB9662 /* WakeWordDetect.mlmodel */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -127,6 +133,12 @@
 		59A0D5C32204E799003709C3 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		59A0D5C52204E8E4003709C3 /* WakewordConfiguration.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WakewordConfiguration.swift; sourceTree = "<group>"; };
 		59A45E4E2243ED530089D023 /* PipelineDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PipelineDelegate.swift; sourceTree = "<group>"; };
+		59FB0C8722A98E1900FB9662 /* CoreMLWakewordRecognizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreMLWakewordRecognizer.swift; sourceTree = "<group>"; };
+		59FB0C8A22AEE4F100FB9662 /* Data+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Data+Extensions.swift"; sourceTree = "<group>"; };
+		59FB0C8C22B0640700FB9662 /* RingBuffer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RingBuffer.swift; sourceTree = "<group>"; };
+		59FB0C8E22B0682900FB9662 /* FFT.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFT.swift; sourceTree = "<group>"; };
+		59FB0C9222B17A9A00FB9662 /* WakeWordFilter.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = WakeWordFilter.mlmodel; sourceTree = "<group>"; };
+		59FB0C9422B17AA300FB9662 /* WakeWordDetect.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = WakeWordDetect.mlmodel; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -195,6 +207,8 @@
 		01D31F3D216BAF260055FD45 /* SpokeStack */ = {
 			isa = PBXGroup;
 			children = (
+				59FB0C9122B17A3600FB9662 /* CoreML */,
+				59FB0C8922AEE4DA00FB9662 /* Extensions */,
 				59062EFD22A5AA6C00613AD8 /* VAD */,
 				01D31F59216BAF710055FD45 /* Configurations */,
 				01D31F60216BAF9A0055FD45 /* Controllers */,
@@ -263,7 +277,9 @@
 		01D31F6C216BAFCD0055FD45 /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				59FB0C8E22B0682900FB9662 /* FFT.swift */,
 				01D31F6E216BAFD90055FD45 /* RecognizerService.swift */,
+				59FB0C8C22B0640700FB9662 /* RingBuffer.swift */,
 				01D31F6D216BAFD90055FD45 /* SpeechContext.swift */,
 				5936594D220A1A7A00C0365F /* WakewordService.swift */,
 			);
@@ -275,11 +291,11 @@
 			children = (
 				01D31F7D216BAFF40055FD45 /* Configurations */,
 				01D31F75216BAFEF0055FD45 /* AudioControllerDelegate.swift */,
+				59A45E4E2243ED530089D023 /* PipelineDelegate.swift */,
 				01D31F74216BAFEF0055FD45 /* SpeechRecognizer.swift */,
 				01D31F76216BAFEF0055FD45 /* SpeechRecognizerService.swift */,
 				5936594B2209EA1800C0365F /* WakewordRecognizerService.swift */,
 				593659492209DDBA00C0365F /* WakewordRecognizer.swift */,
-				59A45E4E2243ED530089D023 /* PipelineDelegate.swift */,
 			);
 			name = Protocols;
 			sourceTree = "<group>";
@@ -287,8 +303,8 @@
 		01D31F7D216BAFF40055FD45 /* Configurations */ = {
 			isa = PBXGroup;
 			children = (
-				59A0D5C52204E8E4003709C3 /* WakewordConfiguration.swift */,
 				01D31F7F216BB0000055FD45 /* RecognizerConfiguration.swift */,
+				59A0D5C52204E8E4003709C3 /* WakewordConfiguration.swift */,
 			);
 			name = Configurations;
 			sourceTree = "<group>";
@@ -298,6 +314,7 @@
 			children = (
 				5967108D21F7AE6B00CBFC88 /* AppleSpeechRecognizer.swift */,
 				59365947220889EE00C0365F /* AppleWakewordRecognizer.swift */,
+				59FB0C8722A98E1900FB9662 /* CoreMLWakewordRecognizer.swift */,
 			);
 			name = Recognizers;
 			sourceTree = "<group>";
@@ -335,6 +352,23 @@
 				59062F0922A5AA8400613AD8 /* Foundation.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		59FB0C8922AEE4DA00FB9662 /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				59FB0C8A22AEE4F100FB9662 /* Data+Extensions.swift */,
+			);
+			path = Extensions;
+			sourceTree = "<group>";
+		};
+		59FB0C9122B17A3600FB9662 /* CoreML */ = {
+			isa = PBXGroup;
+			children = (
+				59FB0C9422B17AA300FB9662 /* WakeWordDetect.mlmodel */,
+				59FB0C9222B17A9A00FB9662 /* WakeWordFilter.mlmodel */,
+			);
+			name = CoreML;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -500,9 +534,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				59365948220889EE00C0365F /* AppleWakewordRecognizer.swift in Sources */,
+				59FB0C8822A98E1900FB9662 /* CoreMLWakewordRecognizer.swift in Sources */,
 				01D31F6F216BAFD90055FD45 /* SpeechContext.swift in Sources */,
 				59A0D5C72204E8E4003709C3 /* WakewordConfiguration.swift in Sources */,
 				01D31F77216BAFEF0055FD45 /* SpeechRecognizer.swift in Sources */,
+				59FB0C8D22B0640700FB9662 /* RingBuffer.swift in Sources */,
 				01D31F8E216BB0370055FD45 /* Typealiases.swift in Sources */,
 				01D31F66216BAFB50055FD45 /* Error.swift in Sources */,
 				01D31F6A216BAFC60055FD45 /* SpeechPipeline.swift in Sources */,
@@ -510,15 +546,19 @@
 				01D31F71216BAFD90055FD45 /* RecognizerService.swift in Sources */,
 				5967108E21F7AE6B00CBFC88 /* AppleSpeechRecognizer.swift in Sources */,
 				5936594C2209EA1800C0365F /* WakewordRecognizerService.swift in Sources */,
+				59FB0C8B22AEE4F100FB9662 /* Data+Extensions.swift in Sources */,
+				59FB0C9322B17A9A00FB9662 /* WakeWordFilter.mlmodel in Sources */,
 				59A45E4F2243ED530089D023 /* PipelineDelegate.swift in Sources */,
 				01D31F82216BB0000055FD45 /* RecognizerConfiguration.swift in Sources */,
 				01D31F62216BAFA40055FD45 /* AudioController.swift in Sources */,
 				5936594E220A1A7A00C0365F /* WakewordService.swift in Sources */,
 				01D31F8A216BB0220055FD45 /* Results.swift in Sources */,
 				5936594A2209DDBA00C0365F /* WakewordRecognizer.swift in Sources */,
+				59FB0C9522B17AA300FB9662 /* WakeWordDetect.mlmodel in Sources */,
 				59FB0C8522A5C48B00FB9662 /* WITVad.m in Sources */,
 				01D31F79216BAFEF0055FD45 /* AudioControllerDelegate.swift in Sources */,
 				59FB0C8322A5C48400FB9662 /* WITCvad.m in Sources */,
+				59FB0C8F22B0682900FB9662 /* FFT.swift in Sources */,
 				01D31F5E216BAF950055FD45 /* StandardRecognizerConfiguration.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

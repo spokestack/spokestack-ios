@@ -41,15 +41,15 @@ public class AppleWakewordRecognizer: NSObject, WakewordRecognizerService {
     
     public override init() {
         super.init()
-        self.vad.delegate = self
-        AudioController.shared.delegate = self
         print("AppleWakewordRecognizer init")
+        self.vad.delegate = self
     }
     
     // MARK: SpeechRecognizerService implementation
     
     func startStreaming(context: SpeechContext) {
         print("AppleWakewordRecognizer startStreaming")
+        AudioController.shared.delegate = self
         phrases = configuration!.wakePhrases.components(separatedBy: ",")
         self.context = context
         self.prepareAudioEngine()
@@ -58,6 +58,7 @@ public class AppleWakewordRecognizer: NSObject, WakewordRecognizerService {
     
     func stopStreaming(context: SpeechContext) {
         print("AppleWakewordRecognizer stopStreaming")
+        AudioController.shared.delegate = nil
         self.context = context
         self.stopRecognition()
         self.dispatchWorker?.cancel()
