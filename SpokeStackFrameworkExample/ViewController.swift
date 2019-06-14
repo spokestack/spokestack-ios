@@ -16,6 +16,8 @@ class ViewController: UIViewController {
     @IBOutlet weak var appleButton: UIButton!
     
     @IBOutlet weak var wakeWordButton: UIButton!
+
+    @IBOutlet weak var coreMLWakewordButton: UIButton!
     
     // MARK: View Life Cycle
     
@@ -25,7 +27,7 @@ class ViewController: UIViewController {
         self.wakeWordButton.isEnabled = true
     }
 
-    @IBAction func appleAxction(_ sender: Any) {
+    @IBAction func appleAction(_ sender: Any) {
     
         let appleViewController: AppleViewController = AppleViewController()
         let navigationViewController: UINavigationController = UINavigationController(rootViewController: appleViewController)
@@ -35,8 +37,16 @@ class ViewController: UIViewController {
     
     @IBAction func wakeWordAction(_ sender: Any) {
         
-        let wakeWordViewController: WakeWordViewController = WakeWordViewController()
-        let navigationViewController: UINavigationController = UINavigationController(rootViewController: wakeWordViewController)
+        let controller: WakeWordViewController = WakeWordViewController()
+        let navigationViewController: UINavigationController = UINavigationController(rootViewController: controller)
+        
+        self.present(navigationViewController, animated: true, completion: nil)
+    }
+
+    @IBAction func coreMLWakewordAction(_ sender: Any) {
+        
+        let controller: CoreMLViewController = CoreMLViewController()
+        let navigationViewController: UINavigationController = UINavigationController(rootViewController: controller)
         
         self.present(navigationViewController, animated: true, completion: nil)
     }

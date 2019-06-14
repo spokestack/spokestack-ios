@@ -60,6 +60,7 @@
 		59FB0C8F22B0682900FB9662 /* FFT.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59FB0C8E22B0682900FB9662 /* FFT.swift */; };
 		59FB0C9322B17A9A00FB9662 /* WakeWordFilter.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = 59FB0C9222B17A9A00FB9662 /* WakeWordFilter.mlmodel */; };
 		59FB0C9522B17AA300FB9662 /* WakeWordDetect.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = 59FB0C9422B17AA300FB9662 /* WakeWordDetect.mlmodel */; };
+		59FB0C9722B2DBC100FB9662 /* CoreMLViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59FB0C9622B2DBC000FB9662 /* CoreMLViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -139,6 +140,7 @@
 		59FB0C8E22B0682900FB9662 /* FFT.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFT.swift; sourceTree = "<group>"; };
 		59FB0C9222B17A9A00FB9662 /* WakeWordFilter.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = WakeWordFilter.mlmodel; sourceTree = "<group>"; };
 		59FB0C9422B17AA300FB9662 /* WakeWordDetect.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = WakeWordDetect.mlmodel; sourceTree = "<group>"; };
+		59FB0C9622B2DBC000FB9662 /* CoreMLViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreMLViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -173,6 +175,7 @@
 			children = (
 				59A0D5C32204E799003709C3 /* Assets.xcassets */,
 				59A0D5BD2204E786003709C3 /* AppleViewController.swift */,
+				59FB0C9622B2DBC000FB9662 /* CoreMLViewController.swift */,
 				59A0D5BF2204E786003709C3 /* WakeWordViewController.swift */,
 				011C191F216BCA3200DB36FD /* AppDelegate.swift */,
 				011C1921216BCA3200DB36FD /* ViewController.swift */,
@@ -526,6 +529,7 @@
 				011C1920216BCA3200DB36FD /* AppDelegate.swift in Sources */,
 				59A0D5C02204E786003709C3 /* AppleViewController.swift in Sources */,
 				59A0D5C22204E786003709C3 /* WakeWordViewController.swift in Sources */,
+				59FB0C9722B2DBC100FB9662 /* CoreMLViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

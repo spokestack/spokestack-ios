@@ -23,7 +23,7 @@
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <state key="normal" title="Apple ASR"/>
                                 <connections>
-                                    <action selector="appleAxction:" destination="BYZ-38-t0r" eventType="touchUpInside" id="LVX-mL-WpS"/>
+                                    <action selector="appleAction:" destination="BYZ-38-t0r" eventType="touchUpInside" id="LVX-mL-WpS"/>
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ewK-ye-p0o">
@@ -34,12 +34,21 @@
                                     <action selector="wakeWordAction:" destination="BYZ-38-t0r" eventType="touchUpInside" id="PBl-wH-ng0"/>
                                 </connections>
                             </button>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="YhZ-w0-Jj9">
+                                <rect key="frame" x="123" y="223" width="130" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="CoreML Wakeword"/>
+                                <connections>
+                                    <action selector="coreMLWakewordAction:" destination="BYZ-38-t0r" eventType="touchUpInside" id="KMy-Wx-uxT"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                     </view>
                     <connections>
                         <outlet property="appleButton" destination="N81-j7-Wc3" id="Fa8-H3-fS1"/>
+                        <outlet property="coreMLWakewordButton" destination="YhZ-w0-Jj9" id="Zid-CP-LS8"/>
                         <outlet property="wakeWordButton" destination="ewK-ye-p0o" id="7Im-BS-1yf"/>
                     </connections>
                 </viewController>
