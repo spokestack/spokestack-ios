@@ -95,6 +95,13 @@ class CoreMLViewController: UIViewController {
     @objc func dismissViewController(_ sender: Any?) -> Void {
         self.dismiss(animated: true, completion: nil)
     }
+    
+    func toggleStartStop() {
+        DispatchQueue.main.async {
+            self.stopRecordingButton.isEnabled.toggle()
+            self.startRecordingButton.isEnabled.toggle()
+        }
+    }
 }
 
 extension CoreMLViewController: SpeechRecognizer, WakewordRecognizer, PipelineDelegate {
@@ -116,14 +123,14 @@ extension CoreMLViewController: SpeechRecognizer, WakewordRecognizer, PipelineDe
     
     func activate() {
         print("activate")
-        self.stopRecordingButton.isEnabled.toggle()
-        self.startRecordingButton.isEnabled.toggle()
+        self.toggleStartStop()
+        self.pipeline.activate()
     }
     
     func deactivate() {
         print("deactivate")
-        self.stopRecordingButton.isEnabled.toggle()
-        self.startRecordingButton.isEnabled.toggle()
+        self.toggleStartStop()
+        self.pipeline.deactivate()
     }
     
     func didError(_ error: Error) {
@@ -136,7 +143,6 @@ extension CoreMLViewController: SpeechRecognizer, WakewordRecognizer, PipelineDe
     
     func didStart() {
         print("didStart")
-        self.stopRecordingButton.isEnabled.toggle()
-        self.startRecordingButton.isEnabled.toggle()
+        self.toggleStartStop()
     }
 }
