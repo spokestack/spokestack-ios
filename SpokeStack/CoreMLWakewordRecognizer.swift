@@ -38,8 +38,6 @@ public class CoreMLWakewordRecognizer: NSObject, WakewordRecognizerService {
     private var vad: WITVad = WITVad()
     private var context: SpeechContext = SpeechContext()
     
-    private var isSpeech: Bool = false
-
     lazy private var wwfilter: WakeWordFilter = {
         return WakeWordFilter()
     }()
@@ -84,6 +82,13 @@ public class CoreMLWakewordRecognizer: NSObject, WakewordRecognizerService {
     private var minActive: Int = 0
     private var maxActive: Int = 0
     private var activeLength: Int = 0
+    
+    /// Debugging collectors
+    
+    private var sampleCollector: Array<Float> = []
+    private var fftFrameCollector: String = ""
+    private var filterCollector: Array<Float> = []
+    private var detectCollector: String = ""
     
     // MARK: NSObject methods
 
@@ -143,7 +148,7 @@ public class CoreMLWakewordRecognizer: NSObject, WakewordRecognizerService {
                 for (j, keyword) in wakePhraseArray.enumerated() {
                     // verify that each keyword in the phrase is a known keyword
                     guard let k: Int = wakeWords.index(of: keyword) else {
-                        assertionFailure("CoreMLWakewordRecognizer parseConfiguration wakeWords did not contain wakePhraseArray value \(keyword)")
+                        assertionFailure("CoreMLWakewordRecognizer parseConfiguration wakeWords did not contain \(keyword)")
                         return
                     }
                     // TODO: verify this check is not necessary because the wakePhraseArray.count == phrases.count
@@ -239,7 +244,6 @@ public class CoreMLWakewordRecognizer: NSObject, WakewordRecognizerService {
     /// MARK: Audio processing
     
     private func process(_ data: Data) -> Void {
-        let vadFall: Bool = self.isSpeech && !self.context.isSpeech
         if !self.context.isActive {
             /// Run the current frame through the detector pipeline.
             /// Activate the pipeline if a keyword phrase was detected.
@@ -248,14 +252,14 @@ public class CoreMLWakewordRecognizer: NSObject, WakewordRecognizerService {
             /// Continue this wakeword (or external) activation
             /// for at least the minimum, until a vad deactivation or timeout
             self.activeLength += 1
-            if (self.activeLength > self.minActive) && (vadFall || (self.activeLength > self.maxActive)) {
+            if (self.activeLength > self.minActive) && (!self.context.isSpeech || (self.activeLength > self.maxActive)) {
                 self.deactivatePipeline()
             }
         }
         
         /// Always clear detector state on a vad deactivation
         /// this prevents <keyword1><pause><keyword2> detection
-        if vadFall {
+        if !self.context.isSpeech {
             self.reset()
         }
     }
@@ -283,6 +287,8 @@ public class CoreMLWakewordRecognizer: NSObject, WakewordRecognizerService {
             let currentSample: Float = sample
             sample -= self.preEmphasis * self.prevSample
             self.prevSample = currentSample
+            
+            sampleCollector.append(sample)
             
             /// Process the sample
             /// - write it to the sample sliding window
@@ -320,6 +326,8 @@ public class CoreMLWakewordRecognizer: NSObject, WakewordRecognizerService {
         
         /// Compute the stft
         self.fft.forward(&self.fftFrame)
+        
+        self.fftFrameCollector += "\(self.fftFrame)\n"
         
         /// Decode the FFT outputs into the filter model's input
         self.filter()
@@ -399,7 +407,8 @@ extension CoreMLWakewordRecognizer {
         }
         for i in 0..<frameCount {
             let floatValue: Float = self.fftFrame[i]
-            multiArray[i] = NSNumber(value: floatValue) // TODO: fftFrame is float. multiArray is float. why cast to NSNumber?
+            let v: NSNumber = NSNumber(value: floatValue) // TODO: fftFrame is float. multiArray is float. why cast to NSNumber?
+            multiArray[i] = v
         }
         
         do {
@@ -412,8 +421,8 @@ extension CoreMLWakewordRecognizer {
             /// Copy the current mel frame into the mel window
             self.frameWindow.rewind().seek(self.melWidth)
             for i in 0..<predictions.melspec_outputs__0.shape[2].intValue {
-                print("CoreMLWakewordRecognizer filter predictions: \(predictions.melspec_outputs__0[i].floatValue)")
-                try? self.frameWindow.write(    .melspec_outputs__0[i].floatValue)
+                try? self.frameWindow.write(predictions.melspec_outputs__0[i].floatValue)
+                filterCollector.append(predictions.melspec_outputs__0[i].floatValue)
             }
             
             /// Detect
@@ -452,7 +461,6 @@ extension CoreMLWakewordRecognizer {
             self.smoothWindow.rewind().seek(self.words.count)
             for index:Int in 0..<predictions.detect_outputs__0.count {
                 let predictionFloat: Float = predictions.detect_outputs__0[index].floatValue
-                print("CoreMLWakewordRecognizer detect predictions: \(predictionFloat)")
                 do {
                     try self.smoothWindow.write(predictionFloat)
                 } catch RingBufferStateError.illegalState(let message) {
@@ -461,6 +469,8 @@ extension CoreMLWakewordRecognizer {
                     fatalError("CoreMLWakewordRecognizer detect couldn't write to smooth window")
                 }
             }
+            
+            detectCollector += "\(predictions.detect_outputs__0.debugDescription)\n"
 
             /// send the prediction posteriors through a smoothing window
             self.smooth()
@@ -506,8 +516,6 @@ extension CoreMLWakewordRecognizer {
                 fatalError("CoreMLWakewordRecognizer smooth error \(#line)")
             }
         }
-        
-        print("CoreMLWakewordRecognizer smooth phrase window \(self.phraseWindow.capacity)")
         
         /// Activate the pipeline if the phrase window argmaxes match
         self.phrase()
@@ -562,9 +570,16 @@ extension CoreMLWakewordRecognizer {
 
 extension CoreMLWakewordRecognizer: AudioControllerDelegate {
     func processSampleData(_ data: Data) -> Void {
+        /// multiplex the audio frame data to both the vad and, if activated, the model pipelines
         audioProcessingQueue.async {[weak self] in
             guard let strongSelf = self else { return }
             strongSelf.vad.vadSpeechFrame(data)
+        }
+        if self.context.isSpeech {
+            audioProcessingQueue.async {[weak self] in
+                guard let strongSelf = self else { return }
+                strongSelf.process(data)
+            }
         }
     }
 }
@@ -572,13 +587,48 @@ extension CoreMLWakewordRecognizer: AudioControllerDelegate {
 extension CoreMLWakewordRecognizer: WITVadDelegate {
     
     public func activate(_ audioData: Data) {
+        /// activate the speech context
         print("CoreMLWakewordRecognizer activate")
         self.context.isSpeech = true
+        /// process the first frames of speech data from the vad
         self.process(audioData)
     }
     
     public func deactivate() {
         print("CoreMLWakewordRecognizer deactivate")
         self.context.isSpeech = false
+        //self.spit(data: sampleCollector.withUnsafeBufferPointer {Data(buffer: $0)}, fileName: "samples.txt")
+        //self.spit(data: fftFrameCollector.data(using: .utf8)!, fileName: "fftFrame.txt")
+        //self.spit(data: filterCollector.withUnsafeBufferPointer {Data(buffer: $0)}, fileName: "filterPredictions.txt")
+        //self.spit(data: detectCollector.data(using: .utf8)!, fileName: "detectPredictions.txt")
+    }
+    
+    private func spit(data: Data, fileName: String) {
+        let filemgr = FileManager.default
+        if let path = filemgr.urls(for: FileManager.SearchPathDirectory.documentDirectory, in: FileManager.SearchPathDomainMask.userDomainMask).last?.appendingPathComponent(fileName) {
+            if !filemgr.fileExists(atPath: path.path) {
+                filemgr.createFile(atPath: path.path, contents: data, attributes: nil)
+                print("CoreMLWakewordRecognizer spit created \(data.count) fileURL: \(path.path)")
+                do {
+                    let handle = try FileHandle(forWritingTo: path)
+                    handle.write(data)
+                    handle.synchronizeFile()
+                } catch let error {
+                    print("CoreMLWakewordRecognizer spit failed to open a handle to \(path.path) because \(error)")
+                }
+            } else {
+                do {
+                    let handle = try FileHandle(forWritingTo: path)
+                    handle.seekToEndOfFile()
+                    handle.write(data)
+                    handle.synchronizeFile()
+                    print("CoreMLWakewordRecognizer spit appended \(data.count) to: \(path.path)")
+                } catch let error {
+                    print("CoreMLWakewordRecognizer spit failed to open a handle to \(path.path) because \(error)")
+                }
+            }
+        } else {
+            print("CoreMLWakewordRecognizer spit failed to get a URL for \(fileName)")
+        }
     }
 }
