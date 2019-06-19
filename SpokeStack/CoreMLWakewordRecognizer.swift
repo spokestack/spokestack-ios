@@ -351,15 +351,16 @@ public class CoreMLWakewordRecognizer: NSObject, WakewordRecognizerService {
         if !self.context.isActive {
             self.context.isActive = true
             self.activeLength = 1
-            //  self.stopStreaming(context: self.speechContext) // TODO: necessary?
-            self.delegate?.activate()
+            self.deactivate()
+            self.stopStreaming(context: self.context)
+                self.delegate?.activate()
         }
     }
     
     private func deactivatePipeline() -> Void {
         if self.context.isActive {
             self.context.isActive = false
-            // self.stopStreaming(context: self.speechContext) // TODO: necessary?
+            self.stopStreaming(context: self.context)
             self.activeLength = 0
             self.delegate?.deactivate()
         }

@@ -43,11 +43,9 @@ class CoreMLViewController: UIViewController {
     }()
     
     lazy private var pipeline: SpeechPipeline = {
-        
-        let appleConfig: RecognizerConfiguration = RecognizerConfiguration()
-        
+                
         return try! SpeechPipeline(.appleSpeech,
-                                   speechConfiguration: appleConfig,
+                                   speechConfiguration: RecognizerConfiguration(),
                                    speechDelegate: self,
                                    wakewordService: .coremlWakeword,
                                    wakewordConfiguration: WakewordConfiguration(),
