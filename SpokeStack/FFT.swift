@@ -17,8 +17,10 @@ final class FFT {
     private var halfSize: Int
     private var log2Size: Int
     private var fftSetup: FFTSetup
-    private var complexBuffer: DSPSplitComplex!
-    
+    private var real_part: Array<Float>
+    private var imaginary_part: Array<Float>
+    private var complexBuffer: DSPSplitComplex
+
     // MARK: Initializers
     
     deinit {
@@ -39,9 +41,9 @@ final class FFT {
         self.fftSetup = vDSP_create_fftsetup(UInt(log2Size), FFTRadix(FFT_RADIX2))!
         
         /// Init the complexBuffer
-        var real: Array<Float> = [Float](repeating: 0.0, count: self.halfSize)
-        var imaginary: Array<Float> = [Float](repeating: 0.0, count: self.halfSize)
-        self.complexBuffer = DSPSplitComplex(realp: &real, imagp: &imaginary)
+        self.real_part = [Float](repeating: 0.0, count: self.halfSize)
+        self.imaginary_part = [Float](repeating: 0.0, count: self.halfSize)
+        self.complexBuffer = DSPSplitComplex(realp: &real_part, imagp: &imaginary_part)
     }
     
     // MARK: Public (methods)
@@ -54,10 +56,10 @@ final class FFT {
         }
         
         /// Perform a forward FFT
-        vDSP_fft_zrip(self.fftSetup, &(self.complexBuffer!), 1, UInt(self.log2Size), Int32(FFT_FORWARD))
+        vDSP_fft_zrip(self.fftSetup, &(self.complexBuffer), 1, UInt(self.log2Size), Int32(FFT_FORWARD))
         
         /// Store and square (for better visualization & conversion to db) the magnitudes
-        vDSP_zvmags(&(self.complexBuffer!), 1, &buffer, 1, UInt(self.halfSize))
+        vDSP_zvmags(&(self.complexBuffer), 1, &buffer, 1, UInt(self.halfSize))
         buffer[0] = self.complexBuffer.realp[0] * self.complexBuffer.realp[0]
         buffer[self.halfSize] = self.complexBuffer.imagp[0] * self.complexBuffer.imagp[0]
         for i in 0..<self.halfSize + 1 {
