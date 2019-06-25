@@ -10,6 +10,7 @@ import Foundation
 
 @objc public enum WakewordService: Int {
     case appleWakeword
+    case coremlWakeword
 }
 
 extension WakewordService {
@@ -19,6 +20,8 @@ extension WakewordService {
         switch self {
         case .appleWakeword:
             return AppleWakewordRecognizer.sharedInstance
+        case .coremlWakeword:
+            return CoreMLWakewordRecognizer.sharedInstance
         }
     }
 }
