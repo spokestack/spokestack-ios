@@ -44,6 +44,32 @@
 		5936594A2209DDBA00C0365F /* WakewordRecognizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 593659492209DDBA00C0365F /* WakewordRecognizer.swift */; };
 		5936594C2209EA1800C0365F /* WakewordRecognizerService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5936594B2209EA1800C0365F /* WakewordRecognizerService.swift */; };
 		5936594E220A1A7A00C0365F /* WakewordService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5936594D220A1A7A00C0365F /* WakewordService.swift */; };
+		593B1D5722C50A0E004D938E /* complex_fft.c in Sources */ = {isa = PBXBuildFile; fileRef = 593B1D5322C50A0E004D938E /* complex_fft.c */; };
+		593B1D5822C50A0E004D938E /* complex_bit_reverse.c in Sources */ = {isa = PBXBuildFile; fileRef = 593B1D5422C50A0E004D938E /* complex_bit_reverse.c */; };
+		593B1D5A22C50A0E004D938E /* copy_set_operations.c in Sources */ = {isa = PBXBuildFile; fileRef = 593B1D5622C50A0E004D938E /* copy_set_operations.c */; };
+		593B1D6922C50A95004D938E /* real_fft.c in Sources */ = {isa = PBXBuildFile; fileRef = 593B1D5B22C50A93004D938E /* real_fft.c */; };
+		593B1D6A22C50A95004D938E /* vector_scaling_operations.c in Sources */ = {isa = PBXBuildFile; fileRef = 593B1D5C22C50A93004D938E /* vector_scaling_operations.c */; };
+		593B1D6B22C50A95004D938E /* spl_sqrt.c in Sources */ = {isa = PBXBuildFile; fileRef = 593B1D5D22C50A93004D938E /* spl_sqrt.c */; };
+		593B1D6C22C50A95004D938E /* resample_by_2.c in Sources */ = {isa = PBXBuildFile; fileRef = 593B1D5E22C50A93004D938E /* resample_by_2.c */; };
+		593B1D6D22C50A95004D938E /* resample_fractional.c in Sources */ = {isa = PBXBuildFile; fileRef = 593B1D5F22C50A94004D938E /* resample_fractional.c */; };
+		593B1D6E22C50A95004D938E /* resample_by_2_internal.c in Sources */ = {isa = PBXBuildFile; fileRef = 593B1D6022C50A94004D938E /* resample_by_2_internal.c */; };
+		593B1D6F22C50A95004D938E /* dot_product_with_scale.c in Sources */ = {isa = PBXBuildFile; fileRef = 593B1D6122C50A94004D938E /* dot_product_with_scale.c */; };
+		593B1D7022C50A95004D938E /* get_scaling_square.c in Sources */ = {isa = PBXBuildFile; fileRef = 593B1D6222C50A94004D938E /* get_scaling_square.c */; };
+		593B1D7122C50A95004D938E /* spl_init.c in Sources */ = {isa = PBXBuildFile; fileRef = 593B1D6322C50A94004D938E /* spl_init.c */; };
+		593B1D7222C50A95004D938E /* division_operations.c in Sources */ = {isa = PBXBuildFile; fileRef = 593B1D6422C50A94004D938E /* division_operations.c */; };
+		593B1D7322C50A95004D938E /* resample_48khz.c in Sources */ = {isa = PBXBuildFile; fileRef = 593B1D6522C50A94004D938E /* resample_48khz.c */; };
+		593B1D7422C50A95004D938E /* downsample_fast.c in Sources */ = {isa = PBXBuildFile; fileRef = 593B1D6622C50A95004D938E /* downsample_fast.c */; };
+		593B1D7522C50A95004D938E /* energy.c in Sources */ = {isa = PBXBuildFile; fileRef = 593B1D6722C50A95004D938E /* energy.c */; };
+		593B1D7622C50A95004D938E /* min_max_operations.c in Sources */ = {isa = PBXBuildFile; fileRef = 593B1D6822C50A95004D938E /* min_max_operations.c */; };
+		593B1D7922C50AB4004D938E /* analog_agc.c in Sources */ = {isa = PBXBuildFile; fileRef = 593B1D7722C50AB4004D938E /* analog_agc.c */; };
+		593B1D7A22C50AB4004D938E /* digital_agc.c in Sources */ = {isa = PBXBuildFile; fileRef = 593B1D7822C50AB4004D938E /* digital_agc.c */; };
+		593B1D8122C50AF3004D938E /* vad_filterbank.c in Sources */ = {isa = PBXBuildFile; fileRef = 593B1D7B22C50AF2004D938E /* vad_filterbank.c */; };
+		593B1D8222C50AF3004D938E /* vad_core.h in Headers */ = {isa = PBXBuildFile; fileRef = 593B1D7C22C50AF2004D938E /* vad_core.h */; };
+		593B1D8322C50AF3004D938E /* vad_gmm.c in Sources */ = {isa = PBXBuildFile; fileRef = 593B1D7D22C50AF2004D938E /* vad_gmm.c */; };
+		593B1D8422C50AF3004D938E /* vad_sp.c in Sources */ = {isa = PBXBuildFile; fileRef = 593B1D7E22C50AF2004D938E /* vad_sp.c */; };
+		593B1D8522C50AF3004D938E /* vad_core.c in Sources */ = {isa = PBXBuildFile; fileRef = 593B1D7F22C50AF2004D938E /* vad_core.c */; };
+		593B1D8622C50AF3004D938E /* webrtc_vad.c in Sources */ = {isa = PBXBuildFile; fileRef = 593B1D8022C50AF3004D938E /* webrtc_vad.c */; };
+		593B1D8822C5401D004D938E /* cross_correlation.c in Sources */ = {isa = PBXBuildFile; fileRef = 593B1D8722C5401C004D938E /* cross_correlation.c */; };
 		5967108E21F7AE6B00CBFC88 /* AppleSpeechRecognizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5967108D21F7AE6B00CBFC88 /* AppleSpeechRecognizer.swift */; };
 		59A0D5C02204E786003709C3 /* AppleViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59A0D5BD2204E786003709C3 /* AppleViewController.swift */; };
 		59A0D5C22204E786003709C3 /* WakeWordViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59A0D5BF2204E786003709C3 /* WakeWordViewController.swift */; };
@@ -128,6 +154,32 @@
 		593659492209DDBA00C0365F /* WakewordRecognizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WakewordRecognizer.swift; sourceTree = "<group>"; };
 		5936594B2209EA1800C0365F /* WakewordRecognizerService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WakewordRecognizerService.swift; sourceTree = "<group>"; };
 		5936594D220A1A7A00C0365F /* WakewordService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WakewordService.swift; sourceTree = "<group>"; };
+		593B1D5322C50A0E004D938E /* complex_fft.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = complex_fft.c; path = filter_audio/other/complex_fft.c; sourceTree = "<group>"; };
+		593B1D5422C50A0E004D938E /* complex_bit_reverse.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = complex_bit_reverse.c; path = filter_audio/other/complex_bit_reverse.c; sourceTree = "<group>"; };
+		593B1D5622C50A0E004D938E /* copy_set_operations.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = copy_set_operations.c; path = filter_audio/other/copy_set_operations.c; sourceTree = "<group>"; };
+		593B1D5B22C50A93004D938E /* real_fft.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = real_fft.c; path = filter_audio/other/real_fft.c; sourceTree = "<group>"; };
+		593B1D5C22C50A93004D938E /* vector_scaling_operations.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = vector_scaling_operations.c; path = filter_audio/other/vector_scaling_operations.c; sourceTree = "<group>"; };
+		593B1D5D22C50A93004D938E /* spl_sqrt.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = spl_sqrt.c; path = filter_audio/other/spl_sqrt.c; sourceTree = "<group>"; };
+		593B1D5E22C50A93004D938E /* resample_by_2.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = resample_by_2.c; path = filter_audio/other/resample_by_2.c; sourceTree = "<group>"; };
+		593B1D5F22C50A94004D938E /* resample_fractional.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = resample_fractional.c; path = filter_audio/other/resample_fractional.c; sourceTree = "<group>"; };
+		593B1D6022C50A94004D938E /* resample_by_2_internal.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = resample_by_2_internal.c; path = filter_audio/other/resample_by_2_internal.c; sourceTree = "<group>"; };
+		593B1D6122C50A94004D938E /* dot_product_with_scale.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = dot_product_with_scale.c; path = filter_audio/other/dot_product_with_scale.c; sourceTree = "<group>"; };
+		593B1D6222C50A94004D938E /* get_scaling_square.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = get_scaling_square.c; path = filter_audio/other/get_scaling_square.c; sourceTree = "<group>"; };
+		593B1D6322C50A94004D938E /* spl_init.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = spl_init.c; path = filter_audio/other/spl_init.c; sourceTree = "<group>"; };
+		593B1D6422C50A94004D938E /* division_operations.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = division_operations.c; path = filter_audio/other/division_operations.c; sourceTree = "<group>"; };
+		593B1D6522C50A94004D938E /* resample_48khz.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = resample_48khz.c; path = filter_audio/other/resample_48khz.c; sourceTree = "<group>"; };
+		593B1D6622C50A95004D938E /* downsample_fast.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = downsample_fast.c; path = filter_audio/other/downsample_fast.c; sourceTree = "<group>"; };
+		593B1D6722C50A95004D938E /* energy.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = energy.c; path = filter_audio/other/energy.c; sourceTree = "<group>"; };
+		593B1D6822C50A95004D938E /* min_max_operations.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = min_max_operations.c; path = filter_audio/other/min_max_operations.c; sourceTree = "<group>"; };
+		593B1D7722C50AB4004D938E /* analog_agc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = analog_agc.c; path = filter_audio/agc/analog_agc.c; sourceTree = "<group>"; };
+		593B1D7822C50AB4004D938E /* digital_agc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = digital_agc.c; path = filter_audio/agc/digital_agc.c; sourceTree = "<group>"; };
+		593B1D7B22C50AF2004D938E /* vad_filterbank.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = vad_filterbank.c; path = filter_audio/vad/vad_filterbank.c; sourceTree = "<group>"; };
+		593B1D7C22C50AF2004D938E /* vad_core.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = vad_core.h; path = filter_audio/vad/vad_core.h; sourceTree = "<group>"; };
+		593B1D7D22C50AF2004D938E /* vad_gmm.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = vad_gmm.c; path = filter_audio/vad/vad_gmm.c; sourceTree = "<group>"; };
+		593B1D7E22C50AF2004D938E /* vad_sp.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = vad_sp.c; path = filter_audio/vad/vad_sp.c; sourceTree = "<group>"; };
+		593B1D7F22C50AF2004D938E /* vad_core.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = vad_core.c; path = filter_audio/vad/vad_core.c; sourceTree = "<group>"; };
+		593B1D8022C50AF3004D938E /* webrtc_vad.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = webrtc_vad.c; path = filter_audio/vad/webrtc_vad.c; sourceTree = "<group>"; };
+		593B1D8722C5401C004D938E /* cross_correlation.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = cross_correlation.c; path = filter_audio/other/cross_correlation.c; sourceTree = "<group>"; };
 		5967108D21F7AE6B00CBFC88 /* AppleSpeechRecognizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppleSpeechRecognizer.swift; sourceTree = "<group>"; };
 		59A0D5BD2204E786003709C3 /* AppleViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppleViewController.swift; sourceTree = "<group>"; };
 		59A0D5BF2204E786003709C3 /* WakeWordViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WakeWordViewController.swift; sourceTree = "<group>"; };
@@ -210,6 +262,7 @@
 		01D31F3D216BAF260055FD45 /* SpokeStack */ = {
 			isa = PBXGroup;
 			children = (
+				593B1D5222C509FF004D938E /* filter_audio */,
 				59FB0C9122B17A3600FB9662 /* CoreML */,
 				59FB0C8922AEE4DA00FB9662 /* Extensions */,
 				59062EFD22A5AA6C00613AD8 /* VAD */,
@@ -357,6 +410,39 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		593B1D5222C509FF004D938E /* filter_audio */ = {
+			isa = PBXGroup;
+			children = (
+				593B1D7722C50AB4004D938E /* analog_agc.c */,
+				593B1D7822C50AB4004D938E /* digital_agc.c */,
+				593B1D5422C50A0E004D938E /* complex_bit_reverse.c */,
+				593B1D5322C50A0E004D938E /* complex_fft.c */,
+				593B1D5622C50A0E004D938E /* copy_set_operations.c */,
+				593B1D8722C5401C004D938E /* cross_correlation.c */,
+				593B1D6422C50A94004D938E /* division_operations.c */,
+				593B1D6122C50A94004D938E /* dot_product_with_scale.c */,
+				593B1D6622C50A95004D938E /* downsample_fast.c */,
+				593B1D6722C50A95004D938E /* energy.c */,
+				593B1D6222C50A94004D938E /* get_scaling_square.c */,
+				593B1D6822C50A95004D938E /* min_max_operations.c */,
+				593B1D5B22C50A93004D938E /* real_fft.c */,
+				593B1D6522C50A94004D938E /* resample_48khz.c */,
+				593B1D6022C50A94004D938E /* resample_by_2_internal.c */,
+				593B1D5E22C50A93004D938E /* resample_by_2.c */,
+				593B1D5F22C50A94004D938E /* resample_fractional.c */,
+				593B1D6322C50A94004D938E /* spl_init.c */,
+				593B1D5D22C50A93004D938E /* spl_sqrt.c */,
+				593B1D7F22C50AF2004D938E /* vad_core.c */,
+				593B1D7C22C50AF2004D938E /* vad_core.h */,
+				593B1D7B22C50AF2004D938E /* vad_filterbank.c */,
+				593B1D7D22C50AF2004D938E /* vad_gmm.c */,
+				593B1D7E22C50AF2004D938E /* vad_sp.c */,
+				593B1D5C22C50A93004D938E /* vector_scaling_operations.c */,
+				593B1D8022C50AF3004D938E /* webrtc_vad.c */,
+			);
+			name = filter_audio;
+			sourceTree = "<group>";
+		};
 		59FB0C8922AEE4DA00FB9662 /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
@@ -384,6 +470,7 @@
 				01D31F4C216BAF260055FD45 /* SpokeStack.h in Headers */,
 				59FB0C8422A5C48700FB9662 /* WITVad.h in Headers */,
 				59FB0C8222A5C47B00FB9662 /* WITCvad.h in Headers */,
+				593B1D8222C50AF3004D938E /* vad_core.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -538,23 +625,46 @@
 			buildActionMask = 2147483647;
 			files = (
 				59365948220889EE00C0365F /* AppleWakewordRecognizer.swift in Sources */,
+				593B1D7422C50A95004D938E /* downsample_fast.c in Sources */,
 				59FB0C8822A98E1900FB9662 /* CoreMLWakewordRecognizer.swift in Sources */,
+				593B1D6F22C50A95004D938E /* dot_product_with_scale.c in Sources */,
+				593B1D8622C50AF3004D938E /* webrtc_vad.c in Sources */,
+				593B1D7322C50A95004D938E /* resample_48khz.c in Sources */,
+				593B1D6A22C50A95004D938E /* vector_scaling_operations.c in Sources */,
 				01D31F6F216BAFD90055FD45 /* SpeechContext.swift in Sources */,
 				59A0D5C72204E8E4003709C3 /* WakewordConfiguration.swift in Sources */,
+				593B1D7222C50A95004D938E /* division_operations.c in Sources */,
 				01D31F77216BAFEF0055FD45 /* SpeechRecognizer.swift in Sources */,
 				59FB0C8D22B0640700FB9662 /* RingBuffer.swift in Sources */,
+				593B1D7522C50A95004D938E /* energy.c in Sources */,
+				593B1D8122C50AF3004D938E /* vad_filterbank.c in Sources */,
 				01D31F8E216BB0370055FD45 /* Typealiases.swift in Sources */,
+				593B1D8522C50AF3004D938E /* vad_core.c in Sources */,
+				593B1D6D22C50A95004D938E /* resample_fractional.c in Sources */,
 				01D31F66216BAFB50055FD45 /* Error.swift in Sources */,
 				01D31F6A216BAFC60055FD45 /* SpeechPipeline.swift in Sources */,
+				593B1D7922C50AB4004D938E /* analog_agc.c in Sources */,
+				593B1D5722C50A0E004D938E /* complex_fft.c in Sources */,
+				593B1D5822C50A0E004D938E /* complex_bit_reverse.c in Sources */,
+				593B1D6E22C50A95004D938E /* resample_by_2_internal.c in Sources */,
+				593B1D8822C5401D004D938E /* cross_correlation.c in Sources */,
 				01D31F7B216BAFEF0055FD45 /* SpeechRecognizerService.swift in Sources */,
 				01D31F71216BAFD90055FD45 /* RecognizerService.swift in Sources */,
 				5967108E21F7AE6B00CBFC88 /* AppleSpeechRecognizer.swift in Sources */,
 				5936594C2209EA1800C0365F /* WakewordRecognizerService.swift in Sources */,
+				593B1D7A22C50AB4004D938E /* digital_agc.c in Sources */,
+				593B1D7122C50A95004D938E /* spl_init.c in Sources */,
 				59FB0C8B22AEE4F100FB9662 /* Data+Extensions.swift in Sources */,
 				59FB0C9322B17A9A00FB9662 /* WakeWordFilter.mlmodel in Sources */,
+				593B1D6922C50A95004D938E /* real_fft.c in Sources */,
 				59A45E4F2243ED530089D023 /* PipelineDelegate.swift in Sources */,
+				593B1D7022C50A95004D938E /* get_scaling_square.c in Sources */,
 				01D31F82216BB0000055FD45 /* RecognizerConfiguration.swift in Sources */,
+				593B1D5A22C50A0E004D938E /* copy_set_operations.c in Sources */,
+				593B1D6C22C50A95004D938E /* resample_by_2.c in Sources */,
 				01D31F62216BAFA40055FD45 /* AudioController.swift in Sources */,
+				593B1D6B22C50A95004D938E /* spl_sqrt.c in Sources */,
+				593B1D8322C50AF3004D938E /* vad_gmm.c in Sources */,
 				5936594E220A1A7A00C0365F /* WakewordService.swift in Sources */,
 				01D31F8A216BB0220055FD45 /* Results.swift in Sources */,
 				5936594A2209DDBA00C0365F /* WakewordRecognizer.swift in Sources */,
@@ -562,6 +672,8 @@
 				59FB0C8522A5C48B00FB9662 /* WITVad.m in Sources */,
 				01D31F79216BAFEF0055FD45 /* AudioControllerDelegate.swift in Sources */,
 				59FB0C8322A5C48400FB9662 /* WITCvad.m in Sources */,
+				593B1D8422C50AF3004D938E /* vad_sp.c in Sources */,
+				593B1D7622C50A95004D938E /* min_max_operations.c in Sources */,
 				59FB0C8F22B0682900FB9662 /* FFT.swift in Sources */,
 				01D31F5E216BAF950055FD45 /* StandardRecognizerConfiguration.swift in Sources */,
 			);
@@ -702,6 +814,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
+				COREML_CODEGEN_LANGUAGE = Swift;
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -766,6 +879,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
+				COREML_CODEGEN_LANGUAGE = Swift;
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
