@@ -28,7 +28,7 @@ public class AppleWakewordRecognizer: NSObject, WakewordRecognizerService {
     private var recognitionTask: SFSpeechRecognitionTask?
     private let audioEngine: AVAudioEngine = AVAudioEngine()
     private var dispatchWorker: DispatchWorkItem?
-    private var vad: WITVad = WITVad()
+    private var vad: WebRTCVAD = WebRTCVAD(frameWidth: 20)
     private var context: SpeechContext?
     
     // MARK: NSObject methods
@@ -36,13 +36,11 @@ public class AppleWakewordRecognizer: NSObject, WakewordRecognizerService {
     deinit {
         print("AppleWakewordRecognizer deinit")
         self.speechRecognizer.delegate = nil
-        self.vad.delegate = nil
     }
     
     public override init() {
         super.init()
         print("AppleWakewordRecognizer init")
-        self.vad.delegate = self
     }
     
     // MARK: SpeechRecognizerService implementation
@@ -71,6 +69,13 @@ public class AppleWakewordRecognizer: NSObject, WakewordRecognizerService {
     
     private func prepareAudioEngine() {
         print("AppleWakewordRecognizer prepareAudioEngine")
+        
+        do {
+            try self.vad.create(mode: .HighQuality, delegate: self)
+        } catch {
+            assertionFailure("CoreMLWakewordRecognizer failed to create a valid VAD")
+        }
+        
         let buffer: Int = (self.configuration!.sampleRate / 1000) * self.configuration!.frameWidth
         self.audioEngine.inputNode.removeTap(onBus: 0) // a belt-and-suspenders approach to fixing https://github.com/wenkesj/react-native-voice/issues/46
         self.audioEngine.inputNode.installTap(
@@ -176,13 +181,13 @@ extension AppleWakewordRecognizer: AudioControllerDelegate {
     func processSampleData(_ data: Data) -> Void {
         audioProcessingQueue.async {[weak self] in
             guard let strongSelf = self else { return }
-            strongSelf.vad.vadSpeechFrame(data)
+            strongSelf.vad.process(sampleRate: 16000, frame: data)
         }
     }
 }
 
-extension AppleWakewordRecognizer: WITVadDelegate {
-    public func activate(_ audioData: Data!) {
+extension AppleWakewordRecognizer: VADDelegate {
+    public func activate(frame: Data) {
         print("AppleWakewordRecognizer activate")
         if let c = self.context {
             if (c.isActive) {

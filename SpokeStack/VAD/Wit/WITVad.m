@@ -47,12 +47,12 @@
         if ( detected_speech == 1){
             //someone just started talking
             NSLog(@"WITVad vadSpeechFrame detected_speech started");
-            [self.delegate activate: samples];
+            // [self.delegate activate: samples];
         } else if ( detected_speech == 0) {
             //someone just stopped talking
             NSLog(@"WITVad vadSpeechFrame detected_speech stopped");
             self.stoppedUsingVad = YES;
-            [self.delegate deactivate];
+            //[self.delegate deactivate];
             break;
         }
     }

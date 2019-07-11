@@ -35,7 +35,7 @@ public class CoreMLWakewordRecognizer: NSObject, WakewordRecognizerService {
         case hann
     }
     
-    private var vad: WITVad = WITVad()
+    private var vad: WebRTCVAD = WebRTCVAD(frameWidth: 20)
     private var context: SpeechContext = SpeechContext()
     
     lazy private var wwfilter: WakeWordFilter = {
@@ -72,10 +72,10 @@ public class CoreMLWakewordRecognizer: NSObject, WakewordRecognizerService {
     
     /// Sliding Window Buffers
     
-    private var sampleWindow: RingBuffer!
-    private var frameWindow: RingBuffer!
-    private var smoothWindow: RingBuffer!
-    private var phraseWindow: RingBuffer!
+    private var sampleWindow: RingBuffer<Float>!
+    private var frameWindow: RingBuffer<Float>!
+    private var smoothWindow: RingBuffer<Float>!
+    private var phraseWindow: RingBuffer<Float>!
 
     /// Wakeword Activation Management
     
@@ -94,13 +94,11 @@ public class CoreMLWakewordRecognizer: NSObject, WakewordRecognizerService {
 
     deinit {
         print("CoreMLWakewordRecognizer deinit")
-        vad.delegate = nil
     }
     
     public override init() {
         super.init()
         print("CoreMLWakewordRecognizer init")
-        self.vad.delegate = self
     }
     
     // MARK: SpeechRecognizerService implementation
@@ -163,6 +161,12 @@ public class CoreMLWakewordRecognizer: NSObject, WakewordRecognizerService {
     private func setConfiguration() -> Void {
         
         if let c = self.configuration {
+            do {
+                try self.vad.create(mode: .HighQuality, delegate: self)
+            } catch {
+                assertionFailure("CoreMLWakewordRecognizer failed to create a valid VAD")
+            }
+            
             let buffer: TimeInterval = TimeInterval((c.sampleRate / 1000) * c.frameWidth)
             AudioController.shared.sampleRate = c.sampleRate
             AudioController.shared.bufferDuration = buffer
@@ -202,10 +206,10 @@ public class CoreMLWakewordRecognizer: NSObject, WakewordRecognizerService {
             
             /// Allocate sliding window buffers
             
-            self.sampleWindow = RingBuffer(c.fftWindowSize)
-            self.frameWindow = RingBuffer(melLength * self.melWidth)
-            self.smoothWindow = RingBuffer(smoothLength * self.words.count)
-            self.phraseWindow = RingBuffer(phraseLength * self.words.count)
+            self.sampleWindow = RingBuffer(c.fftWindowSize, repeating: 0.0)
+            self.frameWindow = RingBuffer(melLength * self.melWidth, repeating: 0.0)
+            self.smoothWindow = RingBuffer(smoothLength * self.words.count, repeating: 0.0)
+            self.phraseWindow = RingBuffer(phraseLength * self.words.count, repeating: 0.0)
             
             /// Fill buffers (except samples) with zero to
             /// minimize detection delay caused by buffering
@@ -574,7 +578,8 @@ extension CoreMLWakewordRecognizer: AudioControllerDelegate {
         /// multiplex the audio frame data to both the vad and, if activated, the model pipelines
         audioProcessingQueue.async {[weak self] in
             guard let strongSelf = self else { return }
-            strongSelf.vad.vadSpeechFrame(data)
+            guard let config = strongSelf.configuration else { return }
+            strongSelf.vad.process(sampleRate: Int32(config.sampleRate), frame: data)
         }
         if self.context.isSpeech {
             audioProcessingQueue.async {[weak self] in
@@ -585,14 +590,14 @@ extension CoreMLWakewordRecognizer: AudioControllerDelegate {
     }
 }
 
-extension CoreMLWakewordRecognizer: WITVadDelegate {
+extension CoreMLWakewordRecognizer: VADDelegate {
     
-    public func activate(_ audioData: Data) {
+    public func activate(frame: Data) {
         /// activate the speech context
         print("CoreMLWakewordRecognizer activate")
         self.context.isSpeech = true
         /// process the first frames of speech data from the vad
-        self.process(audioData)
+        self.process(frame)
     }
     
     public func deactivate() {

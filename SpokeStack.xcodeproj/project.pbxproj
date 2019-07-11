@@ -44,6 +44,7 @@
 		5936594A2209DDBA00C0365F /* WakewordRecognizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 593659492209DDBA00C0365F /* WakewordRecognizer.swift */; };
 		5936594C2209EA1800C0365F /* WakewordRecognizerService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5936594B2209EA1800C0365F /* WakewordRecognizerService.swift */; };
 		5936594E220A1A7A00C0365F /* WakewordService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5936594D220A1A7A00C0365F /* WakewordService.swift */; };
+		5937579322D5281900AA7516 /* VADDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5937579222D5281900AA7516 /* VADDelegate.swift */; };
 		593B1D5722C50A0E004D938E /* complex_fft.c in Sources */ = {isa = PBXBuildFile; fileRef = 593B1D5322C50A0E004D938E /* complex_fft.c */; };
 		593B1D5822C50A0E004D938E /* complex_bit_reverse.c in Sources */ = {isa = PBXBuildFile; fileRef = 593B1D5422C50A0E004D938E /* complex_bit_reverse.c */; };
 		593B1D5A22C50A0E004D938E /* copy_set_operations.c in Sources */ = {isa = PBXBuildFile; fileRef = 593B1D5622C50A0E004D938E /* copy_set_operations.c */; };
@@ -70,6 +71,8 @@
 		593B1D8522C50AF3004D938E /* vad_core.c in Sources */ = {isa = PBXBuildFile; fileRef = 593B1D7F22C50AF2004D938E /* vad_core.c */; };
 		593B1D8622C50AF3004D938E /* webrtc_vad.c in Sources */ = {isa = PBXBuildFile; fileRef = 593B1D8022C50AF3004D938E /* webrtc_vad.c */; };
 		593B1D8822C5401D004D938E /* cross_correlation.c in Sources */ = {isa = PBXBuildFile; fileRef = 593B1D8722C5401C004D938E /* cross_correlation.c */; };
+		593B1D8A22CA8EDD004D938E /* webrtc_vad.h in Headers */ = {isa = PBXBuildFile; fileRef = 593B1D8922CA8EDC004D938E /* webrtc_vad.h */; };
+		593B1D8C22CA9243004D938E /* WebRTCVAD.swift in Sources */ = {isa = PBXBuildFile; fileRef = 593B1D8B22CA9243004D938E /* WebRTCVAD.swift */; };
 		5967108E21F7AE6B00CBFC88 /* AppleSpeechRecognizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5967108D21F7AE6B00CBFC88 /* AppleSpeechRecognizer.swift */; };
 		59A0D5C02204E786003709C3 /* AppleViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59A0D5BD2204E786003709C3 /* AppleViewController.swift */; };
 		59A0D5C22204E786003709C3 /* WakeWordViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59A0D5BF2204E786003709C3 /* WakeWordViewController.swift */; };
@@ -154,6 +157,7 @@
 		593659492209DDBA00C0365F /* WakewordRecognizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WakewordRecognizer.swift; sourceTree = "<group>"; };
 		5936594B2209EA1800C0365F /* WakewordRecognizerService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WakewordRecognizerService.swift; sourceTree = "<group>"; };
 		5936594D220A1A7A00C0365F /* WakewordService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WakewordService.swift; sourceTree = "<group>"; };
+		5937579222D5281900AA7516 /* VADDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VADDelegate.swift; sourceTree = "<group>"; };
 		593B1D5322C50A0E004D938E /* complex_fft.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = complex_fft.c; path = filter_audio/other/complex_fft.c; sourceTree = "<group>"; };
 		593B1D5422C50A0E004D938E /* complex_bit_reverse.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = complex_bit_reverse.c; path = filter_audio/other/complex_bit_reverse.c; sourceTree = "<group>"; };
 		593B1D5622C50A0E004D938E /* copy_set_operations.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = copy_set_operations.c; path = filter_audio/other/copy_set_operations.c; sourceTree = "<group>"; };
@@ -180,6 +184,9 @@
 		593B1D7F22C50AF2004D938E /* vad_core.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = vad_core.c; path = filter_audio/vad/vad_core.c; sourceTree = "<group>"; };
 		593B1D8022C50AF3004D938E /* webrtc_vad.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = webrtc_vad.c; path = filter_audio/vad/webrtc_vad.c; sourceTree = "<group>"; };
 		593B1D8722C5401C004D938E /* cross_correlation.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = cross_correlation.c; path = filter_audio/other/cross_correlation.c; sourceTree = "<group>"; };
+		593B1D8922CA8EDC004D938E /* webrtc_vad.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = webrtc_vad.h; path = filter_audio/vad/include/webrtc_vad.h; sourceTree = "<group>"; };
+		593B1D8B22CA9243004D938E /* WebRTCVAD.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebRTCVAD.swift; sourceTree = "<group>"; };
+		593B1D8D22CA965A004D938E /* module.modulemap */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.module-map"; name = module.modulemap; path = filter_audio/module.modulemap; sourceTree = "<group>"; };
 		5967108D21F7AE6B00CBFC88 /* AppleSpeechRecognizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppleSpeechRecognizer.swift; sourceTree = "<group>"; };
 		59A0D5BD2204E786003709C3 /* AppleViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppleViewController.swift; sourceTree = "<group>"; };
 		59A0D5BF2204E786003709C3 /* WakeWordViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WakeWordViewController.swift; sourceTree = "<group>"; };
@@ -262,7 +269,6 @@
 		01D31F3D216BAF260055FD45 /* SpokeStack */ = {
 			isa = PBXGroup;
 			children = (
-				593B1D5222C509FF004D938E /* filter_audio */,
 				59FB0C9122B17A3600FB9662 /* CoreML */,
 				59FB0C8922AEE4DA00FB9662 /* Extensions */,
 				59062EFD22A5AA6C00613AD8 /* VAD */,
@@ -352,6 +358,7 @@
 				01D31F76216BAFEF0055FD45 /* SpeechRecognizerService.swift */,
 				5936594B2209EA1800C0365F /* WakewordRecognizerService.swift */,
 				593659492209DDBA00C0365F /* WakewordRecognizer.swift */,
+				5937579222D5281900AA7516 /* VADDelegate.swift */,
 			);
 			name = Protocols;
 			sourceTree = "<group>";
@@ -394,10 +401,8 @@
 		59062EFD22A5AA6C00613AD8 /* VAD */ = {
 			isa = PBXGroup;
 			children = (
-				59062F0F22A5AA9E00613AD8 /* WITCvad.h */,
-				59062F0D22A5AA9E00613AD8 /* WITCvad.m */,
-				59062F0B22A5AA9D00613AD8 /* WITVad.h */,
-				59062F0C22A5AA9D00613AD8 /* WITVad.m */,
+				593B1D5222C509FF004D938E /* filter_audio */,
+				593757AA22D68A9500AA7516 /* Wit */,
 			);
 			path = VAD;
 			sourceTree = "<group>";
@@ -410,9 +415,21 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		593757AA22D68A9500AA7516 /* Wit */ = {
+			isa = PBXGroup;
+			children = (
+				59062F0F22A5AA9E00613AD8 /* WITCvad.h */,
+				59062F0D22A5AA9E00613AD8 /* WITCvad.m */,
+				59062F0B22A5AA9D00613AD8 /* WITVad.h */,
+				59062F0C22A5AA9D00613AD8 /* WITVad.m */,
+			);
+			path = Wit;
+			sourceTree = "<group>";
+		};
 		593B1D5222C509FF004D938E /* filter_audio */ = {
 			isa = PBXGroup;
 			children = (
+				593B1D8D22CA965A004D938E /* module.modulemap */,
 				593B1D7722C50AB4004D938E /* analog_agc.c */,
 				593B1D7822C50AB4004D938E /* digital_agc.c */,
 				593B1D5422C50A0E004D938E /* complex_bit_reverse.c */,
@@ -438,9 +455,12 @@
 				593B1D7D22C50AF2004D938E /* vad_gmm.c */,
 				593B1D7E22C50AF2004D938E /* vad_sp.c */,
 				593B1D5C22C50A93004D938E /* vector_scaling_operations.c */,
+				593B1D8922CA8EDC004D938E /* webrtc_vad.h */,
 				593B1D8022C50AF3004D938E /* webrtc_vad.c */,
+				593B1D8B22CA9243004D938E /* WebRTCVAD.swift */,
 			);
 			name = filter_audio;
+			path = ..;
 			sourceTree = "<group>";
 		};
 		59FB0C8922AEE4DA00FB9662 /* Extensions */ = {
@@ -469,6 +489,7 @@
 			files = (
 				01D31F4C216BAF260055FD45 /* SpokeStack.h in Headers */,
 				59FB0C8422A5C48700FB9662 /* WITVad.h in Headers */,
+				593B1D8A22CA8EDD004D938E /* webrtc_vad.h in Headers */,
 				59FB0C8222A5C47B00FB9662 /* WITCvad.h in Headers */,
 				593B1D8222C50AF3004D938E /* vad_core.h in Headers */,
 			);
@@ -634,6 +655,7 @@
 				01D31F6F216BAFD90055FD45 /* SpeechContext.swift in Sources */,
 				59A0D5C72204E8E4003709C3 /* WakewordConfiguration.swift in Sources */,
 				593B1D7222C50A95004D938E /* division_operations.c in Sources */,
+				593B1D8C22CA9243004D938E /* WebRTCVAD.swift in Sources */,
 				01D31F77216BAFEF0055FD45 /* SpeechRecognizer.swift in Sources */,
 				59FB0C8D22B0640700FB9662 /* RingBuffer.swift in Sources */,
 				593B1D7522C50A95004D938E /* energy.c in Sources */,
@@ -645,6 +667,7 @@
 				01D31F6A216BAFC60055FD45 /* SpeechPipeline.swift in Sources */,
 				593B1D7922C50AB4004D938E /* analog_agc.c in Sources */,
 				593B1D5722C50A0E004D938E /* complex_fft.c in Sources */,
+				5937579322D5281900AA7516 /* VADDelegate.swift in Sources */,
 				593B1D5822C50A0E004D938E /* complex_bit_reverse.c in Sources */,
 				593B1D6E22C50A95004D938E /* resample_by_2_internal.c in Sources */,
 				593B1D8822C5401D004D938E /* cross_correlation.c in Sources */,
@@ -839,6 +862,7 @@
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_INCLUDE_PATHS = "${SRCROOT}/SpokeStack/filter_audio/**";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
@@ -897,6 +921,7 @@
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_INCLUDE_PATHS = "${SRCROOT}/SpokeStack/filter_audio/**";
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
 				VALIDATE_PRODUCT = YES;
 				VERSIONING_SYSTEM = "apple-generic";
