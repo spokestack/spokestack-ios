@@ -28,7 +28,7 @@ public class AppleWakewordRecognizer: NSObject, WakewordRecognizerService {
     private var recognitionTask: SFSpeechRecognitionTask?
     private let audioEngine: AVAudioEngine = AVAudioEngine()
     private var dispatchWorker: DispatchWorkItem?
-    private var vad: WebRTCVAD = WebRTCVAD(frameWidth: 20)
+    private var vad: WebRTCVAD = WebRTCVAD()
     private var context: SpeechContext?
     
     // MARK: NSObject methods
@@ -71,7 +71,10 @@ public class AppleWakewordRecognizer: NSObject, WakewordRecognizerService {
         print("AppleWakewordRecognizer prepareAudioEngine")
         
         do {
-            try self.vad.create(mode: .HighQuality, delegate: self)
+            try self.vad.create(mode: .HighQuality,
+                                delegate: self,
+                                frameWidth: self.configuration!.frameWidth,
+                                samplerate: self.configuration!.sampleRate)
         } catch {
             assertionFailure("CoreMLWakewordRecognizer failed to create a valid VAD")
         }
@@ -181,7 +184,7 @@ extension AppleWakewordRecognizer: AudioControllerDelegate {
     func processSampleData(_ data: Data) -> Void {
         audioProcessingQueue.async {[weak self] in
             guard let strongSelf = self else { return }
-            strongSelf.vad.process(sampleRate: 16000, frame: data)
+            strongSelf.vad.process(frame: data, isSpeech: true)
         }
     }
 }

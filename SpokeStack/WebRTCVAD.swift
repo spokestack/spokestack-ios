@@ -30,26 +30,24 @@ private var vad: UnsafeMutablePointer<OpaquePointer?> = UnsafeMutablePointer<Opa
 
 private var frameBufferStride: Int = 0
 private var frameBufferStride32: Int32 = 0
+private var sampleRate: Int32 = 16000
 
 private var frameBuffer: RingBuffer<Int16>!
 
 public class WebRTCVAD: NSObject {
     public var delegate: VADDelegate?
     
-    init(frameWidth: Int) {
-        frameBufferStride = frameWidth*16
-        frameBufferStride32 = Int32(frameBufferStride)
-        frameBuffer = RingBuffer(frameBufferStride*4, repeating: 0) /// frame width * sample rate/1000 * 2 allows for variablely-sized frames
-        super.init()
-    }
-    
     deinit {
         WebRtcVad_Free(vad.pointee)
         vad.deallocate()
     }
     
-    public func create(mode: VADMode, delegate: VADDelegate) throws {
+    public func create(mode: VADMode, delegate: VADDelegate, frameWidth: Int, samplerate: Int) throws {
         self.delegate = delegate
+        sampleRate = Int32(samplerate) // 16000
+        frameBufferStride = frameWidth*(samplerate/1000) // 20*16 = 320
+        frameBufferStride32 = Int32(frameBufferStride) // 320
+        frameBuffer = RingBuffer(frameBufferStride*4, repeating: 0) /// frame width * sample rate/1000 * magic number 4 allowing for variablely-sized frames = 1280
         var errorCode:Int32 = 0
         errorCode = WebRtcVad_Create(vad)
         assert(errorCode == 0, "unable to create a WebRTCVAD struct, which returned error code \(errorCode)")
@@ -62,32 +60,36 @@ public class WebRTCVAD: NSObject {
         }
     }
     
-    public func process(sampleRate: Int32, frame: Data) -> Void {
+    public func process(frame: Data, isSpeech: Bool) -> Void {
         do {
             /// write the frame to the buffer
             let frameSamples: Array<Int16> = frame.elements()
-            for (i, s) in frameSamples.enumerated() {
+            for s in frameSamples {
                 try frameBuffer.write(s)
             }
             
             /// if the buffer has enough elements, process a sample
-            if (abs(frameBuffer.available) >= frameBufferStride) {
+            if (frameBuffer.availableToRead >= frameBufferStride) {
                 var sampleWindow: Array<Int16> = []
-                for i in 0..<frameBufferStride {
+                for _ in 0..<frameBufferStride {
                     if !frameBuffer.isEmpty {
                         let s: Int16 = try frameBuffer.read()
                         sampleWindow.append(s)
                     }
                 }
-                let sampleWindowP = Array(UnsafeBufferPointer(start: sampleWindow, count: sampleWindow.count))
-                let result = WebRtcVad_Process(vad.pointee, sampleRate, sampleWindowP, frameBufferStride32)
+                let sampleWindowUBP = Array(UnsafeBufferPointer(start: sampleWindow, count: sampleWindow.count))
+                let result = WebRtcVad_Process(vad.pointee, sampleRate, sampleWindowUBP, frameBufferStride32)
                 print("WebRtcVad_Process result \(result)")
                 switch result {
                 case 1:
-                    self.delegate?.activate(frame: frame)
+                    if !isSpeech {
+                        self.delegate?.activate(frame: frame)
+                    }
                     break
                 case 0:
-                    self.delegate?.deactivate()
+                    if isSpeech {
+                        self.delegate?.deactivate()
+                    }
                     break
                 default:
                     /// WebRtcVad_Process error case

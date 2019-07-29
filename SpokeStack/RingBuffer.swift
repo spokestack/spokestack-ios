@@ -20,7 +20,7 @@ final class RingBuffer <T> {
         return self.data.count - 1
     }
     
-    var available: Int {
+    var availableToRead: Int {
         return self.wpos - self.rpos
     }
     
@@ -29,7 +29,7 @@ final class RingBuffer <T> {
     }
     
     var isFull: Bool {
-        return self.pos(self.wpos + 1) == self.rpos
+        return self.data.count - self.wpos - self.rpos == 0
     }
     
     // MARK: Private (properties)
@@ -69,8 +69,8 @@ final class RingBuffer <T> {
         if self.isEmpty {
             throw RingBufferStateError.illegalState(message: "ring buffer is empty")
         }
-        let value: T = self.data[self.rpos]
-        self.rpos = self.pos(self.rpos + 1)
+        let value: T = self.data[self.rpos % self.data.count]
+        self.rpos += 1
         return value
     }
     
@@ -78,8 +78,8 @@ final class RingBuffer <T> {
         if self.isFull {
             throw RingBufferStateError.illegalState(message: "ring buffer is full")
         }
-        self.data[self.wpos] = value
-        self.wpos = self.pos(self.wpos + 1)
+        self.data[self.wpos % self.data.count] = value
+        self.wpos += 1
     }
     
     @discardableResult
@@ -93,8 +93,6 @@ final class RingBuffer <T> {
     // MARK: Private (properties)
     
     private func pos(_ x: Int) -> Int {
-        let c = self.data.count
-        let pos = x - self.data.count * Int(floor(Double(x / self.data.count)))
-        return pos
+        return x - self.data.count * Int(floor(Double(x / self.data.count)))
     }
 }

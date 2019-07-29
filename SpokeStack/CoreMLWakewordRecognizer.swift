@@ -35,7 +35,7 @@ public class CoreMLWakewordRecognizer: NSObject, WakewordRecognizerService {
         case hann
     }
     
-    private var vad: WebRTCVAD = WebRTCVAD(frameWidth: 20)
+    private var vad: WebRTCVAD = WebRTCVAD()
     private var context: SpeechContext = SpeechContext()
     
     lazy private var wwfilter: WakeWordFilter = {
@@ -162,7 +162,7 @@ public class CoreMLWakewordRecognizer: NSObject, WakewordRecognizerService {
         
         if let c = self.configuration {
             do {
-                try self.vad.create(mode: .HighQuality, delegate: self)
+                try self.vad.create(mode: .HighQuality, delegate: self, frameWidth: c.frameWidth, samplerate: c.sampleRate)
             } catch {
                 assertionFailure("CoreMLWakewordRecognizer failed to create a valid VAD")
             }
@@ -247,7 +247,9 @@ public class CoreMLWakewordRecognizer: NSObject, WakewordRecognizerService {
     
     /// MARK: Audio processing
     
-    private func process(_ data: Data) -> Void {
+    private func process(_ data: Data, isActive: Bool) -> Void {
+        print("CoreMLWakewordRecognizer process \(isActive)")
+        self.context.isActive = isActive
         if !self.context.isActive {
             /// Run the current frame through the detector pipeline.
             /// Activate the pipeline if a keyword phrase was detected.
@@ -269,6 +271,7 @@ public class CoreMLWakewordRecognizer: NSObject, WakewordRecognizerService {
     }
     
     private func sample(_ data: Data) -> Void {
+        print("CoreMLWakewordRecognizer sample")
         /// Preallocate an array of data elements in the frame for use in RMS and sampling
         let dataElements: Array<Int16> = data.elements()
         
@@ -578,13 +581,9 @@ extension CoreMLWakewordRecognizer: AudioControllerDelegate {
         /// multiplex the audio frame data to both the vad and, if activated, the model pipelines
         audioProcessingQueue.async {[weak self] in
             guard let strongSelf = self else { return }
-            guard let config = strongSelf.configuration else { return }
-            strongSelf.vad.process(sampleRate: Int32(config.sampleRate), frame: data)
-        }
-        if self.context.isSpeech {
-            audioProcessingQueue.async {[weak self] in
-                guard let strongSelf = self else { return }
-                strongSelf.process(data)
+            strongSelf.vad.process(frame: data, isSpeech: strongSelf.context.isSpeech)
+            if strongSelf.context.isSpeech {
+                strongSelf.process(data, isActive: strongSelf.context.isSpeech)
             }
         }
     }
@@ -597,7 +596,7 @@ extension CoreMLWakewordRecognizer: VADDelegate {
         print("CoreMLWakewordRecognizer activate")
         self.context.isSpeech = true
         /// process the first frames of speech data from the vad
-        self.process(frame)
+        self.process(frame, isActive: true)
     }
     
     public func deactivate() {
