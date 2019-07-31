@@ -20,24 +20,16 @@ final class RingBuffer <T> {
         return self.data.count - 1
     }
     
-    var availableToRead: Int {
-        return self.wpos - self.rpos
-    }
-    
     var isEmpty: Bool {
         return self.rpos == self.wpos
     }
     
-    var availableToWrite: Int {
-        return self.data.count - self.availableToRead
-    }
-    
     var isFull: Bool {
-        return self.availableToWrite == 0
+        return self.pos(self.wpos + 1) == self.rpos
     }
     
     func debug() -> Void {
-        print("RingBuffer isFull \(self.data.count) \(self.wpos) \(self.rpos) \(self.availableToRead) \(self.availableToWrite)")
+        print("RingBuffer \(self.data.count) \(self.wpos) \(self.rpos)")
     }
     
     // MARK: Private (properties)
@@ -57,13 +49,13 @@ final class RingBuffer <T> {
     
     @discardableResult
     func rewind() -> RingBuffer {
-        self.rpos = self.wpos - self.data.count
+        self.rpos = self.pos(self.wpos + 1)
         return self
     }
     
     @discardableResult
     func seek(_ elems: Int) -> RingBuffer {
-        self.rpos = (self.rpos + elems) % self.wpos
+        self.rpos = self.pos(self.rpos + elems)
         return self
     }
     
@@ -77,8 +69,8 @@ final class RingBuffer <T> {
         if self.isEmpty {
             throw RingBufferStateError.illegalState(message: "ring buffer is empty")
         }
-        let value: T = self.data[self.rpos % self.data.count]
-        self.rpos += 1
+        let value: T = self.data[self.rpos]
+        self.rpos = self.pos(self.rpos + 1)
         return value
     }
     
@@ -86,8 +78,8 @@ final class RingBuffer <T> {
         if self.isFull {
             throw RingBufferStateError.illegalState(message: "ring buffer is full")
         }
-        self.data[self.wpos % self.data.count] = value
-        self.wpos += 1
+        self.data[self.wpos] = value
+        self.wpos = self.pos(self.wpos + 1)
     }
     
     @discardableResult

@@ -305,8 +305,8 @@ public class CoreMLWakewordRecognizer: NSObject, WakewordRecognizerService {
                 try self.sampleWindow.write(sample)
             } catch SpeechPipelineError.illegalState(let message) {
                 fatalError("CoreMLWakewordRecognizer sample illegal state error \(message)")
-            } catch {
-                fatalError("CoreMLWakewordRecognizer sample unknown error occurred while processing \(#line)")
+            } catch let error {
+                fatalError("CoreMLWakewordRecognizer sample unknown error occurred while processing \(error.localizedDescription)")
             }
             //self.sampleWindow.debug()
             if self.sampleWindow.isFull {
@@ -330,8 +330,8 @@ public class CoreMLWakewordRecognizer: NSObject, WakewordRecognizerService {
                 self.fftFrame[index] = sample * self.fftWindow[index]
             } catch SpeechPipelineError.illegalState(let message) {
                 print("CoreMLWakewordRecognizer analyze illegal state error \(message)")
-            } catch {
-                fatalError("CoreMLWakewordRecognizer analyze unknown error occurred \(#line)")
+            } catch let error {
+                fatalError("CoreMLWakewordRecognizer analyze unknown error occurred \(error.localizedDescription)")
             }
         }
         
@@ -504,14 +504,14 @@ extension CoreMLWakewordRecognizer {
         for (index, _) in self.words.enumerated() {
             self.phraseSum[index] = 0
         }
-        while self.smoothWindow.availableToRead - self.words.count > 0 {
+        while !self.smoothWindow.isEmpty {
             for (index, _) in self.words.enumerated() {
                 do {
                     self.phraseSum[index] += try self.smoothWindow.read()
                 } catch RingBufferStateError.illegalState(let message) {
                     fatalError("CoreMLWakewordRecognizer smooth couldn't read the smoothing window: \(message)")
-                } catch {
-                    fatalError("CoreMLWakewordRecognizer smooth error \(#line)")
+                } catch let error {
+                    fatalError("CoreMLWakewordRecognizer smooth error \(error.localizedDescription)")
                 }
             }
         }
@@ -526,8 +526,8 @@ extension CoreMLWakewordRecognizer {
                 try self.phraseWindow.write(windowValue)
             } catch RingBufferStateError.illegalState(let message) {
                 fatalError("CoreMLWakewordRecognizer smooth couldn't write to phrase window \(message)")
-            } catch {
-                fatalError("CoreMLWakewordRecognizer smooth error \(#line)")
+            } catch let error {
+                fatalError("CoreMLWakewordRecognizer smooth error \(error.localizedDescription)")
             }
         }
         
@@ -540,7 +540,7 @@ extension CoreMLWakewordRecognizer {
         /// Compute the argmax (winning class) of each smoothed output
         /// in the current phrase window
         var i: Int = 0
-        while self.phraseWindow.availableToRead - self.words.count > 0  {
+        while !self.phraseWindow.isEmpty  {
             var argmax: Float = -Float.greatestFiniteMagnitude
             for (j, _) in self.words.enumerated() {
                 do {
@@ -552,8 +552,8 @@ extension CoreMLWakewordRecognizer {
                     }
                 } catch RingBufferStateError.illegalState(let message) {
                     fatalError("CoreMLWakewordRecognizer phrase couldn't read the phrase window \(message)")
-                } catch {
-                    fatalError("CoreMLWakewordRecognizer phrase error \(#line)")
+                } catch let error {
+                    fatalError("CoreMLWakewordRecognizer phrase error \(error.localizedDescription)")
                 }
             }
             i += 1
@@ -610,9 +610,9 @@ extension CoreMLWakewordRecognizer: VADDelegate {
         print("CoreMLWakewordRecognizer deactivate")
         self.context.isSpeech = false
         //self.spit(data: sampleCollector.withUnsafeBufferPointer {Data(buffer: $0)}, fileName: "samples.txt")
-        self.spit(data: (sampleCollector as NSArray).componentsJoined(by: ", ").data(using: .utf8)!, fileName: "samples.txt")
+        self.spit(data: "[\((sampleCollector as NSArray).componentsJoined(by: ", "))]".data(using: .utf8)!, fileName: "samples.txt")
         self.spit(data: fftFrameCollector.data(using: .utf8)!, fileName: "fftFrame.txt")
-        self.spit(data: (filterCollector as NSArray).componentsJoined(by: ", ").data(using: .utf8)!, fileName: "filterPredictions.txt")
+        self.spit(data: "[\((filterCollector as NSArray).componentsJoined(by: ", "))]".data(using: .utf8)!, fileName: "filterPredictions.txt")
         self.spit(data: detectCollector.data(using: .utf8)!, fileName: "detectPredictions.txt")
     }
     

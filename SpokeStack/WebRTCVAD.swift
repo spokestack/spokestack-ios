@@ -65,36 +65,38 @@ public class WebRTCVAD: NSObject {
             /// write the frame to the buffer
             let frameSamples: Array<Int16> = frame.elements()
             for s in frameSamples {
-                try frameBuffer.write(s)
-            }
-            
-            /// if the buffer has enough elements, process a sample
-            if (frameBuffer.availableToRead >= frameBufferStride) {
-                var sampleWindow: Array<Int16> = []
-                for _ in 0..<frameBufferStride {
-                    if !frameBuffer.isEmpty {
-                        let s: Int16 = try frameBuffer.read()
-                        sampleWindow.append(s)
+                if !frameBuffer.isFull {
+                    try frameBuffer.write(s)
+                } else {
+                    /// once the buffer is full, process its samples
+                    while !frameBuffer.isEmpty {
+                        var sampleWindow: Array<Int16> = []
+                        for _ in 0..<frameBufferStride {
+                            if !frameBuffer.isEmpty {
+                                let s: Int16 = try frameBuffer.read()
+                                sampleWindow.append(s)
+                            }
+                        }
+                        let sampleWindowUBP = Array(UnsafeBufferPointer(start: sampleWindow, count: sampleWindow.count))
+                        let result = WebRtcVad_Process(vad.pointee, sampleRate, sampleWindowUBP, frameBufferStride32)
+                        print("WebRtcVad_Process result \(result)")
+                        switch result {
+                        case 1:
+                            if !isSpeech {
+                                self.delegate?.activate(frame: frame)
+                            }
+                            break
+                        case 0:
+                            if isSpeech {
+                                self.delegate?.deactivate()
+                            }
+                            break
+                        default:
+                            /// WebRtcVad_Process error case
+                            // self.delegate?.deactivate()
+                            break
+                        }
                     }
-                }
-                let sampleWindowUBP = Array(UnsafeBufferPointer(start: sampleWindow, count: sampleWindow.count))
-                let result = WebRtcVad_Process(vad.pointee, sampleRate, sampleWindowUBP, frameBufferStride32)
-                print("WebRtcVad_Process result \(result)")
-                switch result {
-                case 1:
-                    if !isSpeech {
-                        self.delegate?.activate(frame: frame)
-                    }
-                    break
-                case 0:
-                    if isSpeech {
-                        self.delegate?.deactivate()
-                    }
-                    break
-                default:
-                    /// WebRtcVad_Process error case
-                    // self.delegate?.deactivate()
-                    break
                 }
             }
         } catch RingBufferStateError.illegalState(let message) {
