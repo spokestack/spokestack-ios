@@ -28,8 +28,16 @@ final class RingBuffer <T> {
         return self.rpos == self.wpos
     }
     
+    var availableToWrite: Int {
+        return self.data.count - self.availableToRead
+    }
+    
     var isFull: Bool {
-        return self.data.count - self.wpos - self.rpos == 0
+        return self.availableToWrite == 0
+    }
+    
+    func debug() -> Void {
+        print("RingBuffer isFull \(self.data.count) \(self.wpos) \(self.rpos) \(self.availableToRead) \(self.availableToWrite)")
     }
     
     // MARK: Private (properties)
@@ -49,13 +57,13 @@ final class RingBuffer <T> {
     
     @discardableResult
     func rewind() -> RingBuffer {
-        self.rpos = self.pos(self.wpos + 1)
+        self.rpos = self.wpos - self.data.count
         return self
     }
     
     @discardableResult
     func seek(_ elems: Int) -> RingBuffer {
-        self.rpos = self.pos(self.rpos + elems)
+        self.rpos = (self.rpos + elems) % self.wpos
         return self
     }
     
