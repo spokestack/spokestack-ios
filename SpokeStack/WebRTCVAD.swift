@@ -47,7 +47,7 @@ public class WebRTCVAD: NSObject {
         sampleRate = Int32(samplerate) // 16000
         frameBufferStride = frameWidth*(samplerate/1000) // 20*16 = 320
         frameBufferStride32 = Int32(frameBufferStride) // 320
-        frameBuffer = RingBuffer(frameBufferStride*4, repeating: 0) /// frame width * sample rate/1000 * magic number 4 allowing for variablely-sized frames = 1280
+        frameBuffer = RingBuffer(frameBufferStride, repeating: 0) /// frame width * sample rate/1000 * magic number 4 allowing for variablely-sized frames = 1280
         var errorCode:Int32 = 0
         errorCode = WebRtcVad_Create(vad)
         assert(errorCode == 0, "unable to create a WebRTCVAD struct, which returned error code \(errorCode)")
@@ -62,14 +62,14 @@ public class WebRTCVAD: NSObject {
     
     public func process(frame: Data, isSpeech: Bool) -> Void {
         do {
-            /// write the frame to the buffer
-            let frameSamples: Array<Int16> = frame.elements()
-            for s in frameSamples {
-                if !frameBuffer.isFull {
-                    try frameBuffer.write(s)
-                } else {
+            var detected: Bool = false
+            let samples: Array<Int16> = frame.elements()
+            for s in samples {
+                /// write the frame sample to the buffer
+                try frameBuffer.write(s)
+                if frameBuffer.isFull {
                     /// once the buffer is full, process its samples
-                    while !frameBuffer.isEmpty {
+                    detecting: while !frameBuffer.isEmpty {
                         var sampleWindow: Array<Int16> = []
                         for _ in 0..<frameBufferStride {
                             if !frameBuffer.isEmpty {
@@ -79,24 +79,26 @@ public class WebRTCVAD: NSObject {
                         }
                         let sampleWindowUBP = Array(UnsafeBufferPointer(start: sampleWindow, count: sampleWindow.count))
                         let result = WebRtcVad_Process(vad.pointee, sampleRate, sampleWindowUBP, frameBufferStride32)
-                        print("WebRtcVad_Process result \(result)")
                         switch result {
+                        /// if activation state changes, stop the detecting loop but finish writing the samples to the buffer (in the outer for loop)
                         case 1:
-                            if !isSpeech {
-                                self.delegate?.activate(frame: frame)
-                            }
-                            break
-                        case 0:
-                            if isSpeech {
-                                self.delegate?.deactivate()
-                            }
-                            break
+                            detected = true
+                            break detecting
                         default:
                             /// WebRtcVad_Process error case
                             // self.delegate?.deactivate()
                             break
                         }
                     }
+                }
+            }
+            if detected {
+                if !isSpeech {
+                    self.delegate?.activate(frame: frame)
+                }
+            } else {
+                if isSpeech {
+                    self.delegate?.deactivate()
                 }
             }
         } catch RingBufferStateError.illegalState(let message) {

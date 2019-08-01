@@ -12,5 +12,5 @@ import Foundation
     @objc public var transcript: String = ""
     @objc public var confidence: Float = 0.0
     @objc public var isActive: Bool = false
-    @objc public var isSpeech: Bool = false 
+    @objc public var isSpeech: Bool = false
 }
