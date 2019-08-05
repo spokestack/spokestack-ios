@@ -43,7 +43,7 @@ func recordingCallback(
     if status != noErr {
         return status
     }
-    
+        
     if buffers[0].mData != nil {
         let data: Data = Data(bytes: buffers[0].mData!, count: Int(buffers[0].mDataByteSize))
         AudioController.shared.delegate?.processSampleData(data)

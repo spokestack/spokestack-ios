@@ -12,7 +12,7 @@ enum RingBufferStateError: Error {
     case illegalState(message: String)
 }
 
-final class RingBuffer {
+final class RingBuffer <T> {
 
     // MARK: Public (properties)
     
@@ -28,17 +28,21 @@ final class RingBuffer {
         return self.pos(self.wpos + 1) == self.rpos
     }
     
+    func debug() -> Void {
+        print("RingBuffer \(self.data.count) \(self.wpos) \(self.rpos)")
+    }
+    
     // MARK: Private (properties)
     
-    private var data: Array<Float> = []
+    private var data: ContiguousArray<T> = []
     private var rpos: Int = 0
     private var wpos: Int = 0
     
     // MARK: Initializers
     
-    required init(_ capacity: Int) {
+    required init(_ capacity: Int, repeating: T) {
         let reservedCapacity: Int = capacity + 1
-        self.data = Array(repeating: 0.0, count: reservedCapacity)
+        self.data = ContiguousArray(repeating: repeating, count: reservedCapacity)
     }
     
     // MARK: Public (methods)
@@ -61,16 +65,16 @@ final class RingBuffer {
         return self
     }
     
-    func read() throws -> Float {
+    func read() throws -> T {
         if self.isEmpty {
             throw RingBufferStateError.illegalState(message: "ring buffer is empty")
         }
-        let value: Float = self.data[self.rpos]
+        let value: T = self.data[self.rpos]
         self.rpos = self.pos(self.rpos + 1)
         return value
     }
     
-    func write(_ value: Float) throws -> Void {
+    func write(_ value: T) throws -> Void {
         if self.isFull {
             throw RingBufferStateError.illegalState(message: "ring buffer is full")
         }
@@ -79,7 +83,7 @@ final class RingBuffer {
     }
     
     @discardableResult
-    func fill(_ value: Float) -> RingBuffer {
+    func fill(_ value: T) -> RingBuffer {
         while !self.isFull {
             try! self.write(value)
         }

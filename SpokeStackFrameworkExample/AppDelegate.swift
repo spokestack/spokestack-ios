@@ -27,6 +27,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let sessionCategory: AVAudioSession.Category = .playAndRecord
         let sessionOptions: AVAudioSession.CategoryOptions = [.allowBluetoothA2DP, .allowAirPlay, .defaultToSpeaker]
         do {
+            // try session.setPreferredIOBufferDuration(0.01)
             if ((session.category != sessionCategory) || !(session.categoryOptions.contains(sessionOptions))) { // TODO: add (session.ioBufferDuration != self.bufferDuration) once mode-based wakeword is enabled
                 try session.setCategory(sessionCategory, mode: .default, options: sessionOptions)
                 // TODO: The below line implicitly disables HFP output. Investigate buffer duration versus bluetooth output settings.

@@ -35,7 +35,7 @@ public class CoreMLWakewordRecognizer: NSObject, WakewordRecognizerService {
         case hann
     }
     
-    private var vad: WITVad = WITVad()
+    private var vad: WebRTCVAD = WebRTCVAD()
     private var context: SpeechContext = SpeechContext()
     
     lazy private var wwfilter: WakeWordFilter = {
@@ -72,10 +72,10 @@ public class CoreMLWakewordRecognizer: NSObject, WakewordRecognizerService {
     
     /// Sliding Window Buffers
     
-    private var sampleWindow: RingBuffer!
-    private var frameWindow: RingBuffer!
-    private var smoothWindow: RingBuffer!
-    private var phraseWindow: RingBuffer!
+    private var sampleWindow: RingBuffer<Float>!
+    private var frameWindow: RingBuffer<Float>!
+    private var smoothWindow: RingBuffer<Float>!
+    private var phraseWindow: RingBuffer<Float>!
 
     /// Wakeword Activation Management
     
@@ -94,13 +94,11 @@ public class CoreMLWakewordRecognizer: NSObject, WakewordRecognizerService {
 
     deinit {
         print("CoreMLWakewordRecognizer deinit")
-        vad.delegate = nil
     }
     
     public override init() {
         super.init()
         print("CoreMLWakewordRecognizer init")
-        self.vad.delegate = self
     }
     
     // MARK: SpeechRecognizerService implementation
@@ -163,6 +161,12 @@ public class CoreMLWakewordRecognizer: NSObject, WakewordRecognizerService {
     private func setConfiguration() -> Void {
         
         if let c = self.configuration {
+            do {
+                try self.vad.create(mode: .HighQuality, delegate: self, frameWidth: c.frameWidth, samplerate: c.sampleRate)
+            } catch {
+                assertionFailure("CoreMLWakewordRecognizer failed to create a valid VAD")
+            }
+            
             let buffer: TimeInterval = TimeInterval((c.sampleRate / 1000) * c.frameWidth)
             AudioController.shared.sampleRate = c.sampleRate
             AudioController.shared.bufferDuration = buffer
@@ -202,10 +206,10 @@ public class CoreMLWakewordRecognizer: NSObject, WakewordRecognizerService {
             
             /// Allocate sliding window buffers
             
-            self.sampleWindow = RingBuffer(c.fftWindowSize)
-            self.frameWindow = RingBuffer(melLength * self.melWidth)
-            self.smoothWindow = RingBuffer(smoothLength * self.words.count)
-            self.phraseWindow = RingBuffer(phraseLength * self.words.count)
+            self.sampleWindow = RingBuffer(c.fftWindowSize, repeating: 0.0)
+            self.frameWindow = RingBuffer(melLength * self.melWidth, repeating: 0.0)
+            self.smoothWindow = RingBuffer(smoothLength * self.words.count, repeating: 0.0)
+            self.phraseWindow = RingBuffer(phraseLength * self.words.count, repeating: 0.0)
             
             /// Fill buffers (except samples) with zero to
             /// minimize detection delay caused by buffering
@@ -243,8 +247,8 @@ public class CoreMLWakewordRecognizer: NSObject, WakewordRecognizerService {
     
     /// MARK: Audio processing
     
-    private func process(_ data: Data) -> Void {
-        if !self.context.isActive {
+    private func process(_ data: Data, isSpeech: Bool) -> Void {
+        if self.context.isSpeech {
             /// Run the current frame through the detector pipeline.
             /// Activate the pipeline if a keyword phrase was detected.
             self.sample(data)
@@ -288,7 +292,7 @@ public class CoreMLWakewordRecognizer: NSObject, WakewordRecognizerService {
             sample -= self.preEmphasis * self.prevSample
             self.prevSample = currentSample
             
-            sampleCollector.append(sample)
+            //sampleCollector.append(sample)
             
             /// Process the sample
             /// - write it to the sample sliding window
@@ -298,14 +302,17 @@ public class CoreMLWakewordRecognizer: NSObject, WakewordRecognizerService {
                 try self.sampleWindow.write(sample)
             } catch SpeechPipelineError.illegalState(let message) {
                 fatalError("CoreMLWakewordRecognizer sample illegal state error \(message)")
-            } catch {
-                fatalError("CoreMLWakewordRecognizer sample unknown error occurred while processing \(#line)")
+            } catch let error {
+                fatalError("CoreMLWakewordRecognizer sample unknown error occurred while processing \(error.localizedDescription)")
             }
+            //self.sampleWindow.debug()
             if self.sampleWindow.isFull {
                 if (self.context.isSpeech) {
                     self.analyze()
                 }
+                //self.sampleWindow.debug()
                 self.sampleWindow.rewind().seek(self.hopLength)
+                //self.sampleWindow.debug()
             }
         }
     }
@@ -319,22 +326,21 @@ public class CoreMLWakewordRecognizer: NSObject, WakewordRecognizerService {
                 self.fftFrame[index] = sample * self.fftWindow[index]
             } catch SpeechPipelineError.illegalState(let message) {
                 print("CoreMLWakewordRecognizer analyze illegal state error \(message)")
-            } catch {
-                fatalError("CoreMLWakewordRecognizer analyze unknown error occurred \(#line)")
+            } catch let error {
+                fatalError("CoreMLWakewordRecognizer analyze unknown error occurred \(error.localizedDescription)")
             }
         }
         
         /// Compute the stft
         self.fft.forward(&self.fftFrame)
         
-        self.fftFrameCollector += "\(self.fftFrame)\n"
+        //self.fftFrameCollector += "\(self.fftFrame)\n"
         
         /// Decode the FFT outputs into the filter model's input
         self.filter()
     }
     
     private func reset() -> Void {
-        print("CoreMLWakewordRecognizer reset")
         /// Empty the sample buffer, so that only contiguous
         /// speech samples are written to it
         self.sampleWindow.reset()
@@ -353,7 +359,7 @@ public class CoreMLWakewordRecognizer: NSObject, WakewordRecognizerService {
             self.activeLength = 1
             self.deactivate()
             self.stopStreaming(context: self.context)
-                self.delegate?.activate()
+            self.delegate?.activate()
         }
     }
     
@@ -423,7 +429,7 @@ extension CoreMLWakewordRecognizer {
             self.frameWindow.rewind().seek(self.melWidth)
             for i in 0..<predictions.melspec_outputs__0.shape[2].intValue {
                 try? self.frameWindow.write(predictions.melspec_outputs__0[i].floatValue)
-                filterCollector.append(predictions.melspec_outputs__0[i].floatValue)
+                //filterCollector.append(predictions.melspec_outputs__0[i].floatValue)
             }
             
             /// Detect
@@ -471,7 +477,7 @@ extension CoreMLWakewordRecognizer {
                 }
             }
             
-            detectCollector += "\(predictions.detect_outputs__0.debugDescription)\n"
+            //detectCollector += "\(predictions.detect_outputs__0.debugDescription)\n"
 
             /// send the prediction posteriors through a smoothing window
             self.smooth()
@@ -486,7 +492,6 @@ extension CoreMLWakewordRecognizer {
 extension CoreMLWakewordRecognizer {
     
     private func smooth() -> Void {
-        
         /// Sum the per-class posteriors across the smoothing window
         for (index, _) in self.words.enumerated() {
             self.phraseSum[index] = 0
@@ -495,10 +500,10 @@ extension CoreMLWakewordRecognizer {
             for (index, _) in self.words.enumerated() {
                 do {
                     self.phraseSum[index] += try self.smoothWindow.read()
-                } catch SpeechPipelineError.illegalState(let message) {
+                } catch RingBufferStateError.illegalState(let message) {
                     fatalError("CoreMLWakewordRecognizer smooth couldn't read the smoothing window: \(message)")
-                } catch {
-                    fatalError("CoreMLWakewordRecognizer smooth error \(#line)")
+                } catch let error {
+                    fatalError("CoreMLWakewordRecognizer smooth error \(error.localizedDescription)")
                 }
             }
         }
@@ -511,10 +516,10 @@ extension CoreMLWakewordRecognizer {
             do {
                 let windowValue: Float = self.phraseSum[index] / Float(total)
                 try self.phraseWindow.write(windowValue)
-            } catch SpeechPipelineError.illegalState(let message) {
+            } catch RingBufferStateError.illegalState(let message) {
                 fatalError("CoreMLWakewordRecognizer smooth couldn't write to phrase window \(message)")
-            } catch {
-                fatalError("CoreMLWakewordRecognizer smooth error \(#line)")
+            } catch let error {
+                fatalError("CoreMLWakewordRecognizer smooth error \(error.localizedDescription)")
             }
         }
         
@@ -523,11 +528,10 @@ extension CoreMLWakewordRecognizer {
     }
     
     private func phrase() -> Void {
-        
         /// Compute the argmax (winning class) of each smoothed output
         /// in the current phrase window
         var i: Int = 0
-        while !self.phraseWindow.isEmpty {
+        while !self.phraseWindow.isEmpty  {
             var argmax: Float = -Float.greatestFiniteMagnitude
             for (j, _) in self.words.enumerated() {
                 do {
@@ -537,10 +541,10 @@ extension CoreMLWakewordRecognizer {
                         self.phraseArg[i] = j
                         argmax = value
                     }
-                } catch SpeechPipelineError.illegalState(let message) {
+                } catch RingBufferStateError.illegalState(let message) {
                     fatalError("CoreMLWakewordRecognizer phrase couldn't read the phrase window \(message)")
-                } catch {
-                    fatalError("CoreMLWakewordRecognizer phrase error \(#line)")
+                } catch let error {
+                    fatalError("CoreMLWakewordRecognizer phrase error \(error.localizedDescription)")
                 }
             }
             i += 1
@@ -574,33 +578,30 @@ extension CoreMLWakewordRecognizer: AudioControllerDelegate {
         /// multiplex the audio frame data to both the vad and, if activated, the model pipelines
         audioProcessingQueue.async {[weak self] in
             guard let strongSelf = self else { return }
-            strongSelf.vad.vadSpeechFrame(data)
-        }
-        if self.context.isSpeech {
-            audioProcessingQueue.async {[weak self] in
-                guard let strongSelf = self else { return }
-                strongSelf.process(data)
+            strongSelf.vad.process(frame: data, isSpeech:
+                strongSelf.context.isSpeech)
+            if strongSelf.context.isSpeech {
+                strongSelf.process(data, isSpeech: strongSelf.context.isSpeech)
             }
         }
     }
 }
 
-extension CoreMLWakewordRecognizer: WITVadDelegate {
+extension CoreMLWakewordRecognizer: VADDelegate {
     
-    public func activate(_ audioData: Data) {
+    public func activate(frame: Data) {
         /// activate the speech context
-        print("CoreMLWakewordRecognizer activate")
         self.context.isSpeech = true
         /// process the first frames of speech data from the vad
-        self.process(audioData)
+        self.process(frame, isSpeech: true)
     }
     
     public func deactivate() {
-        print("CoreMLWakewordRecognizer deactivate")
         self.context.isSpeech = false
         //self.spit(data: sampleCollector.withUnsafeBufferPointer {Data(buffer: $0)}, fileName: "samples.txt")
+        //self.spit(data: "[\((sampleCollector as NSArray).componentsJoined(by: ", "))]".data(using: .utf8)!, fileName: "samples.txt")
         //self.spit(data: fftFrameCollector.data(using: .utf8)!, fileName: "fftFrame.txt")
-        //self.spit(data: filterCollector.withUnsafeBufferPointer {Data(buffer: $0)}, fileName: "filterPredictions.txt")
+        //self.spit(data: "[\((filterCollector as NSArray).componentsJoined(by: ", "))]".data(using: .utf8)!, fileName: "filterPredictions.txt")
         //self.spit(data: detectCollector.data(using: .utf8)!, fileName: "detectPredictions.txt")
     }
     
