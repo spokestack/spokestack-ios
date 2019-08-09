@@ -187,7 +187,7 @@ public class CoreMLWakewordRecognizer: NSObject, WakewordRecognizerService {
             
             /// Allocate the stft window and FFT/frame buffer
             
-            self.fftWindow = self.hannWindow(c.fftWindowSize)
+            self.fftWindow = SignalProcessing.hannWindow(c.fftWindowSize)
             self.fft = FFT(c.fftWindowSize)
             self.fftFrame = Array(repeating: 0.0, count: c.fftWindowSize)
             
@@ -248,16 +248,19 @@ public class CoreMLWakewordRecognizer: NSObject, WakewordRecognizerService {
     /// MARK: Audio processing
     
     private func process(_ data: Data, isSpeech: Bool) -> Void {
-        if self.context.isSpeech {
+        self.activeLength += 1
+        if self.context.isSpeech && self.activeLength < self.maxActive {
+            print("CoreMLWakewordRecognizer process if")
             /// Run the current frame through the detector pipeline.
             /// Activate the pipeline if a keyword phrase was detected.
             self.sample(data)
         } else {
+            print("CoreMLWakewordRecognizer process else")
             /// Continue this wakeword (or external) activation
             /// for at least the minimum, until a vad deactivation or timeout
-            self.activeLength += 1
             if (self.activeLength > self.minActive) && (!self.context.isSpeech || (self.activeLength > self.maxActive)) {
                 self.deactivatePipeline()
+                self.reset()
             }
         }
         
@@ -275,7 +278,7 @@ public class CoreMLWakewordRecognizer: NSObject, WakewordRecognizerService {
         /// Update the rms normalization factors
         /// Maintain an ewma of the rms signal energy for speech samples
         if (self.context.isSpeech && self.rmsAlpha > 0) {
-            self.rmsValue = self.rmsAlpha * self.rms(data, dataElements) + (1 - self.rmsAlpha) * self.rmsValue
+            self.rmsValue = self.rmsAlpha * SignalProcessing.rms(data, dataElements) + (1 - self.rmsAlpha) * self.rmsValue
         }
         
         /// Process all samples in the frame
@@ -305,14 +308,9 @@ public class CoreMLWakewordRecognizer: NSObject, WakewordRecognizerService {
             } catch let error {
                 fatalError("CoreMLWakewordRecognizer sample unknown error occurred while processing \(error.localizedDescription)")
             }
-            //self.sampleWindow.debug()
             if self.sampleWindow.isFull {
-                if (self.context.isSpeech) {
-                    self.analyze()
-                }
-                //self.sampleWindow.debug()
+                self.analyze()
                 self.sampleWindow.rewind().seek(self.hopLength)
-                //self.sampleWindow.debug()
             }
         }
     }
@@ -373,39 +371,12 @@ public class CoreMLWakewordRecognizer: NSObject, WakewordRecognizerService {
     }
 }
 
-// MARK: Root Mean Squared and Hann algorithms
-
-extension CoreMLWakewordRecognizer {
-    private func rms(_ data: Data, _ dataElements: Array<Int16>) -> Float {
-        var sum: Float = 0
-        
-        /// Process all samples in the frame
-        /// calculating the sum of the squares of the samples
-        for d in dataElements {
-            let sample: Float = Float(d) / Float(Int16.max)
-            sum += sample * sample
-        }
-        
-        /// calculate rms
-        return Float(sqrt(sum / Float(dataElements.count)))
-    }
-    
-    private func hannWindow(_ length: Int) -> Array<Float> {
-        /// https://en.wikipedia.org/wiki/Hann_function
-        var window: Array<Float> = Array(repeating: 0, count: length)
-        for (index, _) in window.enumerated() {
-            window[index] = Float(pow(sin((Float.pi * Float(index)) / Float((length - 1))), 2))
-        }
-        return window
-    }
-}
-
 // MARK: CoreML filter and detect model predictions
 extension CoreMLWakewordRecognizer {
     
     private func filter() -> Void {
         precondition(!self.fftFrame.isEmpty, "CoreMLWakewordRecognizer filter FFT Frame can't be empty")
-        
+
         /// Cast the fftFrame single-dimension array of stft values into the model's required MLMultiArray data structure
         /// TODO: no need to decode fft outputs for model input?
         let frameCount: Int = (self.fftFrame.count / 2) + 1
@@ -417,24 +388,24 @@ extension CoreMLWakewordRecognizer {
             let v: NSNumber = NSNumber(value: floatValue) // TODO: fftFrame is float. multiArray is float. why cast to NSNumber?
             multiArray[i] = v
         }
-        
+
         do {
             /// execute the mel filterbank tensorflow model, gather predictions
             let options: MLPredictionOptions = MLPredictionOptions()
             options.usesCPUOnly = true // TODO: use GPU?
             let input: WakeWordFilterInput = WakeWordFilterInput(linspec_inputs__0: multiArray)
             let predictions: WakeWordFilterOutput = try self.wwfilter.prediction(input: input, options: options)
-            
+
             /// Copy the current mel frame into the mel window
             self.frameWindow.rewind().seek(self.melWidth)
             for i in 0..<predictions.melspec_outputs__0.shape[2].intValue {
                 try? self.frameWindow.write(predictions.melspec_outputs__0[i].floatValue)
-                //filterCollector.append(predictions.melspec_outputs__0[i].floatValue)
+            //filterCollector.append(predictions.melspec_outputs__0[i].floatValue)
             }
-            
+
             /// Detect
             self.detect()
-            
+
         } catch let modelFilterError {
             fatalError("CoreMLWakewordRecognizer filters failed to write predictions to framewindow due to \(modelFilterError)")
         }
@@ -597,40 +568,13 @@ extension CoreMLWakewordRecognizer: VADDelegate {
     }
     
     public func deactivate() {
-        self.context.isSpeech = false
-        //self.spit(data: sampleCollector.withUnsafeBufferPointer {Data(buffer: $0)}, fileName: "samples.txt")
-        //self.spit(data: "[\((sampleCollector as NSArray).componentsJoined(by: ", "))]".data(using: .utf8)!, fileName: "samples.txt")
-        //self.spit(data: fftFrameCollector.data(using: .utf8)!, fileName: "fftFrame.txt")
-        //self.spit(data: "[\((filterCollector as NSArray).componentsJoined(by: ", "))]".data(using: .utf8)!, fileName: "filterPredictions.txt")
-        //self.spit(data: detectCollector.data(using: .utf8)!, fileName: "detectPredictions.txt")
-    }
-    
-    private func spit(data: Data, fileName: String) {
-        let filemgr = FileManager.default
-        if let path = filemgr.urls(for: FileManager.SearchPathDirectory.documentDirectory, in: FileManager.SearchPathDomainMask.userDomainMask).last?.appendingPathComponent(fileName) {
-            if !filemgr.fileExists(atPath: path.path) {
-                filemgr.createFile(atPath: path.path, contents: data, attributes: nil)
-                print("CoreMLWakewordRecognizer spit created \(data.count) fileURL: \(path.path)")
-                do {
-                    let handle = try FileHandle(forWritingTo: path)
-                    handle.write(data)
-                    handle.synchronizeFile()
-                } catch let error {
-                    print("CoreMLWakewordRecognizer spit failed to open a handle to \(path.path) because \(error)")
-                }
-            } else {
-                do {
-                    let handle = try FileHandle(forWritingTo: path)
-                    handle.seekToEndOfFile()
-                    handle.write(data)
-                    handle.synchronizeFile()
-                    print("CoreMLWakewordRecognizer spit appended \(data.count) to: \(path.path)")
-                } catch let error {
-                    print("CoreMLWakewordRecognizer spit failed to open a handle to \(path.path) because \(error)")
-                }
-            }
-        } else {
-            print("CoreMLWakewordRecognizer spit failed to get a URL for \(fileName)")
+        if self.activeLength >= self.maxActive {
+            self.context.isSpeech = false
+            //Spit.spit(data: sampleCollector.withUnsafeBufferPointer {Data(buffer: $0)}, fileName: "samples.txt")
+            //Spit.spit(data: "[\((sampleCollector as NSArray).componentsJoined(by: ", "))]".data(using: .utf8)!, fileName: "samples.txt")
+            //Spit.spit(data: fftFrameCollector.data(using: .utf8)!, fileName: "fftFrame.txt")
+            //Spit.spit(data: "[\((filterCollector as NSArray).componentsJoined(by: ", "))]".data(using: .utf8)!, fileName: "filterPredictions.txt")
+            //Spit.spit(data: detectCollector.data(using: .utf8)!, fileName: "detectPredictions.txt")
         }
     }
 }

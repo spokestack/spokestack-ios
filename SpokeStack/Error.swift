@@ -21,3 +21,10 @@ public enum SpeechRecognizerError: Error {
     case unknownCause(String)
     case failed(String)
 }
+
+public enum WakewordModelError: Error {
+    case model(String)
+    case filter(String)
+    case encode(String)
+    case detect(String)
+}

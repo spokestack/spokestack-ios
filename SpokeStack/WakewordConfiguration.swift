@@ -17,8 +17,12 @@ import Foundation
     public var rmsAlpha: Float = 0.1
     public var fftWindowSize: Int = 512
     public var fftHopLength: Int = 10
-    public var melFrameLength: Int = 400
+    public var melFrameLength: Int = 10 // coreml: 400, tflite: 10
     public var melFrameWidth: Int = 40
+    public var stateWidth: Int = 128
+    public var encodeLength: Int = 1000
+    public var encodeWidth: Int = 128
+    public var wakeThreshold: Float = 0.5
     public var wakePhraseLength: Int = 2000
     public var wakeActiveMin: Int = 600
     public var wakeActiveMax: Int = 5000
@@ -27,4 +31,7 @@ import Foundation
     public var frameWidth: Int = 20
     public var wakewordRequestTimeout: Int = 50000
     public var preEmphasis: Float = 0.97
+    public var filterModel: String = "filter"
+    public var encodeModel: String = "encode"
+    public var detectModel: String = "detect"
 }

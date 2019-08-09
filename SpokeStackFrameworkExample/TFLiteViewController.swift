@@ -1,8 +1,8 @@
 //
-//  CoreMLViewController.swift
+//  TFLiteViewController.swift
 //  SpokeStackFrameworkExample
 //
-//  Created by Noel Weichbrodt on 6/13/19.
+//  Created by Noel Weichbrodt on 8/12/19.
 //  Copyright © 2019 Pylon AI, Inc. All rights reserved.
 //
 
@@ -10,7 +10,7 @@ import UIKit
 import SpokeStack
 import AVFoundation
 
-class CoreMLViewController: UIViewController {
+class TFLiteViewController: UIViewController {
     
     lazy var startRecordingButton: UIButton = {
         
@@ -19,7 +19,7 @@ class CoreMLViewController: UIViewController {
         button.translatesAutoresizingMaskIntoConstraints = false
         button.setTitle("Start Recording", for: .normal)
         button.addTarget(self,
-                         action: #selector(CoreMLViewController.startRecordingAction(_:)),
+                         action: #selector(TFLiteViewController.startRecordingAction(_:)),
                          for: .touchUpInside)
         button.setTitleColor(.purple, for: .normal)
         
@@ -33,7 +33,7 @@ class CoreMLViewController: UIViewController {
         button.translatesAutoresizingMaskIntoConstraints = false
         button.setTitle("Stop Recording", for: .normal)
         button.addTarget(self,
-                         action: #selector(CoreMLViewController.stopRecordingAction(_:)),
+                         action: #selector(TFLiteViewController.stopRecordingAction(_:)),
                          for: .touchUpInside)
         
         button.setTitleColor(.purple, for: .normal)
@@ -47,7 +47,7 @@ class CoreMLViewController: UIViewController {
         return try! SpeechPipeline(.appleSpeech,
                                    speechConfiguration: RecognizerConfiguration(),
                                    speechDelegate: self,
-                                   wakewordService: .coremlWakeword,
+                                   wakewordService: .tFLiteWakeword,
                                    wakewordConfiguration: WakewordConfiguration(),
                                    wakewordDelegate: self,
                                    pipelineDelegate: self)
@@ -57,11 +57,11 @@ class CoreMLViewController: UIViewController {
         
         super.loadView()
         self.view.backgroundColor = .white
-        self.title = "CoreML"
+        self.title = "TensorFlow"
         
         let doneBarButtonItem: UIBarButtonItem = UIBarButtonItem(barButtonSystemItem: .done,
                                                                  target: self,
-                                                                 action: #selector(CoreMLViewController.dismissViewController(_:)))
+                                                                 action: #selector(TFLiteViewController.dismissViewController(_:)))
         self.navigationItem.rightBarButtonItem = doneBarButtonItem
     }
     
@@ -102,7 +102,7 @@ class CoreMLViewController: UIViewController {
     }
 }
 
-extension CoreMLViewController: SpeechRecognizer, WakewordRecognizer, PipelineDelegate {
+extension TFLiteViewController: SpeechRecognizer, WakewordRecognizer, PipelineDelegate {
     func setupFailed(_ error: String) {
         print("setupFailed: " + error)
     }
@@ -144,3 +144,4 @@ extension CoreMLViewController: SpeechRecognizer, WakewordRecognizer, PipelineDe
         self.toggleStartStop()
     }
 }
+
