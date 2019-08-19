@@ -190,10 +190,10 @@ public class TFLiteWakewordRecognizer: NSObject {
             self.encodeWidth = c.encodeWidth
             self.encodeLength = c.encodeLength * c.sampleRate / 1000 / self.hopLength
             self.stateWidth = c.stateWidth
-            self.encodeWindow = RingBuffer(c.encodeLength * c.encodeWidth, repeating: 0.0)
+            self.encodeWindow = RingBuffer(self.encodeLength * c.encodeWidth, repeating: 0.0)
             self.encodeState = RingBuffer(c.stateWidth, repeating: 0.0)
             self.encodeState.fill(0.0)
-            self.detectWindow = RingBuffer(c.encodeLength * c.encodeWidth, repeating: 0.0)
+            self.detectWindow = RingBuffer(self.encodeLength * c.encodeWidth, repeating: 0.0)
             
             /// attention model posteriors
             self.posteriorThreshold = c.wakeThreshold
