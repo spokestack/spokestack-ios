@@ -98,7 +98,6 @@ public class WebRTCVAD: NSObject {
                 }
             } else {
                 if isSpeech {
-                    print("WebRTCVAD process deacitvate")
                     self.delegate?.deactivate()
                 }
             }

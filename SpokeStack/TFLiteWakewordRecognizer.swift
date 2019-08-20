@@ -209,9 +209,9 @@ public class TFLiteWakewordRecognizer: NSObject {
     /// MARK: Pipeline control
     
     private func process(_ frame: Data) -> Void {
+        print("TFLiteWakewordRecognizer process \(self.activeLength)/\(self.maxActive) isActive: \(self.context.isActive) isSpeech: \(self.context.isSpeech)")
         self.activeLength += 1
         if self.context.isSpeech && self.activeLength < self.maxActive {
-            print("TFLiteWakewordRecognizer process if")
             /// Run the current frame through the detector pipeline.
             /// Activate the pipeline if a keyword phrase was detected.
             do {
@@ -220,16 +220,22 @@ public class TFLiteWakewordRecognizer: NSObject {
                 analyze()
                 try filter()
                 try encode()
-                try detect()
-            } catch(let message) {
-                print("TFLiteWakewordRecognizer process \(message)")
+                let activate = try detect()
+                if activate && !self.context.isActive {
+                    self.context.isActive = true
+                    self.reset()
+                    self.stopStreaming(context: self.context)
+                    self.delegate?.activate()
+                }
+            } catch let error {
+                self.delegate?.didError(error)
             }
         } else {
-            print("TFLiteWakewordRecognizer process else")
             /// Continue this wakeword (or external) activation
             /// for at least the activation minimum,
             /// until a vad deactivation or timeout
             if (self.activeLength > self.minActive) && (!self.context.isSpeech || (self.activeLength >= self.maxActive)) {
+                self.context.isActive = false
                 self.reset()
             }
         }
@@ -396,7 +402,7 @@ public class TFLiteWakewordRecognizer: NSObject {
         }
     }
     
-    private func detect() throws -> Void {
+    private func detect() throws -> Bool {
         print("TFLiteWakewordRecognizer detect")
         if self.encodeWindow.isFull {
             do {
@@ -420,26 +426,16 @@ public class TFLiteWakewordRecognizer: NSObject {
                     let detectResults = detectOutput.data.withUnsafeBytes { (pointer: UnsafePointer<Float32>) -> [Float32] in
                         Array<Float32>(UnsafeBufferPointer(start: pointer, count: detectOutput.data.count / 4))}
                     let posterior = detectResults[0]
-                    if posterior > self.posteriorThreshold {
-                        self.activatePipeline()
-                    }
                     if posterior > self.posteriorMax {
                         self.posteriorMax = posterior
+                    }
+                    if posterior > self.posteriorThreshold {
+                        return true
                     }
                  }
             }
         }
-    }
-    
-    private func activatePipeline() -> Void {
-        print("TFLiteWakewordRecognizer activatePipeline")
-        if !self.context.isActive {
-            self.context.isActive = true
-            self.activeLength = 1
-            self.deactivate()
-            self.stopStreaming(context: self.context)
-            self.delegate?.activate()
-        }
+        return false
     }
     
     private func reset() -> Void {
@@ -456,10 +452,18 @@ public class TFLiteWakewordRecognizer: NSObject {
         self.posteriorMax = 0
         
         /// control flow deactivation
-        self.context.isActive = false
-        self.stopStreaming(context: self.context)
         self.activeLength = 0
-        self.delegate?.deactivate()
+        
+        self.debug()
+    }
+    
+    private func debug() -> Void {
+        Spit.spit(data: "[\((sampleCollector as NSArray).componentsJoined(by: ", "))]".data(using: .utf8)!, fileName: "samples.txt")
+        Spit.spit(data: fftFrameCollector.data(using: .utf8)!, fileName: "fftFrame.txt")
+        Spit.spit(data: "[\((filterCollector as NSArray).componentsJoined(by: ", "))]".data(using: .utf8)!, fileName: "filterOutput.txt")
+        Spit.spit(data: "[\((encodeCollector as NSArray).componentsJoined(by: ", "))]".data(using: .utf8)!, fileName: "encodeOutput.txt")
+        Spit.spit(data: "[\((stateCollector as NSArray).componentsJoined(by: ", "))]".data(using: .utf8)!, fileName: "stateOutput.txt")
+        //Spit.spit(data: detectCollector.data(using: .utf8)!, fileName: "detectPredictions.txt")
     }
 }
 
@@ -478,14 +482,14 @@ extension TFLiteWakewordRecognizer : WakewordRecognizerService {
 }
 
 extension TFLiteWakewordRecognizer: AudioControllerDelegate {
-    func processSampleData(_ data: Data) -> Void {
+    func processFrame(_ frame: Data) -> Void {
         /// multiplex the audio frame data to both the vad and, if activated, the model pipelines
         audioProcessingQueue.async {[weak self] in
             guard let strongSelf = self else { return }
-            strongSelf.vad.process(frame: data, isSpeech:
+            strongSelf.vad.process(frame: frame, isSpeech:
                 strongSelf.context.isSpeech)
             if strongSelf.context.isSpeech {
-                strongSelf.process(data)
+                strongSelf.process(frame)
             }
         }
     }
@@ -504,12 +508,6 @@ extension TFLiteWakewordRecognizer: VADDelegate {
         print("TFLiteWakewordRecognizer deactivate")
         if self.activeLength >= self.maxActive {
             self.context.isSpeech = false
-            Spit.spit(data: "[\((sampleCollector as NSArray).componentsJoined(by: ", "))]".data(using: .utf8)!, fileName: "samples.txt")
-            Spit.spit(data: fftFrameCollector.data(using: .utf8)!, fileName: "fftFrame.txt")
-            Spit.spit(data: "[\((filterCollector as NSArray).componentsJoined(by: ", "))]".data(using: .utf8)!, fileName: "filterOutput.txt")
-            Spit.spit(data: "[\((encodeCollector as NSArray).componentsJoined(by: ", "))]".data(using: .utf8)!, fileName: "encodeOutput.txt")
-            Spit.spit(data: "[\((stateCollector as NSArray).componentsJoined(by: ", "))]".data(using: .utf8)!, fileName: "stateOutput.txt")
-            //Spit.spit(data: detectCollector.data(using: .utf8)!, fileName: "detectPredictions.txt")
         }
     }
 }

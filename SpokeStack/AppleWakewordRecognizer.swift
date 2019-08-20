@@ -181,10 +181,10 @@ public class AppleWakewordRecognizer: NSObject, WakewordRecognizerService {
 }
 
 extension AppleWakewordRecognizer: AudioControllerDelegate {
-    func processSampleData(_ data: Data) -> Void {
+    func processFrame(_ frame: Data) -> Void {
         audioProcessingQueue.async {[weak self] in
             guard let strongSelf = self else { return }
-            strongSelf.vad.process(frame: data, isSpeech: true)
+            strongSelf.vad.process(frame: frame, isSpeech: true)
         }
     }
 }

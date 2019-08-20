@@ -545,14 +545,14 @@ extension CoreMLWakewordRecognizer {
 }
 
 extension CoreMLWakewordRecognizer: AudioControllerDelegate {
-    func processSampleData(_ data: Data) -> Void {
+    func processFrame(_ frame: Data) -> Void {
         /// multiplex the audio frame data to both the vad and, if activated, the model pipelines
         audioProcessingQueue.async {[weak self] in
             guard let strongSelf = self else { return }
-            strongSelf.vad.process(frame: data, isSpeech:
+            strongSelf.vad.process(frame: frame, isSpeech:
                 strongSelf.context.isSpeech)
             if strongSelf.context.isSpeech {
-                strongSelf.process(data, isSpeech: strongSelf.context.isSpeech)
+                strongSelf.process(frame, isSpeech: strongSelf.context.isSpeech)
             }
         }
     }

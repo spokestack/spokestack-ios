@@ -24,6 +24,7 @@ public enum SpeechRecognizerError: Error {
 
 public enum WakewordModelError: Error {
     case model(String)
+    case process(String)
     case filter(String)
     case encode(String)
     case detect(String)
