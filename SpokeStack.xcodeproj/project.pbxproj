@@ -80,12 +80,12 @@
 		59A0D5C42204E799003709C3 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 59A0D5C32204E799003709C3 /* Assets.xcassets */; };
 		59A0D5C72204E8E4003709C3 /* WakewordConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59A0D5C52204E8E4003709C3 /* WakewordConfiguration.swift */; };
 		59A45E4F2243ED530089D023 /* PipelineDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59A45E4E2243ED530089D023 /* PipelineDelegate.swift */; };
-		59E0E13122FC8B720060F012 /* encode.lite in Resources */ = {isa = PBXBuildFile; fileRef = 59E0E12E22FC8B720060F012 /* encode.lite */; };
-		59E0E13222FC8B720060F012 /* detect.lite in Resources */ = {isa = PBXBuildFile; fileRef = 59E0E12F22FC8B720060F012 /* detect.lite */; };
-		59E0E13322FC8B720060F012 /* filter.lite in Resources */ = {isa = PBXBuildFile; fileRef = 59E0E13022FC8B720060F012 /* filter.lite */; };
 		59E0E13522FE2C2B0060F012 /* SignalProcessing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59E0E13422FE2C2B0060F012 /* SignalProcessing.swift */; };
 		59E0E1372301F0A80060F012 /* Spit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59E0E1362301F0A80060F012 /* Spit.swift */; };
 		59E0E1392301FB920060F012 /* TFLiteViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59E0E1382301FB920060F012 /* TFLiteViewController.swift */; };
+		59E0E13E230DEB7C0060F012 /* detect.lite in Resources */ = {isa = PBXBuildFile; fileRef = 59E0E13B230DEB7C0060F012 /* detect.lite */; };
+		59E0E13F230DEB7C0060F012 /* encode.lite in Resources */ = {isa = PBXBuildFile; fileRef = 59E0E13C230DEB7C0060F012 /* encode.lite */; };
+		59E0E140230DEB7C0060F012 /* filter.lite in Resources */ = {isa = PBXBuildFile; fileRef = 59E0E13D230DEB7C0060F012 /* filter.lite */; };
 		59FB0C8222A5C47B00FB9662 /* WITCvad.h in Headers */ = {isa = PBXBuildFile; fileRef = 59062F0F22A5AA9E00613AD8 /* WITCvad.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		59FB0C8322A5C48400FB9662 /* WITCvad.m in Sources */ = {isa = PBXBuildFile; fileRef = 59062F0D22A5AA9E00613AD8 /* WITCvad.m */; };
 		59FB0C8422A5C48700FB9662 /* WITVad.h in Headers */ = {isa = PBXBuildFile; fileRef = 59062F0B22A5AA9D00613AD8 /* WITVad.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -206,12 +206,12 @@
 		59A0D5C52204E8E4003709C3 /* WakewordConfiguration.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WakewordConfiguration.swift; sourceTree = "<group>"; };
 		59A45E4E2243ED530089D023 /* PipelineDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PipelineDelegate.swift; sourceTree = "<group>"; };
 		59E00286DC69F3331EFFC970 /* Pods_SpokeStackFrameworkExample.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SpokeStackFrameworkExample.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		59E0E12E22FC8B720060F012 /* encode.lite */ = {isa = PBXFileReference; lastKnownFileType = file; path = encode.lite; sourceTree = "<group>"; };
-		59E0E12F22FC8B720060F012 /* detect.lite */ = {isa = PBXFileReference; lastKnownFileType = file; path = detect.lite; sourceTree = "<group>"; };
-		59E0E13022FC8B720060F012 /* filter.lite */ = {isa = PBXFileReference; lastKnownFileType = file; path = filter.lite; sourceTree = "<group>"; };
 		59E0E13422FE2C2B0060F012 /* SignalProcessing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignalProcessing.swift; sourceTree = "<group>"; };
 		59E0E1362301F0A80060F012 /* Spit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Spit.swift; sourceTree = "<group>"; };
 		59E0E1382301FB920060F012 /* TFLiteViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TFLiteViewController.swift; sourceTree = "<group>"; };
+		59E0E13B230DEB7C0060F012 /* detect.lite */ = {isa = PBXFileReference; lastKnownFileType = file; path = detect.lite; sourceTree = "<group>"; };
+		59E0E13C230DEB7C0060F012 /* encode.lite */ = {isa = PBXFileReference; lastKnownFileType = file; path = encode.lite; sourceTree = "<group>"; };
+		59E0E13D230DEB7C0060F012 /* filter.lite */ = {isa = PBXFileReference; lastKnownFileType = file; path = filter.lite; sourceTree = "<group>"; };
 		59FB0C8722A98E1900FB9662 /* CoreMLWakewordRecognizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreMLWakewordRecognizer.swift; sourceTree = "<group>"; };
 		59FB0C8A22AEE4F100FB9662 /* Data+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Data+Extensions.swift"; sourceTree = "<group>"; };
 		59FB0C8C22B0640700FB9662 /* RingBuffer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RingBuffer.swift; sourceTree = "<group>"; };
@@ -258,6 +258,9 @@
 		011C191E216BCA3200DB36FD /* SpokeStackFrameworkExample */ = {
 			isa = PBXGroup;
 			children = (
+				59E0E13B230DEB7C0060F012 /* detect.lite */,
+				59E0E13C230DEB7C0060F012 /* encode.lite */,
+				59E0E13D230DEB7C0060F012 /* filter.lite */,
 				59A0D5C32204E799003709C3 /* Assets.xcassets */,
 				59A0D5BD2204E786003709C3 /* AppleViewController.swift */,
 				59FB0C9622B2DBC000FB9662 /* CoreMLViewController.swift */,
@@ -297,7 +300,6 @@
 		01D31F3D216BAF260055FD45 /* SpokeStack */ = {
 			isa = PBXGroup;
 			children = (
-				59E0E12722FC87260060F012 /* TensorFlow */,
 				59FB0C9122B17A3600FB9662 /* CoreML */,
 				59FB0C8922AEE4DA00FB9662 /* Extensions */,
 				59062EFD22A5AA6C00613AD8 /* VAD */,
@@ -489,16 +491,6 @@
 			path = ..;
 			sourceTree = "<group>";
 		};
-		59E0E12722FC87260060F012 /* TensorFlow */ = {
-			isa = PBXGroup;
-			children = (
-				59E0E12F22FC8B720060F012 /* detect.lite */,
-				59E0E12E22FC8B720060F012 /* encode.lite */,
-				59E0E13022FC8B720060F012 /* filter.lite */,
-			);
-			name = TensorFlow;
-			sourceTree = "<group>";
-		};
 		59FB0C8922AEE4DA00FB9662 /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
@@ -658,9 +650,12 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				59E0E13E230DEB7C0060F012 /* detect.lite in Resources */,
+				59E0E140230DEB7C0060F012 /* filter.lite in Resources */,
 				011C192A216BCA3200DB36FD /* LaunchScreen.storyboard in Resources */,
 				011C1925216BCA3200DB36FD /* Main.storyboard in Resources */,
 				59A0D5C42204E799003709C3 /* Assets.xcassets in Resources */,
+				59E0E13F230DEB7C0060F012 /* encode.lite in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -668,9 +663,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				59E0E13222FC8B720060F012 /* detect.lite in Resources */,
-				59E0E13322FC8B720060F012 /* filter.lite in Resources */,
-				59E0E13122FC8B720060F012 /* encode.lite in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -121,26 +121,14 @@ public class TFLiteWakewordRecognizer: NSObject {
         /// tensorflow model initialization
         if let c = self.configuration {
             do {
-                guard let filterBundle = Bundle(for: type(of: self)).path(forResource: c.filterModel, ofType: "lite") else {
-                    throw WakewordModelError.filter("could not find filter.lite in bundle \(self.debugDescription)")
-                }
-                
-                guard let encodeBundle = Bundle(for: type(of: self)).path(forResource: c.encodeModel, ofType: "lite") else {
-                    throw WakewordModelError.encode("could not find encode.lite in bundle \(self.debugDescription)")
-                }
-                
-                guard let detectBundle = Bundle(for: type(of: self)).path(forResource: c.detectModel, ofType: "lite") else {
-                    throw WakewordModelError.detect("could not find encode.lite in bundle \(self.debugDescription)")
-                }
-                
-                self.filterModel = try Interpreter(modelPath: filterBundle)
+                self.filterModel = try Interpreter(modelPath: c.filterModelPath)
                 if let model = self.filterModel {
                     try model.allocateTensors()
                 } else {
                     throw WakewordModelError.filter("filter.lite was not initialized")
                 }
                 
-                self.encodeModel = try Interpreter(modelPath: encodeBundle)
+                self.encodeModel = try Interpreter(modelPath: c.encodeModelPath)
                 if let model = self.encodeModel {
                     try model.allocateTensors()
                     assert(model.inputTensorCount == Tensors.allCases.count)
@@ -148,7 +136,7 @@ public class TFLiteWakewordRecognizer: NSObject {
                     throw WakewordModelError.encode("encode.lite was not initialized")
                 }
                 
-                self.detectModel = try Interpreter(modelPath: detectBundle)
+                self.detectModel = try Interpreter(modelPath: c.detectModelPath)
                 if let model = self.detectModel {
                     try model.allocateTensors()
                 } else {
