@@ -89,12 +89,10 @@ public class TFLiteWakewordRecognizer: NSObject {
     /// MARK: NSObject methods
     
     deinit {
-        print("TFLiteWakewordRecognizer deinit")
     }
     
     public override init() {
         super.init()
-        print("TFLiteWakewordRecognizer init")
     }
     
     /// MARK: Private functions
@@ -197,15 +195,14 @@ public class TFLiteWakewordRecognizer: NSObject {
     /// MARK: Pipeline control
     
     private func process(_ frame: Data) -> Void {
-        print("TFLiteWakewordRecognizer process \(self.activeLength)/\(self.maxActive) isActive: \(self.context.isActive) isSpeech: \(self.context.isSpeech)")
         self.activeLength += 1
         if self.context.isSpeech && self.activeLength < self.maxActive {
             /// Run the current frame through the detector pipeline.
             /// Activate the pipeline if a keyword phrase was detected.
             do {
                 /// Decode the FFT outputs into the filter model's input
-                sample(frame)
-                analyze()
+                try sample(frame)
+                try analyze()
                 try filter()
                 try encode()
                 let activate = try detect()
@@ -231,7 +228,7 @@ public class TFLiteWakewordRecognizer: NSObject {
     
     /// MARK: Audio processing
     
-    private func sample(_ data: Data) -> Void {
+    private func sample(_ data: Data) throws -> Void {
         
         /// Preallocate an array of data elements in the frame for use in RMS and sampling
         let dataElements: Array<Int16> = data.elements()
@@ -256,38 +253,26 @@ public class TFLiteWakewordRecognizer: NSObject {
             sample -= self.preEmphasis * self.prevSample
             self.prevSample = currentSample
             
-            sampleCollector.append(sample)
+            //sampleCollector.append(sample)
             
             /// Process the sample
             /// - write it to the sample sliding window
             /// - run the remainder of the detection pipleline if speech
             /// - advance the sample sliding window
-            do {
-                try self.sampleWindow.write(sample)
-            } catch SpeechPipelineError.illegalState(let message) {
-                fatalError("TFLiteWakewordRecognizer sample illegal state error \(message)")
-            } catch let error {
-                fatalError("TFLiteWakewordRecognizer sample unknown error occurred while processing \(error.localizedDescription)")
-            }
+            try self.sampleWindow.write(sample)
             if self.sampleWindow.isFull {
                 return
             }
         }
     }
     
-    private func analyze() -> Void {
+    private func analyze() throws -> Void {
         /// The current sample window contains speech, so
         /// apply the fft windowing function to it
         if self.sampleWindow.isFull {
             for (index, _) in self.fftFrame.enumerated() {
-                do {
-                    let sample: Float = try self.sampleWindow.read()
-                    self.fftFrame[index] = sample * self.fftWindow[index]
-                } catch SpeechPipelineError.illegalState(let message) {
-                    print("TFLiteWakewordRecognizer analyze illegal state error \(message)")
-                } catch let error {
-                    fatalError("TFLiteWakewordRecognizer analyze unknown error occurred \(error.localizedDescription)")
-                }
+                let sample: Float = try self.sampleWindow.read()
+                self.fftFrame[index] = sample * self.fftWindow[index]
             }
             
             /// Compute the stft spectrogram
@@ -296,14 +281,13 @@ public class TFLiteWakewordRecognizer: NSObject {
             /// rewind the sample window for another run
             self.sampleWindow.rewind().seek(self.hopLength)
             
-            self.fftFrameCollector += "\(self.fftFrame)\n"
+            //self.fftFrameCollector += "\(self.fftFrame)\n"
         }
     }
     
     /// Attention model processing
     
     private func filter() throws -> Void {
-        print("TFLiteWakewordRecognizer filter")
         if !self.fftFrame.isEmpty {
             do {
                 if let model = self.filterModel {
@@ -327,7 +311,7 @@ public class TFLiteWakewordRecognizer: NSObject {
                     self.frameWindow.rewind().seek(self.melWidth)
                     for r in results {
                         try self.frameWindow.write(r)
-                        filterCollector.append(r)
+                        //filterCollector.append(r)
                     }
                 } else {
                     throw WakewordModelError.filter("model is not initialized")
@@ -340,7 +324,6 @@ public class TFLiteWakewordRecognizer: NSObject {
     }
     
     private func encode() throws -> Void {
-        print("TFLiteWakewordRecognizer encode")
         if self.frameWindow.isFull {
             do {
                 if let model = self.encodeModel {
@@ -374,14 +357,14 @@ public class TFLiteWakewordRecognizer: NSObject {
                     self.encodeWindow.rewind().seek(self.encodeWidth)
                     for r in encodeResults {
                         try self.encodeWindow.write(r)
-                        encodeCollector.append(r)
+                        //encodeCollector.append(r)
                     }
                     let stateOutput = try model.output(at: Tensors.state.rawValue)
                     let stateResults = stateOutput.data.withUnsafeBytes { (pointer: UnsafePointer<Float32>) -> [Float32] in
                         Array<Float32>(UnsafeBufferPointer(start: pointer, count: stateOutput.data.count / 4))}
                     for r in stateResults {
                         try self.encodeState.write(r)
-                        stateCollector.append(r)
+                        //stateCollector.append(r)
                     }
                 } else {
                     throw WakewordModelError.encode("encode.lite was not initialized")
@@ -391,7 +374,6 @@ public class TFLiteWakewordRecognizer: NSObject {
     }
     
     private func detect() throws -> Bool {
-        print("TFLiteWakewordRecognizer detect")
         if self.encodeWindow.isFull {
             do {
                 if let model = self.detectModel {
@@ -427,7 +409,6 @@ public class TFLiteWakewordRecognizer: NSObject {
     }
     
     private func reset() -> Void {
-        print("TFLiteWakewordRecognizer reset")
         /// Empty the sample buffer, so that only contiguous
         /// speech samples are written to it
         self.sampleWindow.reset()
@@ -442,7 +423,7 @@ public class TFLiteWakewordRecognizer: NSObject {
         /// control flow deactivation
         self.activeLength = 0
         
-        self.debug()
+        //self.debug()
     }
     
     private func debug() -> Void {
@@ -457,13 +438,11 @@ public class TFLiteWakewordRecognizer: NSObject {
 
 extension TFLiteWakewordRecognizer : WakewordRecognizerService {
     func startStreaming(context: SpeechContext) -> Void {
-        print("TFLiteWakewordRecognizer startStreaming")
         AudioController.shared.delegate = self
         self.context = context
     }
     
     func stopStreaming(context: SpeechContext) -> Void {
-        print("TFLiteWakewordRecognizer stopStreaming")
         AudioController.shared.delegate = nil
         self.context = context
     }
@@ -485,7 +464,6 @@ extension TFLiteWakewordRecognizer: AudioControllerDelegate {
 
 extension TFLiteWakewordRecognizer: VADDelegate {
     public func activate(frame: Data) {
-        print("TFLiteWakewordRecognizer activate")
         /// activate the speech context
         self.context.isSpeech = true
         /// process the first frames of speech data from the vad
@@ -493,7 +471,6 @@ extension TFLiteWakewordRecognizer: VADDelegate {
     }
     
     public func deactivate() {
-        print("TFLiteWakewordRecognizer deactivate")
         if self.activeLength >= self.maxActive {
             self.context.isSpeech = false
         }
