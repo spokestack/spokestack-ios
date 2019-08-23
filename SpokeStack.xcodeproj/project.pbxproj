@@ -16,8 +16,6 @@
 		01D31F45216BAF260055FD45 /* SpokeStack.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01D31F3B216BAF260055FD45 /* SpokeStack.framework */; };
 		01D31F4A216BAF260055FD45 /* SpokeStackTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01D31F49216BAF260055FD45 /* SpokeStackTests.swift */; };
 		01D31F4C216BAF260055FD45 /* SpokeStack.h in Headers */ = {isa = PBXBuildFile; fileRef = 01D31F3E216BAF260055FD45 /* SpokeStack.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		01D31F5E216BAF950055FD45 /* StandardRecognizerConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01D31F5B216BAF950055FD45 /* StandardRecognizerConfiguration.swift */; };
-		01D31F5F216BAF950055FD45 /* StandardRecognizerConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01D31F5B216BAF950055FD45 /* StandardRecognizerConfiguration.swift */; };
 		01D31F62216BAFA40055FD45 /* AudioController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01D31F61216BAFA40055FD45 /* AudioController.swift */; };
 		01D31F63216BAFA40055FD45 /* AudioController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01D31F61216BAFA40055FD45 /* AudioController.swift */; };
 		01D31F66216BAFB50055FD45 /* Error.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01D31F65216BAFB50055FD45 /* Error.swift */; };
@@ -40,6 +38,8 @@
 		01D31F8B216BB0220055FD45 /* Results.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01D31F89216BB0220055FD45 /* Results.swift */; };
 		01D31F8E216BB0370055FD45 /* Typealiases.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01D31F8D216BB0370055FD45 /* Typealiases.swift */; };
 		01D31F8F216BB0370055FD45 /* Typealiases.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01D31F8D216BB0370055FD45 /* Typealiases.swift */; };
+		34FFC9B0ECF4B891E68E1D7A /* Pods_SpokeStack.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1B644F4FE4DCC43463622FF9 /* Pods_SpokeStack.framework */; };
+		581A587338A107EE9BB1FDCE /* Pods_SpokeStackFrameworkExample.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59E00286DC69F3331EFFC970 /* Pods_SpokeStackFrameworkExample.framework */; };
 		59365948220889EE00C0365F /* AppleWakewordRecognizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59365947220889EE00C0365F /* AppleWakewordRecognizer.swift */; };
 		5936594A2209DDBA00C0365F /* WakewordRecognizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 593659492209DDBA00C0365F /* WakewordRecognizer.swift */; };
 		5936594C2209EA1800C0365F /* WakewordRecognizerService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5936594B2209EA1800C0365F /* WakewordRecognizerService.swift */; };
@@ -73,12 +73,19 @@
 		593B1D8822C5401D004D938E /* cross_correlation.c in Sources */ = {isa = PBXBuildFile; fileRef = 593B1D8722C5401C004D938E /* cross_correlation.c */; };
 		593B1D8A22CA8EDD004D938E /* webrtc_vad.h in Headers */ = {isa = PBXBuildFile; fileRef = 593B1D8922CA8EDC004D938E /* webrtc_vad.h */; };
 		593B1D8C22CA9243004D938E /* WebRTCVAD.swift in Sources */ = {isa = PBXBuildFile; fileRef = 593B1D8B22CA9243004D938E /* WebRTCVAD.swift */; };
+		594154B822F8AD2200E3624E /* TFLiteWakewordRecognizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 594154B722F8AD2200E3624E /* TFLiteWakewordRecognizer.swift */; };
 		5967108E21F7AE6B00CBFC88 /* AppleSpeechRecognizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5967108D21F7AE6B00CBFC88 /* AppleSpeechRecognizer.swift */; };
 		59A0D5C02204E786003709C3 /* AppleViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59A0D5BD2204E786003709C3 /* AppleViewController.swift */; };
 		59A0D5C22204E786003709C3 /* WakeWordViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59A0D5BF2204E786003709C3 /* WakeWordViewController.swift */; };
 		59A0D5C42204E799003709C3 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 59A0D5C32204E799003709C3 /* Assets.xcassets */; };
 		59A0D5C72204E8E4003709C3 /* WakewordConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59A0D5C52204E8E4003709C3 /* WakewordConfiguration.swift */; };
 		59A45E4F2243ED530089D023 /* PipelineDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59A45E4E2243ED530089D023 /* PipelineDelegate.swift */; };
+		59E0E13522FE2C2B0060F012 /* SignalProcessing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59E0E13422FE2C2B0060F012 /* SignalProcessing.swift */; };
+		59E0E1372301F0A80060F012 /* Spit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59E0E1362301F0A80060F012 /* Spit.swift */; };
+		59E0E1392301FB920060F012 /* TFLiteViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59E0E1382301FB920060F012 /* TFLiteViewController.swift */; };
+		59E0E13E230DEB7C0060F012 /* detect.lite in Resources */ = {isa = PBXBuildFile; fileRef = 59E0E13B230DEB7C0060F012 /* detect.lite */; };
+		59E0E13F230DEB7C0060F012 /* encode.lite in Resources */ = {isa = PBXBuildFile; fileRef = 59E0E13C230DEB7C0060F012 /* encode.lite */; };
+		59E0E140230DEB7C0060F012 /* filter.lite in Resources */ = {isa = PBXBuildFile; fileRef = 59E0E13D230DEB7C0060F012 /* filter.lite */; };
 		59FB0C8222A5C47B00FB9662 /* WITCvad.h in Headers */ = {isa = PBXBuildFile; fileRef = 59062F0F22A5AA9E00613AD8 /* WITCvad.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		59FB0C8322A5C48400FB9662 /* WITCvad.m in Sources */ = {isa = PBXBuildFile; fileRef = 59062F0D22A5AA9E00613AD8 /* WITCvad.m */; };
 		59FB0C8422A5C48700FB9662 /* WITVad.h in Headers */ = {isa = PBXBuildFile; fileRef = 59062F0B22A5AA9D00613AD8 /* WITVad.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -90,6 +97,7 @@
 		59FB0C9322B17A9A00FB9662 /* WakeWordFilter.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = 59FB0C9222B17A9A00FB9662 /* WakeWordFilter.mlmodel */; };
 		59FB0C9522B17AA300FB9662 /* WakeWordDetect.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = 59FB0C9422B17AA300FB9662 /* WakeWordDetect.mlmodel */; };
 		59FB0C9722B2DBC100FB9662 /* CoreMLViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59FB0C9622B2DBC000FB9662 /* CoreMLViewController.swift */; };
+		79380F8051F9451C5C2690AB /* Pods_SpokeStackTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DB7CAD15C170D87C0C34C0E2 /* Pods_SpokeStackTests.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -136,7 +144,6 @@
 		01D31F44216BAF260055FD45 /* SpokeStackTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SpokeStackTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		01D31F49216BAF260055FD45 /* SpokeStackTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpokeStackTests.swift; sourceTree = "<group>"; };
 		01D31F4B216BAF260055FD45 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		01D31F5B216BAF950055FD45 /* StandardRecognizerConfiguration.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StandardRecognizerConfiguration.swift; sourceTree = "<group>"; };
 		01D31F61216BAFA40055FD45 /* AudioController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AudioController.swift; sourceTree = "<group>"; };
 		01D31F65216BAFB50055FD45 /* Error.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Error.swift; sourceTree = "<group>"; };
 		01D31F69216BAFC60055FD45 /* SpeechPipeline.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SpeechPipeline.swift; sourceTree = "<group>"; };
@@ -148,6 +155,10 @@
 		01D31F7F216BB0000055FD45 /* RecognizerConfiguration.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RecognizerConfiguration.swift; sourceTree = "<group>"; };
 		01D31F89216BB0220055FD45 /* Results.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Results.swift; sourceTree = "<group>"; };
 		01D31F8D216BB0370055FD45 /* Typealiases.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Typealiases.swift; sourceTree = "<group>"; };
+		1B644F4FE4DCC43463622FF9 /* Pods_SpokeStack.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SpokeStack.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		2375DCD9CBFF30556C7DF76A /* Pods-SpokeStack.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SpokeStack.debug.xcconfig"; path = "Target Support Files/Pods-SpokeStack/Pods-SpokeStack.debug.xcconfig"; sourceTree = "<group>"; };
+		43FEB1CECD4379A2C9135539 /* Pods-SpokeStack.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SpokeStack.release.xcconfig"; path = "Target Support Files/Pods-SpokeStack/Pods-SpokeStack.release.xcconfig"; sourceTree = "<group>"; };
+		5032B63E7BB24FAFD93E54B4 /* Pods-SpokeStackFrameworkExample.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SpokeStackFrameworkExample.release.xcconfig"; path = "Target Support Files/Pods-SpokeStackFrameworkExample/Pods-SpokeStackFrameworkExample.release.xcconfig"; sourceTree = "<group>"; };
 		59062F0922A5AA8400613AD8 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		59062F0B22A5AA9D00613AD8 /* WITVad.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WITVad.h; sourceTree = "<group>"; };
 		59062F0C22A5AA9D00613AD8 /* WITVad.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = WITVad.m; sourceTree = "<group>"; };
@@ -187,12 +198,20 @@
 		593B1D8922CA8EDC004D938E /* webrtc_vad.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = webrtc_vad.h; path = filter_audio/vad/include/webrtc_vad.h; sourceTree = "<group>"; };
 		593B1D8B22CA9243004D938E /* WebRTCVAD.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebRTCVAD.swift; sourceTree = "<group>"; };
 		593B1D8D22CA965A004D938E /* module.modulemap */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.module-map"; name = module.modulemap; path = filter_audio/module.modulemap; sourceTree = "<group>"; };
+		594154B722F8AD2200E3624E /* TFLiteWakewordRecognizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TFLiteWakewordRecognizer.swift; sourceTree = "<group>"; };
 		5967108D21F7AE6B00CBFC88 /* AppleSpeechRecognizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppleSpeechRecognizer.swift; sourceTree = "<group>"; };
 		59A0D5BD2204E786003709C3 /* AppleViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppleViewController.swift; sourceTree = "<group>"; };
 		59A0D5BF2204E786003709C3 /* WakeWordViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WakeWordViewController.swift; sourceTree = "<group>"; };
 		59A0D5C32204E799003709C3 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		59A0D5C52204E8E4003709C3 /* WakewordConfiguration.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WakewordConfiguration.swift; sourceTree = "<group>"; };
 		59A45E4E2243ED530089D023 /* PipelineDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PipelineDelegate.swift; sourceTree = "<group>"; };
+		59E00286DC69F3331EFFC970 /* Pods_SpokeStackFrameworkExample.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SpokeStackFrameworkExample.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		59E0E13422FE2C2B0060F012 /* SignalProcessing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignalProcessing.swift; sourceTree = "<group>"; };
+		59E0E1362301F0A80060F012 /* Spit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Spit.swift; sourceTree = "<group>"; };
+		59E0E1382301FB920060F012 /* TFLiteViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TFLiteViewController.swift; sourceTree = "<group>"; };
+		59E0E13B230DEB7C0060F012 /* detect.lite */ = {isa = PBXFileReference; lastKnownFileType = file; path = detect.lite; sourceTree = "<group>"; };
+		59E0E13C230DEB7C0060F012 /* encode.lite */ = {isa = PBXFileReference; lastKnownFileType = file; path = encode.lite; sourceTree = "<group>"; };
+		59E0E13D230DEB7C0060F012 /* filter.lite */ = {isa = PBXFileReference; lastKnownFileType = file; path = filter.lite; sourceTree = "<group>"; };
 		59FB0C8722A98E1900FB9662 /* CoreMLWakewordRecognizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreMLWakewordRecognizer.swift; sourceTree = "<group>"; };
 		59FB0C8A22AEE4F100FB9662 /* Data+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Data+Extensions.swift"; sourceTree = "<group>"; };
 		59FB0C8C22B0640700FB9662 /* RingBuffer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RingBuffer.swift; sourceTree = "<group>"; };
@@ -200,6 +219,10 @@
 		59FB0C9222B17A9A00FB9662 /* WakeWordFilter.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = WakeWordFilter.mlmodel; sourceTree = "<group>"; };
 		59FB0C9422B17AA300FB9662 /* WakeWordDetect.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = WakeWordDetect.mlmodel; sourceTree = "<group>"; };
 		59FB0C9622B2DBC000FB9662 /* CoreMLViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreMLViewController.swift; sourceTree = "<group>"; };
+		AD7F29D98EA28A40D9C208F8 /* Pods-SpokeStackTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SpokeStackTests.release.xcconfig"; path = "Target Support Files/Pods-SpokeStackTests/Pods-SpokeStackTests.release.xcconfig"; sourceTree = "<group>"; };
+		BAF6725A135BC6F386096604 /* Pods-SpokeStackTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SpokeStackTests.debug.xcconfig"; path = "Target Support Files/Pods-SpokeStackTests/Pods-SpokeStackTests.debug.xcconfig"; sourceTree = "<group>"; };
+		DB7CAD15C170D87C0C34C0E2 /* Pods_SpokeStackTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SpokeStackTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		ED0E9023AA04B554804D3AFF /* Pods-SpokeStackFrameworkExample.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SpokeStackFrameworkExample.debug.xcconfig"; path = "Target Support Files/Pods-SpokeStackFrameworkExample/Pods-SpokeStackFrameworkExample.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -208,6 +231,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				01B2B42721ADC32A00289890 /* SpokeStack.framework in Frameworks */,
+				581A587338A107EE9BB1FDCE /* Pods_SpokeStackFrameworkExample.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -215,6 +239,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				34FFC9B0ECF4B891E68E1D7A /* Pods_SpokeStack.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -223,6 +248,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				01D31F45216BAF260055FD45 /* SpokeStack.framework in Frameworks */,
+				79380F8051F9451C5C2690AB /* Pods_SpokeStackTests.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -232,9 +258,13 @@
 		011C191E216BCA3200DB36FD /* SpokeStackFrameworkExample */ = {
 			isa = PBXGroup;
 			children = (
+				59E0E13B230DEB7C0060F012 /* detect.lite */,
+				59E0E13C230DEB7C0060F012 /* encode.lite */,
+				59E0E13D230DEB7C0060F012 /* filter.lite */,
 				59A0D5C32204E799003709C3 /* Assets.xcassets */,
 				59A0D5BD2204E786003709C3 /* AppleViewController.swift */,
 				59FB0C9622B2DBC000FB9662 /* CoreMLViewController.swift */,
+				59E0E1382301FB920060F012 /* TFLiteViewController.swift */,
 				59A0D5BF2204E786003709C3 /* WakeWordViewController.swift */,
 				011C191F216BCA3200DB36FD /* AppDelegate.swift */,
 				011C1921216BCA3200DB36FD /* ViewController.swift */,
@@ -253,6 +283,7 @@
 				01D31F3D216BAF260055FD45 /* SpokeStack */,
 				01D31F48216BAF260055FD45 /* SpokeStackTests */,
 				59062F0822A5AA8400613AD8 /* Frameworks */,
+				FCED7B8EC4B311B39038A465 /* Pods */,
 			);
 			sourceTree = "<group>";
 		};
@@ -272,7 +303,6 @@
 				59FB0C9122B17A3600FB9662 /* CoreML */,
 				59FB0C8922AEE4DA00FB9662 /* Extensions */,
 				59062EFD22A5AA6C00613AD8 /* VAD */,
-				01D31F59216BAF710055FD45 /* Configurations */,
 				01D31F60216BAF9A0055FD45 /* Controllers */,
 				01D31F64216BAFAA0055FD45 /* Errors */,
 				01D31F68216BAFBC0055FD45 /* Managers */,
@@ -302,14 +332,6 @@
 				01D31F3F216BAF260055FD45 /* Info.plist */,
 			);
 			name = "Support Files";
-			sourceTree = "<group>";
-		};
-		01D31F59216BAF710055FD45 /* Configurations */ = {
-			isa = PBXGroup;
-			children = (
-				01D31F5B216BAF950055FD45 /* StandardRecognizerConfiguration.swift */,
-			);
-			name = Configurations;
 			sourceTree = "<group>";
 		};
 		01D31F60216BAF9A0055FD45 /* Controllers */ = {
@@ -344,6 +366,8 @@
 				59FB0C8C22B0640700FB9662 /* RingBuffer.swift */,
 				01D31F6D216BAFD90055FD45 /* SpeechContext.swift */,
 				5936594D220A1A7A00C0365F /* WakewordService.swift */,
+				59E0E13422FE2C2B0060F012 /* SignalProcessing.swift */,
+				59E0E1362301F0A80060F012 /* Spit.swift */,
 			);
 			name = Models;
 			sourceTree = "<group>";
@@ -378,6 +402,7 @@
 				5967108D21F7AE6B00CBFC88 /* AppleSpeechRecognizer.swift */,
 				59365947220889EE00C0365F /* AppleWakewordRecognizer.swift */,
 				59FB0C8722A98E1900FB9662 /* CoreMLWakewordRecognizer.swift */,
+				594154B722F8AD2200E3624E /* TFLiteWakewordRecognizer.swift */,
 			);
 			name = Recognizers;
 			sourceTree = "<group>";
@@ -411,6 +436,9 @@
 			isa = PBXGroup;
 			children = (
 				59062F0922A5AA8400613AD8 /* Foundation.framework */,
+				1B644F4FE4DCC43463622FF9 /* Pods_SpokeStack.framework */,
+				59E00286DC69F3331EFFC970 /* Pods_SpokeStackFrameworkExample.framework */,
+				DB7CAD15C170D87C0C34C0E2 /* Pods_SpokeStackTests.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -480,6 +508,19 @@
 			name = CoreML;
 			sourceTree = "<group>";
 		};
+		FCED7B8EC4B311B39038A465 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				2375DCD9CBFF30556C7DF76A /* Pods-SpokeStack.debug.xcconfig */,
+				43FEB1CECD4379A2C9135539 /* Pods-SpokeStack.release.xcconfig */,
+				ED0E9023AA04B554804D3AFF /* Pods-SpokeStackFrameworkExample.debug.xcconfig */,
+				5032B63E7BB24FAFD93E54B4 /* Pods-SpokeStackFrameworkExample.release.xcconfig */,
+				BAF6725A135BC6F386096604 /* Pods-SpokeStackTests.debug.xcconfig */,
+				AD7F29D98EA28A40D9C208F8 /* Pods-SpokeStackTests.release.xcconfig */,
+			);
+			path = Pods;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -502,6 +543,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 011C192C216BCA3200DB36FD /* Build configuration list for PBXNativeTarget "SpokeStackFrameworkExample" */;
 			buildPhases = (
+				19FA2CF8B5FFC31F5C8FE530 /* [CP] Check Pods Manifest.lock */,
 				011C1919216BCA3200DB36FD /* Sources */,
 				011C191A216BCA3200DB36FD /* Frameworks */,
 				011C191B216BCA3200DB36FD /* Resources */,
@@ -521,6 +563,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 01D31F4F216BAF260055FD45 /* Build configuration list for PBXNativeTarget "SpokeStack" */;
 			buildPhases = (
+				6C213DE7E97E54E292AD0F3A /* [CP] Check Pods Manifest.lock */,
 				01D31F36216BAF260055FD45 /* Headers */,
 				01D31F37216BAF260055FD45 /* Sources */,
 				01D31F38216BAF260055FD45 /* Frameworks */,
@@ -539,6 +582,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 01D31F52216BAF260055FD45 /* Build configuration list for PBXNativeTarget "SpokeStackTests" */;
 			buildPhases = (
+				137022192CCC0C67E787D79C /* [CP] Check Pods Manifest.lock */,
 				01D31F40216BAF260055FD45 /* Sources */,
 				01D31F41216BAF260055FD45 /* Frameworks */,
 				01D31F42216BAF260055FD45 /* Resources */,
@@ -606,9 +650,12 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				59E0E13E230DEB7C0060F012 /* detect.lite in Resources */,
+				59E0E140230DEB7C0060F012 /* filter.lite in Resources */,
 				011C192A216BCA3200DB36FD /* LaunchScreen.storyboard in Resources */,
 				011C1925216BCA3200DB36FD /* Main.storyboard in Resources */,
 				59A0D5C42204E799003709C3 /* Assets.xcassets in Resources */,
+				59E0E13F230DEB7C0060F012 /* encode.lite in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -628,6 +675,75 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		137022192CCC0C67E787D79C /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-SpokeStackTests-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		19FA2CF8B5FFC31F5C8FE530 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-SpokeStackFrameworkExample-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		6C213DE7E97E54E292AD0F3A /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-SpokeStack-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		011C1919216BCA3200DB36FD /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
@@ -635,6 +751,7 @@
 			files = (
 				011C1922216BCA3200DB36FD /* ViewController.swift in Sources */,
 				011C1920216BCA3200DB36FD /* AppDelegate.swift in Sources */,
+				59E0E1392301FB920060F012 /* TFLiteViewController.swift in Sources */,
 				59A0D5C02204E786003709C3 /* AppleViewController.swift in Sources */,
 				59A0D5C22204E786003709C3 /* WakeWordViewController.swift in Sources */,
 				59FB0C9722B2DBC100FB9662 /* CoreMLViewController.swift in Sources */,
@@ -653,6 +770,8 @@
 				593B1D7322C50A95004D938E /* resample_48khz.c in Sources */,
 				593B1D6A22C50A95004D938E /* vector_scaling_operations.c in Sources */,
 				01D31F6F216BAFD90055FD45 /* SpeechContext.swift in Sources */,
+				59E0E1372301F0A80060F012 /* Spit.swift in Sources */,
+				59E0E13522FE2C2B0060F012 /* SignalProcessing.swift in Sources */,
 				59A0D5C72204E8E4003709C3 /* WakewordConfiguration.swift in Sources */,
 				593B1D7222C50A95004D938E /* division_operations.c in Sources */,
 				593B1D8C22CA9243004D938E /* WebRTCVAD.swift in Sources */,
@@ -676,6 +795,7 @@
 				5967108E21F7AE6B00CBFC88 /* AppleSpeechRecognizer.swift in Sources */,
 				5936594C2209EA1800C0365F /* WakewordRecognizerService.swift in Sources */,
 				593B1D7A22C50AB4004D938E /* digital_agc.c in Sources */,
+				594154B822F8AD2200E3624E /* TFLiteWakewordRecognizer.swift in Sources */,
 				593B1D7122C50A95004D938E /* spl_init.c in Sources */,
 				59FB0C8B22AEE4F100FB9662 /* Data+Extensions.swift in Sources */,
 				59FB0C9322B17A9A00FB9662 /* WakeWordFilter.mlmodel in Sources */,
@@ -698,7 +818,6 @@
 				593B1D8422C50AF3004D938E /* vad_sp.c in Sources */,
 				593B1D7622C50A95004D938E /* min_max_operations.c in Sources */,
 				59FB0C8F22B0682900FB9662 /* FFT.swift in Sources */,
-				01D31F5E216BAF950055FD45 /* StandardRecognizerConfiguration.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -709,7 +828,6 @@
 				01D31F8F216BB0370055FD45 /* Typealiases.swift in Sources */,
 				01D31F70216BAFD90055FD45 /* SpeechContext.swift in Sources */,
 				01D31F83216BB0000055FD45 /* RecognizerConfiguration.swift in Sources */,
-				01D31F5F216BAF950055FD45 /* StandardRecognizerConfiguration.swift in Sources */,
 				01D31F72216BAFD90055FD45 /* RecognizerService.swift in Sources */,
 				01D31F63216BAFA40055FD45 /* AudioController.swift in Sources */,
 				01D31F7C216BAFEF0055FD45 /* SpeechRecognizerService.swift in Sources */,
@@ -759,6 +877,7 @@
 /* Begin XCBuildConfiguration section */
 		011C192D216BCA3200DB36FD /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = ED0E9023AA04B554804D3AFF /* Pods-SpokeStackFrameworkExample.debug.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -782,6 +901,7 @@
 		};
 		011C192E216BCA3200DB36FD /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 5032B63E7BB24FAFD93E54B4 /* Pods-SpokeStackFrameworkExample.release.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -931,6 +1051,7 @@
 		};
 		01D31F50216BAF260055FD45 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 2375DCD9CBFF30556C7DF76A /* Pods-SpokeStack.debug.xcconfig */;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
@@ -964,6 +1085,7 @@
 		};
 		01D31F51216BAF260055FD45 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 43FEB1CECD4379A2C9135539 /* Pods-SpokeStack.release.xcconfig */;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "";
@@ -996,6 +1118,7 @@
 		};
 		01D31F53216BAF260055FD45 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = BAF6725A135BC6F386096604 /* Pods-SpokeStackTests.debug.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
@@ -1026,6 +1149,7 @@
 		};
 		01D31F54216BAF260055FD45 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = AD7F29D98EA28A40D9C208F8 /* Pods-SpokeStackTests.release.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;

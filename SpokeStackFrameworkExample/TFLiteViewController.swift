@@ -1,8 +1,8 @@
 //
-//  CoreMLViewController.swift
+//  TFLiteViewController.swift
 //  SpokeStackFrameworkExample
 //
-//  Created by Noel Weichbrodt on 6/13/19.
+//  Created by Noel Weichbrodt on 8/12/19.
 //  Copyright © 2019 Pylon AI, Inc. All rights reserved.
 //
 
@@ -10,7 +10,7 @@ import UIKit
 import SpokeStack
 import AVFoundation
 
-class CoreMLViewController: UIViewController {
+class TFLiteViewController: UIViewController {
     
     lazy var startRecordingButton: UIButton = {
         
@@ -19,7 +19,7 @@ class CoreMLViewController: UIViewController {
         button.translatesAutoresizingMaskIntoConstraints = false
         button.setTitle("Start Recording", for: .normal)
         button.addTarget(self,
-                         action: #selector(CoreMLViewController.startRecordingAction(_:)),
+                         action: #selector(TFLiteViewController.startRecordingAction(_:)),
                          for: .touchUpInside)
         button.setTitleColor(.purple, for: .normal)
         
@@ -33,7 +33,7 @@ class CoreMLViewController: UIViewController {
         button.translatesAutoresizingMaskIntoConstraints = false
         button.setTitle("Stop Recording", for: .normal)
         button.addTarget(self,
-                         action: #selector(CoreMLViewController.stopRecordingAction(_:)),
+                         action: #selector(TFLiteViewController.stopRecordingAction(_:)),
                          for: .touchUpInside)
         
         button.setTitleColor(.purple, for: .normal)
@@ -42,26 +42,17 @@ class CoreMLViewController: UIViewController {
         return button
     }()
     
-    lazy private var pipeline: SpeechPipeline = {
-        
-        return try! SpeechPipeline(.appleSpeech,
-                                   speechConfiguration: RecognizerConfiguration(),
-                                   speechDelegate: self,
-                                   wakewordService: .coremlWakeword,
-                                   wakewordConfiguration: WakewordConfiguration(),
-                                   wakewordDelegate: self,
-                                   pipelineDelegate: self)
-    }()
+    private var pipeline: SpeechPipeline?
     
     override func loadView() {
         
         super.loadView()
         self.view.backgroundColor = .white
-        self.title = "CoreML"
+        self.title = "TensorFlow"
         
         let doneBarButtonItem: UIBarButtonItem = UIBarButtonItem(barButtonSystemItem: .done,
                                                                  target: self,
-                                                                 action: #selector(CoreMLViewController.dismissViewController(_:)))
+                                                                 action: #selector(TFLiteViewController.dismissViewController(_:)))
         self.navigationItem.rightBarButtonItem = doneBarButtonItem
     }
     
@@ -78,16 +69,45 @@ class CoreMLViewController: UIViewController {
         self.stopRecordingButton.topAnchor.constraint(equalTo: self.startRecordingButton.bottomAnchor, constant: 50.0).isActive = true
         self.stopRecordingButton.leftAnchor.constraint(equalTo: self.startRecordingButton.leftAnchor).isActive = true
         self.stopRecordingButton.rightAnchor.constraint(equalTo: self.startRecordingButton.rightAnchor).isActive = true
+        
+        do {
+            self.pipeline = try self.initPipeline()
+        } catch let error {
+            print("couldn't initialize pipeline becuase \(error)")
+        }
+    }
+    
+    func initPipeline() throws -> SpeechPipeline {
+        let c = WakewordConfiguration()
+        guard let filterPath = Bundle(for: type(of: self)).path(forResource: c.filterModelName, ofType: "lite") else {
+            throw WakewordModelError.filter("could not find \(c.filterModelName).lite in bundle \(self.debugDescription)")
+        }
+        c.filterModelPath = filterPath
+        guard let encodePath = Bundle(for: type(of: self)).path(forResource: c.encodeModelName, ofType: "lite") else {
+            throw WakewordModelError.encode("could not find \(c.encodeModelName).lite in bundle \(self.debugDescription)")
+        }
+        c.encodeModelPath = encodePath
+        guard let detectPath = Bundle(for: type(of: self)).path(forResource: c.detectModelName, ofType: "lite") else {
+            throw WakewordModelError.detect("could not find \(c.detectModelName).lite in bundle \(self.debugDescription)")
+        }
+        c.detectModelPath = detectPath
+        return try! SpeechPipeline(.appleSpeech,
+                                   speechConfiguration: RecognizerConfiguration(),
+                                   speechDelegate: self,
+                                   wakewordService: .tFLiteWakeword,
+                                   wakewordConfiguration: c,
+                                   wakewordDelegate: self,
+                                   pipelineDelegate: self)
     }
     
     @objc func startRecordingAction(_ sender: Any) {
         print("pipeline started")
-        self.pipeline.start()
+        self.pipeline?.start()
     }
     
     @objc func stopRecordingAction(_ sender: Any) {
         print("pipeline finished")
-        self.pipeline.stop()
+        self.pipeline?.stop()
     }
     
     @objc func dismissViewController(_ sender: Any?) -> Void {
@@ -102,7 +122,7 @@ class CoreMLViewController: UIViewController {
     }
 }
 
-extension CoreMLViewController: SpeechRecognizer, WakewordRecognizer, PipelineDelegate {
+extension TFLiteViewController: SpeechRecognizer, WakewordRecognizer, PipelineDelegate {
     func setupFailed(_ error: String) {
         print("setupFailed: " + error)
     }
@@ -122,13 +142,13 @@ extension CoreMLViewController: SpeechRecognizer, WakewordRecognizer, PipelineDe
     func activate() {
         print("activate")
         self.toggleStartStop()
-        self.pipeline.activate()
+        self.pipeline?.activate()
     }
     
     func deactivate() {
         print("deactivate")
         self.toggleStartStop()
-        self.pipeline.deactivate()
+        self.pipeline?.deactivate()
     }
     
     func didError(_ error: Error) {
@@ -144,3 +164,4 @@ extension CoreMLViewController: SpeechRecognizer, WakewordRecognizer, PipelineDe
         self.toggleStartStop()
     }
 }
+
