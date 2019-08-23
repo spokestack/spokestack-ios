@@ -22,7 +22,7 @@ import Foundation
     public var stateWidth: Int = 128
     public var encodeLength: Int = 1000
     public var encodeWidth: Int = 128
-    public var wakeThreshold: Float = 0.5
+    public var wakeThreshold: Float = 0.9
     public var wakePhraseLength: Int = 2000
     public var wakeActiveMin: Int = 600
     public var wakeActiveMax: Int = 5000

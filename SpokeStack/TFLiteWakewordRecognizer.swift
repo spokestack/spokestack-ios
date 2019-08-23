@@ -22,7 +22,6 @@ public class TFLiteWakewordRecognizer: NSObject {
     public var configuration: WakewordConfiguration? = WakewordConfiguration() {
         didSet {
             if configuration != nil {
-                self.parseConfiguration()
                 self.validateConfiguration()
                 self.configureAttentionModels()
                 self.setConfiguration()
@@ -98,11 +97,6 @@ public class TFLiteWakewordRecognizer: NSObject {
     /// MARK: Private functions
     
     /// MARK: Configuration processing
-
-    private func parseConfiguration() -> Void {
-        if let c = self.configuration {
-        }
-    }
     
     private func validateConfiguration() -> Void {
         if let c = self.configuration {
@@ -195,11 +189,11 @@ public class TFLiteWakewordRecognizer: NSObject {
     /// MARK: Pipeline control
     
     private func process(_ frame: Data) -> Void {
-        self.activeLength += 1
-        if self.context.isSpeech && self.activeLength < self.maxActive {
+        if !context.isActive {
             /// Run the current frame through the detector pipeline.
             /// Activate the pipeline if a keyword phrase was detected.
             do {
+                self.activeLength = 0
                 /// Decode the FFT outputs into the filter model's input
                 try sample(frame)
                 try analyze()
@@ -216,12 +210,13 @@ public class TFLiteWakewordRecognizer: NSObject {
                 self.delegate?.didError(error)
             }
         } else {
+            self.activeLength += 1
             /// Continue this wakeword (or external) activation
             /// for at least the activation minimum,
             /// until a vad deactivation or timeout
-            if (self.activeLength > self.minActive) && (!self.context.isSpeech || (self.activeLength >= self.maxActive)) {
+            if (self.activeLength > self.minActive) && (self.activeLength >= self.maxActive) {
                 self.context.isActive = false
-                self.reset()
+                self.delegate?.deactivate()
             }
         }
     }
@@ -457,6 +452,8 @@ extension TFLiteWakewordRecognizer: AudioControllerDelegate {
                 strongSelf.context.isSpeech)
             if strongSelf.context.isSpeech {
                 strongSelf.process(frame)
+            } else {
+                strongSelf.reset()
             }
         }
     }
