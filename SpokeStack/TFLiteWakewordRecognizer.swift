@@ -196,9 +196,6 @@ public class TFLiteWakewordRecognizer: NSObject {
                 self.activeLength = 0
                 /// Decode the FFT outputs into the filter model's input
                 try sample(frame)
-                try analyze()
-                try filter()
-                try encode()
                 let activate = try detect()
                 if activate && !self.context.isActive {
                     self.context.isActive = true
@@ -256,7 +253,7 @@ public class TFLiteWakewordRecognizer: NSObject {
             /// - advance the sample sliding window
             try self.sampleWindow.write(sample)
             if self.sampleWindow.isFull {
-                return
+                try self.analyze()
             }
         }
     }
@@ -264,106 +261,103 @@ public class TFLiteWakewordRecognizer: NSObject {
     private func analyze() throws -> Void {
         /// The current sample window contains speech, so
         /// apply the fft windowing function to it
-        if self.sampleWindow.isFull {
-            for (index, _) in self.fftFrame.enumerated() {
-                let sample: Float = try self.sampleWindow.read()
-                self.fftFrame[index] = sample * self.fftWindow[index]
-            }
-            
-            /// Compute the stft spectrogram
-            self.fft.forward(&self.fftFrame)
-            
-            /// rewind the sample window for another run
-            self.sampleWindow.rewind().seek(self.hopLength)
-            
-            //self.fftFrameCollector += "\(self.fftFrame)\n"
+        for (index, _) in self.fftFrame.enumerated() {
+            let sample: Float = try self.sampleWindow.read()
+            self.fftFrame[index] = sample * self.fftWindow[index]
         }
+        
+        /// Compute the stft spectrogram
+        self.fft.forward(&self.fftFrame)
+        
+        /// rewind the sample window for another run
+        self.sampleWindow.rewind().seek(self.hopLength)
+        
+        try self.filter()
+        
+        //self.fftFrameCollector += "\(self.fftFrame)\n"
     }
     
     /// Attention model processing
     
     private func filter() throws -> Void {
-        if !self.fftFrame.isEmpty {
-            do {
-                if let model = self.filterModel {
-                    /// inputs
-                    /// compute the manitude of the spectrogram
-                    let magnitude = (self.fftFrame.count / 2) + 1
-                    /// copy the spectrogram into the filter model's input
-                    _ = try self
-                        .fftFrame
-                        .prefix(magnitude)
-                        .withUnsafeBytes(
-                            {try model.copy(Data($0), toInputAt: 0)})
-                    
-                    /// calculate
-                    try model.invoke()
-                    
-                    /// outputs
-                    let output = try model.output(at: 0)
-                    let results = output.data.withUnsafeBytes { (pointer: UnsafePointer<Float32>) -> [Float32] in
-                        Array<Float32>(UnsafeBufferPointer(start: pointer, count: output.data.count / 4))}
-                    self.frameWindow.rewind().seek(self.melWidth)
-                    for r in results {
-                        try self.frameWindow.write(r)
-                        //filterCollector.append(r)
-                    }
-                } else {
-                    throw WakewordModelError.filter("model is not initialized")
+        do {
+            if let model = self.filterModel {
+                /// inputs
+                /// compute the manitude of the spectrogram
+                let magnitude = (self.fftFrame.count / 2) + 1
+                /// copy the spectrogram into the filter model's input
+                _ = try self
+                    .fftFrame
+                    .prefix(magnitude)
+                    .withUnsafeBytes(
+                        {try model.copy(Data($0), toInputAt: 0)})
+                
+                /// calculate
+                try model.invoke()
+                
+                /// outputs
+                let output = try model.output(at: 0)
+                let results = output.data.withUnsafeBytes { (pointer: UnsafePointer<Float32>) -> [Float32] in
+                    Array<Float32>(UnsafeBufferPointer(start: pointer, count: output.data.count / 4))}
+                self.frameWindow.rewind().seek(self.melWidth)
+                for r in results {
+                    try self.frameWindow.write(r)
+                    //filterCollector.append(r)
                 }
                 
-            } catch let message {
-                throw WakewordModelError.filter("TFLiteWakewordRecognizer filter \(message)")
+                try self.encode()
+            } else {
+                throw WakewordModelError.filter("model is not initialized")
             }
+        } catch let message {
+            throw WakewordModelError.filter("TFLiteWakewordRecognizer filter \(message)")
         }
     }
     
     private func encode() throws -> Void {
-        if self.frameWindow.isFull {
-            do {
-                if let model = self.encodeModel {
-                    /// inputs
-                    self.frameWindow.rewind()
-                    // TODO: model.copy requires that the data be sized to exactly the same as the tensor, so we can't just do read()s off the ringbuffer and copy over piecewise. This introduces an aggrevating overhead of having to copy the ringbuffer into an array before copying over to the tensor. Maybe use a fixed-sized array that is advanced based off the fft frame size?
-                    var frameWindowArray: Array<Float32> = []
-                    while !self.frameWindow.isEmpty {
-                        let f = try self.frameWindow.read()
-                        frameWindowArray.append(f)
-                    }
-                    var stateArray: Array<Float32> = []
-                    for _ in 0..<self.stateWidth {
-                        let f = try self.encodeState.read()
-                        stateArray.append(f)
-                    }
-                    _ = try frameWindowArray
-                        .withUnsafeBytes(
-                            {try model.copy(Data($0), toInputAt: Tensors.encode.rawValue)})
-                    _ = try stateArray
-                        .withUnsafeBytes(
-                            {try model.copy(Data($0), toInputAt: Tensors.state.rawValue)})
-                    
-                    /// calculate
-                    try model.invoke()
-                    
-                    /// outputs
-                    let encodeOutput = try model.output(at: Tensors.encode.rawValue)
-                    let encodeResults = encodeOutput.data.withUnsafeBytes { (pointer: UnsafePointer<Float32>) -> [Float32] in
-                        Array<Float32>(UnsafeBufferPointer(start: pointer, count: encodeOutput.data.count / 4))}
-                    self.encodeWindow.rewind().seek(self.encodeWidth)
-                    for r in encodeResults {
-                        try self.encodeWindow.write(r)
-                        //encodeCollector.append(r)
-                    }
-                    let stateOutput = try model.output(at: Tensors.state.rawValue)
-                    let stateResults = stateOutput.data.withUnsafeBytes { (pointer: UnsafePointer<Float32>) -> [Float32] in
-                        Array<Float32>(UnsafeBufferPointer(start: pointer, count: stateOutput.data.count / 4))}
-                    for r in stateResults {
-                        try self.encodeState.write(r)
-                        //stateCollector.append(r)
-                    }
-                } else {
-                    throw WakewordModelError.encode("encode.lite was not initialized")
+        do {
+            if let model = self.encodeModel {
+                /// inputs
+                self.frameWindow.rewind()
+                // TODO: model.copy requires that the data be sized to exactly the same as the tensor, so we can't just do read()s off the ringbuffer and copy over piecewise. This introduces an aggrevating overhead of having to copy the ringbuffer into an array before copying over to the tensor. Maybe use a fixed-sized array that is advanced based off the fft frame size?
+                var frameWindowArray: Array<Float32> = []
+                while !self.frameWindow.isEmpty {
+                    let f = try self.frameWindow.read()
+                    frameWindowArray.append(f)
                 }
+                var stateArray: Array<Float32> = []
+                for _ in 0..<self.stateWidth {
+                    let f = try self.encodeState.read()
+                    stateArray.append(f)
+                }
+                _ = try frameWindowArray
+                    .withUnsafeBytes(
+                        {try model.copy(Data($0), toInputAt: Tensors.encode.rawValue)})
+                _ = try stateArray
+                    .withUnsafeBytes(
+                        {try model.copy(Data($0), toInputAt: Tensors.state.rawValue)})
+                
+                /// calculate
+                try model.invoke()
+                
+                /// outputs
+                let encodeOutput = try model.output(at: Tensors.encode.rawValue)
+                let encodeResults = encodeOutput.data.withUnsafeBytes { (pointer: UnsafePointer<Float32>) -> [Float32] in
+                    Array<Float32>(UnsafeBufferPointer(start: pointer, count: encodeOutput.data.count / 4))}
+                self.encodeWindow.rewind().seek(self.encodeWidth)
+                for r in encodeResults {
+                    try self.encodeWindow.write(r)
+                    //encodeCollector.append(r)
+                }
+                let stateOutput = try model.output(at: Tensors.state.rawValue)
+                let stateResults = stateOutput.data.withUnsafeBytes { (pointer: UnsafePointer<Float32>) -> [Float32] in
+                    Array<Float32>(UnsafeBufferPointer(start: pointer, count: stateOutput.data.count / 4))}
+                for r in stateResults {
+                    try self.encodeState.write(r)
+                    //stateCollector.append(r)
+                }
+            } else {
+                throw WakewordModelError.encode("encode.lite was not initialized")
             }
         }
     }
@@ -411,6 +405,9 @@ public class TFLiteWakewordRecognizer: NSObject {
         /// Reset and fill the other buffers,
         /// which prevents them from lagging the detection
         self.frameWindow.reset().fill(0)
+        self.encodeWindow.reset().fill(0)
+        self.encodeState.reset().fill(0)
+        self.detectWindow.reset().fill(0)
         
         /// reset the maximum posterior
         self.posteriorMax = 0
