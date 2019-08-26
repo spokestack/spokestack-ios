@@ -140,5 +140,9 @@ extension AppleViewController: SpeechRecognizer, WakewordRecognizer, PipelineDel
         self.stopRecordingButton.isEnabled.toggle()
         self.startRecordingButton.isEnabled.toggle()
     }
+    
+    func didTrace(_ trace: String) {
+        print("didTrace: \(trace)")
+    }
 }
 

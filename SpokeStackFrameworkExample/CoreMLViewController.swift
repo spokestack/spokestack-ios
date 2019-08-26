@@ -143,4 +143,8 @@ extension CoreMLViewController: SpeechRecognizer, WakewordRecognizer, PipelineDe
         print("didStart")
         self.toggleStartStop()
     }
+    
+    func didTrace(_ trace: String) {
+        print("didTrace: \(trace)")
+    }
 }

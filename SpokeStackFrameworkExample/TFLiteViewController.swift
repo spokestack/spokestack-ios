@@ -91,6 +91,7 @@ class TFLiteViewController: UIViewController {
             throw WakewordModelError.detect("could not find \(c.detectModelName).lite in bundle \(self.debugDescription)")
         }
         c.detectModelPath = detectPath
+        c.tracing = Trace.Level.PERF
         return try! SpeechPipeline(.appleSpeech,
                                    speechConfiguration: RecognizerConfiguration(),
                                    speechDelegate: self,
@@ -162,6 +163,10 @@ extension TFLiteViewController: SpeechRecognizer, WakewordRecognizer, PipelineDe
     func didStart() {
         print("didStart")
         self.toggleStartStop()
+    }
+    
+    func didTrace(_ trace: String) {
+        print("didTrace: \(trace)")
     }
 }
 

@@ -81,7 +81,7 @@
 		59A0D5C72204E8E4003709C3 /* WakewordConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59A0D5C52204E8E4003709C3 /* WakewordConfiguration.swift */; };
 		59A45E4F2243ED530089D023 /* PipelineDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59A45E4E2243ED530089D023 /* PipelineDelegate.swift */; };
 		59E0E13522FE2C2B0060F012 /* SignalProcessing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59E0E13422FE2C2B0060F012 /* SignalProcessing.swift */; };
-		59E0E1372301F0A80060F012 /* Spit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59E0E1362301F0A80060F012 /* Spit.swift */; };
+		59E0E1372301F0A80060F012 /* Trace.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59E0E1362301F0A80060F012 /* Trace.swift */; };
 		59E0E1392301FB920060F012 /* TFLiteViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59E0E1382301FB920060F012 /* TFLiteViewController.swift */; };
 		59E0E13E230DEB7C0060F012 /* detect.lite in Resources */ = {isa = PBXBuildFile; fileRef = 59E0E13B230DEB7C0060F012 /* detect.lite */; };
 		59E0E13F230DEB7C0060F012 /* encode.lite in Resources */ = {isa = PBXBuildFile; fileRef = 59E0E13C230DEB7C0060F012 /* encode.lite */; };
@@ -207,7 +207,7 @@
 		59A45E4E2243ED530089D023 /* PipelineDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PipelineDelegate.swift; sourceTree = "<group>"; };
 		59E00286DC69F3331EFFC970 /* Pods_SpokeStackFrameworkExample.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SpokeStackFrameworkExample.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		59E0E13422FE2C2B0060F012 /* SignalProcessing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignalProcessing.swift; sourceTree = "<group>"; };
-		59E0E1362301F0A80060F012 /* Spit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Spit.swift; sourceTree = "<group>"; };
+		59E0E1362301F0A80060F012 /* Trace.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Trace.swift; sourceTree = "<group>"; };
 		59E0E1382301FB920060F012 /* TFLiteViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TFLiteViewController.swift; sourceTree = "<group>"; };
 		59E0E13B230DEB7C0060F012 /* detect.lite */ = {isa = PBXFileReference; lastKnownFileType = file; path = detect.lite; sourceTree = "<group>"; };
 		59E0E13C230DEB7C0060F012 /* encode.lite */ = {isa = PBXFileReference; lastKnownFileType = file; path = encode.lite; sourceTree = "<group>"; };
@@ -367,7 +367,7 @@
 				01D31F6D216BAFD90055FD45 /* SpeechContext.swift */,
 				5936594D220A1A7A00C0365F /* WakewordService.swift */,
 				59E0E13422FE2C2B0060F012 /* SignalProcessing.swift */,
-				59E0E1362301F0A80060F012 /* Spit.swift */,
+				59E0E1362301F0A80060F012 /* Trace.swift */,
 			);
 			name = Models;
 			sourceTree = "<group>";
@@ -770,7 +770,7 @@
 				593B1D7322C50A95004D938E /* resample_48khz.c in Sources */,
 				593B1D6A22C50A95004D938E /* vector_scaling_operations.c in Sources */,
 				01D31F6F216BAFD90055FD45 /* SpeechContext.swift in Sources */,
-				59E0E1372301F0A80060F012 /* Spit.swift in Sources */,
+				59E0E1372301F0A80060F012 /* Trace.swift in Sources */,
 				59E0E13522FE2C2B0060F012 /* SignalProcessing.swift in Sources */,
 				59A0D5C72204E8E4003709C3 /* WakewordConfiguration.swift in Sources */,
 				593B1D7222C50A95004D938E /* division_operations.c in Sources */,

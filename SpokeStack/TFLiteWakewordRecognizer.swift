@@ -43,6 +43,7 @@ public class TFLiteWakewordRecognizer: NSObject {
     private var activeLength: Int = 0
     private var minActive: Int = 0
     private var maxActive: Int = 0
+    private var isSpeech: Bool = false
     
     /// TensorFlowLite models
     private var filterModel: Interpreter?
@@ -75,16 +76,17 @@ public class TFLiteWakewordRecognizer: NSObject {
     
     /// attention model posteriors
     private var posteriorThreshold: Float = 0
-    private var posteriorMax: Float = 0
 
-    /// Debugging collectors
-    private var sampleCollector: Array<Float> = []
-    private var fftFrameCollector: String = ""
-    private var filterCollector: Array<Float> = []
-    private var encodeCollector: Array<Float> = []
-    private var stateCollector: Array<Float> = []
-    private var detectCollector: Array<Float> = []
-    
+    /// Tracing
+    private var traceLevel: Trace.Level = Trace.Level.NONE
+    private var sampleCollector: Array<Float>?
+    private var fftFrameCollector: String?
+    private var filterCollector: Array<Float>?
+    private var encodeCollector: Array<Float>?
+    private var stateCollector: Array<Float>?
+    private var detectCollector: Array<Float>?
+    private var posteriorMax: Float?
+
     /// MARK: NSObject methods
     
     deinit {
@@ -117,7 +119,7 @@ public class TFLiteWakewordRecognizer: NSObject {
                 if let model = self.filterModel {
                     try model.allocateTensors()
                 } else {
-                    throw WakewordModelError.filter("filter.lite was not initialized")
+                    throw WakewordModelError.filter("\(c.filterModelPath) could not be initialized")
                 }
                 
                 self.encodeModel = try Interpreter(modelPath: c.encodeModelPath)
@@ -125,27 +127,39 @@ public class TFLiteWakewordRecognizer: NSObject {
                     try model.allocateTensors()
                     assert(model.inputTensorCount == Tensors.allCases.count)
                 } else {
-                    throw WakewordModelError.encode("encode.lite was not initialized")
+                    throw WakewordModelError.encode("\(c.encodeModelPath) could not be initialized")
                 }
                 
                 self.detectModel = try Interpreter(modelPath: c.detectModelPath)
                 if let model = self.detectModel {
                     try model.allocateTensors()
                 } else {
-                    throw WakewordModelError.detect("detect.lite was not initialized")
+                    throw WakewordModelError.detect("\(c.detectModelPath) could not be initialized")
                 }
             } catch let message {
-                assertionFailure("TFLiteWakewordRecognizer setConfiguration \(message)")
+                self.delegate!.didError(WakewordModelError.model("TFLiteWakewordRecognizer configureAttentionModels \(message)"))
             }
         }
     }
     
     private func setConfiguration() -> Void {
         if let c = self.configuration {
+            
+            /// Tracing
+            self.traceLevel = c.tracing
+            if self.traceLevel.rawValue > Trace.Level.INFO.rawValue {
+                self.posteriorMax = 0
+                self.sampleCollector = []
+                self.fftFrameCollector = ""
+                self.filterCollector = []
+                self.encodeCollector = []
+                self.stateCollector = []
+                self.detectCollector = []
+            }
 
-            /// VAD configuration
+            /// VAD
             do {
-                try self.vad.create(mode: .HighQuality, delegate: self, frameWidth: c.frameWidth, samplerate: c.sampleRate)
+                try self.vad.create(mode: c.vadMode, delegate: self, frameWidth: c.frameWidth, samplerate: c.sampleRate)
             } catch {
                 assertionFailure("TFLiteWakewordRecognizer failed to create a valid VAD")
             }
@@ -179,7 +193,7 @@ public class TFLiteWakewordRecognizer: NSObject {
             self.posteriorThreshold = c.wakeThreshold
             self.posteriorMax = 0
             
-            /// Calculate the wakeword activation lengths
+            /// Wakeword activation lengths
             let frameWidth: Int = c.frameWidth
             self.minActive = c.wakeActiveMin / frameWidth
             self.maxActive = c.wakeActiveMax / frameWidth
@@ -189,7 +203,7 @@ public class TFLiteWakewordRecognizer: NSObject {
     /// MARK: Pipeline control
     
     private func process(_ frame: Data) -> Void {
-        if !context.isActive {
+        if !self.context.isActive {
             /// Run the current frame through the detector pipeline.
             /// Activate the pipeline if a keyword phrase was detected.
             do {
@@ -197,7 +211,7 @@ public class TFLiteWakewordRecognizer: NSObject {
                 /// Decode the FFT outputs into the filter model's input
                 try sample(frame)
                 let activate = try detect()
-                if activate && !self.context.isActive {
+                if activate {
                     self.context.isActive = true
                     self.reset()
                     self.stopStreaming(context: self.context)
@@ -245,7 +259,9 @@ public class TFLiteWakewordRecognizer: NSObject {
             sample -= self.preEmphasis * self.prevSample
             self.prevSample = currentSample
             
-            //sampleCollector.append(sample)
+            if self.traceLevel.rawValue > Trace.Level.INFO.rawValue {
+              self.sampleCollector?.append(sample)
+            }
             
             /// Process the sample
             /// - write it to the sample sliding window
@@ -272,9 +288,12 @@ public class TFLiteWakewordRecognizer: NSObject {
         /// rewind the sample window for another run
         self.sampleWindow.rewind().seek(self.hopLength)
         
-        try self.filter()
+        if self.traceLevel.rawValue > Trace.Level.INFO.rawValue {
+            self.fftFrameCollector? += "\(self.fftFrame)\n"
+        }
         
-        //self.fftFrameCollector += "\(self.fftFrame)\n"
+        /// send sampleWindow to filter model
+        try self.filter()
     }
     
     /// Attention model processing
@@ -302,12 +321,15 @@ public class TFLiteWakewordRecognizer: NSObject {
                 self.frameWindow.rewind().seek(self.melWidth)
                 for r in results {
                     try self.frameWindow.write(r)
-                    //filterCollector.append(r)
+                    if self.traceLevel.rawValue > Trace.Level.INFO.rawValue {
+                        self.filterCollector?.append(r)
+                    }
                 }
                 
+                /// send frameWinodw to encoding model
                 try self.encode()
             } else {
-                throw WakewordModelError.filter("model is not initialized")
+                throw WakewordModelError.filter("model was not initialized")
             }
         } catch let message {
             throw WakewordModelError.filter("TFLiteWakewordRecognizer filter \(message)")
@@ -347,17 +369,18 @@ public class TFLiteWakewordRecognizer: NSObject {
                 self.encodeWindow.rewind().seek(self.encodeWidth)
                 for r in encodeResults {
                     try self.encodeWindow.write(r)
-                    //encodeCollector.append(r)
+                    if self.traceLevel.rawValue > Trace.Level.INFO.rawValue {
+                        self.encodeCollector?.append(r)
+                    }
                 }
                 let stateOutput = try model.output(at: Tensors.state.rawValue)
                 let stateResults = stateOutput.data.withUnsafeBytes { (pointer: UnsafePointer<Float32>) -> [Float32] in
                     Array<Float32>(UnsafeBufferPointer(start: pointer, count: stateOutput.data.count / 4))}
                 for r in stateResults {
                     try self.encodeState.write(r)
-                    //stateCollector.append(r)
                 }
             } else {
-                throw WakewordModelError.encode("encode.lite was not initialized")
+                throw WakewordModelError.encode("model was not initialized")
             }
         }
     }
@@ -385,9 +408,15 @@ public class TFLiteWakewordRecognizer: NSObject {
                     let detectResults = detectOutput.data.withUnsafeBytes { (pointer: UnsafePointer<Float32>) -> [Float32] in
                         Array<Float32>(UnsafeBufferPointer(start: pointer, count: detectOutput.data.count / 4))}
                     let posterior = detectResults[0]
-                    if posterior > self.posteriorMax {
-                        self.posteriorMax = posterior
+                    
+                    if let pmax = self.posteriorMax {
+                        if self.traceLevel.rawValue > Trace.Level.INFO.rawValue {
+                            if posterior > pmax {
+                                self.posteriorMax = posterior
+                            }
+                        }
                     }
+                    
                     if posterior > self.posteriorThreshold {
                         return true
                     }
@@ -398,6 +427,8 @@ public class TFLiteWakewordRecognizer: NSObject {
     }
     
     private func reset() -> Void {
+        self.debug()
+        
         /// Empty the sample buffer, so that only contiguous
         /// speech samples are written to it
         self.sampleWindow.reset()
@@ -414,17 +445,18 @@ public class TFLiteWakewordRecognizer: NSObject {
         
         /// control flow deactivation
         self.activeLength = 0
-        
-        //self.debug()
-    }
+}
     
     private func debug() -> Void {
-        Spit.spit(data: "[\((sampleCollector as NSArray).componentsJoined(by: ", "))]".data(using: .utf8)!, fileName: "samples.txt")
-        Spit.spit(data: fftFrameCollector.data(using: .utf8)!, fileName: "fftFrame.txt")
-        Spit.spit(data: "[\((filterCollector as NSArray).componentsJoined(by: ", "))]".data(using: .utf8)!, fileName: "filterOutput.txt")
-        Spit.spit(data: "[\((encodeCollector as NSArray).componentsJoined(by: ", "))]".data(using: .utf8)!, fileName: "encodeOutput.txt")
-        Spit.spit(data: "[\((stateCollector as NSArray).componentsJoined(by: ", "))]".data(using: .utf8)!, fileName: "stateOutput.txt")
-        //Spit.spit(data: detectCollector.data(using: .utf8)!, fileName: "detectPredictions.txt")
+        Trace.trace(Trace.Level.PERF, configLevel: self.traceLevel, message: "wake: \(self.posteriorMax!)", delegate: self.delegate, caller: self)
+        
+        if self.traceLevel.rawValue >= Trace.Level.DEBUG.rawValue {
+            Trace.spit(data: "[\((self.sampleCollector! as NSArray).componentsJoined(by: ", "))]".data(using: .utf8)!, fileName: "samples.txt", delegate: self.delegate!)
+            Trace.spit(data: self.fftFrameCollector!.data(using: .utf8)!, fileName: "fftFrame.txt", delegate: self.delegate!)
+            Trace.spit(data: "[\((self.filterCollector! as NSArray).componentsJoined(by: ", "))]".data(using: .utf8)!, fileName: "filterOutput.txt", delegate: self.delegate!)
+            Trace.spit(data: "[\((self.encodeCollector! as NSArray).componentsJoined(by: ", "))]".data(using: .utf8)!, fileName: "encodeOutput.txt", delegate: self.delegate!)
+            Trace.spit(data: "[\((self.stateCollector! as NSArray).componentsJoined(by: ", "))]".data(using: .utf8)!, fileName: "stateOutput.txt", delegate: self.delegate!)
+        }
     }
 }
 
@@ -445,13 +477,22 @@ extension TFLiteWakewordRecognizer: AudioControllerDelegate {
         /// multiplex the audio frame data to both the vad and, if activated, the model pipelines
         audioProcessingQueue.async {[weak self] in
             guard let strongSelf = self else { return }
+        
+            /// always run the frame through the vad, since that will determine speech activation/deactivation edges
             strongSelf.vad.process(frame: frame, isSpeech:
                 strongSelf.context.isSpeech)
+            
+            /// if the vad is detecting speech, check for wakeword activation
             if strongSelf.context.isSpeech {
                 strongSelf.process(frame)
-            } else {
-                strongSelf.reset()
+                
+            /// detect speech deactivation edge
+            } else if strongSelf.isSpeech {
+                if !strongSelf.context.isActive {
+                    strongSelf.debug()
+                }
             }
+            strongSelf.isSpeech = strongSelf.context.isSpeech
         }
     }
 }
@@ -465,7 +506,8 @@ extension TFLiteWakewordRecognizer: VADDelegate {
     }
     
     public func deactivate() {
-        if self.activeLength >= self.maxActive {
+        if !self.context.isActive ||
+            (self.context.isActive && self.activeLength >= self.maxActive) {
             self.context.isSpeech = false
         }
     }
