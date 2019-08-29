@@ -50,10 +50,9 @@ class WakeWordViewController: UIViewController {
     
     lazy public var pipeline: SpeechPipeline = {
         return try! SpeechPipeline(.appleSpeech,
-                                   speechConfiguration: RecognizerConfiguration(),
+                                   speechConfiguration: SpeechConfiguration(),
                                    speechDelegate: self,
                                    wakewordService: .appleWakeword,
-                                   wakewordConfiguration: WakewordConfiguration(),
                                    wakewordDelegate: self,
                                    pipelineDelegate: self)
     }()

@@ -19,7 +19,7 @@ public class TFLiteWakewordRecognizer: NSObject {
     
     public weak var delegate: WakewordRecognizer?
     
-    public var configuration: WakewordConfiguration? = WakewordConfiguration() {
+    public var configuration: SpeechConfiguration? = SpeechConfiguration() {
         didSet {
             if configuration != nil {
                 self.validateConfiguration()
@@ -462,12 +462,12 @@ public class TFLiteWakewordRecognizer: NSObject {
 
 extension TFLiteWakewordRecognizer : WakewordRecognizerService {
     func startStreaming(context: SpeechContext) -> Void {
-        AudioController.shared.delegate = self
+        AudioController.sharedInstance.delegate = self
         self.context = context
     }
     
     func stopStreaming(context: SpeechContext) -> Void {
-        AudioController.shared.delegate = nil
+        AudioController.sharedInstance.delegate = nil
         self.context = context
     }
 }

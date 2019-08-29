@@ -19,7 +19,7 @@ func recordingCallback(
     inNumberFrames: UInt32,
     ioData: UnsafeMutablePointer<AudioBufferList>?) -> OSStatus {
 
-    guard let remoteIOUnit: AudioComponentInstance = AudioController.shared.remoteIOUnit else {
+    guard let remoteIOUnit: AudioComponentInstance = AudioController.sharedInstance.remoteIOUnit else {
         return kAudioServicesSystemSoundUnspecifiedError
     }
     var status: OSStatus = noErr
@@ -46,7 +46,7 @@ func recordingCallback(
         
     if buffers[0].mData != nil {
         let data: Data = Data(bytes: buffers[0].mData!, count: Int(buffers[0].mDataByteSize))
-        AudioController.shared.delegate?.processFrame(data)
+        AudioController.sharedInstance.delegate?.processFrame(data)
     }
     
     return noErr
@@ -56,14 +56,14 @@ class AudioController {
     
     // MARK: Public (properties)
     
-    static let shared: AudioController = AudioController()
+    static let sharedInstance: AudioController = AudioController()
     weak var delegate: AudioControllerDelegate?
     weak var pipelineDelegate: PipelineDelegate?
-    var sampleRate: Int = 16000
-    var bufferDuration: TimeInterval = 10
-    
+    public var configuration: SpeechConfiguration = SpeechConfiguration()
+
     // MARK: Private (properties)
     
+    // private var bufferDuration: TimeInterval = TimeInterval((configuration.sampleRate / 1000) * configuration.frameWidth)
     fileprivate var remoteIOUnit: AudioComponentInstance?
     lazy private var audioComponentDescription: AudioComponentDescription = {
         var componentDescription: AudioComponentDescription = AudioComponentDescription()
@@ -78,7 +78,6 @@ class AudioController {
     // MARK: Initializers
     
     deinit {
-        print("AudioController deinit")
         if let riou = remoteIOUnit {
             AudioComponentInstanceDispose(riou)
         }
@@ -88,7 +87,6 @@ class AudioController {
     }
     
     init() {
-        print("AudioController init")
         NotificationCenter.default.addObserver(self,
                                                selector: #selector(audioRouteChanged),
                                                name: AVAudioSession.routeChangeNotification,
@@ -98,7 +96,6 @@ class AudioController {
     // MARK: Public functions
     
     func startStreaming(context: SpeechContext) -> Void {
-        print("AudioController startStreaming")
         self.checkAudioSession()
         do {
             try self.start()
@@ -112,7 +109,6 @@ class AudioController {
     }
     
     func stopStreaming(context: SpeechContext) -> Void {
-        print("AudioController stopStreaming")
         do {
             try self.stop()
         } catch AudioError.audioSessionSetup(let message) {
@@ -126,7 +122,6 @@ class AudioController {
     
     @discardableResult
     private func start() throws -> OSStatus {
-        print("AudioController start")
         var status: OSStatus = noErr
         status = self.prepareRemoteIOUnit()
         if status != noErr {
@@ -165,7 +160,6 @@ class AudioController {
     }
     
     private func prepareRemoteIOUnit() -> OSStatus {
-        print("AudioController prepareRemoteIOUnit")
         var status: OSStatus = noErr
         let remoteIOComponent = AudioComponentFindNext(nil, &audioComponentDescription)
         status = AudioComponentInstanceNew(remoteIOComponent!, &remoteIOUnit)
@@ -189,7 +183,7 @@ class AudioController {
         
         // MARK: set format for mic input (bus 1) on RemoteIO unit's output scope
         var asbd: AudioStreamBasicDescription = AudioStreamBasicDescription()
-        asbd.mSampleRate = Double(self.sampleRate)
+        asbd.mSampleRate = Double(self.configuration.sampleRate)
         asbd.mFormatID = kAudioFormatLinearPCM
         asbd.mFormatFlags = kAudioFormatFlagIsSignedInteger | kAudioFormatFlagIsPacked
         asbd.mBytesPerPacket = 2
@@ -227,18 +221,18 @@ class AudioController {
         return AudioUnitInitialize(self.remoteIOUnit!)
     }
     
-    private func printAudioSessionDebug() {
+    private func debug() {
         let session = AVAudioSession.sharedInstance()
         let sss: String = session.category.rawValue
         let sco: String = session.categoryOptions.rawValue.description
         let sioap: String = session.isOtherAudioPlaying.description
-        print("AudioController printAudioSessionDebug current category: " + sss + " options: " + sco + " isOtherAudioPlaying: " + sioap + " bufferduration " + session.ioBufferDuration.description)
+        Trace.trace(Trace.Level.DEBUG, configLevel: configuration.tracing, message: "current category: \(sss) +  options: \(sco) isOtherAudioPlaying: \(sioap) bufferduration  \(session.ioBufferDuration.description)", delegate: self.pipelineDelegate, caller: self)
         let route_inputs: String = session.currentRoute.inputs.debugDescription
         let route_outputs: String = session.currentRoute.outputs.debugDescription
         let preferredInput: String = session.preferredInput.debugDescription
         let usb_outputs: String = session.outputDataSources?.debugDescription ?? "none"
         let inputs: String = session.availableInputs?.debugDescription ?? "none"
-        print("AudioController printAudioSessionDebug inputs: " + inputs + " preferredinput: " + preferredInput + " input: " + route_inputs + " output: " + route_outputs + " usb_outputs: " + usb_outputs)
+        Trace.trace(Trace.Level.DEBUG, configLevel: configuration.tracing, message: "inputs: \(inputs) preferredinput: \(preferredInput) input: \(route_inputs) output: \(route_outputs) usb_outputs: \(usb_outputs)", delegate: self.pipelineDelegate, caller: self)
     }
     
     @objc private func audioRouteChanged(_ notification: Notification) {
@@ -247,19 +241,19 @@ class AudioController {
             let reason = AVAudioSession.RouteChangeReason(rawValue:reasonValue) else {
                 return
         }
-        print("AudioController audioRouteChanged reason: " + reasonValue.description + " notification: " + userInfo.debugDescription)
-        printAudioSessionDebug()
+        Trace.trace(Trace.Level.DEBUG, configLevel: configuration.tracing, message: "audioRouteChanged reason: \(reasonValue.description) notification: \(userInfo.debugDescription)", delegate: self.pipelineDelegate, caller: self)
+        debug()
         let session = AVAudioSession.sharedInstance()
         switch reason {
         case .newDeviceAvailable:
-            print("AudioController audioRouteChanged new output: " + session.currentRoute.outputs.description)
+            Trace.trace(Trace.Level.DEBUG, configLevel: configuration.tracing, message: "AudioController audioRouteChanged new output:  \(session.currentRoute.outputs.description)", delegate: self.pipelineDelegate, caller: self)
         case .oldDeviceUnavailable:
             if let previousRoute =
                 userInfo[AVAudioSessionRouteChangePreviousRouteKey] as? AVAudioSessionRouteDescription {
-                print("AudioController audioRouteChanged old output: " + previousRoute.outputs.description)
+                Trace.trace(Trace.Level.DEBUG, configLevel: configuration.tracing, message: "AudioController audioRouteChanged old output: \(previousRoute.outputs.description)", delegate: self.pipelineDelegate, caller: self)
             }
         case .categoryChange:
-            print("AudioController audioRouteChanged new category: " + session.category.rawValue)
+            Trace.trace(Trace.Level.DEBUG, configLevel: configuration.tracing, message: "AudioController audioRouteChanged new category: \(session.category.rawValue)", delegate: self.pipelineDelegate, caller: self)
         default: ()
         }
     }

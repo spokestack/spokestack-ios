@@ -32,8 +32,6 @@
 		01D31F7A216BAFEF0055FD45 /* AudioControllerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01D31F75216BAFEF0055FD45 /* AudioControllerDelegate.swift */; };
 		01D31F7B216BAFEF0055FD45 /* SpeechRecognizerService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01D31F76216BAFEF0055FD45 /* SpeechRecognizerService.swift */; };
 		01D31F7C216BAFEF0055FD45 /* SpeechRecognizerService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01D31F76216BAFEF0055FD45 /* SpeechRecognizerService.swift */; };
-		01D31F82216BB0000055FD45 /* RecognizerConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01D31F7F216BB0000055FD45 /* RecognizerConfiguration.swift */; };
-		01D31F83216BB0000055FD45 /* RecognizerConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01D31F7F216BB0000055FD45 /* RecognizerConfiguration.swift */; };
 		01D31F8A216BB0220055FD45 /* Results.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01D31F89216BB0220055FD45 /* Results.swift */; };
 		01D31F8B216BB0220055FD45 /* Results.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01D31F89216BB0220055FD45 /* Results.swift */; };
 		01D31F8E216BB0370055FD45 /* Typealiases.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01D31F8D216BB0370055FD45 /* Typealiases.swift */; };
@@ -78,7 +76,7 @@
 		59A0D5C02204E786003709C3 /* AppleViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59A0D5BD2204E786003709C3 /* AppleViewController.swift */; };
 		59A0D5C22204E786003709C3 /* WakeWordViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59A0D5BF2204E786003709C3 /* WakeWordViewController.swift */; };
 		59A0D5C42204E799003709C3 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 59A0D5C32204E799003709C3 /* Assets.xcassets */; };
-		59A0D5C72204E8E4003709C3 /* WakewordConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59A0D5C52204E8E4003709C3 /* WakewordConfiguration.swift */; };
+		59A0D5C72204E8E4003709C3 /* SpeechConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59A0D5C52204E8E4003709C3 /* SpeechConfiguration.swift */; };
 		59A45E4F2243ED530089D023 /* PipelineDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59A45E4E2243ED530089D023 /* PipelineDelegate.swift */; };
 		59E0E13522FE2C2B0060F012 /* SignalProcessing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59E0E13422FE2C2B0060F012 /* SignalProcessing.swift */; };
 		59E0E1372301F0A80060F012 /* Trace.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59E0E1362301F0A80060F012 /* Trace.swift */; };
@@ -152,7 +150,6 @@
 		01D31F74216BAFEF0055FD45 /* SpeechRecognizer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SpeechRecognizer.swift; sourceTree = "<group>"; };
 		01D31F75216BAFEF0055FD45 /* AudioControllerDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AudioControllerDelegate.swift; sourceTree = "<group>"; };
 		01D31F76216BAFEF0055FD45 /* SpeechRecognizerService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SpeechRecognizerService.swift; sourceTree = "<group>"; };
-		01D31F7F216BB0000055FD45 /* RecognizerConfiguration.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RecognizerConfiguration.swift; sourceTree = "<group>"; };
 		01D31F89216BB0220055FD45 /* Results.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Results.swift; sourceTree = "<group>"; };
 		01D31F8D216BB0370055FD45 /* Typealiases.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Typealiases.swift; sourceTree = "<group>"; };
 		1B644F4FE4DCC43463622FF9 /* Pods_SpokeStack.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SpokeStack.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -203,7 +200,7 @@
 		59A0D5BD2204E786003709C3 /* AppleViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppleViewController.swift; sourceTree = "<group>"; };
 		59A0D5BF2204E786003709C3 /* WakeWordViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WakeWordViewController.swift; sourceTree = "<group>"; };
 		59A0D5C32204E799003709C3 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		59A0D5C52204E8E4003709C3 /* WakewordConfiguration.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WakewordConfiguration.swift; sourceTree = "<group>"; };
+		59A0D5C52204E8E4003709C3 /* SpeechConfiguration.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SpeechConfiguration.swift; sourceTree = "<group>"; };
 		59A45E4E2243ED530089D023 /* PipelineDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PipelineDelegate.swift; sourceTree = "<group>"; };
 		59E00286DC69F3331EFFC970 /* Pods_SpokeStackFrameworkExample.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SpokeStackFrameworkExample.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		59E0E13422FE2C2B0060F012 /* SignalProcessing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignalProcessing.swift; sourceTree = "<group>"; };
@@ -368,6 +365,7 @@
 				5936594D220A1A7A00C0365F /* WakewordService.swift */,
 				59E0E13422FE2C2B0060F012 /* SignalProcessing.swift */,
 				59E0E1362301F0A80060F012 /* Trace.swift */,
+				59A0D5C52204E8E4003709C3 /* SpeechConfiguration.swift */,
 			);
 			name = Models;
 			sourceTree = "<group>";
@@ -375,7 +373,6 @@
 		01D31F73216BAFE20055FD45 /* Protocols */ = {
 			isa = PBXGroup;
 			children = (
-				01D31F7D216BAFF40055FD45 /* Configurations */,
 				01D31F75216BAFEF0055FD45 /* AudioControllerDelegate.swift */,
 				59A45E4E2243ED530089D023 /* PipelineDelegate.swift */,
 				01D31F74216BAFEF0055FD45 /* SpeechRecognizer.swift */,
@@ -385,15 +382,6 @@
 				5937579222D5281900AA7516 /* VADDelegate.swift */,
 			);
 			name = Protocols;
-			sourceTree = "<group>";
-		};
-		01D31F7D216BAFF40055FD45 /* Configurations */ = {
-			isa = PBXGroup;
-			children = (
-				01D31F7F216BB0000055FD45 /* RecognizerConfiguration.swift */,
-				59A0D5C52204E8E4003709C3 /* WakewordConfiguration.swift */,
-			);
-			name = Configurations;
 			sourceTree = "<group>";
 		};
 		01D31F84216BB0070055FD45 /* Recognizers */ = {
@@ -772,7 +760,7 @@
 				01D31F6F216BAFD90055FD45 /* SpeechContext.swift in Sources */,
 				59E0E1372301F0A80060F012 /* Trace.swift in Sources */,
 				59E0E13522FE2C2B0060F012 /* SignalProcessing.swift in Sources */,
-				59A0D5C72204E8E4003709C3 /* WakewordConfiguration.swift in Sources */,
+				59A0D5C72204E8E4003709C3 /* SpeechConfiguration.swift in Sources */,
 				593B1D7222C50A95004D938E /* division_operations.c in Sources */,
 				593B1D8C22CA9243004D938E /* WebRTCVAD.swift in Sources */,
 				01D31F77216BAFEF0055FD45 /* SpeechRecognizer.swift in Sources */,
@@ -802,7 +790,6 @@
 				593B1D6922C50A95004D938E /* real_fft.c in Sources */,
 				59A45E4F2243ED530089D023 /* PipelineDelegate.swift in Sources */,
 				593B1D7022C50A95004D938E /* get_scaling_square.c in Sources */,
-				01D31F82216BB0000055FD45 /* RecognizerConfiguration.swift in Sources */,
 				593B1D5A22C50A0E004D938E /* copy_set_operations.c in Sources */,
 				593B1D6C22C50A95004D938E /* resample_by_2.c in Sources */,
 				01D31F62216BAFA40055FD45 /* AudioController.swift in Sources */,
@@ -827,7 +814,6 @@
 			files = (
 				01D31F8F216BB0370055FD45 /* Typealiases.swift in Sources */,
 				01D31F70216BAFD90055FD45 /* SpeechContext.swift in Sources */,
-				01D31F83216BB0000055FD45 /* RecognizerConfiguration.swift in Sources */,
 				01D31F72216BAFD90055FD45 /* RecognizerService.swift in Sources */,
 				01D31F63216BAFA40055FD45 /* AudioController.swift in Sources */,
 				01D31F7C216BAFEF0055FD45 /* SpeechRecognizerService.swift in Sources */,

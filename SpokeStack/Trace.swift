@@ -27,6 +27,12 @@ public struct Trace {
             delegate?.didTrace("\(level) \(String(describing: type(of: caller))) \(message)")
         }
     }
+
+    public static func trace(_ level: Trace.Level, configLevel: Trace.Level, message: String, delegate: PipelineDelegate?, caller: Any) {
+        if level.rawValue >= configLevel.rawValue {
+            delegate?.didTrace("\(level) \(String(describing: type(of: caller))) \(message)")
+        }
+    }
     
     public static func spit(data: Data, fileName: String, delegate: WakewordRecognizer) {
         let filemgr = FileManager.default

@@ -45,13 +45,12 @@ class AppleViewController: UIViewController {
     
     lazy private var pipeline: SpeechPipeline = {
         
-        let appleConfiguration: RecognizerConfiguration = RecognizerConfiguration()
+        let appleConfiguration: SpeechConfiguration = SpeechConfiguration()
         
         return try! SpeechPipeline(.appleSpeech,
                                    speechConfiguration: appleConfiguration,
                                    speechDelegate: self,
                                    wakewordService: .appleWakeword,
-                                   wakewordConfiguration: WakewordConfiguration(),
                                    wakewordDelegate: self,
                                    pipelineDelegate: self)
     }()

@@ -17,4 +17,6 @@ import Foundation
     func didStop() -> Void
     
     func setupFailed(_ error: String) -> Void
+    
+    func didTrace(_ trace: String) -> Void
 }

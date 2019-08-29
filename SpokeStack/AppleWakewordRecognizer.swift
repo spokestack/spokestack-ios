@@ -14,7 +14,7 @@ public class AppleWakewordRecognizer: NSObject, WakewordRecognizerService {
     // MARK: public properties
     
     static let sharedInstance: AppleWakewordRecognizer = AppleWakewordRecognizer()
-    public var configuration: WakewordConfiguration?
+    public var configuration: SpeechConfiguration?
     public weak var delegate: WakewordRecognizer?
     
     // MARK: wakeword properties
@@ -44,7 +44,7 @@ public class AppleWakewordRecognizer: NSObject, WakewordRecognizerService {
     // MARK: SpeechRecognizerService implementation
     
     func startStreaming(context: SpeechContext) {
-        AudioController.shared.delegate = self
+        AudioController.sharedInstance.delegate = self
         phrases = configuration!.wakePhrases.components(separatedBy: ",")
         self.context = context
         self.prepareAudioEngine()
@@ -52,7 +52,7 @@ public class AppleWakewordRecognizer: NSObject, WakewordRecognizerService {
     }
     
     func stopStreaming(context: SpeechContext) {
-        AudioController.shared.delegate = nil
+        AudioController.sharedInstance.delegate = nil
         self.context = context
         self.stopRecognition()
         self.dispatchWorker?.cancel()

@@ -14,7 +14,7 @@ class AppleSpeechRecognizer: NSObject, SpeechRecognizerService {
     // MARK: public properties
     
     public static let sharedInstance: AppleSpeechRecognizer = AppleSpeechRecognizer()
-    public var configuration: RecognizerConfiguration?
+    public var configuration: SpeechConfiguration?
     public weak var delegate: SpeechRecognizer?
     
     // MARK: private properties

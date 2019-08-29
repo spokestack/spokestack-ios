@@ -17,7 +17,7 @@ public class CoreMLWakewordRecognizer: NSObject, WakewordRecognizerService {
     
     static let sharedInstance: CoreMLWakewordRecognizer = CoreMLWakewordRecognizer()
     
-    public var configuration: WakewordConfiguration? = WakewordConfiguration() {
+    public var configuration: SpeechConfiguration? = SpeechConfiguration() {
         didSet {
             if configuration != nil {
                 self.parseConfiguration()
@@ -102,12 +102,12 @@ public class CoreMLWakewordRecognizer: NSObject, WakewordRecognizerService {
     // MARK: SpeechRecognizerService implementation
 
     func startStreaming(context: SpeechContext) -> Void {
-        AudioController.shared.delegate = self
+        AudioController.sharedInstance.delegate = self
         self.context = context
     }
     
     func stopStreaming(context: SpeechContext) -> Void {
-        AudioController.shared.delegate = nil
+        AudioController.sharedInstance.delegate = nil
         self.context = context
     }
     
@@ -173,10 +173,6 @@ public class CoreMLWakewordRecognizer: NSObject, WakewordRecognizerService {
                 assertionFailure("CoreMLWakewordRecognizer failed to create a valid VAD")
             }
             
-            let buffer: TimeInterval = TimeInterval((c.sampleRate / 1000) * c.frameWidth)
-            AudioController.shared.sampleRate = c.sampleRate
-            AudioController.shared.bufferDuration = buffer
-        
             /// Signal normalization
             
             self.rmsTarget = c.rmsTarget
@@ -186,9 +182,8 @@ public class CoreMLWakewordRecognizer: NSObject, WakewordRecognizerService {
             
             /// Calculate stft/mel spectrogram configuration
             
-            let sampleRate: Int = c.sampleRate
-            self.hopLength = c.fftHopLength * sampleRate / 1000
-            let melLength: Int = c.melFrameLength * sampleRate / 1000 / self.hopLength
+            self.hopLength = c.fftHopLength * c.sampleRate / 1000
+            let melLength: Int = c.melFrameLength * c.sampleRate / 1000 / self.hopLength
             self.melWidth = c.melFrameWidth
             
             /// Allocate the stft window and FFT/frame buffer
@@ -199,8 +194,8 @@ public class CoreMLWakewordRecognizer: NSObject, WakewordRecognizerService {
             
             /// Calculate smoothing & phrasing window lengths
             
-            let smoothLength: Int = c.wakeSmoothLength * sampleRate / 1000 / self.hopLength
-            let phraseLength: Int = c.wakePhraseLength * sampleRate / 1000 / self.hopLength
+            let smoothLength: Int = c.wakeSmoothLength * c.sampleRate / 1000 / self.hopLength
+            let phraseLength: Int = c.wakePhraseLength * c.sampleRate / 1000 / self.hopLength
 
             /// Allocate the buffers used for posterior smoothing
             /// and argmax used for phrasing, so that we don't do
@@ -262,9 +257,10 @@ public class CoreMLWakewordRecognizer: NSObject, WakewordRecognizerService {
         } else {
             /// Continue this wakeword (or external) activation
             /// for at least the minimum, until a vad deactivation or timeout
-            if (self.activeLength > self.minActive) && (!self.context.isSpeech || (self.activeLength > self.maxActive)) {
+            if (self.activeLength > self.minActive) && (!self.context.isSpeech || (self.activeLength >= self.maxActive)) {
                 self.deactivatePipeline()
                 self.reset()
+                self.activeLength = 0
             }
         }
         
@@ -545,6 +541,7 @@ extension CoreMLWakewordRecognizer {
                 break
             }
         }
+        Trace.trace(Trace.Level.DEBUG, configLevel: self.configuration?.tracing ?? Trace.Level.NONE, message: "words to maxes: \n\(self.words)\n\(self.phraseMax)", delegate: self.delegate, caller: self)
     }
 }
 

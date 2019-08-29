@@ -78,7 +78,7 @@ class TFLiteViewController: UIViewController {
     }
     
     func initPipeline() throws -> SpeechPipeline {
-        let c = WakewordConfiguration()
+        let c = SpeechConfiguration()
         guard let filterPath = Bundle(for: type(of: self)).path(forResource: c.filterModelName, ofType: "lite") else {
             throw WakewordModelError.filter("could not find \(c.filterModelName).lite in bundle \(self.debugDescription)")
         }
@@ -93,10 +93,9 @@ class TFLiteViewController: UIViewController {
         c.detectModelPath = detectPath
         c.tracing = Trace.Level.PERF
         return try! SpeechPipeline(.appleSpeech,
-                                   speechConfiguration: RecognizerConfiguration(),
+                                   speechConfiguration: c,
                                    speechDelegate: self,
                                    wakewordService: .tFLiteWakeword,
-                                   wakewordConfiguration: c,
                                    wakewordDelegate: self,
                                    pipelineDelegate: self)
     }

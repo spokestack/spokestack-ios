@@ -1,5 +1,5 @@
 //
-//  WakeRecognizerConfiguration.swift
+//  SpeechConfiguration.swift
 //  SpokeStack
 //
 //  Created by Cory D. Wiles on 12/4/18.
@@ -8,7 +8,7 @@
 
 import Foundation
 
-@objc public class WakewordConfiguration: NSObject {
+@objc public class SpeechConfiguration: NSObject {
     @objc public var wakeWords: String = "up,dog" // cannot contain spaces
     @objc public var wakePhrases: String = "up dog"
     public var wakeSmoothLength: Int = 50
@@ -27,6 +27,7 @@ import Foundation
     public var wakeActiveMin: Int = 600
     public var wakeActiveMax: Int = 5000
     public var vadMode: VADMode = VADMode.HighQuality
+    @objc public var vadFallDelay: Int = 600
     public var sampleRate = 16000
     public var languageLocale = "en-US"
     public var frameWidth: Int = 20
