@@ -28,8 +28,8 @@ final class RingBuffer <T> {
         return self.pos(self.wpos + 1) == self.rpos
     }
     
-    func debug() -> Void {
-        print("RingBuffer \(self.data.count) \(self.wpos) \(self.rpos)")
+    func debug() -> String {
+        return ("RingBuffer \(self.data.count) \(self.wpos) \(self.rpos)")
     }
     
     // MARK: Private (properties)

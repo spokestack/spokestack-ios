@@ -50,10 +50,9 @@ class WakeWordViewController: UIViewController {
     
     lazy public var pipeline: SpeechPipeline = {
         return try! SpeechPipeline(.appleSpeech,
-                                   speechConfiguration: RecognizerConfiguration(),
+                                   speechConfiguration: SpeechConfiguration(),
                                    speechDelegate: self,
                                    wakewordService: .appleWakeword,
-                                   wakewordConfiguration: WakewordConfiguration(),
                                    wakewordDelegate: self,
                                    pipelineDelegate: self)
     }()
@@ -154,6 +153,9 @@ extension WakeWordViewController: SpeechRecognizer, WakewordRecognizer, Pipeline
     func setupFailed(_ error: String) {
         print("audiocontroller setup failed: " + error)
     }
-
+    
+    func didTrace(_ trace: String) {
+        print("didTrace: \(trace)")
+    }
 }
 

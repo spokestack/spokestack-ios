@@ -15,4 +15,6 @@ import Foundation
     func deactivate() -> Void
     
     func didError(_ error: Error) -> Void
+    
+    func didTrace(_ trace: String) -> Void
 }

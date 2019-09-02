@@ -17,7 +17,7 @@ public class CoreMLWakewordRecognizer: NSObject, WakewordRecognizerService {
     
     static let sharedInstance: CoreMLWakewordRecognizer = CoreMLWakewordRecognizer()
     
-    public var configuration: WakewordConfiguration? = WakewordConfiguration() {
+    public var configuration: SpeechConfiguration? = SpeechConfiguration() {
         didSet {
             if configuration != nil {
                 self.parseConfiguration()
@@ -83,35 +83,31 @@ public class CoreMLWakewordRecognizer: NSObject, WakewordRecognizerService {
     private var maxActive: Int = 0
     private var activeLength: Int = 0
     
-    /// Debugging collectors
-    
-    private var sampleCollector: Array<Float> = []
-    private var fftFrameCollector: String = ""
-    private var filterCollector: Array<Float> = []
-    private var detectCollector: String = ""
+    /// Tracing
+    private var traceLevel: Trace.Level = Trace.Level.NONE
+    private var sampleCollector: Array<Float>?
+    private var fftFrameCollector: String?
+    private var filterCollector: Array<Float>?
+    private var detectCollector: String?
     
     // MARK: NSObject methods
 
     deinit {
-        print("CoreMLWakewordRecognizer deinit")
     }
     
     public override init() {
         super.init()
-        print("CoreMLWakewordRecognizer init")
     }
     
     // MARK: SpeechRecognizerService implementation
 
     func startStreaming(context: SpeechContext) -> Void {
-        print("CoreMLWakewordRecognizer startStreaming")
-        AudioController.shared.delegate = self
+        AudioController.sharedInstance.delegate = self
         self.context = context
     }
     
     func stopStreaming(context: SpeechContext) -> Void {
-        print("CoreMLWakewordRecognizer stopStreaming")
-        AudioController.shared.delegate = nil
+        AudioController.sharedInstance.delegate = nil
         self.context = context
     }
     
@@ -138,7 +134,7 @@ public class CoreMLWakewordRecognizer: NSObject, WakewordRecognizerService {
             self.phrases = Array<Array<Int>>.init(repeating: [0], count: wakePhrases.count)
             for (i, phrase) in wakePhrases.enumerated() {
                 let wakePhraseArray: Array<String> = phrase.components(separatedBy: " ")
-                print("CoreMLWakewordRecognizer parseConfiguration wakePhraseArray \(wakePhraseArray)")
+                Trace.trace(Trace.Level.DEBUG, configLevel: self.traceLevel, message: "wakePhraseArray \(wakePhraseArray)", delegate: self.delegate, caller: self)
                 /// Allocate an additional (null) slot at the end of each phrase,
                 /// which forces the phraser to continue detection until the end
                 /// of the final keyword in each phrase
@@ -161,16 +157,22 @@ public class CoreMLWakewordRecognizer: NSObject, WakewordRecognizerService {
     private func setConfiguration() -> Void {
         
         if let c = self.configuration {
+            /// Tracing
+            self.traceLevel = c.tracing
+            if self.traceLevel.rawValue > Trace.Level.PERF.rawValue {
+                self.sampleCollector = []
+                self.fftFrameCollector = ""
+                self.filterCollector = []
+                self.detectCollector = ""
+            }
+            
+            /// VAD
             do {
                 try self.vad.create(mode: .HighQuality, delegate: self, frameWidth: c.frameWidth, samplerate: c.sampleRate)
             } catch {
                 assertionFailure("CoreMLWakewordRecognizer failed to create a valid VAD")
             }
             
-            let buffer: TimeInterval = TimeInterval((c.sampleRate / 1000) * c.frameWidth)
-            AudioController.shared.sampleRate = c.sampleRate
-            AudioController.shared.bufferDuration = buffer
-        
             /// Signal normalization
             
             self.rmsTarget = c.rmsTarget
@@ -180,9 +182,8 @@ public class CoreMLWakewordRecognizer: NSObject, WakewordRecognizerService {
             
             /// Calculate stft/mel spectrogram configuration
             
-            let sampleRate: Int = c.sampleRate
-            self.hopLength = c.fftHopLength * sampleRate / 1000
-            let melLength: Int = c.melFrameLength * sampleRate / 1000 / self.hopLength
+            self.hopLength = c.fftHopLength * c.sampleRate / 1000
+            let melLength: Int = c.melFrameLength * c.sampleRate / 1000 / self.hopLength
             self.melWidth = c.melFrameWidth
             
             /// Allocate the stft window and FFT/frame buffer
@@ -193,8 +194,8 @@ public class CoreMLWakewordRecognizer: NSObject, WakewordRecognizerService {
             
             /// Calculate smoothing & phrasing window lengths
             
-            let smoothLength: Int = c.wakeSmoothLength * sampleRate / 1000 / self.hopLength
-            let phraseLength: Int = c.wakePhraseLength * sampleRate / 1000 / self.hopLength
+            let smoothLength: Int = c.wakeSmoothLength * c.sampleRate / 1000 / self.hopLength
+            let phraseLength: Int = c.wakePhraseLength * c.sampleRate / 1000 / self.hopLength
 
             /// Allocate the buffers used for posterior smoothing
             /// and argmax used for phrasing, so that we don't do
@@ -241,7 +242,7 @@ public class CoreMLWakewordRecognizer: NSObject, WakewordRecognizerService {
             }
 
             /// Smoothing window capacity
-            print("CoreMLWakewordRecognizer validateConfiguration smoothWindow capacity inital \(self.smoothWindow.capacity)")
+            Trace.trace(Trace.Level.DEBUG, configLevel: self.traceLevel, message: "smoothWindow capacity inital \(self.smoothWindow.capacity)", delegate: self.delegate, caller: self)
         }
     }
     
@@ -250,17 +251,16 @@ public class CoreMLWakewordRecognizer: NSObject, WakewordRecognizerService {
     private func process(_ data: Data, isSpeech: Bool) -> Void {
         self.activeLength += 1
         if self.context.isSpeech && self.activeLength < self.maxActive {
-            print("CoreMLWakewordRecognizer process if")
             /// Run the current frame through the detector pipeline.
             /// Activate the pipeline if a keyword phrase was detected.
             self.sample(data)
         } else {
-            print("CoreMLWakewordRecognizer process else")
             /// Continue this wakeword (or external) activation
             /// for at least the minimum, until a vad deactivation or timeout
-            if (self.activeLength > self.minActive) && (!self.context.isSpeech || (self.activeLength > self.maxActive)) {
+            if (self.activeLength > self.minActive) && (!self.context.isSpeech || (self.activeLength >= self.maxActive)) {
                 self.deactivatePipeline()
                 self.reset()
+                self.activeLength = 0
             }
         }
         
@@ -323,7 +323,7 @@ public class CoreMLWakewordRecognizer: NSObject, WakewordRecognizerService {
                 let sample: Float = try self.sampleWindow.read()
                 self.fftFrame[index] = sample * self.fftWindow[index]
             } catch SpeechPipelineError.illegalState(let message) {
-                print("CoreMLWakewordRecognizer analyze illegal state error \(message)")
+                fatalError("CoreMLWakewordRecognizer analyze illegal state error \(message)")
             } catch let error {
                 fatalError("CoreMLWakewordRecognizer analyze unknown error occurred \(error.localizedDescription)")
             }
@@ -541,6 +541,7 @@ extension CoreMLWakewordRecognizer {
                 break
             }
         }
+        Trace.trace(Trace.Level.DEBUG, configLevel: self.configuration?.tracing ?? Trace.Level.NONE, message: "words to maxes: \n\(self.words)\n\(self.phraseMax)", delegate: self.delegate, caller: self)
     }
 }
 

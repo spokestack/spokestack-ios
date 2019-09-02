@@ -43,12 +43,12 @@ class CoreMLViewController: UIViewController {
     }()
     
     lazy private var pipeline: SpeechPipeline = {
-        
+        let c = SpeechConfiguration()
+        c.tracing = Trace.Level.DEBUG
         return try! SpeechPipeline(.appleSpeech,
-                                   speechConfiguration: RecognizerConfiguration(),
+                                   speechConfiguration: c,
                                    speechDelegate: self,
                                    wakewordService: .coremlWakeword,
-                                   wakewordConfiguration: WakewordConfiguration(),
                                    wakewordDelegate: self,
                                    pipelineDelegate: self)
     }()
@@ -142,5 +142,9 @@ extension CoreMLViewController: SpeechRecognizer, WakewordRecognizer, PipelineDe
     func didStart() {
         print("didStart")
         self.toggleStartStop()
+    }
+    
+    func didTrace(_ trace: String) {
+        print("didTrace: \(trace)")
     }
 }

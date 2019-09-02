@@ -17,4 +17,6 @@ import Foundation
     func didError(_ error: Error) -> Void
     
     func timeout() -> Void
+    
+    func didTrace(_ trace: String) -> Void
 }

@@ -13,9 +13,9 @@ class AppleSpeechRecognizer: NSObject, SpeechRecognizerService {
     
     // MARK: public properties
     
-    static let sharedInstance: AppleSpeechRecognizer = AppleSpeechRecognizer()
-    var configuration: RecognizerConfiguration?
-    weak var delegate: SpeechRecognizer?
+    public static let sharedInstance: AppleSpeechRecognizer = AppleSpeechRecognizer()
+    public var configuration: SpeechConfiguration?
+    public weak var delegate: SpeechRecognizer?
     
     // MARK: private properties
     
@@ -29,19 +29,16 @@ class AppleSpeechRecognizer: NSObject, SpeechRecognizerService {
     // MARK: NSObject methods
     
     deinit {
-        print("AppleSpeechRecognizer deinit")
         speechRecognizer.delegate = nil
     }
     
     override init() {
-        print("AppleSpeechRecognizer init")
         super.init()
     }
     
     // MARK: SpeechRecognizerService implementation
     
     func startStreaming(context: SpeechContext) {
-        print("AppleSpeechRecognizer startStreaming")
         do {
             context.isActive = true
             self.prepareAudioEngine()
@@ -51,7 +48,6 @@ class AppleSpeechRecognizer: NSObject, SpeechRecognizerService {
             self.audioEngine.prepare()
             try self.audioEngine.start()
             self.wakeActiveMaxWorker = DispatchWorkItem {[weak self] in
-                print("AppleSpeechRecognizer wakeActiveMaxWorker")
                 context.isActive = false
                 self?.delegate?.timeout()
                 self?.delegate?.deactivate()
@@ -63,7 +59,6 @@ class AppleSpeechRecognizer: NSObject, SpeechRecognizerService {
     }
     
     func stopStreaming(context: SpeechContext) {
-        print("AppleSpeechRecognizer stopStreaming")
         self.recognitionTask?.cancel()
         self.recognitionTask = nil
         self.recognitionRequest?.endAudio()
@@ -78,7 +73,6 @@ class AppleSpeechRecognizer: NSObject, SpeechRecognizerService {
     // MARK: private functions
     
     private func prepareAudioEngine() {
-        print("AppleSpeechRecognizer prepareAudioEngine")
         let buffer: Int = (self.configuration!.sampleRate / 1000) * self.configuration!.frameWidth
         self.audioEngine.inputNode.removeTap(onBus: 0) // a belt-and-suspenders approach to fixing https://github.com/wenkesj/react-native-voice/issues/46
         self.audioEngine.inputNode.installTap(
@@ -97,13 +91,12 @@ class AppleSpeechRecognizer: NSObject, SpeechRecognizerService {
         self.recognitionTask = self.speechRecognizer.recognitionTask(
             with: recognitionRequest!,
             resultHandler: {[weak self] result, error in
-                print("AppleSpeechRecognizer createRecognitionTask resultHandler")
                 guard let strongSelf = self else {
-                    print("AppleSpeechRecognizer recognitionTask resultHandler strongSelf is nil")
+                    assertionFailure("AppleSpeechRecognizer recognitionTask resultHandler strongSelf is nil")
                     return
                 }
                 guard let delegate = strongSelf.delegate else {
-                    print("AppleSpeechRecognizer recognitionTask resultHandler delegate is nil")
+                    assertionFailure("AppleSpeechRecognizer recognitionTask resultHandler delegate is nil")
                     return
                 }
                 strongSelf.vadFallWorker?.cancel()
@@ -114,15 +107,16 @@ class AppleSpeechRecognizer: NSObject, SpeechRecognizerService {
                             case 0..<200: // Apple retry error: https://developer.nuance.com/public/Help/DragonMobileSDKReference_iOS/Error-codes.html
                                 break
                             case 203: // request timed out, retry
-                                print("AppleSpeechRecognizer createRecognitionTask resultHandler error 203")
+                                Trace.trace(Trace.Level.INFO, configLevel: strongSelf.configuration?.tracing ?? Trace.Level.NONE, message: "resultHandler error 203", delegate: strongSelf.delegate, caller: strongSelf)
                                 context.isActive = false
                                 delegate.deactivate()
                                 break
                             case 209: // ¯\_(ツ)_/¯
-                                print("AppleSpeechRecognizer createRecognitionTask resultHandler error 209")
+                                Trace.trace(Trace.Level.INFO, configLevel: strongSelf.configuration?.tracing ?? Trace.Level.NONE, message: "resultHandler error 209", delegate: strongSelf.delegate, caller: strongSelf)
                                 break
                             case 216: // Apple internal error: https://stackoverflow.com/questions/53037789/sfspeechrecognizer-216-error-with-multiple-requests?noredirect=1&lq=1)
-                                print("AppleSpeechRecognizer createRecognitionTask resultHandler error 216")
+                                Trace.trace(Trace.Level.INFO, configLevel: strongSelf.configuration?.tracing ?? Trace.Level.NONE, message: "resultHandler error 216", delegate: strongSelf.delegate, caller: strongSelf)
+
                                 break
                             case 300..<603: // Apple retry error: https://developer.nuance.com/public/Help/DragonMobileSDKReference_iOS/Error-codes.html
                                 break
@@ -135,7 +129,7 @@ class AppleSpeechRecognizer: NSObject, SpeechRecognizerService {
                     }
                 }
                 if let r = result {
-                    print("AppleSpeechRecognizer result " + r.bestTranscription.formattedString)
+                    Trace.trace(Trace.Level.DEBUG, configLevel: strongSelf.configuration?.tracing ?? Trace.Level.NONE, message: "recognized \(r.bestTranscription.formattedString)", delegate: strongSelf.delegate, caller: strongSelf)
                     strongSelf.wakeActiveMaxWorker?.cancel()
                     let confidence = r.transcriptions.first?.segments.sorted(
                         by: { (a, b) -> Bool in
@@ -143,7 +137,6 @@ class AppleSpeechRecognizer: NSObject, SpeechRecognizerService {
                     context.transcript = r.bestTranscription.formattedString
                     context.confidence = confidence
                     strongSelf.vadFallWorker = DispatchWorkItem {[weak self] in
-                        print("AppleSpeechRecognizer vadFallWorker")
                         context.isActive = false
                         self?.delegate?.didRecognize(context)
                         self?.delegate?.deactivate()
