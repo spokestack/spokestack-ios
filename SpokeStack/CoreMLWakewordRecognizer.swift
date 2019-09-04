@@ -30,10 +30,6 @@ public class CoreMLWakewordRecognizer: NSObject, WakewordRecognizerService {
     public weak var delegate: WakewordRecognizer?
     
     // MARK: Private (properties)
-
-    enum FFTWindowType: String {
-        case hann
-    }
     
     private var vad: WebRTCVAD = WebRTCVAD()
     private var context: SpeechContext = SpeechContext()
@@ -188,7 +184,7 @@ public class CoreMLWakewordRecognizer: NSObject, WakewordRecognizerService {
             
             /// Allocate the stft window and FFT/frame buffer
             
-            self.fftWindow = SignalProcessing.hannWindow(c.fftWindowSize)
+            self.fftWindow = SignalProcessing.fftWindowDispatch(windowType: c.fftWindowType, windowLength: c.fftWindowSize)
             self.fft = FFT(c.fftWindowSize)
             self.fftFrame = Array(repeating: 0.0, count: c.fftWindowSize)
             
@@ -233,11 +229,6 @@ public class CoreMLWakewordRecognizer: NSObject, WakewordRecognizerService {
             let windowSize: Int = c.fftWindowSize
             if windowSize % 2 != 0 {
                 assertionFailure("CoreMLWakewordRecognizer validateConfiguration invalid fft-window-size")
-                return
-            }
-            let windowType: String = c.fftWindowType
-            guard windowType == FFTWindowType.hann.rawValue else {
-                assertionFailure("CoreMLWakewordRecognizer validateConfiguration invalid fft-window-type")
                 return
             }
 

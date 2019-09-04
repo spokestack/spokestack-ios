@@ -8,9 +8,9 @@
 
 import Foundation
 
-// MARK: Root Mean Squared and Hann algorithms
+// Root Mean Squared and Hann algorithms
 
-struct SignalProcessing {
+public struct SignalProcessing {
     public static func rms(_ frame: Data, _ dataElements: Array<Int16>) -> Float {
         var sum: Float = 0
         
@@ -23,6 +23,16 @@ struct SignalProcessing {
         
         /// calculate rms
         return Float(sqrt(sum / Float(dataElements.count)))
+    }
+    
+    public enum FFTWindowType: String {
+        case hann
+    }
+    
+    public static func fftWindowDispatch(windowType: FFTWindowType, windowLength: Int) -> Array<Float> {
+        switch windowType {
+        case .hann: return hannWindow(windowLength)
+        }
     }
     
     public static func hannWindow(_ length: Int) -> Array<Float> {

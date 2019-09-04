@@ -177,7 +177,7 @@ public class TFLiteWakewordRecognizer: NSObject {
             let melLength: Int = c.melFrameLength * c.sampleRate / 1000 / self.hopLength
             self.frameWindow = RingBuffer(melLength * self.melWidth, repeating: 0.0)
             self.sampleWindow = RingBuffer(c.fftWindowSize, repeating: 0.0)
-            self.fftWindow = SignalProcessing.hannWindow(c.fftWindowSize)
+            self.fftWindow = SignalProcessing.fftWindowDispatch(windowType: c.fftWindowType, windowLength: c.fftWindowSize)
             self.fft = FFT(c.fftWindowSize)
             
             /// Attention model buffers

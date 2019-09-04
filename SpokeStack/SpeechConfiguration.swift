@@ -12,7 +12,7 @@ import Foundation
     @objc public var wakeWords: String = "up,dog" // cannot contain spaces
     @objc public var wakePhrases: String = "up dog"
     public var wakeSmoothLength: Int = 50
-    public var fftWindowType: String = "hann"
+    public var fftWindowType: SignalProcessing.FFTWindowType = .hann
     public var rmsTarget: Float = 0.08
     public var rmsAlpha: Float = 0.1
     public var fftWindowSize: Int = 512
