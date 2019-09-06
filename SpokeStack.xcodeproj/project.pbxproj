@@ -96,6 +96,7 @@
 		59C2AFEA2319CF8A00E47AC5 /* Data+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59FB0C8A22AEE4F100FB9662 /* Data+Extensions.swift */; };
 		59C2AFEB2319D05B00E47AC5 /* WakeWordDetect.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = 59FB0C9422B17AA300FB9662 /* WakeWordDetect.mlmodel */; };
 		59C2AFEC2319D05E00E47AC5 /* WakeWordFilter.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = 59FB0C9222B17A9A00FB9662 /* WakeWordFilter.mlmodel */; };
+		59C2AFEE231ED07100E47AC5 /* WebRTCVADTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59C2AFED231ED07100E47AC5 /* WebRTCVADTest.swift */; };
 		59E0E13522FE2C2B0060F012 /* SignalProcessing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59E0E13422FE2C2B0060F012 /* SignalProcessing.swift */; };
 		59E0E1372301F0A80060F012 /* Trace.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59E0E1362301F0A80060F012 /* Trace.swift */; };
 		59E0E1392301FB920060F012 /* TFLiteViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59E0E1382301FB920060F012 /* TFLiteViewController.swift */; };
@@ -220,6 +221,7 @@
 		59A0D5C52204E8E4003709C3 /* SpeechConfiguration.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SpeechConfiguration.swift; sourceTree = "<group>"; };
 		59A45E4E2243ED530089D023 /* PipelineDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PipelineDelegate.swift; sourceTree = "<group>"; };
 		59C2AFD92319CB7100E47AC5 /* RingBufferTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RingBufferTest.swift; sourceTree = "<group>"; };
+		59C2AFED231ED07100E47AC5 /* WebRTCVADTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebRTCVADTest.swift; sourceTree = "<group>"; };
 		59E00286DC69F3331EFFC970 /* Pods_SpokeStackFrameworkExample.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SpokeStackFrameworkExample.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		59E0E13422FE2C2B0060F012 /* SignalProcessing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignalProcessing.swift; sourceTree = "<group>"; };
 		59E0E1362301F0A80060F012 /* Trace.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Trace.swift; sourceTree = "<group>"; };
@@ -336,6 +338,7 @@
 			children = (
 				59C2AFD92319CB7100E47AC5 /* RingBufferTest.swift */,
 				01D31F4B216BAF260055FD45 /* Info.plist */,
+				59C2AFED231ED07100E47AC5 /* WebRTCVADTest.swift */,
 			);
 			path = SpokeStackTests;
 			sourceTree = "<group>";
@@ -848,6 +851,7 @@
 				01D31F7C216BAFEF0055FD45 /* SpeechRecognizerService.swift in Sources */,
 				01D31F78216BAFEF0055FD45 /* SpeechRecognizer.swift in Sources */,
 				59C2AFDD2319CE6F00E47AC5 /* WakewordRecognizer.swift in Sources */,
+				59C2AFEE231ED07100E47AC5 /* WebRTCVADTest.swift in Sources */,
 				01D31F8B216BB0220055FD45 /* Results.swift in Sources */,
 				59C2AFE92319CF4100E47AC5 /* SignalProcessing.swift in Sources */,
 				01D31F6B216BAFC60055FD45 /* SpeechPipeline.swift in Sources */,
