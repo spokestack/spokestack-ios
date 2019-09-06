@@ -22,6 +22,12 @@ public enum SpeechRecognizerError: Error {
     case failed(String)
 }
 
+public enum VADError: Error {
+    case invalidConfiguration(String)
+    case initialization(String)
+    case processing(String)
+}
+
 public enum WakewordModelError: Error {
     case model(String)
     case process(String)

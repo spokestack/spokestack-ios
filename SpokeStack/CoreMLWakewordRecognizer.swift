@@ -164,7 +164,7 @@ public class CoreMLWakewordRecognizer: NSObject, WakewordRecognizerService {
             
             /// VAD
             do {
-                try self.vad.create(mode: .HighQuality, delegate: self, frameWidth: c.frameWidth, samplerate: c.sampleRate)
+                try self.vad.create(mode: .HighQuality, delegate: self, frameWidth: c.frameWidth, sampleRate: c.sampleRate)
             } catch {
                 assertionFailure("CoreMLWakewordRecognizer failed to create a valid VAD")
             }
@@ -541,8 +541,11 @@ extension CoreMLWakewordRecognizer: AudioControllerDelegate {
         /// multiplex the audio frame data to both the vad and, if activated, the model pipelines
         audioProcessingQueue.async {[weak self] in
             guard let strongSelf = self else { return }
-            strongSelf.vad.process(frame: frame, isSpeech:
+            do { try strongSelf.vad.process(frame: frame, isSpeech:
                 strongSelf.context.isSpeech)
+            } catch let error {
+                strongSelf.delegate?.didError(error)
+            }
             if strongSelf.context.isSpeech {
                 strongSelf.process(frame, isSpeech: strongSelf.context.isSpeech)
             }

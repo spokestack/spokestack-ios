@@ -69,7 +69,7 @@ public class AppleWakewordRecognizer: NSObject, WakewordRecognizerService {
             try self.vad.create(mode: .HighQuality,
                                 delegate: self,
                                 frameWidth: self.configuration!.frameWidth,
-                                samplerate: self.configuration!.sampleRate)
+                                sampleRate: self.configuration!.sampleRate)
         } catch {
             assertionFailure("CoreMLWakewordRecognizer failed to create a valid VAD")
         }
@@ -173,7 +173,10 @@ extension AppleWakewordRecognizer: AudioControllerDelegate {
     func processFrame(_ frame: Data) -> Void {
         audioProcessingQueue.async {[weak self] in
             guard let strongSelf = self else { return }
-            strongSelf.vad.process(frame: frame, isSpeech: true)
+            do { try strongSelf.vad.process(frame: frame, isSpeech: true) }
+            catch let error {
+                strongSelf.delegate?.didError(error)
+            }
         }
     }
 }

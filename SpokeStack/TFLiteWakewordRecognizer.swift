@@ -159,7 +159,7 @@ public class TFLiteWakewordRecognizer: NSObject {
 
             /// VAD
             do {
-                try self.vad.create(mode: c.vadMode, delegate: self, frameWidth: c.frameWidth, samplerate: c.sampleRate)
+                try self.vad.create(mode: c.vadMode, delegate: self, frameWidth: c.frameWidth, sampleRate: c.sampleRate)
             } catch {
                 assertionFailure("TFLiteWakewordRecognizer failed to create a valid VAD")
             }
@@ -479,8 +479,11 @@ extension TFLiteWakewordRecognizer: AudioControllerDelegate {
             guard let strongSelf = self else { return }
         
             /// always run the frame through the vad, since that will determine speech activation/deactivation edges
-            strongSelf.vad.process(frame: frame, isSpeech:
-                strongSelf.context.isSpeech)
+            do { try strongSelf.vad.process(frame: frame, isSpeech:
+                strongSelf.context.isSpeech) }
+            catch let error {
+                strongSelf.delegate?.didError(error)
+            }
             
             /// if the vad is detecting speech, check for wakeword activation
             if strongSelf.context.isSpeech {
