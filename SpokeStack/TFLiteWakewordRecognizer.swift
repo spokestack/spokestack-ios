@@ -17,7 +17,7 @@ public class TFLiteWakewordRecognizer: NSObject {
     
     static let sharedInstance: TFLiteWakewordRecognizer = TFLiteWakewordRecognizer()
     
-    public weak var delegate: WakewordRecognizer?
+    public weak var delegate: SpeechEventListener?
     
     public var configuration: SpeechConfiguration? = SpeechConfiguration() {
         didSet {
@@ -197,38 +197,6 @@ public class TFLiteWakewordRecognizer: NSObject {
             let frameWidth: Int = c.frameWidth
             self.minActive = c.wakeActiveMin / frameWidth
             self.maxActive = c.wakeActiveMax / frameWidth
-        }
-    }
-    
-    /// MARK: Pipeline control
-    
-    private func process(_ frame: Data) -> Void {
-        if !self.context.isActive {
-            /// Run the current frame through the detector pipeline.
-            /// Activate the pipeline if a keyword phrase was detected.
-            do {
-                self.activeLength = 0
-                /// Decode the FFT outputs into the filter model's input
-                try sample(frame)
-                let activate = try detect()
-                if activate {
-                    self.context.isActive = true
-                    self.reset()
-                    self.stopStreaming(context: self.context)
-                    self.delegate?.activate()
-                }
-            } catch let error {
-                self.delegate?.didError(error)
-            }
-        } else {
-            self.activeLength += 1
-            /// Continue this wakeword (or external) activation
-            /// for at least the activation minimum,
-            /// until a vad deactivation or timeout
-            if (self.activeLength > self.minActive) && (self.activeLength >= self.maxActive) {
-                self.context.isActive = false
-                self.delegate?.deactivate()
-            }
         }
     }
     
@@ -460,7 +428,7 @@ public class TFLiteWakewordRecognizer: NSObject {
     }
 }
 
-extension TFLiteWakewordRecognizer : WakewordRecognizerService {
+extension TFLiteWakewordRecognizer : SpeechProcessor {
     func startStreaming(context: SpeechContext) -> Void {
         AudioController.sharedInstance.delegate = self
         self.context = context
@@ -473,7 +441,7 @@ extension TFLiteWakewordRecognizer : WakewordRecognizerService {
 }
 
 extension TFLiteWakewordRecognizer: AudioControllerDelegate {
-    func processFrame(_ frame: Data) -> Void {
+    func process(_ frame: Data) -> Void {
         /// multiplex the audio frame data to both the vad and, if activated, the model pipelines
         audioProcessingQueue.async {[weak self] in
             guard let strongSelf = self else { return }
@@ -487,8 +455,33 @@ extension TFLiteWakewordRecognizer: AudioControllerDelegate {
             
             /// if the vad is detecting speech, check for wakeword activation
             if strongSelf.context.isSpeech {
-                strongSelf.process(frame)
-                
+                if !strongSelf.context.isActive {
+                    /// Run the current frame through the detector pipeline.
+                    /// Activate the pipeline if a keyword phrase was detected.
+                    do {
+                        strongSelf.activeLength = 0
+                        /// Decode the FFT outputs into the filter model's input
+                        try strongSelf.sample(frame)
+                        let activate = try strongSelf.detect()
+                        if activate {
+                            strongSelf.context.isActive = true
+                            strongSelf.reset()
+                            strongSelf.stopStreaming(context: strongSelf.context)
+                            strongSelf.delegate?.activate()
+                        }
+                    } catch let error {
+                        strongSelf.delegate?.didError(error)
+                    }
+                } else {
+                    strongSelf.activeLength += 1
+                    /// Continue this wakeword (or external) activation
+                    /// for at least the activation minimum,
+                    /// until a vad deactivation or timeout
+                    if (strongSelf.activeLength > strongSelf.minActive) && (strongSelf.activeLength >= strongSelf.maxActive) {
+                        strongSelf.context.isActive = false
+                        strongSelf.delegate?.deactivate()
+                    }
+                }
             /// detect speech deactivation edge
             } else if strongSelf.isSpeech {
                 if !strongSelf.context.isActive {

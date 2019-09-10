@@ -11,7 +11,7 @@ import AVFoundation
 import CoreML
 import Speech
 
-public class CoreMLWakewordRecognizer: NSObject, WakewordRecognizerService {
+public class CoreMLWakewordRecognizer: NSObject, SpeechProcessor {
     
     // MARK: Public (properties)
     
@@ -27,7 +27,7 @@ public class CoreMLWakewordRecognizer: NSObject, WakewordRecognizerService {
         }
     }
     
-    public weak var delegate: WakewordRecognizer?
+    public weak var delegate: SpeechEventListener?
     
     // MARK: Private (properties)
     
@@ -537,7 +537,7 @@ extension CoreMLWakewordRecognizer {
 }
 
 extension CoreMLWakewordRecognizer: AudioControllerDelegate {
-    func processFrame(_ frame: Data) -> Void {
+    func process(_ frame: Data) -> Void {
         /// multiplex the audio frame data to both the vad and, if activated, the model pipelines
         audioProcessingQueue.async {[weak self] in
             guard let strongSelf = self else { return }

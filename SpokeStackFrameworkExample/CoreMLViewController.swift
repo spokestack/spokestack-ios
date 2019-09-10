@@ -102,7 +102,7 @@ class CoreMLViewController: UIViewController {
     }
 }
 
-extension CoreMLViewController: SpeechRecognizer, WakewordRecognizer, PipelineDelegate {
+extension CoreMLViewController: SpeechEventListener, PipelineDelegate {
     func setupFailed(_ error: String) {
         print("setupFailed: " + error)
     }
@@ -115,7 +115,7 @@ extension CoreMLViewController: SpeechRecognizer, WakewordRecognizer, PipelineDe
         print("didStop")
     }
     
-    func timeout() {
+    func didTimeout() {
         print("timeout")
     }
     

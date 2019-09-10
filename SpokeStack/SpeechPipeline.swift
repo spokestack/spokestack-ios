@@ -12,19 +12,19 @@ import Foundation
     
     // MARK: Public (properties)
     
-    public private (set) var speechService: RecognizerService?
+    public private (set) var speechService: SpeechProcessors?
     public private (set) var speechConfiguration: SpeechConfiguration?
-    public weak var speechDelegate: SpeechRecognizer?
-    public private (set) var wakewordService: WakewordService?
-    public weak var wakewordDelegate: WakewordRecognizer?
+    public weak var speechDelegate: SpeechEventListener?
+    public private (set) var wakewordService: SpeechProcessors?
+    public weak var wakewordDelegate: SpeechEventListener?
     public private (set) var pipelineDelegate: PipelineDelegate?
     public let context: SpeechContext = SpeechContext()
     
     
     // MARK: Private (properties)
     
-    private var speechRecognizerService: SpeechRecognizerService
-    private var wakewordRecognizerService: WakewordRecognizerService
+    private var speechRecognizerService: SpeechProcessor
+    private var wakewordRecognizerService: SpeechProcessor
     
     // MARK: Initializers
     
@@ -33,17 +33,17 @@ import Foundation
         wakewordRecognizerService.delegate = nil
     }
     
-    @objc public init(_ speechService: RecognizerService,
+    @objc public init(_ speechService: SpeechProcessors,
                       speechConfiguration: SpeechConfiguration,
-                      speechDelegate: SpeechRecognizer?,
-                      wakewordService: WakewordService,
-                      wakewordDelegate: WakewordRecognizer?,
+                      speechDelegate: SpeechEventListener,
+                      wakewordService: SpeechProcessors,
+                      wakewordDelegate: SpeechEventListener,
                       pipelineDelegate: PipelineDelegate) throws {
         self.speechService = speechService
         self.speechConfiguration = speechConfiguration
         self.speechDelegate = speechDelegate
         
-        self.speechRecognizerService = speechService.speechRecognizerService
+        self.speechRecognizerService = speechService.speechProcessor
         /// order is important: set the delegate first so that configuration errors/tracing can be sent back
         self.speechRecognizerService.delegate = self.speechDelegate
         self.speechRecognizerService.configuration = speechConfiguration
@@ -51,7 +51,7 @@ import Foundation
         self.wakewordService = wakewordService
         self.wakewordDelegate = wakewordDelegate
         
-        self.wakewordRecognizerService = wakewordService.wakewordRecognizerService
+        self.wakewordRecognizerService = wakewordService.speechProcessor
         /// see previous comment
         self.wakewordRecognizerService.delegate = self.wakewordDelegate
         self.wakewordRecognizerService.configuration = speechConfiguration
@@ -74,8 +74,8 @@ import Foundation
         return false
     }
     
-    @objc public func setDelegates(_ speechDelegate: SpeechRecognizer?,
-                                   wakewordDelegate: WakewordRecognizer?) -> Void {
+    @objc public func setDelegates(_ speechDelegate: SpeechEventListener,
+                                   wakewordDelegate: SpeechEventListener) -> Void {
         self.speechDelegate = speechDelegate
         self.wakewordDelegate = wakewordDelegate
         self.speechRecognizerService.delegate = self.speechDelegate

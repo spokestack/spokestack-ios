@@ -1,5 +1,5 @@
 //
-//  WakewordRecognizerService.swift
+//  SpeechProcessor.swift
 //  SpokeStack
 //
 //  Created by Noel Weichbrodt on 2/5/19.
@@ -8,11 +8,11 @@
 
 import Foundation
 
-protocol WakewordRecognizerService: AnyObject {
+protocol SpeechProcessor: AnyObject {
     
     var configuration: SpeechConfiguration? { get set }
     
-    var delegate: WakewordRecognizer? { get set }
+    var delegate: SpeechEventListener? { get set }
     
     func startStreaming(context: SpeechContext) -> Void
     

@@ -9,13 +9,13 @@
 import Foundation
 import Speech
 
-public class AppleWakewordRecognizer: NSObject, WakewordRecognizerService {
+public class AppleWakewordRecognizer: NSObject, SpeechProcessor {
     
     // MARK: public properties
     
     static let sharedInstance: AppleWakewordRecognizer = AppleWakewordRecognizer()
     public var configuration: SpeechConfiguration?
-    public weak var delegate: WakewordRecognizer?
+    public weak var delegate: SpeechEventListener?
     
     // MARK: wakeword properties
     
@@ -170,7 +170,7 @@ public class AppleWakewordRecognizer: NSObject, WakewordRecognizerService {
 }
 
 extension AppleWakewordRecognizer: AudioControllerDelegate {
-    func processFrame(_ frame: Data) -> Void {
+    func process(_ frame: Data) -> Void {
         audioProcessingQueue.async {[weak self] in
             guard let strongSelf = self else { return }
             do { try strongSelf.vad.process(frame: frame, isSpeech: true) }
