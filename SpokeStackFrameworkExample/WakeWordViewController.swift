@@ -49,10 +49,10 @@ class WakeWordViewController: UIViewController {
     }()
     
     lazy public var pipeline: SpeechPipeline = {
-        return try! SpeechPipeline(.appleSpeech,
+        return try! SpeechPipeline(SpeechProcessors.appleSpeech.processor,
                                    speechConfiguration: SpeechConfiguration(),
                                    speechDelegate: self,
-                                   wakewordService: .appleWakeword,
+                                   wakewordService: SpeechProcessors.appleWakeword.processor,
                                    wakewordDelegate: self,
                                    pipelineDelegate: self)
     }()

@@ -45,10 +45,10 @@ class CoreMLViewController: UIViewController {
     lazy private var pipeline: SpeechPipeline = {
         let c = SpeechConfiguration()
         c.tracing = Trace.Level.DEBUG
-        return try! SpeechPipeline(.appleSpeech,
+        return try! SpeechPipeline(SpeechProcessors.appleSpeech.processor,
                                    speechConfiguration: c,
                                    speechDelegate: self,
-                                   wakewordService: .coremlWakeword,
+                                   wakewordService: SpeechProcessors.coremlWakeword.processor,
                                    wakewordDelegate: self,
                                    pipelineDelegate: self)
     }()

@@ -43,7 +43,7 @@ public class AppleWakewordRecognizer: NSObject, SpeechProcessor {
     
     // MARK: SpeechRecognizerService implementation
     
-    func startStreaming(context: SpeechContext) {
+    public func startStreaming(context: SpeechContext) {
         AudioController.sharedInstance.delegate = self
         phrases = configuration!.wakePhrases.components(separatedBy: ",")
         self.context = context
@@ -51,7 +51,7 @@ public class AppleWakewordRecognizer: NSObject, SpeechProcessor {
         self.audioEngine.prepare()
     }
     
-    func stopStreaming(context: SpeechContext) {
+    public func stopStreaming(context: SpeechContext) {
         AudioController.sharedInstance.delegate = nil
         self.context = context
         self.stopRecognition()
@@ -71,7 +71,7 @@ public class AppleWakewordRecognizer: NSObject, SpeechProcessor {
                                 frameWidth: self.configuration!.frameWidth,
                                 sampleRate: self.configuration!.sampleRate)
         } catch {
-            assertionFailure("CoreMLWakewordRecognizer failed to create a valid VAD")
+            assertionFailure("AppleWakewordRecognizer failed to create a valid VAD")
         }
         
         let buffer: Int = (self.configuration!.sampleRate / 1000) * self.configuration!.frameWidth

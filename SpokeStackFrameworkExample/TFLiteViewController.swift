@@ -92,10 +92,10 @@ class TFLiteViewController: UIViewController {
         }
         c.detectModelPath = detectPath
         c.tracing = Trace.Level.PERF
-        return try! SpeechPipeline(.appleSpeech,
+        return try! SpeechPipeline(SpeechProcessors.appleSpeech.processor,
                                    speechConfiguration: c,
                                    speechDelegate: self,
-                                   wakewordService: .tFLiteWakeword,
+                                   wakewordService: SpeechProcessors.tFLiteWakeword.processor,
                                    wakewordDelegate: self,
                                    pipelineDelegate: self)
     }

@@ -8,7 +8,7 @@
 
 import Foundation
 
-protocol SpeechProcessor: AnyObject {
+@objc public protocol SpeechProcessor: AnyObject {
     
     var configuration: SpeechConfiguration? { get set }
     

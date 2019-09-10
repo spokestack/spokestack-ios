@@ -12,10 +12,8 @@ import Foundation
     
     // MARK: Public (properties)
     
-    public private (set) var speechService: SpeechProcessors?
     public private (set) var speechConfiguration: SpeechConfiguration?
     public weak var speechDelegate: SpeechEventListener?
-    public private (set) var wakewordService: SpeechProcessors?
     public weak var wakewordDelegate: SpeechEventListener?
     public private (set) var pipelineDelegate: PipelineDelegate?
     public let context: SpeechContext = SpeechContext()
@@ -33,25 +31,23 @@ import Foundation
         wakewordRecognizerService.delegate = nil
     }
     
-    @objc public init(_ speechService: SpeechProcessors,
+    @objc public init(_ speechService: SpeechProcessor,
                       speechConfiguration: SpeechConfiguration,
                       speechDelegate: SpeechEventListener,
-                      wakewordService: SpeechProcessors,
+                      wakewordService: SpeechProcessor,
                       wakewordDelegate: SpeechEventListener,
                       pipelineDelegate: PipelineDelegate) throws {
-        self.speechService = speechService
         self.speechConfiguration = speechConfiguration
         self.speechDelegate = speechDelegate
         
-        self.speechRecognizerService = speechService.speechProcessor
+        self.speechRecognizerService = speechService
         /// order is important: set the delegate first so that configuration errors/tracing can be sent back
         self.speechRecognizerService.delegate = self.speechDelegate
         self.speechRecognizerService.configuration = speechConfiguration
         
-        self.wakewordService = wakewordService
         self.wakewordDelegate = wakewordDelegate
         
-        self.wakewordRecognizerService = wakewordService.speechProcessor
+        self.wakewordRecognizerService = wakewordService
         /// see previous comment
         self.wakewordRecognizerService.delegate = self.wakewordDelegate
         self.wakewordRecognizerService.configuration = speechConfiguration
@@ -69,9 +65,9 @@ import Foundation
             let _ = self.wakewordDelegate,
             let _ = self.pipelineDelegate
         else {
-            return true
+            return false
         }
-        return false
+        return true
     }
     
     @objc public func setDelegates(_ speechDelegate: SpeechEventListener,

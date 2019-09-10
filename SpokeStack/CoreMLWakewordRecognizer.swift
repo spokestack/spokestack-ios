@@ -97,12 +97,12 @@ public class CoreMLWakewordRecognizer: NSObject, SpeechProcessor {
     
     // MARK: SpeechRecognizerService implementation
 
-    func startStreaming(context: SpeechContext) -> Void {
+    public func startStreaming(context: SpeechContext) -> Void {
         AudioController.sharedInstance.delegate = self
         self.context = context
     }
     
-    func stopStreaming(context: SpeechContext) -> Void {
+    public func stopStreaming(context: SpeechContext) -> Void {
         AudioController.sharedInstance.delegate = nil
         self.context = context
     }

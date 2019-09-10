@@ -16,9 +16,7 @@ import Foundation
 }
 
 extension SpeechProcessors {
-    
-    var speechProcessor: SpeechProcessor {
-        
+    var processor: SpeechProcessor {
         switch self {
         case .appleWakeword:
             return AppleWakewordRecognizer.sharedInstance

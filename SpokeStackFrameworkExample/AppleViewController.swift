@@ -47,10 +47,10 @@ class AppleViewController: UIViewController {
         
         let appleConfiguration: SpeechConfiguration = SpeechConfiguration()
         
-        return try! SpeechPipeline(.appleSpeech,
+        return try! SpeechPipeline(SpeechProcessors.appleSpeech.processor,
                                    speechConfiguration: appleConfiguration,
                                    speechDelegate: self,
-                                   wakewordService: .appleWakeword,
+                                   wakewordService: SpeechProcessors.appleWakeword.processor,
                                    wakewordDelegate: self,
                                    pipelineDelegate: self)
     }()
