@@ -21,8 +21,14 @@ class WebRTCVADTest: XCTestCase {
         XCTAssertNoThrow(try vad.create(mode: VADMode.HighQuality, delegate: WebRTCVADTestDelegate(), frameWidth: 30, sampleRate: 48000))
 
         // invalid config
-        XCTAssertThrowsError(try vad.create(mode: VADMode.HighQuality, delegate: WebRTCVADTestDelegate(), frameWidth: 10, sampleRate: 44100))
-        XCTAssertThrowsError(try vad.create(mode: VADMode.HighQuality, delegate: WebRTCVADTestDelegate(), frameWidth: 40, sampleRate: 32000))
+        var thrownError: Error?
+        XCTAssertThrowsError(try vad.create(mode: VADMode.HighQuality, delegate: WebRTCVADTestDelegate(), frameWidth: 10, sampleRate: 44100)) { thrownError = $0 }
+        XCTAssert(thrownError is VADError, "unexpected error type \(type(of: thrownError)) during read()")
+        XCTAssertEqual(thrownError as? VADError, VADError.invalidConfiguration("Invalid sampleRate of 44100"))
+        thrownError = .none
+        XCTAssertThrowsError(try vad.create(mode: VADMode.HighQuality, delegate: WebRTCVADTestDelegate(), frameWidth: 40, sampleRate: 32000)) { thrownError = $0 }
+        XCTAssert(thrownError is VADError, "unexpected error type \(type(of: thrownError)) during read()")
+        XCTAssertEqual(thrownError as? VADError, VADError.invalidConfiguration("Invalid frameWidth of 40"))
     }
     
     /// Since WebRTCVAD uses Data for frames, there's no danger of null pointers, so our tests are simple =)

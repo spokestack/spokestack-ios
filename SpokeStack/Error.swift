@@ -8,27 +8,27 @@
 
 import Foundation
 
-public enum AudioError: Error {
+public enum AudioError: Error, Equatable {
     case general(String)
     case audioSessionSetup(String)
 }
 
-public enum SpeechPipelineError: Error {
+public enum SpeechPipelineError: Error, Equatable {
     case illegalState(String)
 }
 
-public enum SpeechRecognizerError: Error {
+public enum SpeechRecognizerError: Error, Equatable {
     case unknownCause(String)
     case failed(String)
 }
 
-public enum VADError: Error {
+public enum VADError: Error, Equatable {
     case invalidConfiguration(String)
     case initialization(String)
     case processing(String)
 }
 
-public enum WakewordModelError: Error {
+public enum WakewordModelError: Error, Equatable {
     case model(String)
     case process(String)
     case filter(String)
