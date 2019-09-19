@@ -99,6 +99,9 @@
 		59E0E13E230DEB7C0060F012 /* detect.lite in Resources */ = {isa = PBXBuildFile; fileRef = 59E0E13B230DEB7C0060F012 /* detect.lite */; };
 		59E0E13F230DEB7C0060F012 /* encode.lite in Resources */ = {isa = PBXBuildFile; fileRef = 59E0E13C230DEB7C0060F012 /* encode.lite */; };
 		59E0E140230DEB7C0060F012 /* filter.lite in Resources */ = {isa = PBXBuildFile; fileRef = 59E0E13D230DEB7C0060F012 /* filter.lite */; };
+		59EF51BF233013A9006BA0BD /* AppleSpeechRecognizerTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59EF51BE233013A9006BA0BD /* AppleSpeechRecognizerTest.swift */; };
+		59EF51C123328D57006BA0BD /* AppleWakewordRecognizerTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59EF51C023328D57006BA0BD /* AppleWakewordRecognizerTest.swift */; };
+		59EF51C32332E57B006BA0BD /* Frame.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59EF51C22332E57B006BA0BD /* Frame.swift */; };
 		59FB0C8222A5C47B00FB9662 /* WITCvad.h in Headers */ = {isa = PBXBuildFile; fileRef = 59062F0F22A5AA9E00613AD8 /* WITCvad.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		59FB0C8322A5C48400FB9662 /* WITCvad.m in Sources */ = {isa = PBXBuildFile; fileRef = 59062F0D22A5AA9E00613AD8 /* WITCvad.m */; };
 		59FB0C8422A5C48700FB9662 /* WITVad.h in Headers */ = {isa = PBXBuildFile; fileRef = 59062F0B22A5AA9D00613AD8 /* WITVad.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -224,6 +227,9 @@
 		59E0E13B230DEB7C0060F012 /* detect.lite */ = {isa = PBXFileReference; lastKnownFileType = file; path = detect.lite; sourceTree = "<group>"; };
 		59E0E13C230DEB7C0060F012 /* encode.lite */ = {isa = PBXFileReference; lastKnownFileType = file; path = encode.lite; sourceTree = "<group>"; };
 		59E0E13D230DEB7C0060F012 /* filter.lite */ = {isa = PBXFileReference; lastKnownFileType = file; path = filter.lite; sourceTree = "<group>"; };
+		59EF51BE233013A9006BA0BD /* AppleSpeechRecognizerTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppleSpeechRecognizerTest.swift; sourceTree = "<group>"; };
+		59EF51C023328D57006BA0BD /* AppleWakewordRecognizerTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppleWakewordRecognizerTest.swift; sourceTree = "<group>"; };
+		59EF51C22332E57B006BA0BD /* Frame.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Frame.swift; sourceTree = "<group>"; };
 		59FB0C8722A98E1900FB9662 /* CoreMLWakewordRecognizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreMLWakewordRecognizer.swift; sourceTree = "<group>"; };
 		59FB0C8A22AEE4F100FB9662 /* Data+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Data+Extensions.swift"; sourceTree = "<group>"; };
 		59FB0C8C22B0640700FB9662 /* RingBuffer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RingBuffer.swift; sourceTree = "<group>"; };
@@ -336,6 +342,9 @@
 				59D78F602322EAE000728A98 /* SpeechPipelineTest.swift */,
 				01D31F4B216BAF260055FD45 /* Info.plist */,
 				59C2AFED231ED07100E47AC5 /* WebRTCVADTest.swift */,
+				59EF51BE233013A9006BA0BD /* AppleSpeechRecognizerTest.swift */,
+				59EF51C023328D57006BA0BD /* AppleWakewordRecognizerTest.swift */,
+				59EF51C22332E57B006BA0BD /* Frame.swift */,
 			);
 			path = SpokeStackTests;
 			sourceTree = "<group>";
@@ -840,6 +849,7 @@
 				59C2AFE82319CF3900E47AC5 /* FFT.swift in Sources */,
 				59C2AFE12319CEA800E47AC5 /* CoreMLWakewordRecognizer.swift in Sources */,
 				01D31F63216BAFA40055FD45 /* AudioController.swift in Sources */,
+				59EF51C123328D57006BA0BD /* AppleWakewordRecognizerTest.swift in Sources */,
 				59C2AFDD2319CE6F00E47AC5 /* SpeechEventListener.swift in Sources */,
 				59C2AFEE231ED07100E47AC5 /* WebRTCVADTest.swift in Sources */,
 				01D31F8B216BB0220055FD45 /* Results.swift in Sources */,
@@ -850,6 +860,8 @@
 				59C2AFE42319CEC300E47AC5 /* Trace.swift in Sources */,
 				59C2AFE52319CED100E47AC5 /* AppleSpeechRecognizer.swift in Sources */,
 				59C2AFDB2319CE5800E47AC5 /* SpeechConfiguration.swift in Sources */,
+				59EF51C32332E57B006BA0BD /* Frame.swift in Sources */,
+				59EF51BF233013A9006BA0BD /* AppleSpeechRecognizerTest.swift in Sources */,
 				59C2AFE32319CEBC00E47AC5 /* WebRTCVAD.swift in Sources */,
 				01D31F67216BAFB50055FD45 /* Error.swift in Sources */,
 				59C2AFEB2319D05B00E47AC5 /* WakeWordDetect.mlmodel in Sources */,

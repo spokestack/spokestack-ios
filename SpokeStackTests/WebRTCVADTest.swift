@@ -42,14 +42,14 @@ class WebRTCVADTest: XCTestCase {
         
         /// speech -> no speech
         delegate.asyncExpectation = deactivateExpectation
-        XCTAssertNoThrow(try vad.process(frame: silenceFrame(frameWidth: 10, sampleRate: 8000), isSpeech: true))
+        XCTAssertNoThrow(try vad.process(frame: Frame.silence(frameWidth: 10, sampleRate: 8000), isSpeech: true))
         wait(for: [delegate.asyncExpectation!], timeout: 1)
             XCTAssert(delegate.didDeactivate, "deactivate should be called because silence + isSpeech: true")
         delegate.reset()
         
         /// no speech
         for _ in 0...9 {
-            XCTAssertNoThrow(try vad.process(frame: silenceFrame(frameWidth: 10, sampleRate: 8000), isSpeech: false))
+            XCTAssertNoThrow(try vad.process(frame: Frame.silence(frameWidth: 10, sampleRate: 8000), isSpeech: false))
         }
         XCTAssert(!delegate.didDeactivate, "deactivate should not be called because silence + isSpeech: false")
         delegate.reset()
@@ -57,34 +57,16 @@ class WebRTCVADTest: XCTestCase {
         
         /// no speech -> speech
         delegate.asyncExpectation = activateExpectation
-        XCTAssertNoThrow(try vad.process(frame: voiceFrame(frameWidth: 10, sampleRate: 8000), isSpeech: false))
+        XCTAssertNoThrow(try vad.process(frame: Frame.voice(frameWidth: 10, sampleRate: 8000), isSpeech: false))
         wait(for: [delegate.asyncExpectation!], timeout: 1)
         XCTAssert(delegate.didActivate, "activate should be called because voice + isSpeech: false")
         delegate.reset()
 
         /// speech
         for _ in 0...9 {
-            XCTAssertNoThrow(try vad.process(frame: voiceFrame(frameWidth: 10, sampleRate: 8000), isSpeech: true))
+            XCTAssertNoThrow(try vad.process(frame: Frame.voice(frameWidth: 10, sampleRate: 8000), isSpeech: true))
         }
         XCTAssert(!delegate.didActivate, "activate should not be called because voice + isSpeech: true")
-    }
-    
-    func silenceFrame(frameWidth: Int, sampleRate: Int) -> Data {
-        let d = [Int](repeating: 0, count: (sampleRate/1000)*frameWidth)
-        let f = d.withUnsafeBufferPointer {Data(buffer: $0)}
-        return f
-    }
-    
-    func voiceFrame(frameWidth: Int, sampleRate: Int) -> Data {
-        let freq: Float = 2000.0
-        let rate = Float(sampleRate)
-        let capacity = frameWidth*(sampleRate/1000)
-        var d = Array<Float>()
-        for i in 0..<capacity {
-            d.append(sin((Float(i) / (rate / freq)) * 2.0 * Float.pi))
-        }
-        let f = d.withUnsafeBufferPointer {Data(buffer: $0)}
-        return f
     }
 }
 
