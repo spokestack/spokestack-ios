@@ -28,6 +28,7 @@ public class TFLiteWakewordRecognizer: NSObject {
             }
         }
     }
+    public var context: SpeechContext = SpeechContext()
     
     enum Tensors: Int, CaseIterable {
         case encode
@@ -37,7 +38,6 @@ public class TFLiteWakewordRecognizer: NSObject {
     // MARK: Private (properties)
     
     private var vad: WebRTCVAD = WebRTCVAD()
-    private var context: SpeechContext = SpeechContext()
     
     /// Wakeword Activation Management
     private var activeLength: Int = 0

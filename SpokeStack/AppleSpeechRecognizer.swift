@@ -16,6 +16,7 @@ class AppleSpeechRecognizer: NSObject, SpeechProcessor {
     public static let sharedInstance: AppleSpeechRecognizer = AppleSpeechRecognizer()
     public var configuration: SpeechConfiguration?
     public weak var delegate: SpeechEventListener?
+    public var context: SpeechContext = SpeechContext()
     
     // MARK: private properties
     

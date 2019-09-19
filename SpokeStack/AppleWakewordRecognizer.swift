@@ -14,8 +14,15 @@ public class AppleWakewordRecognizer: NSObject, SpeechProcessor {
     // MARK: public properties
     
     static let sharedInstance: AppleWakewordRecognizer = AppleWakewordRecognizer()
-    public var configuration: SpeechConfiguration?
+    public var configuration: SpeechConfiguration? = SpeechConfiguration() {
+        didSet {
+            if self.configuration != nil {
+                phrases = self.configuration!.wakePhrases.components(separatedBy: ",")
+            }
+        }
+    }
     public weak var delegate: SpeechEventListener?
+    public var context: SpeechContext = SpeechContext()
     
     // MARK: wakeword properties
     
@@ -29,7 +36,6 @@ public class AppleWakewordRecognizer: NSObject, SpeechProcessor {
     private let audioEngine: AVAudioEngine = AVAudioEngine()
     private var dispatchWorker: DispatchWorkItem?
     private var vad: WebRTCVAD = WebRTCVAD()
-    private var context: SpeechContext?
     
     // MARK: NSObject methods
     
@@ -45,10 +51,10 @@ public class AppleWakewordRecognizer: NSObject, SpeechProcessor {
     
     public func startStreaming(context: SpeechContext) {
         AudioController.sharedInstance.delegate = self
-        phrases = configuration!.wakePhrases.components(separatedBy: ",")
         self.context = context
         self.prepareAudioEngine()
         self.audioEngine.prepare()
+        self.context.isStarted = true
     }
     
     public func stopStreaming(context: SpeechContext) {
@@ -59,6 +65,7 @@ public class AppleWakewordRecognizer: NSObject, SpeechProcessor {
         self.dispatchWorker = nil
         self.audioEngine.stop()
         self.audioEngine.inputNode.removeTap(onBus: 0)
+        self.context.isStarted = false
     }
     
     // MARK: private functions
@@ -121,7 +128,7 @@ public class AppleWakewordRecognizer: NSObject, SpeechProcessor {
                     return
                 }
                 guard let delegate = strongSelf.delegate else {
-                    assertionFailure("recognitionTask resultHandler delegate is nil")
+                    assertionFailure("AppleWakewordRecognizer recognitionTask resultHandler strongSelf delegate is nil")
                     return
                 }
                 if let e = error {
@@ -183,28 +190,24 @@ extension AppleWakewordRecognizer: AudioControllerDelegate {
 
 extension AppleWakewordRecognizer: VADDelegate {
     public func activate(frame: Data) {
-        if let c = self.context {
-            if (c.isActive) {
-                // asr is active, so don't interrupt
-            } else {
-                do {
-                    try self.audioEngine.start()
-                    self.startRecognition()
-                } catch let error {
-                    self.delegate?.didError(error)
-                }
+        if (self.context.isActive) {
+            // asr is active, so don't interrupt
+        } else if (self.context.isStarted){
+            do {
+                try self.audioEngine.start()
+                self.startRecognition()
+            } catch let error {
+                self.delegate?.didError(error)
             }
         }
     }
     
     public func deactivate() {
-        if let c = self.context {
-            if (c.isActive) {
-                // asr is active, so don't interrupt
-            } else {
-                self.stopRecognition()
-                self.audioEngine.pause()
-            }
+        if (self.context.isActive) {
+            // asr is active, so don't interrupt
+        } else {
+            self.stopRecognition()
+            self.audioEngine.pause()
         }
     }
 }

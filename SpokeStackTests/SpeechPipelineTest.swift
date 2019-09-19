@@ -32,7 +32,7 @@ class SpeechPipelineTest: XCTestCase {
             XCTFail(error.localizedDescription)
         }
         
-        /// NB init is marked as throws because it force-unwraps the pipelineDelegate, but since the pipelineDelegate is requred in the constructor, init cannot actually throw.
+        /// NB init is marked as throws because it force-unwraps the pipelineDelegate, but since the pipelineDelegate is required in the constructor, init cannot actually throw.
     }
     
     /// status
@@ -230,6 +230,7 @@ class SpeechPipelineTestDelegate: PipelineDelegate, SpeechEventListener {
 class TestProcessor: SpeechProcessor {
     var configuration: SpeechConfiguration?
     var delegate: SpeechEventListener?
+    var context: SpeechContext = SpeechContext()
     var isSpeechProcessor: Bool = false
     
     init() {}

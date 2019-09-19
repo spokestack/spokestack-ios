@@ -26,13 +26,12 @@ public class CoreMLWakewordRecognizer: NSObject, SpeechProcessor {
             }
         }
     }
-    
+    public var context: SpeechContext = SpeechContext()
     public weak var delegate: SpeechEventListener?
     
     // MARK: Private (properties)
     
     private var vad: WebRTCVAD = WebRTCVAD()
-    private var context: SpeechContext = SpeechContext()
     
     lazy private var wwfilter: WakeWordFilter = {
         return WakeWordFilter()

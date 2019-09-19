@@ -14,6 +14,8 @@ import Foundation
     
     var delegate: SpeechEventListener? { get set }
     
+    var context: SpeechContext { get set }
+
     func startStreaming(context: SpeechContext) -> Void
     
     func stopStreaming(context: SpeechContext) -> Void
