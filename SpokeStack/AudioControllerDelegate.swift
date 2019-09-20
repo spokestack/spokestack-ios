@@ -10,5 +10,5 @@ import Foundation
 
 protocol AudioControllerDelegate: AnyObject {
         
-    func processFrame(_ frame: Data) -> Void
+    func process(_ frame: Data) -> Void
 }

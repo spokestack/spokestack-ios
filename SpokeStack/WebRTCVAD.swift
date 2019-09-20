@@ -30,11 +30,12 @@ private var vad: UnsafeMutablePointer<OpaquePointer?> = UnsafeMutablePointer<Opa
 
 private var frameBufferStride: Int = 0
 private var frameBufferStride32: Int32 = 0
-private var sampleRate: Int32 = 16000
+private var sampleRate32: Int32 = 16000
 
 private var frameBuffer: RingBuffer<Int16>!
 
 public class WebRTCVAD: NSObject {
+    
     public var delegate: VADDelegate?
     
     deinit {
@@ -42,25 +43,46 @@ public class WebRTCVAD: NSObject {
         vad.deallocate()
     }
     
-    public func create(mode: VADMode, delegate: VADDelegate, frameWidth: Int, samplerate: Int) throws {
+    public func create(mode: VADMode, delegate: VADDelegate, frameWidth: Int, sampleRate: Int) throws {
+        
+        /// validation of configurable parameters
+        try self.validate(frameWidth: frameWidth, sampleRate: sampleRate)
+        
+        /// set public property
         self.delegate = delegate
-        sampleRate = Int32(samplerate) // 16000
-        frameBufferStride = frameWidth*(samplerate/1000) // 20*16 = 320
-        frameBufferStride32 = Int32(frameBufferStride) // 320
-        frameBuffer = RingBuffer(frameBufferStride, repeating: 0) /// frame width * sample rate/1000 * magic number 4 allowing for variablely-sized frames = 1280
+        
+        /// set private properties
+        frameBufferStride = frameWidth*(sampleRate/1000) /// eg 20*(16000/1000) = 320
+        sampleRate32 = Int32(sampleRate)
+        frameBufferStride32 = Int32(frameBufferStride)
+        frameBuffer = RingBuffer(frameBufferStride, repeating: 0)
+        
+        /// initialize WebRtcVad with provided configuration
         var errorCode:Int32 = 0
         errorCode = WebRtcVad_Create(vad)
-        assert(errorCode == 0, "unable to create a WebRTCVAD struct, which returned error code \(errorCode)")
+        if errorCode != 0 { throw VADError.initialization("unable to create a WebRTCVAD struct, which returned error code \(errorCode)") }
         errorCode = WebRtcVad_Init(vad.pointee)
-        assert(errorCode == 0, "unable to initialize WebRTCVAD, which returned error code \(errorCode)")
+        if errorCode != 0 { throw VADError.initialization("unable to initialize WebRTCVAD, which returned error code \(errorCode)") }
         errorCode = WebRtcVad_set_mode(vad.pointee, Int32(mode.rawValue))
         if errorCode != 0 {
             WebRtcVad_Free(vad.pointee)
-            assert(errorCode == 0, "unable to set WebRTCVAD mode, which returned error code \(errorCode)")
+            throw VADError.initialization("unable to set WebRTCVAD mode, which returned error code \(errorCode)")
         }
     }
     
-    public func process(frame: Data, isSpeech: Bool) -> Void {
+    private func validate(frameWidth: Int, sampleRate: Int) throws {
+        switch frameWidth {
+        case 10, 20, 30: break
+        default: throw VADError.invalidConfiguration("Invalid frameWidth of \(frameWidth)")
+        }
+        
+        switch sampleRate {
+        case 8000, 16000, 32000, 48000: break
+        default: throw VADError.invalidConfiguration("Invalid sampleRate of \(sampleRate)")
+        }
+    }
+    
+    public func process(frame: Data, isSpeech: Bool) throws -> Void {
         do {
             var detected: Bool = false
             let samples: Array<Int16> = frame.elements()
@@ -78,7 +100,7 @@ public class WebRTCVAD: NSObject {
                             }
                         }
                         let sampleWindowUBP = Array(UnsafeBufferPointer(start: sampleWindow, count: sampleWindow.count))
-                        let result = WebRtcVad_Process(vad.pointee, sampleRate, sampleWindowUBP, frameBufferStride32)
+                        let result = WebRtcVad_Process(vad.pointee, sampleRate32, sampleWindowUBP, frameBufferStride32)
                         switch result {
                         /// if activation state changes, stop the detecting loop but finish writing the samples to the buffer (in the outer for loop)
                         case 1:
@@ -101,10 +123,8 @@ public class WebRTCVAD: NSObject {
                     self.delegate?.deactivate()
                 }
             }
-        } catch RingBufferStateError.illegalState(let message) {
-            fatalError("WebRTCVAD process illegal state error \(message)")
         } catch let error {
-            fatalError("WebRTCVAD process unknown error occurred while processing \(error.localizedDescription)")
+            throw VADError.processing("error occurred while vad is processing \(error.localizedDescription)")
         }
     }
 }

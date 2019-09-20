@@ -9,13 +9,14 @@
 import Foundation
 import Speech
 
-class AppleSpeechRecognizer: NSObject, SpeechRecognizerService {
+class AppleSpeechRecognizer: NSObject, SpeechProcessor {
     
     // MARK: public properties
     
     public static let sharedInstance: AppleSpeechRecognizer = AppleSpeechRecognizer()
     public var configuration: SpeechConfiguration?
-    public weak var delegate: SpeechRecognizer?
+    public weak var delegate: SpeechEventListener?
+    public var context: SpeechContext = SpeechContext()
     
     // MARK: private properties
     
@@ -49,7 +50,7 @@ class AppleSpeechRecognizer: NSObject, SpeechRecognizerService {
             try self.audioEngine.start()
             self.wakeActiveMaxWorker = DispatchWorkItem {[weak self] in
                 context.isActive = false
-                self?.delegate?.timeout()
+                self?.delegate?.didTimeout()
                 self?.delegate?.deactivate()
             }
             DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(self.configuration!.wakeActiveMax), execute: self.wakeActiveMaxWorker!)

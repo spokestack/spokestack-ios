@@ -11,6 +11,7 @@ import Foundation
 @objc public class SpeechContext: NSObject {
     @objc public var transcript: String = ""
     @objc public var confidence: Float = 0.0
+    @objc public var isStarted: Bool = false
     @objc public var isActive: Bool = false
     @objc public var isSpeech: Bool = false
 }

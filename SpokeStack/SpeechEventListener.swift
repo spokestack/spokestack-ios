@@ -8,7 +8,7 @@
 
 import Foundation
 
-@objc public protocol WakewordRecognizer: AnyObject {
+@objc public protocol SpeechEventListener: AnyObject {
     
     func activate() -> Void
         
@@ -17,4 +17,12 @@ import Foundation
     func didError(_ error: Error) -> Void
     
     func didTrace(_ trace: String) -> Void
+    
+    func didStop() -> Void
+    
+    func didStart() -> Void
+    
+    func didRecognize(_ result: SpeechContext) -> Void
+    
+    func didTimeout() -> Void
 }

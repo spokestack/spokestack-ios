@@ -1,5 +1,5 @@
 //
-//  WakewordService.swift
+//  SpeechProcessors.swift
 //  SpokeStack
 //
 //  Created by Noel Weichbrodt on 2/5/19.
@@ -8,16 +8,15 @@
 
 import Foundation
 
-@objc public enum WakewordService: Int {
+@objc public enum SpeechProcessors: Int {
     case appleWakeword
     case coremlWakeword
     case tFLiteWakeword
+    case appleSpeech
 }
 
-extension WakewordService {
-    
-    var wakewordRecognizerService: WakewordRecognizerService {
-        
+extension SpeechProcessors {
+    var processor: SpeechProcessor {
         switch self {
         case .appleWakeword:
             return AppleWakewordRecognizer.sharedInstance
@@ -25,6 +24,8 @@ extension WakewordService {
             return CoreMLWakewordRecognizer.sharedInstance
         case .tFLiteWakeword:
             return TFLiteWakewordRecognizer.sharedInstance
+        case .appleSpeech:
+            return AppleSpeechRecognizer.sharedInstance
         }
     }
 }

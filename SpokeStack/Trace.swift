@@ -16,13 +16,7 @@ public struct Trace {
         case DEBUG
     }
     
-    public static func trace(_ level: Trace.Level, configLevel: Trace.Level, message: String, delegate: WakewordRecognizer?, caller: Any) {
-        if level.rawValue >= configLevel.rawValue {
-            delegate?.didTrace("\(level) \(String(describing: type(of: caller))) \(message)")
-        }
-    }
-    
-    public static func trace(_ level: Trace.Level, configLevel: Trace.Level, message: String, delegate: SpeechRecognizer?, caller: Any) {
+    public static func trace(_ level: Trace.Level, configLevel: Trace.Level, message: String, delegate: SpeechEventListener?, caller: Any) {
         if level.rawValue >= configLevel.rawValue {
             delegate?.didTrace("\(level) \(String(describing: type(of: caller))) \(message)")
         }
@@ -34,7 +28,7 @@ public struct Trace {
         }
     }
     
-    public static func spit(data: Data, fileName: String, delegate: WakewordRecognizer) {
+    public static func spit(data: Data, fileName: String, delegate: SpeechEventListener) {
         let filemgr = FileManager.default
         if let path = filemgr.urls(for: FileManager.SearchPathDirectory.documentDirectory, in: FileManager.SearchPathDomainMask.userDomainMask).last?.appendingPathComponent(fileName) {
             if !filemgr.fileExists(atPath: path.path) {

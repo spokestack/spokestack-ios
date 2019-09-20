@@ -45,10 +45,10 @@ class CoreMLViewController: UIViewController {
     lazy private var pipeline: SpeechPipeline = {
         let c = SpeechConfiguration()
         c.tracing = Trace.Level.DEBUG
-        return try! SpeechPipeline(.appleSpeech,
+        return try! SpeechPipeline(SpeechProcessors.appleSpeech.processor,
                                    speechConfiguration: c,
                                    speechDelegate: self,
-                                   wakewordService: .coremlWakeword,
+                                   wakewordService: SpeechProcessors.coremlWakeword.processor,
                                    wakewordDelegate: self,
                                    pipelineDelegate: self)
     }()
@@ -102,7 +102,7 @@ class CoreMLViewController: UIViewController {
     }
 }
 
-extension CoreMLViewController: SpeechRecognizer, WakewordRecognizer, PipelineDelegate {
+extension CoreMLViewController: SpeechEventListener, PipelineDelegate {
     func setupFailed(_ error: String) {
         print("setupFailed: " + error)
     }
@@ -115,7 +115,7 @@ extension CoreMLViewController: SpeechRecognizer, WakewordRecognizer, PipelineDe
         print("didStop")
     }
     
-    func timeout() {
+    func didTimeout() {
         print("timeout")
     }
     

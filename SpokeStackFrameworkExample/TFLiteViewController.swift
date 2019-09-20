@@ -92,10 +92,10 @@ class TFLiteViewController: UIViewController {
         }
         c.detectModelPath = detectPath
         c.tracing = Trace.Level.PERF
-        return try! SpeechPipeline(.appleSpeech,
+        return try! SpeechPipeline(SpeechProcessors.appleSpeech.processor,
                                    speechConfiguration: c,
                                    speechDelegate: self,
-                                   wakewordService: .tFLiteWakeword,
+                                   wakewordService: SpeechProcessors.tFLiteWakeword.processor,
                                    wakewordDelegate: self,
                                    pipelineDelegate: self)
     }
@@ -122,7 +122,8 @@ class TFLiteViewController: UIViewController {
     }
 }
 
-extension TFLiteViewController: SpeechRecognizer, WakewordRecognizer, PipelineDelegate {
+extension TFLiteViewController: SpeechEventListener, PipelineDelegate {
+    
     func setupFailed(_ error: String) {
         print("setupFailed: " + error)
     }
@@ -131,23 +132,17 @@ extension TFLiteViewController: SpeechRecognizer, WakewordRecognizer, PipelineDe
         print("didInit")
     }
     
-    func didStop() {
-        print("didStop")
-    }
-    
-    func timeout() {
+    func didTimeout() {
         print("timeout")
     }
     
     func activate() {
         print("activate")
-        self.toggleStartStop()
         self.pipeline?.activate()
     }
     
     func deactivate() {
         print("deactivate")
-        self.toggleStartStop()
         self.pipeline?.deactivate()
     }
     
@@ -160,6 +155,11 @@ extension TFLiteViewController: SpeechRecognizer, WakewordRecognizer, PipelineDe
     }
     
     func didStart() {
+        print("didStart")
+        self.toggleStartStop()
+    }
+    
+    func didStop() {
         print("didStart")
         self.toggleStartStop()
     }

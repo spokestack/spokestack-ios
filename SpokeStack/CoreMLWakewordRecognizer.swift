@@ -11,7 +11,7 @@ import AVFoundation
 import CoreML
 import Speech
 
-public class CoreMLWakewordRecognizer: NSObject, WakewordRecognizerService {
+public class CoreMLWakewordRecognizer: NSObject, SpeechProcessor {
     
     // MARK: Public (properties)
     
@@ -26,17 +26,12 @@ public class CoreMLWakewordRecognizer: NSObject, WakewordRecognizerService {
             }
         }
     }
-    
-    public weak var delegate: WakewordRecognizer?
+    public var context: SpeechContext = SpeechContext()
+    public weak var delegate: SpeechEventListener?
     
     // MARK: Private (properties)
-
-    enum FFTWindowType: String {
-        case hann
-    }
     
     private var vad: WebRTCVAD = WebRTCVAD()
-    private var context: SpeechContext = SpeechContext()
     
     lazy private var wwfilter: WakeWordFilter = {
         return WakeWordFilter()
@@ -101,12 +96,12 @@ public class CoreMLWakewordRecognizer: NSObject, WakewordRecognizerService {
     
     // MARK: SpeechRecognizerService implementation
 
-    func startStreaming(context: SpeechContext) -> Void {
+    public func startStreaming(context: SpeechContext) -> Void {
         AudioController.sharedInstance.delegate = self
         self.context = context
     }
     
-    func stopStreaming(context: SpeechContext) -> Void {
+    public func stopStreaming(context: SpeechContext) -> Void {
         AudioController.sharedInstance.delegate = nil
         self.context = context
     }
@@ -168,7 +163,7 @@ public class CoreMLWakewordRecognizer: NSObject, WakewordRecognizerService {
             
             /// VAD
             do {
-                try self.vad.create(mode: .HighQuality, delegate: self, frameWidth: c.frameWidth, samplerate: c.sampleRate)
+                try self.vad.create(mode: .HighQuality, delegate: self, frameWidth: c.frameWidth, sampleRate: c.sampleRate)
             } catch {
                 assertionFailure("CoreMLWakewordRecognizer failed to create a valid VAD")
             }
@@ -188,7 +183,7 @@ public class CoreMLWakewordRecognizer: NSObject, WakewordRecognizerService {
             
             /// Allocate the stft window and FFT/frame buffer
             
-            self.fftWindow = SignalProcessing.hannWindow(c.fftWindowSize)
+            self.fftWindow = SignalProcessing.fftWindowDispatch(windowType: c.fftWindowType, windowLength: c.fftWindowSize)
             self.fft = FFT(c.fftWindowSize)
             self.fftFrame = Array(repeating: 0.0, count: c.fftWindowSize)
             
@@ -233,11 +228,6 @@ public class CoreMLWakewordRecognizer: NSObject, WakewordRecognizerService {
             let windowSize: Int = c.fftWindowSize
             if windowSize % 2 != 0 {
                 assertionFailure("CoreMLWakewordRecognizer validateConfiguration invalid fft-window-size")
-                return
-            }
-            let windowType: String = c.fftWindowType
-            guard windowType == FFTWindowType.hann.rawValue else {
-                assertionFailure("CoreMLWakewordRecognizer validateConfiguration invalid fft-window-type")
                 return
             }
 
@@ -546,12 +536,15 @@ extension CoreMLWakewordRecognizer {
 }
 
 extension CoreMLWakewordRecognizer: AudioControllerDelegate {
-    func processFrame(_ frame: Data) -> Void {
+    func process(_ frame: Data) -> Void {
         /// multiplex the audio frame data to both the vad and, if activated, the model pipelines
         audioProcessingQueue.async {[weak self] in
             guard let strongSelf = self else { return }
-            strongSelf.vad.process(frame: frame, isSpeech:
+            do { try strongSelf.vad.process(frame: frame, isSpeech:
                 strongSelf.context.isSpeech)
+            } catch let error {
+                strongSelf.delegate?.didError(error)
+            }
             if strongSelf.context.isSpeech {
                 strongSelf.process(frame, isSpeech: strongSelf.context.isSpeech)
             }

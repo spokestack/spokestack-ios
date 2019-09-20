@@ -47,10 +47,10 @@ class AppleViewController: UIViewController {
         
         let appleConfiguration: SpeechConfiguration = SpeechConfiguration()
         
-        return try! SpeechPipeline(.appleSpeech,
+        return try! SpeechPipeline(SpeechProcessors.appleSpeech.processor,
                                    speechConfiguration: appleConfiguration,
                                    speechDelegate: self,
-                                   wakewordService: .appleWakeword,
+                                   wakewordService: SpeechProcessors.appleWakeword.processor,
                                    wakewordDelegate: self,
                                    pipelineDelegate: self)
     }()
@@ -97,7 +97,8 @@ class AppleViewController: UIViewController {
     }
 }
 
-extension AppleViewController: SpeechRecognizer, WakewordRecognizer, PipelineDelegate {
+extension AppleViewController: SpeechEventListener, PipelineDelegate {
+    
     func setupFailed(_ error: String) {
         print("setupFailed: " + error)
     }
@@ -110,7 +111,7 @@ extension AppleViewController: SpeechRecognizer, WakewordRecognizer, PipelineDel
         print("didStop")
     }
     
-    func timeout() {
+    func didTimeout() {
         print("timeout")
     }
     

@@ -49,10 +49,10 @@ class WakeWordViewController: UIViewController {
     }()
     
     lazy public var pipeline: SpeechPipeline = {
-        return try! SpeechPipeline(.appleSpeech,
+        return try! SpeechPipeline(SpeechProcessors.appleSpeech.processor,
                                    speechConfiguration: SpeechConfiguration(),
                                    speechDelegate: self,
-                                   wakewordService: .appleWakeword,
+                                   wakewordService: SpeechProcessors.appleWakeword.processor,
                                    wakewordDelegate: self,
                                    pipelineDelegate: self)
     }()
@@ -112,9 +112,9 @@ class WakeWordViewController: UIViewController {
     }
 }
 
-extension WakeWordViewController: SpeechRecognizer, WakewordRecognizer, PipelineDelegate {
+extension WakeWordViewController: SpeechEventListener, PipelineDelegate {
 
-    func timeout() {
+    func didTimeout() {
         print("timeout")
     }
     
