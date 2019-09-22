@@ -46,7 +46,9 @@ func recordingCallback(
         
     if buffers[0].mData != nil {
         let data: Data = Data(bytes: buffers[0].mData!, count: Int(buffers[0].mDataByteSize))
-        AudioController.sharedInstance.delegate?.process(data)
+        audioProcessingQueue.sync {
+            AudioController.sharedInstance.delegate?.process(data)
+        }
     }
     
     return noErr
