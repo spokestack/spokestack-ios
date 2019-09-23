@@ -7,8 +7,8 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "WITCvad.h"
-#import "WITVad.h"
+#import "VAD/Wit/WITCvad.h"
+#import "VAD/Wit/WITVad.h"
 
 //! Project version number for SpokeStack.
 FOUNDATION_EXPORT double SpokeStackVersionNumber;
