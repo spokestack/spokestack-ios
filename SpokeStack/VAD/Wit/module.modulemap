@@ -1,0 +1,5 @@
+module WitVAD {
+  header "WITCvad.h"
+  header "WITvad.h"
+  export *
+}

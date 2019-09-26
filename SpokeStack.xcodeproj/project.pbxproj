@@ -56,13 +56,11 @@
 		593B1D7922C50AB4004D938E /* analog_agc.c in Sources */ = {isa = PBXBuildFile; fileRef = 593B1D7722C50AB4004D938E /* analog_agc.c */; };
 		593B1D7A22C50AB4004D938E /* digital_agc.c in Sources */ = {isa = PBXBuildFile; fileRef = 593B1D7822C50AB4004D938E /* digital_agc.c */; };
 		593B1D8122C50AF3004D938E /* vad_filterbank.c in Sources */ = {isa = PBXBuildFile; fileRef = 593B1D7B22C50AF2004D938E /* vad_filterbank.c */; };
-		593B1D8222C50AF3004D938E /* vad_core.h in Headers */ = {isa = PBXBuildFile; fileRef = 593B1D7C22C50AF2004D938E /* vad_core.h */; };
 		593B1D8322C50AF3004D938E /* vad_gmm.c in Sources */ = {isa = PBXBuildFile; fileRef = 593B1D7D22C50AF2004D938E /* vad_gmm.c */; };
 		593B1D8422C50AF3004D938E /* vad_sp.c in Sources */ = {isa = PBXBuildFile; fileRef = 593B1D7E22C50AF2004D938E /* vad_sp.c */; };
 		593B1D8522C50AF3004D938E /* vad_core.c in Sources */ = {isa = PBXBuildFile; fileRef = 593B1D7F22C50AF2004D938E /* vad_core.c */; };
 		593B1D8622C50AF3004D938E /* webrtc_vad.c in Sources */ = {isa = PBXBuildFile; fileRef = 593B1D8022C50AF3004D938E /* webrtc_vad.c */; };
 		593B1D8822C5401D004D938E /* cross_correlation.c in Sources */ = {isa = PBXBuildFile; fileRef = 593B1D8722C5401C004D938E /* cross_correlation.c */; };
-		593B1D8A22CA8EDD004D938E /* webrtc_vad.h in Headers */ = {isa = PBXBuildFile; fileRef = 593B1D8922CA8EDC004D938E /* webrtc_vad.h */; };
 		593B1D8C22CA9243004D938E /* WebRTCVAD.swift in Sources */ = {isa = PBXBuildFile; fileRef = 593B1D8B22CA9243004D938E /* WebRTCVAD.swift */; };
 		594154B822F8AD2200E3624E /* TFLiteWakewordRecognizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 594154B722F8AD2200E3624E /* TFLiteWakewordRecognizer.swift */; };
 		5967108E21F7AE6B00CBFC88 /* AppleSpeechRecognizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5967108D21F7AE6B00CBFC88 /* AppleSpeechRecognizer.swift */; };
@@ -102,9 +100,7 @@
 		59EF51BF233013A9006BA0BD /* AppleSpeechRecognizerTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59EF51BE233013A9006BA0BD /* AppleSpeechRecognizerTest.swift */; };
 		59EF51C123328D57006BA0BD /* AppleWakewordRecognizerTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59EF51C023328D57006BA0BD /* AppleWakewordRecognizerTest.swift */; };
 		59EF51C32332E57B006BA0BD /* Frame.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59EF51C22332E57B006BA0BD /* Frame.swift */; };
-		59FB0C8222A5C47B00FB9662 /* WITCvad.h in Headers */ = {isa = PBXBuildFile; fileRef = 59062F0F22A5AA9E00613AD8 /* WITCvad.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		59FB0C8322A5C48400FB9662 /* WITCvad.m in Sources */ = {isa = PBXBuildFile; fileRef = 59062F0D22A5AA9E00613AD8 /* WITCvad.m */; };
-		59FB0C8422A5C48700FB9662 /* WITVad.h in Headers */ = {isa = PBXBuildFile; fileRef = 59062F0B22A5AA9D00613AD8 /* WITVad.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		59FB0C8522A5C48B00FB9662 /* WITVad.m in Sources */ = {isa = PBXBuildFile; fileRef = 59062F0C22A5AA9D00613AD8 /* WITVad.m */; };
 		59FB0C8822A98E1900FB9662 /* CoreMLWakewordRecognizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59FB0C8722A98E1900FB9662 /* CoreMLWakewordRecognizer.swift */; };
 		59FB0C8B22AEE4F100FB9662 /* Data+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59FB0C8A22AEE4F100FB9662 /* Data+Extensions.swift */; };
@@ -175,6 +171,7 @@
 		59062F0C22A5AA9D00613AD8 /* WITVad.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = WITVad.m; sourceTree = "<group>"; };
 		59062F0D22A5AA9E00613AD8 /* WITCvad.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = WITCvad.m; sourceTree = "<group>"; };
 		59062F0F22A5AA9E00613AD8 /* WITCvad.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WITCvad.h; sourceTree = "<group>"; };
+		592D2651233C18D700354AF8 /* module.modulemap */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.module-map"; path = module.modulemap; sourceTree = "<group>"; };
 		59365947220889EE00C0365F /* AppleWakewordRecognizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppleWakewordRecognizer.swift; sourceTree = "<group>"; };
 		593659492209DDBA00C0365F /* SpeechEventListener.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeechEventListener.swift; sourceTree = "<group>"; };
 		5936594B2209EA1800C0365F /* SpeechProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeechProcessor.swift; sourceTree = "<group>"; };
@@ -458,6 +455,7 @@
 		593757AA22D68A9500AA7516 /* Wit */ = {
 			isa = PBXGroup;
 			children = (
+				592D2651233C18D700354AF8 /* module.modulemap */,
 				59062F0F22A5AA9E00613AD8 /* WITCvad.h */,
 				59062F0D22A5AA9E00613AD8 /* WITCvad.m */,
 				59062F0B22A5AA9D00613AD8 /* WITVad.h */,
@@ -541,10 +539,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				01D31F4C216BAF260055FD45 /* SpokeStack.h in Headers */,
-				59FB0C8422A5C48700FB9662 /* WITVad.h in Headers */,
-				593B1D8A22CA8EDD004D938E /* webrtc_vad.h in Headers */,
-				59FB0C8222A5C47B00FB9662 /* WITCvad.h in Headers */,
-				593B1D8222C50AF3004D938E /* vad_core.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1081,6 +1075,8 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 2375DCD9CBFF30556C7DF76A /* Pods-SpokeStack.debug.xcconfig */;
 			buildSettings = {
+				APPLY_RULES_IN_COPY_HEADERS = NO;
+				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = NO;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
@@ -1091,6 +1087,10 @@
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/TensorFlowLiteSwift/TensorFlowLite.framework/Headers\"",
+				);
 				INFOPLIST_FILE = SpokeStack/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -1104,11 +1104,13 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.pylon.SpokeStack;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SCAN_ALL_SOURCE_FILES_FOR_INCLUDES = YES;
 				SKIP_INSTALL = YES;
+				SWIFT_INCLUDE_PATHS = "${SRCROOT}/SpokeStack/filter_audio/** ${SRCROOT}/SpokeStack/VAD/Wit";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				USER_HEADER_SEARCH_PATHS = "${PROJECT_DIR}/VAD/Wit";
+				USER_HEADER_SEARCH_PATHS = "";
 			};
 			name = Debug;
 		};
@@ -1116,6 +1118,8 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 43FEB1CECD4379A2C9135539 /* Pods-SpokeStack.release.xcconfig */;
 			buildSettings = {
+				APPLY_RULES_IN_COPY_HEADERS = NO;
+				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = NO;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Automatic;
@@ -1126,6 +1130,10 @@
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/TensorFlowLiteSwift/TensorFlowLite.framework/Headers\"",
+				);
 				INFOPLIST_FILE = SpokeStack/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -1139,10 +1147,12 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.pylon.SpokeStack;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SCAN_ALL_SOURCE_FILES_FOR_INCLUDES = YES;
 				SKIP_INSTALL = YES;
+				SWIFT_INCLUDE_PATHS = "${SRCROOT}/SpokeStack/filter_audio/** ${SRCROOT}/SpokeStack/VAD/Wit";
 				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				USER_HEADER_SEARCH_PATHS = "${PROJECT_DIR}/VAD/Wit";
+				USER_HEADER_SEARCH_PATHS = "";
 			};
 			name = Release;
 		};
