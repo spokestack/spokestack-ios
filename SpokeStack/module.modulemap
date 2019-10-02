@@ -1,4 +1,0 @@
-module filter_audio {
-  header "vad/vad_core.h"
-  export *
-}

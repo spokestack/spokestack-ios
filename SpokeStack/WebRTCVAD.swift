@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import filter_audio
+import WebRtcVad
 
 public enum VADMode: Int {
     case HighQuality
