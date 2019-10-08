@@ -9,13 +9,14 @@ Pod::Spec.new do |s|
   s.license = {:type => 'Apache', :file => 'LICENSE'}
   s.ios.deployment_target = '11.0'
   s.swift_version = '4.2'
-  s.ios.framework = 'AVFoundation'
+  s.ios.framework = 'AVFoundation', 'CoreML'
   s.exclude_files = 'SpokeStackFrameworkExample/*.*', 'SpokeStackTests/*.*', 'SpokeStack/Info.plist'
-  s.source_files = 'SpokeStack/**/*.{swift,h,m,c}'
-  s.pod_target_xcconfig = {'SWIFT_INCLUDE_PATHS' => '${SRCROOT}/SpokeStack/VAD/filter_audio/** ${SRCROOT}/SpokeStack/VAD/Wit', 'HEADER_SEARCH_PATHS' => '${SRCROOT}/SpokeStack/VAD/filter_audio/** ${SRCROOT}/SpokeStack/VAD/Wit'}
+  s.source_files = 'SpokeStack/**/*.{swift,h,m,c,mlmodel}'
+  s.pod_target_xcconfig = {'SWIFT_INCLUDE_PATHS' => '$(SRCROOT)/SpokeStack/VAD/Wit', 'HEADER_SEARCH_PATHS' => '$(SRCROOT)/SpokeStack/VAD/Wit'}
   s.preserve_paths = 'SpokeStack/**/*.modulemap'
   s.public_header_files = 'SpokeStack/SpokeStack.h'
   s.dependency 'TensorFlowLiteSwift', '~> 1.14.0'
+  s.dependency 'filter_audio', '~> 0.3.1'
   s.static_framework = true
 
 end
