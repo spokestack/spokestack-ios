@@ -16,7 +16,7 @@ Pod::Spec.new do |s|
   s.preserve_paths = 'SpokeStack/**/*.modulemap'
   s.public_header_files = 'SpokeStack/SpokeStack.h'
   s.dependency 'TensorFlowLiteSwift', '~> 1.14.0'
-  s.dependency 'filter_audio', '~> 0.3.1'
+  s.dependency 'filter_audio', '~> 0.4.0'
   s.static_framework = true
 
 end
