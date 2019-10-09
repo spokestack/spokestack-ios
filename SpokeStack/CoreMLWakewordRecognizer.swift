@@ -11,9 +11,9 @@ import AVFoundation
 import CoreML
 import Speech
 
-public class CoreMLWakewordRecognizer: NSObject, SpeechProcessor {
+public class CoreMLWakewordRecognizer: NSObject {
     
-    // MARK: Public (properties)
+    // MARK: Public properties
     
     static let sharedInstance: CoreMLWakewordRecognizer = CoreMLWakewordRecognizer()
     
@@ -21,6 +21,7 @@ public class CoreMLWakewordRecognizer: NSObject, SpeechProcessor {
         didSet {
             if configuration != nil {
                 self.parseConfiguration()
+                self.setAttentionModels()
                 self.setConfiguration()
                 self.validateConfiguration()
             }
@@ -28,18 +29,14 @@ public class CoreMLWakewordRecognizer: NSObject, SpeechProcessor {
     }
     public var context: SpeechContext = SpeechContext()
     public weak var delegate: SpeechEventListener?
-    
-    // MARK: Private (properties)
+
+    // MARK: Private properties
     
     private var vad: WebRTCVAD = WebRTCVAD()
     
-    lazy private var wwfilter: WakeWordFilter = {
-        return WakeWordFilter()
-    }()
+    private var filterModel: Filter?
 
-    lazy private var wwdetect: WakeWordDetect = {
-        return WakeWordDetect()
-    }()
+    private var detectModel: Detect?
     
     /// Keyword & phrase preallocated buffers
     
@@ -85,7 +82,7 @@ public class CoreMLWakewordRecognizer: NSObject, SpeechProcessor {
     private var filterCollector: Array<Float>?
     private var detectCollector: String?
     
-    // MARK: NSObject methods
+    // MARK: NSObject implementation
 
     deinit {
     }
@@ -93,22 +90,8 @@ public class CoreMLWakewordRecognizer: NSObject, SpeechProcessor {
     public override init() {
         super.init()
     }
-    
-    // MARK: SpeechRecognizerService implementation
-
-    public func startStreaming(context: SpeechContext) -> Void {
-        AudioController.sharedInstance.delegate = self
-        self.context = context
-    }
-    
-    public func stopStreaming(context: SpeechContext) -> Void {
-        AudioController.sharedInstance.delegate = nil
-        self.context = context
-    }
-    
-    // MARK: Private functions
-    
-    /// MARK: Configuration processing
+        
+    // MARK: Configuration processing
     
     private func parseConfiguration() -> Void {
         if let c = self.configuration {
@@ -145,6 +128,20 @@ public class CoreMLWakewordRecognizer: NSObject, SpeechProcessor {
                         self.phrases[i][j] = k + 1
                     }
                 }
+            }
+        }
+    }
+    
+    private func setAttentionModels() -> Void {
+        if let c = self.configuration {
+            do {
+                /// NB a compiled (.mlmodelc) CoreML model is assumed to be on detectModelPath.
+                let detectModelURL = URL.init(fileURLWithPath: c.detectModelPath)
+                detectModel = try Detect(contentsOf: detectModelURL)
+                let filterModelURL = URL.init(fileURLWithPath: c.filterModelPath)
+                filterModel = try Filter(contentsOf: filterModelURL)
+            } catch let message {
+                self.delegate!.didError(WakewordModelError.model("CoreMLWakewordRecognizer setAttentionModels \(message)"))
             }
         }
     }
@@ -236,7 +233,7 @@ public class CoreMLWakewordRecognizer: NSObject, SpeechProcessor {
         }
     }
     
-    /// MARK: Audio processing
+    // MARK: Audio processing
     
     private func process(_ data: Data, isSpeech: Bool) -> Void {
         self.activeLength += 1
@@ -383,8 +380,8 @@ extension CoreMLWakewordRecognizer {
             /// execute the mel filterbank tensorflow model, gather predictions
             let options: MLPredictionOptions = MLPredictionOptions()
             options.usesCPUOnly = true // TODO: use GPU?
-            let input: WakeWordFilterInput = WakeWordFilterInput(linspec_inputs__0: multiArray)
-            let predictions: WakeWordFilterOutput = try self.wwfilter.prediction(input: input, options: options)
+            let input: FilterInput = FilterInput(linspec_inputs__0: multiArray)
+            let predictions: FilterOutput = try self.filterModel!.prediction(input: input, options: options)
 
             /// Copy the current mel frame into the mel window
             self.frameWindow.rewind().seek(self.melWidth)
@@ -422,8 +419,8 @@ extension CoreMLWakewordRecognizer {
             // run the classifier tensorflow model
             let options: MLPredictionOptions = MLPredictionOptions()
             options.usesCPUOnly = true // TODO: use GPU?
-            let input: WakeWordDetectInput = WakeWordDetectInput(melspec_inputs__0: multiArray)
-            let predictions: WakeWordDetectOutput = try self.wwdetect.prediction(input: input, options: options)
+            let input: DetectInput = DetectInput(melspec_inputs__0: multiArray)
+            let predictions: DetectOutput = try self.detectModel!.prediction(input: input, options: options)
             
             /// Transfer the classifier's outputs to the posterior smoothing window
             self.smoothWindow.rewind().seek(self.words.count)
@@ -449,7 +446,7 @@ extension CoreMLWakewordRecognizer {
     }
 }
 
-// Mark: Posterior smoothing algorithms
+// MARK: Posterior smoothing algorithms
 extension CoreMLWakewordRecognizer {
     
     private func smooth() -> Void {
@@ -535,6 +532,21 @@ extension CoreMLWakewordRecognizer {
     }
 }
 
+// MARK: SpeechRecognizerService implementation
+extension CoreMLWakewordRecognizer: SpeechProcessor {
+
+    public func startStreaming(context: SpeechContext) -> Void {
+        AudioController.sharedInstance.delegate = self
+        self.context = context
+    }
+    
+    public func stopStreaming(context: SpeechContext) -> Void {
+        AudioController.sharedInstance.delegate = nil
+        self.context = context
+    }
+}
+
+// MARK: Delegate Protocol implementation
 extension CoreMLWakewordRecognizer: AudioControllerDelegate {
     func process(_ frame: Data) -> Void {
         /// multiplex the audio frame data to both the vad and, if activated, the model pipelines
