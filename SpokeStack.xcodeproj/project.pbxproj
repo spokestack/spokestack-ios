@@ -36,32 +36,6 @@
 		5936594C2209EA1800C0365F /* SpeechProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5936594B2209EA1800C0365F /* SpeechProcessor.swift */; };
 		5936594E220A1A7A00C0365F /* SpeechProcessors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5936594D220A1A7A00C0365F /* SpeechProcessors.swift */; };
 		5937579322D5281900AA7516 /* VADDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5937579222D5281900AA7516 /* VADDelegate.swift */; };
-		593B1D5722C50A0E004D938E /* complex_fft.c in Sources */ = {isa = PBXBuildFile; fileRef = 593B1D5322C50A0E004D938E /* complex_fft.c */; };
-		593B1D5822C50A0E004D938E /* complex_bit_reverse.c in Sources */ = {isa = PBXBuildFile; fileRef = 593B1D5422C50A0E004D938E /* complex_bit_reverse.c */; };
-		593B1D5A22C50A0E004D938E /* copy_set_operations.c in Sources */ = {isa = PBXBuildFile; fileRef = 593B1D5622C50A0E004D938E /* copy_set_operations.c */; };
-		593B1D6922C50A95004D938E /* real_fft.c in Sources */ = {isa = PBXBuildFile; fileRef = 593B1D5B22C50A93004D938E /* real_fft.c */; };
-		593B1D6A22C50A95004D938E /* vector_scaling_operations.c in Sources */ = {isa = PBXBuildFile; fileRef = 593B1D5C22C50A93004D938E /* vector_scaling_operations.c */; };
-		593B1D6B22C50A95004D938E /* spl_sqrt.c in Sources */ = {isa = PBXBuildFile; fileRef = 593B1D5D22C50A93004D938E /* spl_sqrt.c */; };
-		593B1D6C22C50A95004D938E /* resample_by_2.c in Sources */ = {isa = PBXBuildFile; fileRef = 593B1D5E22C50A93004D938E /* resample_by_2.c */; };
-		593B1D6D22C50A95004D938E /* resample_fractional.c in Sources */ = {isa = PBXBuildFile; fileRef = 593B1D5F22C50A94004D938E /* resample_fractional.c */; };
-		593B1D6E22C50A95004D938E /* resample_by_2_internal.c in Sources */ = {isa = PBXBuildFile; fileRef = 593B1D6022C50A94004D938E /* resample_by_2_internal.c */; };
-		593B1D6F22C50A95004D938E /* dot_product_with_scale.c in Sources */ = {isa = PBXBuildFile; fileRef = 593B1D6122C50A94004D938E /* dot_product_with_scale.c */; };
-		593B1D7022C50A95004D938E /* get_scaling_square.c in Sources */ = {isa = PBXBuildFile; fileRef = 593B1D6222C50A94004D938E /* get_scaling_square.c */; };
-		593B1D7122C50A95004D938E /* spl_init.c in Sources */ = {isa = PBXBuildFile; fileRef = 593B1D6322C50A94004D938E /* spl_init.c */; };
-		593B1D7222C50A95004D938E /* division_operations.c in Sources */ = {isa = PBXBuildFile; fileRef = 593B1D6422C50A94004D938E /* division_operations.c */; };
-		593B1D7322C50A95004D938E /* resample_48khz.c in Sources */ = {isa = PBXBuildFile; fileRef = 593B1D6522C50A94004D938E /* resample_48khz.c */; };
-		593B1D7422C50A95004D938E /* downsample_fast.c in Sources */ = {isa = PBXBuildFile; fileRef = 593B1D6622C50A95004D938E /* downsample_fast.c */; };
-		593B1D7522C50A95004D938E /* energy.c in Sources */ = {isa = PBXBuildFile; fileRef = 593B1D6722C50A95004D938E /* energy.c */; };
-		593B1D7622C50A95004D938E /* min_max_operations.c in Sources */ = {isa = PBXBuildFile; fileRef = 593B1D6822C50A95004D938E /* min_max_operations.c */; };
-		593B1D7922C50AB4004D938E /* analog_agc.c in Sources */ = {isa = PBXBuildFile; fileRef = 593B1D7722C50AB4004D938E /* analog_agc.c */; };
-		593B1D7A22C50AB4004D938E /* digital_agc.c in Sources */ = {isa = PBXBuildFile; fileRef = 593B1D7822C50AB4004D938E /* digital_agc.c */; };
-		593B1D8122C50AF3004D938E /* vad_filterbank.c in Sources */ = {isa = PBXBuildFile; fileRef = 593B1D7B22C50AF2004D938E /* vad_filterbank.c */; };
-		593B1D8322C50AF3004D938E /* vad_gmm.c in Sources */ = {isa = PBXBuildFile; fileRef = 593B1D7D22C50AF2004D938E /* vad_gmm.c */; };
-		593B1D8422C50AF3004D938E /* vad_sp.c in Sources */ = {isa = PBXBuildFile; fileRef = 593B1D7E22C50AF2004D938E /* vad_sp.c */; };
-		593B1D8522C50AF3004D938E /* vad_core.c in Sources */ = {isa = PBXBuildFile; fileRef = 593B1D7F22C50AF2004D938E /* vad_core.c */; };
-		593B1D8622C50AF3004D938E /* webrtc_vad.c in Sources */ = {isa = PBXBuildFile; fileRef = 593B1D8022C50AF3004D938E /* webrtc_vad.c */; };
-		593B1D8822C5401D004D938E /* cross_correlation.c in Sources */ = {isa = PBXBuildFile; fileRef = 593B1D8722C5401C004D938E /* cross_correlation.c */; };
-		593B1D8C22CA9243004D938E /* WebRTCVAD.swift in Sources */ = {isa = PBXBuildFile; fileRef = 593B1D8B22CA9243004D938E /* WebRTCVAD.swift */; };
 		594154B822F8AD2200E3624E /* TFLiteWakewordRecognizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 594154B722F8AD2200E3624E /* TFLiteWakewordRecognizer.swift */; };
 		5967108E21F7AE6B00CBFC88 /* AppleSpeechRecognizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5967108D21F7AE6B00CBFC88 /* AppleSpeechRecognizer.swift */; };
 		59A0D5C02204E786003709C3 /* AppleViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59A0D5BD2204E786003709C3 /* AppleViewController.swift */; };
@@ -69,6 +43,7 @@
 		59A0D5C42204E799003709C3 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 59A0D5C32204E799003709C3 /* Assets.xcassets */; };
 		59A0D5C72204E8E4003709C3 /* SpeechConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59A0D5C52204E8E4003709C3 /* SpeechConfiguration.swift */; };
 		59A45E4F2243ED530089D023 /* PipelineDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59A45E4E2243ED530089D023 /* PipelineDelegate.swift */; };
+		59C15D53234D322A00B091F4 /* WebRTCVAD.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59C15D52234D322A00B091F4 /* WebRTCVAD.swift */; };
 		59C2AFDA2319CB7100E47AC5 /* RingBufferTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59C2AFD92319CB7100E47AC5 /* RingBufferTest.swift */; };
 		59C2AFDB2319CE5800E47AC5 /* SpeechConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59A0D5C52204E8E4003709C3 /* SpeechConfiguration.swift */; };
 		59C2AFDC2319CE6200E47AC5 /* SpeechProcessors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5936594D220A1A7A00C0365F /* SpeechProcessors.swift */; };
@@ -78,7 +53,6 @@
 		59C2AFE02319CEA100E47AC5 /* AppleWakewordRecognizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59365947220889EE00C0365F /* AppleWakewordRecognizer.swift */; };
 		59C2AFE12319CEA800E47AC5 /* CoreMLWakewordRecognizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59FB0C8722A98E1900FB9662 /* CoreMLWakewordRecognizer.swift */; };
 		59C2AFE22319CEAE00E47AC5 /* TFLiteWakewordRecognizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 594154B722F8AD2200E3624E /* TFLiteWakewordRecognizer.swift */; };
-		59C2AFE32319CEBC00E47AC5 /* WebRTCVAD.swift in Sources */ = {isa = PBXBuildFile; fileRef = 593B1D8B22CA9243004D938E /* WebRTCVAD.swift */; };
 		59C2AFE42319CEC300E47AC5 /* Trace.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59E0E1362301F0A80060F012 /* Trace.swift */; };
 		59C2AFE52319CED100E47AC5 /* AppleSpeechRecognizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5967108D21F7AE6B00CBFC88 /* AppleSpeechRecognizer.swift */; };
 		59C2AFE62319CEEF00E47AC5 /* RingBuffer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59FB0C8C22B0640700FB9662 /* RingBuffer.swift */; };
@@ -177,35 +151,6 @@
 		5936594B2209EA1800C0365F /* SpeechProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeechProcessor.swift; sourceTree = "<group>"; };
 		5936594D220A1A7A00C0365F /* SpeechProcessors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeechProcessors.swift; sourceTree = "<group>"; };
 		5937579222D5281900AA7516 /* VADDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VADDelegate.swift; sourceTree = "<group>"; };
-		593B1D5322C50A0E004D938E /* complex_fft.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = complex_fft.c; path = filter_audio/other/complex_fft.c; sourceTree = "<group>"; };
-		593B1D5422C50A0E004D938E /* complex_bit_reverse.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = complex_bit_reverse.c; path = filter_audio/other/complex_bit_reverse.c; sourceTree = "<group>"; };
-		593B1D5622C50A0E004D938E /* copy_set_operations.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = copy_set_operations.c; path = filter_audio/other/copy_set_operations.c; sourceTree = "<group>"; };
-		593B1D5B22C50A93004D938E /* real_fft.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = real_fft.c; path = filter_audio/other/real_fft.c; sourceTree = "<group>"; };
-		593B1D5C22C50A93004D938E /* vector_scaling_operations.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = vector_scaling_operations.c; path = filter_audio/other/vector_scaling_operations.c; sourceTree = "<group>"; };
-		593B1D5D22C50A93004D938E /* spl_sqrt.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = spl_sqrt.c; path = filter_audio/other/spl_sqrt.c; sourceTree = "<group>"; };
-		593B1D5E22C50A93004D938E /* resample_by_2.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = resample_by_2.c; path = filter_audio/other/resample_by_2.c; sourceTree = "<group>"; };
-		593B1D5F22C50A94004D938E /* resample_fractional.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = resample_fractional.c; path = filter_audio/other/resample_fractional.c; sourceTree = "<group>"; };
-		593B1D6022C50A94004D938E /* resample_by_2_internal.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = resample_by_2_internal.c; path = filter_audio/other/resample_by_2_internal.c; sourceTree = "<group>"; };
-		593B1D6122C50A94004D938E /* dot_product_with_scale.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = dot_product_with_scale.c; path = filter_audio/other/dot_product_with_scale.c; sourceTree = "<group>"; };
-		593B1D6222C50A94004D938E /* get_scaling_square.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = get_scaling_square.c; path = filter_audio/other/get_scaling_square.c; sourceTree = "<group>"; };
-		593B1D6322C50A94004D938E /* spl_init.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = spl_init.c; path = filter_audio/other/spl_init.c; sourceTree = "<group>"; };
-		593B1D6422C50A94004D938E /* division_operations.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = division_operations.c; path = filter_audio/other/division_operations.c; sourceTree = "<group>"; };
-		593B1D6522C50A94004D938E /* resample_48khz.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = resample_48khz.c; path = filter_audio/other/resample_48khz.c; sourceTree = "<group>"; };
-		593B1D6622C50A95004D938E /* downsample_fast.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = downsample_fast.c; path = filter_audio/other/downsample_fast.c; sourceTree = "<group>"; };
-		593B1D6722C50A95004D938E /* energy.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = energy.c; path = filter_audio/other/energy.c; sourceTree = "<group>"; };
-		593B1D6822C50A95004D938E /* min_max_operations.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = min_max_operations.c; path = filter_audio/other/min_max_operations.c; sourceTree = "<group>"; };
-		593B1D7722C50AB4004D938E /* analog_agc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = analog_agc.c; path = filter_audio/agc/analog_agc.c; sourceTree = "<group>"; };
-		593B1D7822C50AB4004D938E /* digital_agc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = digital_agc.c; path = filter_audio/agc/digital_agc.c; sourceTree = "<group>"; };
-		593B1D7B22C50AF2004D938E /* vad_filterbank.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = vad_filterbank.c; path = filter_audio/vad/vad_filterbank.c; sourceTree = "<group>"; };
-		593B1D7C22C50AF2004D938E /* vad_core.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = vad_core.h; path = filter_audio/vad/vad_core.h; sourceTree = "<group>"; };
-		593B1D7D22C50AF2004D938E /* vad_gmm.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = vad_gmm.c; path = filter_audio/vad/vad_gmm.c; sourceTree = "<group>"; };
-		593B1D7E22C50AF2004D938E /* vad_sp.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = vad_sp.c; path = filter_audio/vad/vad_sp.c; sourceTree = "<group>"; };
-		593B1D7F22C50AF2004D938E /* vad_core.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = vad_core.c; path = filter_audio/vad/vad_core.c; sourceTree = "<group>"; };
-		593B1D8022C50AF3004D938E /* webrtc_vad.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = webrtc_vad.c; path = filter_audio/vad/webrtc_vad.c; sourceTree = "<group>"; };
-		593B1D8722C5401C004D938E /* cross_correlation.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = cross_correlation.c; path = filter_audio/other/cross_correlation.c; sourceTree = "<group>"; };
-		593B1D8922CA8EDC004D938E /* webrtc_vad.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = webrtc_vad.h; path = filter_audio/vad/include/webrtc_vad.h; sourceTree = "<group>"; };
-		593B1D8B22CA9243004D938E /* WebRTCVAD.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebRTCVAD.swift; sourceTree = "<group>"; };
-		593B1D8D22CA965A004D938E /* module.modulemap */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.module-map"; name = module.modulemap; path = filter_audio/module.modulemap; sourceTree = "<group>"; };
 		594154B722F8AD2200E3624E /* TFLiteWakewordRecognizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TFLiteWakewordRecognizer.swift; sourceTree = "<group>"; };
 		5967108D21F7AE6B00CBFC88 /* AppleSpeechRecognizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppleSpeechRecognizer.swift; sourceTree = "<group>"; };
 		59A0D5BD2204E786003709C3 /* AppleViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppleViewController.swift; sourceTree = "<group>"; };
@@ -213,6 +158,7 @@
 		59A0D5C32204E799003709C3 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		59A0D5C52204E8E4003709C3 /* SpeechConfiguration.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SpeechConfiguration.swift; sourceTree = "<group>"; };
 		59A45E4E2243ED530089D023 /* PipelineDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PipelineDelegate.swift; sourceTree = "<group>"; };
+		59C15D52234D322A00B091F4 /* WebRTCVAD.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = WebRTCVAD.swift; path = SpokeStack/WebRTCVAD.swift; sourceTree = SOURCE_ROOT; };
 		59C2AFD92319CB7100E47AC5 /* RingBufferTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RingBufferTest.swift; sourceTree = "<group>"; };
 		59C2AFED231ED07100E47AC5 /* WebRTCVADTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebRTCVADTest.swift; sourceTree = "<group>"; };
 		59D78F5E2322D13700728A98 /* AudioControllerTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioControllerTest.swift; sourceTree = "<group>"; };
@@ -435,7 +381,7 @@
 		59062EFD22A5AA6C00613AD8 /* VAD */ = {
 			isa = PBXGroup;
 			children = (
-				593B1D5222C509FF004D938E /* filter_audio */,
+				59C15D51234D321A00B091F4 /* filter_audio */,
 				593757AA22D68A9500AA7516 /* Wit */,
 			);
 			path = VAD;
@@ -464,41 +410,12 @@
 			path = Wit;
 			sourceTree = "<group>";
 		};
-		593B1D5222C509FF004D938E /* filter_audio */ = {
+		59C15D51234D321A00B091F4 /* filter_audio */ = {
 			isa = PBXGroup;
 			children = (
-				593B1D8D22CA965A004D938E /* module.modulemap */,
-				593B1D7722C50AB4004D938E /* analog_agc.c */,
-				593B1D7822C50AB4004D938E /* digital_agc.c */,
-				593B1D5422C50A0E004D938E /* complex_bit_reverse.c */,
-				593B1D5322C50A0E004D938E /* complex_fft.c */,
-				593B1D5622C50A0E004D938E /* copy_set_operations.c */,
-				593B1D8722C5401C004D938E /* cross_correlation.c */,
-				593B1D6422C50A94004D938E /* division_operations.c */,
-				593B1D6122C50A94004D938E /* dot_product_with_scale.c */,
-				593B1D6622C50A95004D938E /* downsample_fast.c */,
-				593B1D6722C50A95004D938E /* energy.c */,
-				593B1D6222C50A94004D938E /* get_scaling_square.c */,
-				593B1D6822C50A95004D938E /* min_max_operations.c */,
-				593B1D5B22C50A93004D938E /* real_fft.c */,
-				593B1D6522C50A94004D938E /* resample_48khz.c */,
-				593B1D6022C50A94004D938E /* resample_by_2_internal.c */,
-				593B1D5E22C50A93004D938E /* resample_by_2.c */,
-				593B1D5F22C50A94004D938E /* resample_fractional.c */,
-				593B1D6322C50A94004D938E /* spl_init.c */,
-				593B1D5D22C50A93004D938E /* spl_sqrt.c */,
-				593B1D7F22C50AF2004D938E /* vad_core.c */,
-				593B1D7C22C50AF2004D938E /* vad_core.h */,
-				593B1D7B22C50AF2004D938E /* vad_filterbank.c */,
-				593B1D7D22C50AF2004D938E /* vad_gmm.c */,
-				593B1D7E22C50AF2004D938E /* vad_sp.c */,
-				593B1D5C22C50A93004D938E /* vector_scaling_operations.c */,
-				593B1D8922CA8EDC004D938E /* webrtc_vad.h */,
-				593B1D8022C50AF3004D938E /* webrtc_vad.c */,
-				593B1D8B22CA9243004D938E /* WebRTCVAD.swift */,
+				59C15D52234D322A00B091F4 /* WebRTCVAD.swift */,
 			);
 			name = filter_audio;
-			path = ..;
 			sourceTree = "<group>";
 		};
 		59FB0C8922AEE4DA00FB9662 /* Extensions */ = {
@@ -769,56 +686,31 @@
 			buildActionMask = 2147483647;
 			files = (
 				59365948220889EE00C0365F /* AppleWakewordRecognizer.swift in Sources */,
-				593B1D7422C50A95004D938E /* downsample_fast.c in Sources */,
 				59FB0C8822A98E1900FB9662 /* CoreMLWakewordRecognizer.swift in Sources */,
-				593B1D6F22C50A95004D938E /* dot_product_with_scale.c in Sources */,
-				593B1D8622C50AF3004D938E /* webrtc_vad.c in Sources */,
-				593B1D7322C50A95004D938E /* resample_48khz.c in Sources */,
-				593B1D6A22C50A95004D938E /* vector_scaling_operations.c in Sources */,
 				01D31F6F216BAFD90055FD45 /* SpeechContext.swift in Sources */,
 				59E0E1372301F0A80060F012 /* Trace.swift in Sources */,
 				59E0E13522FE2C2B0060F012 /* SignalProcessing.swift in Sources */,
 				59A0D5C72204E8E4003709C3 /* SpeechConfiguration.swift in Sources */,
-				593B1D7222C50A95004D938E /* division_operations.c in Sources */,
-				593B1D8C22CA9243004D938E /* WebRTCVAD.swift in Sources */,
 				59FB0C8D22B0640700FB9662 /* RingBuffer.swift in Sources */,
-				593B1D7522C50A95004D938E /* energy.c in Sources */,
-				593B1D8122C50AF3004D938E /* vad_filterbank.c in Sources */,
 				01D31F8E216BB0370055FD45 /* Typealiases.swift in Sources */,
-				593B1D8522C50AF3004D938E /* vad_core.c in Sources */,
-				593B1D6D22C50A95004D938E /* resample_fractional.c in Sources */,
 				01D31F66216BAFB50055FD45 /* Error.swift in Sources */,
 				01D31F6A216BAFC60055FD45 /* SpeechPipeline.swift in Sources */,
-				593B1D7922C50AB4004D938E /* analog_agc.c in Sources */,
-				593B1D5722C50A0E004D938E /* complex_fft.c in Sources */,
 				5937579322D5281900AA7516 /* VADDelegate.swift in Sources */,
-				593B1D5822C50A0E004D938E /* complex_bit_reverse.c in Sources */,
-				593B1D6E22C50A95004D938E /* resample_by_2_internal.c in Sources */,
-				593B1D8822C5401D004D938E /* cross_correlation.c in Sources */,
 				5967108E21F7AE6B00CBFC88 /* AppleSpeechRecognizer.swift in Sources */,
 				5936594C2209EA1800C0365F /* SpeechProcessor.swift in Sources */,
-				593B1D7A22C50AB4004D938E /* digital_agc.c in Sources */,
 				594154B822F8AD2200E3624E /* TFLiteWakewordRecognizer.swift in Sources */,
-				593B1D7122C50A95004D938E /* spl_init.c in Sources */,
 				59FB0C8B22AEE4F100FB9662 /* Data+Extensions.swift in Sources */,
 				59FB0C9322B17A9A00FB9662 /* WakeWordFilter.mlmodel in Sources */,
-				593B1D6922C50A95004D938E /* real_fft.c in Sources */,
 				59A45E4F2243ED530089D023 /* PipelineDelegate.swift in Sources */,
-				593B1D7022C50A95004D938E /* get_scaling_square.c in Sources */,
-				593B1D5A22C50A0E004D938E /* copy_set_operations.c in Sources */,
-				593B1D6C22C50A95004D938E /* resample_by_2.c in Sources */,
 				01D31F62216BAFA40055FD45 /* AudioController.swift in Sources */,
-				593B1D6B22C50A95004D938E /* spl_sqrt.c in Sources */,
-				593B1D8322C50AF3004D938E /* vad_gmm.c in Sources */,
 				5936594E220A1A7A00C0365F /* SpeechProcessors.swift in Sources */,
 				01D31F8A216BB0220055FD45 /* Results.swift in Sources */,
 				5936594A2209DDBA00C0365F /* SpeechEventListener.swift in Sources */,
 				59FB0C9522B17AA300FB9662 /* WakeWordDetect.mlmodel in Sources */,
 				59FB0C8522A5C48B00FB9662 /* WITVad.m in Sources */,
 				01D31F79216BAFEF0055FD45 /* AudioControllerDelegate.swift in Sources */,
+				59C15D53234D322A00B091F4 /* WebRTCVAD.swift in Sources */,
 				59FB0C8322A5C48400FB9662 /* WITCvad.m in Sources */,
-				593B1D8422C50AF3004D938E /* vad_sp.c in Sources */,
-				593B1D7622C50A95004D938E /* min_max_operations.c in Sources */,
 				59FB0C8F22B0682900FB9662 /* FFT.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -856,7 +748,6 @@
 				59C2AFDB2319CE5800E47AC5 /* SpeechConfiguration.swift in Sources */,
 				59EF51C32332E57B006BA0BD /* Frame.swift in Sources */,
 				59EF51BF233013A9006BA0BD /* AppleSpeechRecognizerTest.swift in Sources */,
-				59C2AFE32319CEBC00E47AC5 /* WebRTCVAD.swift in Sources */,
 				01D31F67216BAFB50055FD45 /* Error.swift in Sources */,
 				59C2AFEB2319D05B00E47AC5 /* WakeWordDetect.mlmodel in Sources */,
 			);
@@ -1106,7 +997,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SCAN_ALL_SOURCE_FILES_FOR_INCLUDES = YES;
 				SKIP_INSTALL = YES;
-				SWIFT_INCLUDE_PATHS = "${SRCROOT}/SpokeStack/filter_audio/** ${SRCROOT}/SpokeStack/VAD/Wit";
+				SWIFT_INCLUDE_PATHS = "${SRCROOT}/SpokeStack/VAD/filter_audio/** ${SRCROOT}/SpokeStack/VAD/Wit";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -1149,7 +1040,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SCAN_ALL_SOURCE_FILES_FOR_INCLUDES = YES;
 				SKIP_INSTALL = YES;
-				SWIFT_INCLUDE_PATHS = "${SRCROOT}/SpokeStack/filter_audio/** ${SRCROOT}/SpokeStack/VAD/Wit";
+				SWIFT_INCLUDE_PATHS = "${SRCROOT}/SpokeStack/VAD/filter_audio/** ${SRCROOT}/SpokeStack/VAD/Wit";
 				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				USER_HEADER_SEARCH_PATHS = "";

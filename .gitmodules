@@ -1,3 +1,0 @@
-[submodule "SpokeStack/filter_audio"]
-	path = SpokeStack/filter_audio
-	url = git@github.com:pylon/filter_audio.git
