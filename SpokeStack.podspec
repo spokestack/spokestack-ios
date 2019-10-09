@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name = 'SpokeStack'
-  s.version = '2.0.6'
+  s.version = '3.0.0'
   s.license = 'Apache'
   s.summary = 'Spokestack provides an extensible speech recognition pipeline for the iOS platform.'
   s.homepage = 'https://www.pylon.com'
@@ -11,7 +11,7 @@ Pod::Spec.new do |s|
   s.swift_version = '4.2'
   s.ios.framework = 'AVFoundation', 'CoreML'
   s.exclude_files = 'SpokeStackFrameworkExample/*.*', 'SpokeStackTests/*.*', 'SpokeStack/Info.plist'
-  s.source_files = 'SpokeStack/**/*.{swift,h,m,c,mlmodel}'
+  s.source_files = 'SpokeStack/**/*.{swift,h,m,c}'
   s.pod_target_xcconfig = {'SWIFT_INCLUDE_PATHS' => '$(SRCROOT)/SpokeStack/VAD/Wit', 'HEADER_SEARCH_PATHS' => '$(SRCROOT)/SpokeStack/VAD/Wit'}
   s.preserve_paths = 'SpokeStack/**/*.modulemap'
   s.public_header_files = 'SpokeStack/SpokeStack.h'
