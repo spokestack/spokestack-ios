@@ -33,11 +33,11 @@ import Foundation
     public var frameWidth: Int = 20
     public var wakewordRequestTimeout: Int = 50000
     public var preEmphasis: Float = 0.97
-    public var filterModelName: String = "filter"
-    public var encodeModelName: String = "encode"
-    public var detectModelName: String = "detect"
-    public var filterModelPath: String = "filter.model"
-    public var encodeModelPath: String = "encode.model"
-    public var detectModelPath: String = "detect.model"
+    public var filterModelName: String = "Filter"
+    public var encodeModelName: String = "Encode"
+    public var detectModelName: String = "Detect"
+    public var filterModelPath: String = "Filter.model"
+    public var encodeModelPath: String = "Encode.model"
+    public var detectModelPath: String = "Detect.model"
     public var tracing: Trace.Level = Trace.Level.NONE
 }
