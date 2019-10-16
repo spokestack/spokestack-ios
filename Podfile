@@ -7,7 +7,7 @@ target 'SpokeStack' do
 
   # Pods for SpokeStack
   pod 'TensorFlowLiteSwift', '~> 1.14.0'
-  pod 'filter_audio', '~> 0.4.0', :modular_headers => true
+  pod 'filter_audio', '~> 0.4.1', :modular_headers => true
 
   target 'SpokeStackTests' do
     inherit! :search_paths

@@ -1,11 +1,11 @@
 PODS:
-  - filter_audio (0.4.0)
+  - filter_audio (0.4.1)
   - TensorFlowLiteC (1.14.0)
   - TensorFlowLiteSwift (1.14.0):
     - TensorFlowLiteC (= 1.14.0)
 
 DEPENDENCIES:
-  - filter_audio (~> 0.4.0)
+  - filter_audio (~> 0.4.1)
   - TensorFlowLiteSwift (~> 1.14.0)
 
 SPEC REPOS:
@@ -15,10 +15,10 @@ SPEC REPOS:
     - TensorFlowLiteSwift
 
 SPEC CHECKSUMS:
-  filter_audio: 4b63e257031d555b581e1bc7d063dd3f354ce7bc
+  filter_audio: 292a158d795a5a8e2ef2c8dc9d079cab90d7ea15
   TensorFlowLiteC: a6702011fb661928634e59565b5fe262f69692d0
   TensorFlowLiteSwift: ac8c816ae2d65f631a96151e7991c46412aec7eb
 
-PODFILE CHECKSUM: ecb119591575b7234b678f41f57fe6206bc448b8
+PODFILE CHECKSUM: 751e183e1dd65b06ce588b773b9b70aa13582295
 
-COCOAPODS: 1.8.0
+COCOAPODS: 1.8.3

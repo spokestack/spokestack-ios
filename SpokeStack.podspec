@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name = 'SpokeStack'
-  s.version = '3.0.0'
+  s.version = '3.0.1'
   s.license = 'Apache'
   s.summary = 'Spokestack provides an extensible speech recognition pipeline for the iOS platform.'
   s.homepage = 'https://www.pylon.com'
@@ -16,7 +16,7 @@ Pod::Spec.new do |s|
   s.preserve_paths = 'SpokeStack/**/*.modulemap'
   s.public_header_files = 'SpokeStack/SpokeStack.h'
   s.dependency 'TensorFlowLiteSwift', '~> 1.14.0'
-  s.dependency 'filter_audio', '~> 0.4.0'
+  s.dependency 'filter_audio', '~> 0.4.1'
   s.static_framework = true
 
 end
