@@ -9,11 +9,11 @@
 import Foundation
 import Speech
 
-class AppleSpeechRecognizer: NSObject, SpeechProcessor {
+@objc public class AppleSpeechRecognizer: NSObject, SpeechProcessor {
     
     // MARK: public properties
     
-    public static let sharedInstance: AppleSpeechRecognizer = AppleSpeechRecognizer()
+    @objc public static let sharedInstance: AppleSpeechRecognizer = AppleSpeechRecognizer()
     public var configuration: SpeechConfiguration?
     public weak var delegate: SpeechEventListener?
     public var context: SpeechContext = SpeechContext()
@@ -39,7 +39,7 @@ class AppleSpeechRecognizer: NSObject, SpeechProcessor {
     
     // MARK: SpeechRecognizerService implementation
     
-    func startStreaming(context: SpeechContext) {
+    public func startStreaming(context: SpeechContext) {
         do {
             context.isActive = true
             self.prepareAudioEngine()
@@ -59,7 +59,7 @@ class AppleSpeechRecognizer: NSObject, SpeechProcessor {
         }
     }
     
-    func stopStreaming(context: SpeechContext) {
+    public func stopStreaming(context: SpeechContext) {
         self.recognitionTask?.cancel()
         self.recognitionTask = nil
         self.recognitionRequest?.endAudio()

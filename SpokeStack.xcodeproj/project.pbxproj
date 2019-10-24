@@ -338,8 +338,8 @@
 				01D31F6D216BAFD90055FD45 /* SpeechContext.swift */,
 				5936594D220A1A7A00C0365F /* SpeechProcessors.swift */,
 				59E0E13422FE2C2B0060F012 /* SignalProcessing.swift */,
-				59E0E1362301F0A80060F012 /* Trace.swift */,
 				59A0D5C52204E8E4003709C3 /* SpeechConfiguration.swift */,
+				59E0E1362301F0A80060F012 /* Trace.swift */,
 			);
 			name = Models;
 			sourceTree = "<group>";

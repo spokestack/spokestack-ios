@@ -9,11 +9,11 @@
 import Foundation
 import Speech
 
-public class AppleWakewordRecognizer: NSObject, SpeechProcessor {
+@objc public class AppleWakewordRecognizer: NSObject, SpeechProcessor {
     
     // MARK: public properties
     
-    static let sharedInstance: AppleWakewordRecognizer = AppleWakewordRecognizer()
+    @objc public static let sharedInstance: AppleWakewordRecognizer = AppleWakewordRecognizer()
     public var configuration: SpeechConfiguration? = SpeechConfiguration() {
         didSet {
             if self.configuration != nil {

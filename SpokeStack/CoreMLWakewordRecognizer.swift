@@ -15,7 +15,7 @@ public class CoreMLWakewordRecognizer: NSObject {
     
     // MARK: Public properties
     
-    static let sharedInstance: CoreMLWakewordRecognizer = CoreMLWakewordRecognizer()
+    @objc public static let sharedInstance: CoreMLWakewordRecognizer = CoreMLWakewordRecognizer()
     
     public var configuration: SpeechConfiguration? = SpeechConfiguration() {
         didSet {
