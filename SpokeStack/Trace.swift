@@ -18,13 +18,13 @@ public struct Trace {
     
     public static func trace(_ level: Trace.Level, configLevel: Trace.Level, message: String, delegate: SpeechEventListener?, caller: Any) {
         if level.rawValue >= configLevel.rawValue {
-            delegate?.didTrace("\(level) \(String(describing: type(of: caller))) \(message)")
+            delegate?.didTrace("\(level.rawValue) \(String(describing: type(of: caller))) \(message)")
         }
     }
 
     public static func trace(_ level: Trace.Level, configLevel: Trace.Level, message: String, delegate: PipelineDelegate?, caller: Any) {
         if level.rawValue >= configLevel.rawValue {
-            delegate?.didTrace("\(level) \(String(describing: type(of: caller))) \(message)")
+            delegate?.didTrace("\(level.rawValue) \(String(describing: type(of: caller))) \(message)")
         }
     }
     

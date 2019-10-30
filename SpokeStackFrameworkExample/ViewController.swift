@@ -13,31 +13,33 @@ class ViewController: UIViewController {
 
     // MARK: Outlets
     
-    @IBOutlet weak var appleButton: UIButton!
+    @IBOutlet weak var appleASRButton: UIButton!
     
-    @IBOutlet weak var wakeWordButton: UIButton!
+    @IBOutlet weak var appleWakewordButton: UIButton!
 
     @IBOutlet weak var coreMLWakewordButton: UIButton!
-    
+
+    @IBOutlet weak var tensorFlowWakewordButton: UIButton!
+
     // MARK: View Life Cycle
     
     override func viewDidLoad() {
         
         super.viewDidLoad()
-        self.wakeWordButton.isEnabled = true
+        self.appleWakewordButton.isEnabled = true
     }
 
-    @IBAction func appleAction(_ sender: Any) {
+    @IBAction func appleASRAction(_ sender: Any) {
     
-        let appleViewController: AppleViewController = AppleViewController()
+        let appleViewController: AppleASRViewController = AppleASRViewController()
         let navigationViewController: UINavigationController = UINavigationController(rootViewController: appleViewController)
         
         self.present(navigationViewController, animated: true, completion: nil)
     }
     
-    @IBAction func wakeWordAction(_ sender: Any) {
+    @IBAction func appleWakewordAction(_ sender: Any) {
         
-        let controller: WakeWordViewController = WakeWordViewController()
+        let controller: AppleWakewordViewController = AppleWakewordViewController()
         let navigationViewController: UINavigationController = UINavigationController(rootViewController: controller)
         
         self.present(navigationViewController, animated: true, completion: nil)

@@ -17,7 +17,7 @@ class CoreMLViewController: UIViewController {
         let button: UIButton = UIButton(frame: .zero)
         
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.setTitle("Start Recording", for: .normal)
+        button.setTitle("Start", for: .normal)
         button.addTarget(self,
                          action: #selector(CoreMLViewController.startRecordingAction(_:)),
                          for: .touchUpInside)
@@ -31,7 +31,7 @@ class CoreMLViewController: UIViewController {
         let button: UIButton = UIButton(frame: .zero)
         
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.setTitle("Stop Recording", for: .normal)
+        button.setTitle("Stop", for: .normal)
         button.addTarget(self,
                          action: #selector(CoreMLViewController.stopRecordingAction(_:)),
                          for: .touchUpInside)

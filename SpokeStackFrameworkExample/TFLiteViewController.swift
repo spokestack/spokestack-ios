@@ -17,7 +17,7 @@ class TFLiteViewController: UIViewController {
         let button: UIButton = UIButton(frame: .zero)
         
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.setTitle("Start Recording", for: .normal)
+        button.setTitle("Start", for: .normal)
         button.addTarget(self,
                          action: #selector(TFLiteViewController.startRecordingAction(_:)),
                          for: .touchUpInside)
@@ -31,7 +31,7 @@ class TFLiteViewController: UIViewController {
         let button: UIButton = UIButton(frame: .zero)
         
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.setTitle("Stop Recording", for: .normal)
+        button.setTitle("Stop", for: .normal)
         button.addTarget(self,
                          action: #selector(TFLiteViewController.stopRecordingAction(_:)),
                          for: .touchUpInside)
@@ -48,7 +48,7 @@ class TFLiteViewController: UIViewController {
         
         super.loadView()
         self.view.backgroundColor = .white
-        self.title = "TensorFlow"
+        self.title = "TensorFlow Wakeword"
         
         let doneBarButtonItem: UIBarButtonItem = UIBarButtonItem(barButtonSystemItem: .done,
                                                                  target: self,

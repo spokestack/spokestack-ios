@@ -38,8 +38,8 @@
 		5937579322D5281900AA7516 /* VADDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5937579222D5281900AA7516 /* VADDelegate.swift */; };
 		594154B822F8AD2200E3624E /* TFLiteWakewordRecognizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 594154B722F8AD2200E3624E /* TFLiteWakewordRecognizer.swift */; };
 		5967108E21F7AE6B00CBFC88 /* AppleSpeechRecognizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5967108D21F7AE6B00CBFC88 /* AppleSpeechRecognizer.swift */; };
-		59A0D5C02204E786003709C3 /* AppleViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59A0D5BD2204E786003709C3 /* AppleViewController.swift */; };
-		59A0D5C22204E786003709C3 /* WakeWordViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59A0D5BF2204E786003709C3 /* WakeWordViewController.swift */; };
+		59A0D5C02204E786003709C3 /* AppleASRViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59A0D5BD2204E786003709C3 /* AppleASRViewController.swift */; };
+		59A0D5C22204E786003709C3 /* AppleWakewordViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59A0D5BF2204E786003709C3 /* AppleWakewordViewController.swift */; };
 		59A0D5C42204E799003709C3 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 59A0D5C32204E799003709C3 /* Assets.xcassets */; };
 		59A0D5C72204E8E4003709C3 /* SpeechConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59A0D5C52204E8E4003709C3 /* SpeechConfiguration.swift */; };
 		59A45E4F2243ED530089D023 /* PipelineDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59A45E4E2243ED530089D023 /* PipelineDelegate.swift */; };
@@ -153,8 +153,8 @@
 		5937579222D5281900AA7516 /* VADDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VADDelegate.swift; sourceTree = "<group>"; };
 		594154B722F8AD2200E3624E /* TFLiteWakewordRecognizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TFLiteWakewordRecognizer.swift; sourceTree = "<group>"; };
 		5967108D21F7AE6B00CBFC88 /* AppleSpeechRecognizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppleSpeechRecognizer.swift; sourceTree = "<group>"; };
-		59A0D5BD2204E786003709C3 /* AppleViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppleViewController.swift; sourceTree = "<group>"; };
-		59A0D5BF2204E786003709C3 /* WakeWordViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WakeWordViewController.swift; sourceTree = "<group>"; };
+		59A0D5BD2204E786003709C3 /* AppleASRViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppleASRViewController.swift; sourceTree = "<group>"; };
+		59A0D5BF2204E786003709C3 /* AppleWakewordViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppleWakewordViewController.swift; sourceTree = "<group>"; };
 		59A0D5C32204E799003709C3 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		59A0D5C52204E8E4003709C3 /* SpeechConfiguration.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SpeechConfiguration.swift; sourceTree = "<group>"; };
 		59A45E4E2243ED530089D023 /* PipelineDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PipelineDelegate.swift; sourceTree = "<group>"; };
@@ -227,10 +227,10 @@
 				59E0E13C230DEB7C0060F012 /* Encode.lite */,
 				59E0E13D230DEB7C0060F012 /* Filter.lite */,
 				59A0D5C32204E799003709C3 /* Assets.xcassets */,
-				59A0D5BD2204E786003709C3 /* AppleViewController.swift */,
+				59A0D5BD2204E786003709C3 /* AppleASRViewController.swift */,
 				59FB0C9622B2DBC000FB9662 /* CoreMLViewController.swift */,
 				59E0E1382301FB920060F012 /* TFLiteViewController.swift */,
-				59A0D5BF2204E786003709C3 /* WakeWordViewController.swift */,
+				59A0D5BF2204E786003709C3 /* AppleWakewordViewController.swift */,
 				011C191F216BCA3200DB36FD /* AppDelegate.swift */,
 				011C1921216BCA3200DB36FD /* ViewController.swift */,
 				011C1923216BCA3200DB36FD /* Main.storyboard */,
@@ -671,8 +671,8 @@
 				011C1922216BCA3200DB36FD /* ViewController.swift in Sources */,
 				011C1920216BCA3200DB36FD /* AppDelegate.swift in Sources */,
 				59E0E1392301FB920060F012 /* TFLiteViewController.swift in Sources */,
-				59A0D5C02204E786003709C3 /* AppleViewController.swift in Sources */,
-				59A0D5C22204E786003709C3 /* WakeWordViewController.swift in Sources */,
+				59A0D5C02204E786003709C3 /* AppleASRViewController.swift in Sources */,
+				59A0D5C22204E786003709C3 /* AppleWakewordViewController.swift in Sources */,
 				59FB0C9722B2DBC100FB9662 /* CoreMLViewController.swift in Sources */,
 				59C15D5A234E430800B091F4 /* Filter.mlmodel in Sources */,
 				59C15D5B234E430800B091F4 /* Detect.mlmodel in Sources */,
