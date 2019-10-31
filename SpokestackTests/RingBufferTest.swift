@@ -1,13 +1,13 @@
 //
 //  RingBufferTest.swift
-//  SpokeStackTests
+//  SpokestackTests
 //
 //  Created by Noel Weichbrodt on 8/30/19.
 //  Copyright © 2019 Pylon AI, Inc. All rights reserved.
 //
 
 import XCTest
-import SpokeStack
+import Spokestack
 
 class RingBufferTest: XCTestCase {
 

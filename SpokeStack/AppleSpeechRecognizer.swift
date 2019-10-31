@@ -1,6 +1,6 @@
 //
 //  AppleSpeechRecognizer.swift
-//  SpokeStack
+//  Spokestack
 //
 //  Created by Cory D. Wiles on 1/10/19.
 //  Copyright © 2019 Pylon AI, Inc. All rights reserved.

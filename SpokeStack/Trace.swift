@@ -1,6 +1,6 @@
 //
 //  Spit.swift
-//  SpokeStack
+//  Spokestack
 //
 //  Created by Noel Weichbrodt on 8/12/19.
 //  Copyright © 2019 Pylon AI, Inc. All rights reserved.

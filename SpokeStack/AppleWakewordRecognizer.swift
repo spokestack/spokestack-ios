@@ -1,6 +1,6 @@
 //
 //  AppleWakewordRecognizer.swift
-//  SpokeStack
+//  Spokestack
 //
 //  Created by Noel Weichbrodt on 2/4/19.
 //  Copyright © 2019 Pylon AI, Inc. All rights reserved.
@@ -60,7 +60,6 @@ import Speech
     
     public func startStreaming(context: SpeechContext) {
         AudioController.sharedInstance.delegate = self
-        Trace.trace(Trace.Level.DEBUG, configLevel: self.traceLevel, message: "startStreaming", delegate: self.delegate, caller: self)
         self.context = context
         self.prepareAudioEngine()
         self.audioEngine.prepare()
@@ -69,7 +68,6 @@ import Speech
     
     public func stopStreaming(context: SpeechContext) {
         AudioController.sharedInstance.delegate = nil
-        Trace.trace(Trace.Level.DEBUG, configLevel: self.traceLevel, message: "stopStreaming", delegate: self.delegate, caller: self)
         self.context = context
         self.stopRecognition()
         self.dispatchWorker?.cancel()
@@ -82,7 +80,6 @@ import Speech
     // MARK: private functions
     
     private func prepareAudioEngine() {
-        Trace.trace(Trace.Level.DEBUG, configLevel: self.traceLevel, message: "prepareAudioEngine", delegate: self.delegate, caller: self)
         do {
             try self.vad.create(mode: .HighQuality,
                                 delegate: self,
@@ -108,7 +105,6 @@ import Speech
     
     private func startRecognition() {
         do {
-            Trace.trace(Trace.Level.DEBUG, configLevel: self.traceLevel, message: "startRecognition", delegate: self.delegate, caller: self)
             self.recognitionRequest = SFSpeechAudioBufferRecognitionRequest()
             self.recognitionRequest?.shouldReportPartialResults = true
             try self.createRecognitionTask()
@@ -126,7 +122,6 @@ import Speech
     }
     
     private func stopRecognition() {
-        Trace.trace(Trace.Level.DEBUG, configLevel: self.traceLevel, message: "stopRecognition", delegate: self.delegate, caller: self)
         self.recognitionTask?.cancel()
         self.recognitionTask?.finish()
         self.recognitionTask = nil
@@ -136,8 +131,6 @@ import Speech
     }
     
     private func createRecognitionTask() throws -> Void {
-        Trace.trace(Trace.Level.DEBUG, configLevel: self.traceLevel, message: "createRecognitionTask", delegate: self.delegate, caller: self)
-
         self.recognitionTask = self.speechRecognizer.recognitionTask(
             with: recognitionRequest!,
             resultHandler: {[weak self] result, error in
@@ -202,7 +195,7 @@ extension AppleWakewordRecognizer: AudioControllerDelegate {
         /// multiplex the audio frame data to both the vad and, if activated, the model pipelines
         audioProcessingQueue.async {[weak self] in
             guard let strongSelf = self else { return }
-            do { try strongSelf.vad.process(frame: frame, isSpeech: false) }
+            do { try strongSelf.vad.process(frame: frame, isSpeech: false) } // TODO: this will only trigger VAD activation the first time, and run the ASR continuously subsequently.
             catch let error {
                 strongSelf.delegate?.didError(error)
             }
@@ -219,7 +212,6 @@ extension AppleWakewordRecognizer: VADDelegate {
         } else if (self.context.isStarted){
             self.context.isSpeech = true
             do {
-                Trace.trace(Trace.Level.DEBUG, configLevel: self.traceLevel, message: "activate self.context.isActive: \(self.context.isActive)", delegate: self.delegate, caller: self)
                 try self.audioEngine.start()
                 self.startRecognition()
             } catch let error {
@@ -232,7 +224,6 @@ extension AppleWakewordRecognizer: VADDelegate {
         if (self.context.isActive) {
             // asr is active, so don't interrupt
         } else {
-            Trace.trace(Trace.Level.DEBUG, configLevel: self.traceLevel, message: "deactivate self.context.isActive: \(self.context.isActive)", delegate: self.delegate, caller: self)
             self.context.isSpeech = false
             self.stopRecognition()
             self.audioEngine.pause()

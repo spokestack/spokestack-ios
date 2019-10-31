@@ -1,13 +1,13 @@
 //
 //  ViewController.swift
-//  SpokeStackFrameworkExample
+//  SpokestackFrameworkExample
 //
 //  Created by Cory D. Wiles on 10/8/18.
 //  Copyright © 2018 Pylon AI, Inc. All rights reserved.
 //
 
 import UIKit
-import SpokeStack
+import Spokestack
 
 class ViewController: UIViewController {
 

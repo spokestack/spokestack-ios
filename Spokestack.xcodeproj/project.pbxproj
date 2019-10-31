@@ -11,10 +11,10 @@
 		011C1922216BCA3200DB36FD /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 011C1921216BCA3200DB36FD /* ViewController.swift */; };
 		011C1925216BCA3200DB36FD /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 011C1923216BCA3200DB36FD /* Main.storyboard */; };
 		011C192A216BCA3200DB36FD /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 011C1928216BCA3200DB36FD /* LaunchScreen.storyboard */; };
-		01B2B42721ADC32A00289890 /* SpokeStack.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01D31F3B216BAF260055FD45 /* SpokeStack.framework */; };
-		01B2B42821ADC33000289890 /* SpokeStack.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 01D31F3B216BAF260055FD45 /* SpokeStack.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		01D31F45216BAF260055FD45 /* SpokeStack.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01D31F3B216BAF260055FD45 /* SpokeStack.framework */; };
-		01D31F4C216BAF260055FD45 /* SpokeStack.h in Headers */ = {isa = PBXBuildFile; fileRef = 01D31F3E216BAF260055FD45 /* SpokeStack.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		01B2B42721ADC32A00289890 /* Spokestack.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01D31F3B216BAF260055FD45 /* Spokestack.framework */; };
+		01B2B42821ADC33000289890 /* Spokestack.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 01D31F3B216BAF260055FD45 /* Spokestack.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		01D31F45216BAF260055FD45 /* Spokestack.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01D31F3B216BAF260055FD45 /* Spokestack.framework */; };
+		01D31F4C216BAF260055FD45 /* Spokestack.h in Headers */ = {isa = PBXBuildFile; fileRef = 01D31F3E216BAF260055FD45 /* Spokestack.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		01D31F62216BAFA40055FD45 /* AudioController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01D31F61216BAFA40055FD45 /* AudioController.swift */; };
 		01D31F63216BAFA40055FD45 /* AudioController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01D31F61216BAFA40055FD45 /* AudioController.swift */; };
 		01D31F66216BAFB50055FD45 /* Error.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01D31F65216BAFB50055FD45 /* Error.swift */; };
@@ -29,8 +29,9 @@
 		01D31F8B216BB0220055FD45 /* Results.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01D31F89216BB0220055FD45 /* Results.swift */; };
 		01D31F8E216BB0370055FD45 /* Typealiases.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01D31F8D216BB0370055FD45 /* Typealiases.swift */; };
 		01D31F8F216BB0370055FD45 /* Typealiases.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01D31F8D216BB0370055FD45 /* Typealiases.swift */; };
-		34FFC9B0ECF4B891E68E1D7A /* Pods_SpokeStack.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1B644F4FE4DCC43463622FF9 /* Pods_SpokeStack.framework */; };
-		581A587338A107EE9BB1FDCE /* Pods_SpokeStackFrameworkExample.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59E00286DC69F3331EFFC970 /* Pods_SpokeStackFrameworkExample.framework */; };
+		5936077D236B687C00FFA29F /* Detect.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59C15D55234E42F800B091F4 /* Detect.swift */; };
+		5936077E236B687F00FFA29F /* Filter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59C15D54234E42F700B091F4 /* Filter.swift */; };
+		5936077F236B688400FFA29F /* WebRTCVAD.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59C15D52234D322A00B091F4 /* WebRTCVAD.swift */; };
 		59365948220889EE00C0365F /* AppleWakewordRecognizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59365947220889EE00C0365F /* AppleWakewordRecognizer.swift */; };
 		5936594A2209DDBA00C0365F /* SpeechEventListener.swift in Sources */ = {isa = PBXBuildFile; fileRef = 593659492209DDBA00C0365F /* SpeechEventListener.swift */; };
 		5936594C2209EA1800C0365F /* SpeechProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5936594B2209EA1800C0365F /* SpeechProcessor.swift */; };
@@ -83,7 +84,9 @@
 		59FB0C8D22B0640700FB9662 /* RingBuffer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59FB0C8C22B0640700FB9662 /* RingBuffer.swift */; };
 		59FB0C8F22B0682900FB9662 /* FFT.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59FB0C8E22B0682900FB9662 /* FFT.swift */; };
 		59FB0C9722B2DBC100FB9662 /* CoreMLViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59FB0C9622B2DBC000FB9662 /* CoreMLViewController.swift */; };
-		79380F8051F9451C5C2690AB /* Pods_SpokeStackTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DB7CAD15C170D87C0C34C0E2 /* Pods_SpokeStackTests.framework */; };
+		6B218E8C6733C09829E0EC8D /* Pods_Spokestack.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DC9D7D743DEFEF26F6187374 /* Pods_Spokestack.framework */; };
+		7310E0D477A0B18484970757 /* Pods_SpokestackFrameworkExample.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2E5DAE627A148F64B7FFBCD0 /* Pods_SpokestackFrameworkExample.framework */; };
+		944CCC7036716C10EB5EF6EA /* Pods_SpokestackTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DCCC4FA8F563F7B62E3D68EE /* Pods_SpokestackTests.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -92,14 +95,21 @@
 			containerPortal = 01D31F32216BAF260055FD45 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = 01D31F3A216BAF260055FD45;
-			remoteInfo = SpokeStack;
+			remoteInfo = Spokestack;
 		};
 		01D31F46216BAF260055FD45 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 01D31F32216BAF260055FD45 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = 01D31F3A216BAF260055FD45;
-			remoteInfo = SpokeStack;
+			remoteInfo = Spokestack;
+		};
+		5936077B236B5D9300FFA29F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 01D31F32216BAF260055FD45 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 011C191C216BCA3200DB36FD;
+			remoteInfo = SpokestackFrameworkExample;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -110,7 +120,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				01B2B42821ADC33000289890 /* SpokeStack.framework in Embed Frameworks */,
+				01B2B42821ADC33000289890 /* Spokestack.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -118,16 +128,16 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		011C191D216BCA3200DB36FD /* SpokeStackFrameworkExample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SpokeStackFrameworkExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		011C191D216BCA3200DB36FD /* SpokestackFrameworkExample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SpokestackFrameworkExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		011C191F216BCA3200DB36FD /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		011C1921216BCA3200DB36FD /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		011C1924216BCA3200DB36FD /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		011C1929216BCA3200DB36FD /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		011C192B216BCA3200DB36FD /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		01D31F3B216BAF260055FD45 /* SpokeStack.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = SpokeStack.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		01D31F3E216BAF260055FD45 /* SpokeStack.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SpokeStack.h; sourceTree = "<group>"; };
+		01D31F3B216BAF260055FD45 /* Spokestack.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Spokestack.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		01D31F3E216BAF260055FD45 /* Spokestack.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Spokestack.h; sourceTree = "<group>"; };
 		01D31F3F216BAF260055FD45 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		01D31F44216BAF260055FD45 /* SpokeStackTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SpokeStackTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		01D31F44216BAF260055FD45 /* SpokestackTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SpokestackTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		01D31F4B216BAF260055FD45 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		01D31F61216BAFA40055FD45 /* AudioController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AudioController.swift; sourceTree = "<group>"; };
 		01D31F65216BAFB50055FD45 /* Error.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Error.swift; sourceTree = "<group>"; };
@@ -136,10 +146,9 @@
 		01D31F75216BAFEF0055FD45 /* AudioControllerDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AudioControllerDelegate.swift; sourceTree = "<group>"; };
 		01D31F89216BB0220055FD45 /* Results.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Results.swift; sourceTree = "<group>"; };
 		01D31F8D216BB0370055FD45 /* Typealiases.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Typealiases.swift; sourceTree = "<group>"; };
-		1B644F4FE4DCC43463622FF9 /* Pods_SpokeStack.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SpokeStack.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		2375DCD9CBFF30556C7DF76A /* Pods-SpokeStack.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SpokeStack.debug.xcconfig"; path = "Target Support Files/Pods-SpokeStack/Pods-SpokeStack.debug.xcconfig"; sourceTree = "<group>"; };
-		43FEB1CECD4379A2C9135539 /* Pods-SpokeStack.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SpokeStack.release.xcconfig"; path = "Target Support Files/Pods-SpokeStack/Pods-SpokeStack.release.xcconfig"; sourceTree = "<group>"; };
-		5032B63E7BB24FAFD93E54B4 /* Pods-SpokeStackFrameworkExample.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SpokeStackFrameworkExample.release.xcconfig"; path = "Target Support Files/Pods-SpokeStackFrameworkExample/Pods-SpokeStackFrameworkExample.release.xcconfig"; sourceTree = "<group>"; };
+		0983B0EE40DA914769988A20 /* Pods-SpokestackTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SpokestackTests.release.xcconfig"; path = "Target Support Files/Pods-SpokestackTests/Pods-SpokestackTests.release.xcconfig"; sourceTree = "<group>"; };
+		2E5DAE627A148F64B7FFBCD0 /* Pods_SpokestackFrameworkExample.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SpokestackFrameworkExample.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		5123AD317B8D6242E1F19C0E /* Pods-Spokestack.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Spokestack.release.xcconfig"; path = "Target Support Files/Pods-Spokestack/Pods-Spokestack.release.xcconfig"; sourceTree = "<group>"; };
 		59062F0922A5AA8400613AD8 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		59062F0B22A5AA9D00613AD8 /* WITVad.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WITVad.h; sourceTree = "<group>"; };
 		59062F0C22A5AA9D00613AD8 /* WITVad.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = WITVad.m; sourceTree = "<group>"; };
@@ -158,7 +167,7 @@
 		59A0D5C32204E799003709C3 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		59A0D5C52204E8E4003709C3 /* SpeechConfiguration.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SpeechConfiguration.swift; sourceTree = "<group>"; };
 		59A45E4E2243ED530089D023 /* PipelineDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PipelineDelegate.swift; sourceTree = "<group>"; };
-		59C15D52234D322A00B091F4 /* WebRTCVAD.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = WebRTCVAD.swift; path = SpokeStack/WebRTCVAD.swift; sourceTree = SOURCE_ROOT; };
+		59C15D52234D322A00B091F4 /* WebRTCVAD.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = WebRTCVAD.swift; path = Spokestack/WebRTCVAD.swift; sourceTree = SOURCE_ROOT; };
 		59C15D54234E42F700B091F4 /* Filter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Filter.swift; sourceTree = "<group>"; };
 		59C15D55234E42F800B091F4 /* Detect.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Detect.swift; sourceTree = "<group>"; };
 		59C15D58234E430700B091F4 /* Filter.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = Filter.mlmodel; sourceTree = "<group>"; };
@@ -167,7 +176,6 @@
 		59C2AFED231ED07100E47AC5 /* WebRTCVADTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebRTCVADTest.swift; sourceTree = "<group>"; };
 		59D78F5E2322D13700728A98 /* AudioControllerTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioControllerTest.swift; sourceTree = "<group>"; };
 		59D78F602322EAE000728A98 /* SpeechPipelineTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeechPipelineTest.swift; sourceTree = "<group>"; };
-		59E00286DC69F3331EFFC970 /* Pods_SpokeStackFrameworkExample.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SpokeStackFrameworkExample.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		59E0E13422FE2C2B0060F012 /* SignalProcessing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignalProcessing.swift; sourceTree = "<group>"; };
 		59E0E1362301F0A80060F012 /* Trace.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Trace.swift; sourceTree = "<group>"; };
 		59E0E1382301FB920060F012 /* TFLiteViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TFLiteViewController.swift; sourceTree = "<group>"; };
@@ -182,10 +190,12 @@
 		59FB0C8C22B0640700FB9662 /* RingBuffer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RingBuffer.swift; sourceTree = "<group>"; };
 		59FB0C8E22B0682900FB9662 /* FFT.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFT.swift; sourceTree = "<group>"; };
 		59FB0C9622B2DBC000FB9662 /* CoreMLViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreMLViewController.swift; sourceTree = "<group>"; };
-		AD7F29D98EA28A40D9C208F8 /* Pods-SpokeStackTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SpokeStackTests.release.xcconfig"; path = "Target Support Files/Pods-SpokeStackTests/Pods-SpokeStackTests.release.xcconfig"; sourceTree = "<group>"; };
-		BAF6725A135BC6F386096604 /* Pods-SpokeStackTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SpokeStackTests.debug.xcconfig"; path = "Target Support Files/Pods-SpokeStackTests/Pods-SpokeStackTests.debug.xcconfig"; sourceTree = "<group>"; };
-		DB7CAD15C170D87C0C34C0E2 /* Pods_SpokeStackTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SpokeStackTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		ED0E9023AA04B554804D3AFF /* Pods-SpokeStackFrameworkExample.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SpokeStackFrameworkExample.debug.xcconfig"; path = "Target Support Files/Pods-SpokeStackFrameworkExample/Pods-SpokeStackFrameworkExample.debug.xcconfig"; sourceTree = "<group>"; };
+		87E00C354EAE6F97CE48B5AE /* Pods-SpokestackFrameworkExample.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SpokestackFrameworkExample.release.xcconfig"; path = "Target Support Files/Pods-SpokestackFrameworkExample/Pods-SpokestackFrameworkExample.release.xcconfig"; sourceTree = "<group>"; };
+		9046EDB03884D7895DE41621 /* Pods-SpokestackFrameworkExample.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SpokestackFrameworkExample.debug.xcconfig"; path = "Target Support Files/Pods-SpokestackFrameworkExample/Pods-SpokestackFrameworkExample.debug.xcconfig"; sourceTree = "<group>"; };
+		C4C6D917748DF75FB3939507 /* Pods-Spokestack.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Spokestack.debug.xcconfig"; path = "Target Support Files/Pods-Spokestack/Pods-Spokestack.debug.xcconfig"; sourceTree = "<group>"; };
+		D0A001F2408B9072FCD54E38 /* Pods-SpokestackTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SpokestackTests.debug.xcconfig"; path = "Target Support Files/Pods-SpokestackTests/Pods-SpokestackTests.debug.xcconfig"; sourceTree = "<group>"; };
+		DC9D7D743DEFEF26F6187374 /* Pods_Spokestack.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Spokestack.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		DCCC4FA8F563F7B62E3D68EE /* Pods_SpokestackTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SpokestackTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -193,8 +203,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				01B2B42721ADC32A00289890 /* SpokeStack.framework in Frameworks */,
-				581A587338A107EE9BB1FDCE /* Pods_SpokeStackFrameworkExample.framework in Frameworks */,
+				01B2B42721ADC32A00289890 /* Spokestack.framework in Frameworks */,
+				7310E0D477A0B18484970757 /* Pods_SpokestackFrameworkExample.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -202,7 +212,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				34FFC9B0ECF4B891E68E1D7A /* Pods_SpokeStack.framework in Frameworks */,
+				6B218E8C6733C09829E0EC8D /* Pods_Spokestack.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -210,15 +220,15 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				01D31F45216BAF260055FD45 /* SpokeStack.framework in Frameworks */,
-				79380F8051F9451C5C2690AB /* Pods_SpokeStackTests.framework in Frameworks */,
+				01D31F45216BAF260055FD45 /* Spokestack.framework in Frameworks */,
+				944CCC7036716C10EB5EF6EA /* Pods_SpokestackTests.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		011C191E216BCA3200DB36FD /* SpokeStackFrameworkExample */ = {
+		011C191E216BCA3200DB36FD /* SpokestackFrameworkExample */ = {
 			isa = PBXGroup;
 			children = (
 				59C15D59234E430800B091F4 /* Detect.mlmodel */,
@@ -237,16 +247,16 @@
 				011C1928216BCA3200DB36FD /* LaunchScreen.storyboard */,
 				011C192B216BCA3200DB36FD /* Info.plist */,
 			);
-			path = SpokeStackFrameworkExample;
+			path = SpokestackFrameworkExample;
 			sourceTree = "<group>";
 		};
 		01D31F31216BAF260055FD45 = {
 			isa = PBXGroup;
 			children = (
-				011C191E216BCA3200DB36FD /* SpokeStackFrameworkExample */,
+				011C191E216BCA3200DB36FD /* SpokestackFrameworkExample */,
 				01D31F3C216BAF260055FD45 /* Products */,
-				01D31F3D216BAF260055FD45 /* SpokeStack */,
-				01D31F48216BAF260055FD45 /* SpokeStackTests */,
+				01D31F3D216BAF260055FD45 /* Spokestack */,
+				01D31F48216BAF260055FD45 /* SpokestackTests */,
 				59062F0822A5AA8400613AD8 /* Frameworks */,
 				FCED7B8EC4B311B39038A465 /* Pods */,
 			);
@@ -255,14 +265,14 @@
 		01D31F3C216BAF260055FD45 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				01D31F3B216BAF260055FD45 /* SpokeStack.framework */,
-				01D31F44216BAF260055FD45 /* SpokeStackTests.xctest */,
-				011C191D216BCA3200DB36FD /* SpokeStackFrameworkExample.app */,
+				01D31F3B216BAF260055FD45 /* Spokestack.framework */,
+				01D31F44216BAF260055FD45 /* SpokestackTests.xctest */,
+				011C191D216BCA3200DB36FD /* SpokestackFrameworkExample.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		01D31F3D216BAF260055FD45 /* SpokeStack */ = {
+		01D31F3D216BAF260055FD45 /* Spokestack */ = {
 			isa = PBXGroup;
 			children = (
 				59FB0C8922AEE4DA00FB9662 /* Extensions */,
@@ -277,10 +287,10 @@
 				01D31F55216BAF3D0055FD45 /* Support Files */,
 				01D31F8C216BB0270055FD45 /* Typealiases */,
 			);
-			path = SpokeStack;
+			path = Spokestack;
 			sourceTree = "<group>";
 		};
-		01D31F48216BAF260055FD45 /* SpokeStackTests */ = {
+		01D31F48216BAF260055FD45 /* SpokestackTests */ = {
 			isa = PBXGroup;
 			children = (
 				59C2AFD92319CB7100E47AC5 /* RingBufferTest.swift */,
@@ -292,13 +302,13 @@
 				59EF51C023328D57006BA0BD /* AppleWakewordRecognizerTest.swift */,
 				59EF51C22332E57B006BA0BD /* Frame.swift */,
 			);
-			path = SpokeStackTests;
+			path = SpokestackTests;
 			sourceTree = "<group>";
 		};
 		01D31F55216BAF3D0055FD45 /* Support Files */ = {
 			isa = PBXGroup;
 			children = (
-				01D31F3E216BAF260055FD45 /* SpokeStack.h */,
+				01D31F3E216BAF260055FD45 /* Spokestack.h */,
 				01D31F3F216BAF260055FD45 /* Info.plist */,
 			);
 			name = "Support Files";
@@ -396,9 +406,9 @@
 			isa = PBXGroup;
 			children = (
 				59062F0922A5AA8400613AD8 /* Foundation.framework */,
-				1B644F4FE4DCC43463622FF9 /* Pods_SpokeStack.framework */,
-				59E00286DC69F3331EFFC970 /* Pods_SpokeStackFrameworkExample.framework */,
-				DB7CAD15C170D87C0C34C0E2 /* Pods_SpokeStackTests.framework */,
+				DC9D7D743DEFEF26F6187374 /* Pods_Spokestack.framework */,
+				2E5DAE627A148F64B7FFBCD0 /* Pods_SpokestackFrameworkExample.framework */,
+				DCCC4FA8F563F7B62E3D68EE /* Pods_SpokestackTests.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -434,12 +444,12 @@
 		FCED7B8EC4B311B39038A465 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				2375DCD9CBFF30556C7DF76A /* Pods-SpokeStack.debug.xcconfig */,
-				43FEB1CECD4379A2C9135539 /* Pods-SpokeStack.release.xcconfig */,
-				ED0E9023AA04B554804D3AFF /* Pods-SpokeStackFrameworkExample.debug.xcconfig */,
-				5032B63E7BB24FAFD93E54B4 /* Pods-SpokeStackFrameworkExample.release.xcconfig */,
-				BAF6725A135BC6F386096604 /* Pods-SpokeStackTests.debug.xcconfig */,
-				AD7F29D98EA28A40D9C208F8 /* Pods-SpokeStackTests.release.xcconfig */,
+				C4C6D917748DF75FB3939507 /* Pods-Spokestack.debug.xcconfig */,
+				5123AD317B8D6242E1F19C0E /* Pods-Spokestack.release.xcconfig */,
+				9046EDB03884D7895DE41621 /* Pods-SpokestackFrameworkExample.debug.xcconfig */,
+				87E00C354EAE6F97CE48B5AE /* Pods-SpokestackFrameworkExample.release.xcconfig */,
+				D0A001F2408B9072FCD54E38 /* Pods-SpokestackTests.debug.xcconfig */,
+				0983B0EE40DA914769988A20 /* Pods-SpokestackTests.release.xcconfig */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
@@ -451,18 +461,18 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				01D31F4C216BAF260055FD45 /* SpokeStack.h in Headers */,
+				01D31F4C216BAF260055FD45 /* Spokestack.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
-		011C191C216BCA3200DB36FD /* SpokeStackFrameworkExample */ = {
+		011C191C216BCA3200DB36FD /* SpokestackFrameworkExample */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 011C192C216BCA3200DB36FD /* Build configuration list for PBXNativeTarget "SpokeStackFrameworkExample" */;
+			buildConfigurationList = 011C192C216BCA3200DB36FD /* Build configuration list for PBXNativeTarget "SpokestackFrameworkExample" */;
 			buildPhases = (
-				19FA2CF8B5FFC31F5C8FE530 /* [CP] Check Pods Manifest.lock */,
+				CF00CFE7EA956E6E6AF0F4BC /* [CP] Check Pods Manifest.lock */,
 				011C1919216BCA3200DB36FD /* Sources */,
 				011C191A216BCA3200DB36FD /* Frameworks */,
 				011C191B216BCA3200DB36FD /* Resources */,
@@ -473,16 +483,16 @@
 			dependencies = (
 				011C1946216BDBE000DB36FD /* PBXTargetDependency */,
 			);
-			name = SpokeStackFrameworkExample;
-			productName = SpokeStackFrameworkExample;
-			productReference = 011C191D216BCA3200DB36FD /* SpokeStackFrameworkExample.app */;
+			name = SpokestackFrameworkExample;
+			productName = SpokestackFrameworkExample;
+			productReference = 011C191D216BCA3200DB36FD /* SpokestackFrameworkExample.app */;
 			productType = "com.apple.product-type.application";
 		};
-		01D31F3A216BAF260055FD45 /* SpokeStack */ = {
+		01D31F3A216BAF260055FD45 /* Spokestack */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 01D31F4F216BAF260055FD45 /* Build configuration list for PBXNativeTarget "SpokeStack" */;
+			buildConfigurationList = 01D31F4F216BAF260055FD45 /* Build configuration list for PBXNativeTarget "Spokestack" */;
 			buildPhases = (
-				6C213DE7E97E54E292AD0F3A /* [CP] Check Pods Manifest.lock */,
+				2F76ED2814D634C38E30EDB2 /* [CP] Check Pods Manifest.lock */,
 				01D31F36216BAF260055FD45 /* Headers */,
 				01D31F37216BAF260055FD45 /* Sources */,
 				01D31F38216BAF260055FD45 /* Frameworks */,
@@ -492,16 +502,16 @@
 			);
 			dependencies = (
 			);
-			name = SpokeStack;
-			productName = SpokeStack;
-			productReference = 01D31F3B216BAF260055FD45 /* SpokeStack.framework */;
+			name = Spokestack;
+			productName = Spokestack;
+			productReference = 01D31F3B216BAF260055FD45 /* Spokestack.framework */;
 			productType = "com.apple.product-type.framework";
 		};
-		01D31F43216BAF260055FD45 /* SpokeStackTests */ = {
+		01D31F43216BAF260055FD45 /* SpokestackTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 01D31F52216BAF260055FD45 /* Build configuration list for PBXNativeTarget "SpokeStackTests" */;
+			buildConfigurationList = 01D31F52216BAF260055FD45 /* Build configuration list for PBXNativeTarget "SpokestackTests" */;
 			buildPhases = (
-				137022192CCC0C67E787D79C /* [CP] Check Pods Manifest.lock */,
+				9C32021C4193DEE646C435BA /* [CP] Check Pods Manifest.lock */,
 				01D31F40216BAF260055FD45 /* Sources */,
 				01D31F41216BAF260055FD45 /* Frameworks */,
 				01D31F42216BAF260055FD45 /* Resources */,
@@ -510,10 +520,11 @@
 			);
 			dependencies = (
 				01D31F47216BAF260055FD45 /* PBXTargetDependency */,
+				5936077C236B5D9300FFA29F /* PBXTargetDependency */,
 			);
-			name = SpokeStackTests;
-			productName = SpokeStackTests;
-			productReference = 01D31F44216BAF260055FD45 /* SpokeStackTests.xctest */;
+			name = SpokestackTests;
+			productName = SpokestackTests;
+			productReference = 01D31F44216BAF260055FD45 /* SpokestackTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
 /* End PBXNativeTarget section */
@@ -544,7 +555,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 01D31F35216BAF260055FD45 /* Build configuration list for PBXProject "SpokeStack" */;
+			buildConfigurationList = 01D31F35216BAF260055FD45 /* Build configuration list for PBXProject "Spokestack" */;
 			compatibilityVersion = "Xcode 9.3";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -557,9 +568,9 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				01D31F3A216BAF260055FD45 /* SpokeStack */,
-				01D31F43216BAF260055FD45 /* SpokeStackTests */,
-				011C191C216BCA3200DB36FD /* SpokeStackFrameworkExample */,
+				01D31F3A216BAF260055FD45 /* Spokestack */,
+				01D31F43216BAF260055FD45 /* SpokestackTests */,
+				011C191C216BCA3200DB36FD /* SpokestackFrameworkExample */,
 			);
 		};
 /* End PBXProject section */
@@ -595,7 +606,7 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		137022192CCC0C67E787D79C /* [CP] Check Pods Manifest.lock */ = {
+		2F76ED2814D634C38E30EDB2 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -610,14 +621,14 @@
 			outputFileListPaths = (
 			);
 			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-SpokeStackTests-checkManifestLockResult.txt",
+				"$(DERIVED_FILE_DIR)/Pods-Spokestack-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		19FA2CF8B5FFC31F5C8FE530 /* [CP] Check Pods Manifest.lock */ = {
+		9C32021C4193DEE646C435BA /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -632,14 +643,14 @@
 			outputFileListPaths = (
 			);
 			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-SpokeStackFrameworkExample-checkManifestLockResult.txt",
+				"$(DERIVED_FILE_DIR)/Pods-SpokestackTests-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		6C213DE7E97E54E292AD0F3A /* [CP] Check Pods Manifest.lock */ = {
+		CF00CFE7EA956E6E6AF0F4BC /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -654,7 +665,7 @@
 			outputFileListPaths = (
 			);
 			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-SpokeStack-checkManifestLockResult.txt",
+				"$(DERIVED_FILE_DIR)/Pods-SpokestackFrameworkExample-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -718,6 +729,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				59C2AFE02319CEA100E47AC5 /* AppleWakewordRecognizer.swift in Sources */,
+				5936077E236B687F00FFA29F /* Filter.swift in Sources */,
 				59D78F612322EAE000728A98 /* SpeechPipelineTest.swift in Sources */,
 				59C2AFEA2319CF8A00E47AC5 /* Data+Extensions.swift in Sources */,
 				59C2AFE22319CEAE00E47AC5 /* TFLiteWakewordRecognizer.swift in Sources */,
@@ -728,6 +740,7 @@
 				59C2AFE62319CEEF00E47AC5 /* RingBuffer.swift in Sources */,
 				01D31F70216BAFD90055FD45 /* SpeechContext.swift in Sources */,
 				59C2AFDF2319CE8000E47AC5 /* SpeechProcessor.swift in Sources */,
+				5936077F236B688400FFA29F /* WebRTCVAD.swift in Sources */,
 				59D78F5F2322D13700728A98 /* AudioControllerTest.swift in Sources */,
 				59C2AFE82319CF3900E47AC5 /* FFT.swift in Sources */,
 				59C2AFE12319CEA800E47AC5 /* CoreMLWakewordRecognizer.swift in Sources */,
@@ -741,6 +754,7 @@
 				01D31F7A216BAFEF0055FD45 /* AudioControllerDelegate.swift in Sources */,
 				59C2AFDA2319CB7100E47AC5 /* RingBufferTest.swift in Sources */,
 				59C2AFE42319CEC300E47AC5 /* Trace.swift in Sources */,
+				5936077D236B687C00FFA29F /* Detect.swift in Sources */,
 				59C2AFE52319CED100E47AC5 /* AppleSpeechRecognizer.swift in Sources */,
 				59C2AFDB2319CE5800E47AC5 /* SpeechConfiguration.swift in Sources */,
 				59EF51C32332E57B006BA0BD /* Frame.swift in Sources */,
@@ -754,13 +768,18 @@
 /* Begin PBXTargetDependency section */
 		011C1946216BDBE000DB36FD /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 01D31F3A216BAF260055FD45 /* SpokeStack */;
+			target = 01D31F3A216BAF260055FD45 /* Spokestack */;
 			targetProxy = 011C1945216BDBE000DB36FD /* PBXContainerItemProxy */;
 		};
 		01D31F47216BAF260055FD45 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 01D31F3A216BAF260055FD45 /* SpokeStack */;
+			target = 01D31F3A216BAF260055FD45 /* Spokestack */;
 			targetProxy = 01D31F46216BAF260055FD45 /* PBXContainerItemProxy */;
+		};
+		5936077C236B5D9300FFA29F /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 011C191C216BCA3200DB36FD /* SpokestackFrameworkExample */;
+			targetProxy = 5936077B236B5D9300FFA29F /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -786,7 +805,7 @@
 /* Begin XCBuildConfiguration section */
 		011C192D216BCA3200DB36FD /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = ED0E9023AA04B554804D3AFF /* Pods-SpokeStackFrameworkExample.debug.xcconfig */;
+			baseConfigurationReference = 9046EDB03884D7895DE41621 /* Pods-SpokestackFrameworkExample.debug.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -795,12 +814,12 @@
 				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
 				DEVELOPMENT_TEAM = S55ZL97588;
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
-				INFOPLIST_FILE = SpokeStackFrameworkExample/Info.plist;
+				INFOPLIST_FILE = SpokestackFrameworkExample/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.pylon.SpokeStackFrameworkExample;
+				PRODUCT_BUNDLE_IDENTIFIER = io.Spokestack.SpokestackFrameworkExample;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 4.2;
@@ -810,7 +829,7 @@
 		};
 		011C192E216BCA3200DB36FD /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 5032B63E7BB24FAFD93E54B4 /* Pods-SpokeStackFrameworkExample.release.xcconfig */;
+			baseConfigurationReference = 87E00C354EAE6F97CE48B5AE /* Pods-SpokestackFrameworkExample.release.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -819,12 +838,12 @@
 				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
 				DEVELOPMENT_TEAM = S55ZL97588;
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
-				INFOPLIST_FILE = SpokeStackFrameworkExample/Info.plist;
+				INFOPLIST_FILE = SpokestackFrameworkExample/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.pylon.SpokeStackFrameworkExample;
+				PRODUCT_BUNDLE_IDENTIFIER = io.Spokestack.SpokestackFrameworkExample;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 4.2;
@@ -891,7 +910,7 @@
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
-				SWIFT_INCLUDE_PATHS = "${SRCROOT}/SpokeStack/filter_audio/**";
+				SWIFT_INCLUDE_PATHS = "${SRCROOT}/Spokestack/filter_audio/**";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
@@ -950,7 +969,7 @@
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
-				SWIFT_INCLUDE_PATHS = "${SRCROOT}/SpokeStack/filter_audio/**";
+				SWIFT_INCLUDE_PATHS = "${SRCROOT}/Spokestack/filter_audio/**";
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
 				VALIDATE_PRODUCT = YES;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -960,7 +979,7 @@
 		};
 		01D31F50216BAF260055FD45 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 2375DCD9CBFF30556C7DF76A /* Pods-SpokeStack.debug.xcconfig */;
+			baseConfigurationReference = C4C6D917748DF75FB3939507 /* Pods-Spokestack.debug.xcconfig */;
 			buildSettings = {
 				APPLY_RULES_IN_COPY_HEADERS = NO;
 				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = NO;
@@ -978,7 +997,7 @@
 					"$(inherited)",
 					"\"${PODS_CONFIGURATION_BUILD_DIR}/TensorFlowLiteSwift/TensorFlowLite.framework/Headers\"",
 				);
-				INFOPLIST_FILE = SpokeStack/Info.plist;
+				INFOPLIST_FILE = Spokestack/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -989,11 +1008,11 @@
 					"$(inherited)",
 					"-ObjC",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.pylon.SpokeStack;
+				PRODUCT_BUNDLE_IDENTIFIER = io.spokestack.Spokestack;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SCAN_ALL_SOURCE_FILES_FOR_INCLUDES = YES;
 				SKIP_INSTALL = YES;
-				SWIFT_INCLUDE_PATHS = "${SRCROOT}/SpokeStack/VAD/filter_audio/** ${SRCROOT}/SpokeStack/VAD/Wit";
+				SWIFT_INCLUDE_PATHS = "${SRCROOT}/Spokestack/VAD/filter_audio/** ${SRCROOT}/Spokestack/VAD/Wit";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -1003,7 +1022,7 @@
 		};
 		01D31F51216BAF260055FD45 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 43FEB1CECD4379A2C9135539 /* Pods-SpokeStack.release.xcconfig */;
+			baseConfigurationReference = 5123AD317B8D6242E1F19C0E /* Pods-Spokestack.release.xcconfig */;
 			buildSettings = {
 				APPLY_RULES_IN_COPY_HEADERS = NO;
 				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = NO;
@@ -1021,7 +1040,7 @@
 					"$(inherited)",
 					"\"${PODS_CONFIGURATION_BUILD_DIR}/TensorFlowLiteSwift/TensorFlowLite.framework/Headers\"",
 				);
-				INFOPLIST_FILE = SpokeStack/Info.plist;
+				INFOPLIST_FILE = Spokestack/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1032,11 +1051,11 @@
 					"$(inherited)",
 					"-ObjC",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.pylon.SpokeStack;
+				PRODUCT_BUNDLE_IDENTIFIER = io.spokestack.Spokestack;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SCAN_ALL_SOURCE_FILES_FOR_INCLUDES = YES;
 				SKIP_INSTALL = YES;
-				SWIFT_INCLUDE_PATHS = "${SRCROOT}/SpokeStack/VAD/filter_audio/** ${SRCROOT}/SpokeStack/VAD/Wit";
+				SWIFT_INCLUDE_PATHS = "${SRCROOT}/Spokestack/VAD/filter_audio/** ${SRCROOT}/Spokestack/VAD/Wit";
 				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				USER_HEADER_SEARCH_PATHS = "";
@@ -1045,7 +1064,7 @@
 		};
 		01D31F53216BAF260055FD45 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = BAF6725A135BC6F386096604 /* Pods-SpokeStackTests.debug.xcconfig */;
+			baseConfigurationReference = D0A001F2408B9072FCD54E38 /* Pods-SpokestackTests.debug.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
@@ -1061,13 +1080,13 @@
 					"$(PROJECT_DIR)/Frameworks/Protobuf",
 					"$(PROJECT_DIR)/Frameworks/gRPC-Core",
 				);
-				INFOPLIST_FILE = SpokeStackTests/Info.plist;
+				INFOPLIST_FILE = SpokestackTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.pylon.SpokeStackTests;
+				PRODUCT_BUNDLE_IDENTIFIER = io.spokestack.SpokestackTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -1076,7 +1095,7 @@
 		};
 		01D31F54216BAF260055FD45 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = AD7F29D98EA28A40D9C208F8 /* Pods-SpokeStackTests.release.xcconfig */;
+			baseConfigurationReference = 0983B0EE40DA914769988A20 /* Pods-SpokestackTests.release.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
@@ -1092,13 +1111,13 @@
 					"$(PROJECT_DIR)/Frameworks/Protobuf",
 					"$(PROJECT_DIR)/Frameworks/gRPC-Core",
 				);
-				INFOPLIST_FILE = SpokeStackTests/Info.plist;
+				INFOPLIST_FILE = SpokestackTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.pylon.SpokeStackTests;
+				PRODUCT_BUNDLE_IDENTIFIER = io.spokestack.SpokestackTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -1108,7 +1127,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		011C192C216BCA3200DB36FD /* Build configuration list for PBXNativeTarget "SpokeStackFrameworkExample" */ = {
+		011C192C216BCA3200DB36FD /* Build configuration list for PBXNativeTarget "SpokestackFrameworkExample" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				011C192D216BCA3200DB36FD /* Debug */,
@@ -1117,7 +1136,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		01D31F35216BAF260055FD45 /* Build configuration list for PBXProject "SpokeStack" */ = {
+		01D31F35216BAF260055FD45 /* Build configuration list for PBXProject "Spokestack" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				01D31F4D216BAF260055FD45 /* Debug */,
@@ -1126,7 +1145,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		01D31F4F216BAF260055FD45 /* Build configuration list for PBXNativeTarget "SpokeStack" */ = {
+		01D31F4F216BAF260055FD45 /* Build configuration list for PBXNativeTarget "Spokestack" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				01D31F50216BAF260055FD45 /* Debug */,
@@ -1135,7 +1154,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		01D31F52216BAF260055FD45 /* Build configuration list for PBXNativeTarget "SpokeStackTests" */ = {
+		01D31F52216BAF260055FD45 /* Build configuration list for PBXNativeTarget "SpokestackTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				01D31F53216BAF260055FD45 /* Debug */,

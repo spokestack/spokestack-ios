@@ -1,6 +1,6 @@
 //
 //  Data+Extensions.swift
-//  SpokeStack
+//  Spokestack
 //
 //  Created by Cory D. Wiles on 12/26/18.
 //  Copyright © 2018 Pylon AI, Inc. All rights reserved.

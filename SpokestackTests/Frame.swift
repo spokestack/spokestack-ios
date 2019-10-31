@@ -1,6 +1,6 @@
 //
 //  Frame.swift
-//  SpokeStackTests
+//  SpokestackTests
 //
 //  Created by Noel Weichbrodt on 9/18/19.
 //  Copyright © 2019 Pylon AI, Inc. All rights reserved.
