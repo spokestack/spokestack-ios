@@ -5,7 +5,7 @@ platform. It includes a variety of built-in speech processors for Voice
 Activity Detection (VAD), wakeword activation, and Automatic Speech Recognition (ASR).
 
 ## Installation
-[![](https://img.shields.io/cocoapods/v/SpokeStack.svg)](https://cocoapods.org/pods/Spokestack-iOS)
+[![](https://img.shields.io/cocoapods/v/Spokestack-iOS.svg)](https://cocoapods.org/pods/Spokestack-iOS)
 
 `pod 'Spokestack-iOS'`
 
