@@ -16,7 +16,7 @@ speech recognition services, such as the Apple Speech API (and potentially Googl
   1. Ensure that CocoaPods has been installed via `gem`, not via `brew`
   2. Increment the `podspec` version in `SpokeStack.podspec`
   3. `git commit -a -m 'YOUR_COMMIT_MESSAGE' && git tag YOUR_PODSPEC_VERSION && git push --origin`
-  4. `pod spec lint`, which should pass all but one checks (expect `ERROR | [iOS] xcodebuild: Returned an unsuccessful exit code. You can use `--verbose` for more information.`)
+  4. `pod spec lint --use-libraries --allow-warnings --use-modular-headers`, which should pass all but one checks (expect `ERROR | [iOS] xcodebuild: Returned an unsuccessful exit code. You can use `--verbose` for more information.`)
   5. edit `/Library/Ruby/Gems/YOUR_RUBY_VERSION/gems/cocoapods-trunk-YOUR_COCOAPODS_VERSION/lib/pod/command/trunk/push.rb`, comment out `validate_podspec_files` (https://github.com/CocoaPods/CocoaPods/blob/master/lib/cocoapods/command/repo/push.rb#L77)
   6. `pod trunk register YOUR_EMAIL --description='release YOUR_PODSPEC_VERSION'`
   7. `pod trunk push Spokestack.podspec`
