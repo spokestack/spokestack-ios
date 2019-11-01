@@ -2,26 +2,22 @@
 
 Spokestack provides an extensible speech recognition pipeline for the iOS
 platform. It includes a variety of built-in speech processors for Voice
-Activity Detection (VAD) and Automatic Speech Recognition (ASR) via popular
-speech recognition services, such as the Apple Speech API (and potentially Google Speech API).
+Activity Detection (VAD), wakeword activation, and Automatic Speech Recognition (ASR).
 
 ## Installation
 [![](https://img.shields.io/cocoapods/v/SpokeStack.svg)](https://cocoapods.org/pods/Spokestack-iOS)
 
-[CocoaPods](https://cocoapods.org) is a dependency manager for Cocoa projects. For usage and installation instructions, visit their website. To integrate Spokestack into your Xcode project using CocoaPods, specify it in your Podfile:
+`pod 'Spokestack-iOS'`
 
-`pod 'Spokestack'`
+[CocoaPods](https://cocoapods.org) is a dependency manager for Cocoa projects. For usage and installation instructions, visit their website. To integrate Spokestack into your Xcode project using CocoaPods, specify it in your Podfile:
 
 ## Release
   1. Ensure that CocoaPods has been installed via `gem`, not via `brew`
-  2. Increment the `podspec` version in `SpokeStack.podspec`
+  2. Increment the `podspec` version in `Spokestack-iOS.podspec`
   3. `git commit -a -m 'YOUR_COMMIT_MESSAGE' && git tag YOUR_PODSPEC_VERSION && git push --origin`
-  4. `pod spec lint --use-libraries --allow-warnings --use-modular-headers`, which should pass all but one checks (expect `ERROR | [iOS] xcodebuild: Returned an unsuccessful exit code. You can use `--verbose` for more information.`)
-  5. edit `/Library/Ruby/Gems/YOUR_RUBY_VERSION/gems/cocoapods-trunk-YOUR_COCOAPODS_VERSION/lib/pod/command/trunk/push.rb`, comment out `validate_podspec_files` (https://github.com/CocoaPods/CocoaPods/blob/master/lib/cocoapods/command/repo/push.rb#L77)
+  4. `pod spec lint --use-libraries --allow-warnings --use-modular-headers`, which should pass all checks 
   6. `pod trunk register YOUR_EMAIL --description='release YOUR_PODSPEC_VERSION'`
-  7. `pod trunk push Spokestack.podspec`
-  8. remove comment inserted in step 5.
-Due to static library dependencies not distributed as universal binaries, there’s no way to make `pod spec lint` or `pod lib lint` complete successfully. Aside from `x86_64`/`iphonesimulator` not being a supported architecture, the `podspec` is complete and correct. This release approach, while not conforming to the standard CocoaPods release process, is understood to be valid (https://github.com/CocoaPods/CocoaPods/issues/5801#issuecomment-244520442).
+  7. `pod trunk push  --use-libraries --allow-warnings --use-modular-headers`
 
 ## License
 [![License](https://img.shields.io/badge/License-Apache%202.0-green.svg)](https://opensource.org/licenses/Apache-2.0)
