@@ -6,7 +6,7 @@ Activity Detection (VAD) and Automatic Speech Recognition (ASR) via popular
 speech recognition services, such as the Apple Speech API (and potentially Google Speech API).
 
 ## Installation
-[![](https://img.shields.io/cocoapods/v/SpokeStack.svg)](https://cocoapods.org/pods/Spokestack)
+[![](https://img.shields.io/cocoapods/v/SpokeStack.svg)](https://cocoapods.org/pods/Spokestack-iOS)
 
 [CocoaPods](https://cocoapods.org) is a dependency manager for Cocoa projects. For usage and installation instructions, visit their website. To integrate Spokestack into your Xcode project using CocoaPods, specify it in your Podfile:
 
