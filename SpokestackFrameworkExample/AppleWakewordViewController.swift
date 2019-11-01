@@ -1,23 +1,23 @@
 //
 //  ViewController.swift
-//  SpokeStackFrameworkExample
+//  SpokestackFrameworkExample
 //
 //  Created by Cory D. Wiles on 10/8/18.
 //  Copyright © 2018 Pylon AI, Inc. All rights reserved.
 //
 
 import UIKit
-import SpokeStack
+import Spokestack
 import AVFoundation
 
-class WakeWordViewController: UIViewController {
+class AppleWakewordViewController: UIViewController {
     
     lazy var startRecordingButton: UIButton = {
         let button: UIButton = UIButton(frame: .zero)
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.setTitle("Start Recording", for: .normal)
+        button.setTitle("Start", for: .normal)
         button.addTarget(self,
-                         action: #selector(WakeWordViewController.startRecordingAction(_:)),
+                         action: #selector(AppleWakewordViewController.startRecordingAction(_:)),
                          for: .touchUpInside)
         button.setTitleColor(.blue, for: .normal)
         button.isEnabled = true
@@ -27,9 +27,9 @@ class WakeWordViewController: UIViewController {
     var stopRecordingButton: UIButton = {
         let button: UIButton = UIButton(frame: .zero)
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.setTitle("Stop Recording", for: .normal)
+        button.setTitle("Stop", for: .normal)
         button.addTarget(self,
-                         action: #selector(WakeWordViewController.stopRecordingAction(_:)),
+                         action: #selector(AppleWakewordViewController.stopRecordingAction(_:)),
                          for: .touchUpInside)
         button.setTitleColor(.blue, for: .normal)
         button.isEnabled = false
@@ -41,7 +41,7 @@ class WakeWordViewController: UIViewController {
         button.translatesAutoresizingMaskIntoConstraints = false
         button.setTitle("Switch Inputs", for: .normal)
         button.addTarget(self,
-                         action: #selector(WakeWordViewController.switchInputs),
+                         action: #selector(AppleWakewordViewController.switchInputs),
                          for: .touchUpInside)
         button.setTitleColor(.blue, for: .normal)
         button.isEnabled = true
@@ -49,8 +49,11 @@ class WakeWordViewController: UIViewController {
     }()
     
     lazy public var pipeline: SpeechPipeline = {
-        return try! SpeechPipeline(SpeechProcessors.appleSpeech.processor,
-                                   speechConfiguration: SpeechConfiguration(),
+        let c = SpeechConfiguration()
+        c.tracing = Trace.Level.DEBUG
+        return try!
+            SpeechPipeline(SpeechProcessors.appleSpeech.processor,
+                                   speechConfiguration: c,
                                    speechDelegate: self,
                                    wakewordService: SpeechProcessors.appleWakeword.processor,
                                    wakewordDelegate: self,
@@ -60,10 +63,10 @@ class WakeWordViewController: UIViewController {
     override func loadView() {
         super.loadView()
         self.view.backgroundColor = .white
-        self.title = "WakeWord"
+        self.title = "Apple Wakeword"
         let doneBarButtonItem: UIBarButtonItem = UIBarButtonItem(barButtonSystemItem: .done,
                                                                  target: self,
-                                                                 action: #selector(WakeWordViewController.dismissViewController(_:)))
+                                                                 action: #selector(AppleWakewordViewController.dismissViewController(_:)))
         self.navigationItem.rightBarButtonItem = doneBarButtonItem
     }
     
@@ -112,7 +115,7 @@ class WakeWordViewController: UIViewController {
     }
 }
 
-extension WakeWordViewController: SpeechEventListener, PipelineDelegate {
+extension AppleWakewordViewController: SpeechEventListener, PipelineDelegate {
 
     func didTimeout() {
         print("timeout")

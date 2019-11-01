@@ -1,13 +1,13 @@
 //
 //  CoreMLViewController.swift
-//  SpokeStackFrameworkExample
+//  SpokestackFrameworkExample
 //
 //  Created by Noel Weichbrodt on 6/13/19.
 //  Copyright © 2019 Pylon AI, Inc. All rights reserved.
 //
 
 import UIKit
-import SpokeStack
+import Spokestack
 import AVFoundation
 
 class CoreMLViewController: UIViewController {
@@ -17,7 +17,7 @@ class CoreMLViewController: UIViewController {
         let button: UIButton = UIButton(frame: .zero)
         
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.setTitle("Start Recording", for: .normal)
+        button.setTitle("Start", for: .normal)
         button.addTarget(self,
                          action: #selector(CoreMLViewController.startRecordingAction(_:)),
                          for: .touchUpInside)
@@ -31,7 +31,7 @@ class CoreMLViewController: UIViewController {
         let button: UIButton = UIButton(frame: .zero)
         
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.setTitle("Stop Recording", for: .normal)
+        button.setTitle("Stop", for: .normal)
         button.addTarget(self,
                          action: #selector(CoreMLViewController.stopRecordingAction(_:)),
                          for: .touchUpInside)

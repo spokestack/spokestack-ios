@@ -1,27 +1,28 @@
 //
-//  TFLiteViewController.swift
-//  SpokeStackFrameworkExample
+//  ViewController.swift
+//  SpokestackFrameworkExample
 //
-//  Created by Noel Weichbrodt on 8/12/19.
-//  Copyright © 2019 Pylon AI, Inc. All rights reserved.
+//  Created by Cory D. Wiles on 10/8/18.
+//  Copyright © 2018 Pylon AI, Inc. All rights reserved.
 //
 
 import UIKit
-import SpokeStack
+import Spokestack
 import AVFoundation
 
-class TFLiteViewController: UIViewController {
+class AppleASRViewController: UIViewController {
     
     lazy var startRecordingButton: UIButton = {
         
         let button: UIButton = UIButton(frame: .zero)
         
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.setTitle("Start Recording", for: .normal)
+        button.setTitle("Start", for: .normal)
         button.addTarget(self,
-                         action: #selector(TFLiteViewController.startRecordingAction(_:)),
+                         action: #selector(AppleASRViewController.startRecordingAction(_:)),
                          for: .touchUpInside)
-        button.setTitleColor(.purple, for: .normal)
+        
+        button.setTitleColor(.blue, for: .normal)
         
         return button
     }()
@@ -31,28 +32,38 @@ class TFLiteViewController: UIViewController {
         let button: UIButton = UIButton(frame: .zero)
         
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.setTitle("Stop Recording", for: .normal)
+        button.setTitle("Stop", for: .normal)
         button.addTarget(self,
-                         action: #selector(TFLiteViewController.stopRecordingAction(_:)),
+                         action: #selector(AppleASRViewController.stopRecordingAction(_:)),
                          for: .touchUpInside)
         
-        button.setTitleColor(.purple, for: .normal)
+        button.setTitleColor(.blue, for: .normal)
         
         
         return button
     }()
     
-    private var pipeline: SpeechPipeline?
+    lazy private var pipeline: SpeechPipeline = {
+        
+        let appleConfiguration: SpeechConfiguration = SpeechConfiguration()
+        
+        return try! SpeechPipeline(SpeechProcessors.appleSpeech.processor,
+                                   speechConfiguration: appleConfiguration,
+                                   speechDelegate: self,
+                                   wakewordService: SpeechProcessors.appleWakeword.processor,
+                                   wakewordDelegate: self,
+                                   pipelineDelegate: self)
+    }()
     
     override func loadView() {
         
         super.loadView()
         self.view.backgroundColor = .white
-        self.title = "TensorFlow"
+        self.title = "Apple ASR"
         
         let doneBarButtonItem: UIBarButtonItem = UIBarButtonItem(barButtonSystemItem: .done,
                                                                  target: self,
-                                                                 action: #selector(TFLiteViewController.dismissViewController(_:)))
+                                                                 action: #selector(AppleASRViewController.dismissViewController(_:)))
         self.navigationItem.rightBarButtonItem = doneBarButtonItem
     }
     
@@ -69,60 +80,24 @@ class TFLiteViewController: UIViewController {
         self.stopRecordingButton.topAnchor.constraint(equalTo: self.startRecordingButton.bottomAnchor, constant: 50.0).isActive = true
         self.stopRecordingButton.leftAnchor.constraint(equalTo: self.startRecordingButton.leftAnchor).isActive = true
         self.stopRecordingButton.rightAnchor.constraint(equalTo: self.startRecordingButton.rightAnchor).isActive = true
-        
-        do {
-            self.pipeline = try self.initPipeline()
-        } catch let error {
-            print("couldn't initialize pipeline becuase \(error)")
-        }
-    }
-    
-    func initPipeline() throws -> SpeechPipeline {
-        let c = SpeechConfiguration()
-        guard let filterPath = Bundle(for: type(of: self)).path(forResource: c.filterModelName, ofType: "lite") else {
-            throw WakewordModelError.filter("could not find \(c.filterModelName).lite in bundle \(self.debugDescription)")
-        }
-        c.filterModelPath = filterPath
-        guard let encodePath = Bundle(for: type(of: self)).path(forResource: c.encodeModelName, ofType: "lite") else {
-            throw WakewordModelError.encode("could not find \(c.encodeModelName).lite in bundle \(self.debugDescription)")
-        }
-        c.encodeModelPath = encodePath
-        guard let detectPath = Bundle(for: type(of: self)).path(forResource: c.detectModelName, ofType: "lite") else {
-            throw WakewordModelError.detect("could not find \(c.detectModelName).lite in bundle \(self.debugDescription)")
-        }
-        c.detectModelPath = detectPath
-        c.tracing = Trace.Level.PERF
-        return try! SpeechPipeline(SpeechProcessors.appleSpeech.processor,
-                                   speechConfiguration: c,
-                                   speechDelegate: self,
-                                   wakewordService: SpeechProcessors.tFLiteWakeword.processor,
-                                   wakewordDelegate: self,
-                                   pipelineDelegate: self)
     }
     
     @objc func startRecordingAction(_ sender: Any) {
         print("pipeline started")
-        self.pipeline?.start()
+        self.pipeline.start()
     }
     
     @objc func stopRecordingAction(_ sender: Any) {
         print("pipeline finished")
-        self.pipeline?.stop()
+        self.pipeline.stop()
     }
     
     @objc func dismissViewController(_ sender: Any?) -> Void {
         self.dismiss(animated: true, completion: nil)
     }
-    
-    func toggleStartStop() {
-        DispatchQueue.main.async {
-            self.stopRecordingButton.isEnabled.toggle()
-            self.startRecordingButton.isEnabled.toggle()
-        }
-    }
 }
 
-extension TFLiteViewController: SpeechEventListener, PipelineDelegate {
+extension AppleASRViewController: SpeechEventListener, PipelineDelegate {
     
     func setupFailed(_ error: String) {
         print("setupFailed: " + error)
@@ -132,18 +107,24 @@ extension TFLiteViewController: SpeechEventListener, PipelineDelegate {
         print("didInit")
     }
     
+    func didStop() {
+        print("didStop")
+    }
+    
     func didTimeout() {
         print("timeout")
     }
     
     func activate() {
         print("activate")
-        self.pipeline?.activate()
+        self.stopRecordingButton.isEnabled.toggle()
+        self.startRecordingButton.isEnabled.toggle()
     }
     
     func deactivate() {
         print("deactivate")
-        self.pipeline?.deactivate()
+        self.stopRecordingButton.isEnabled.toggle()
+        self.startRecordingButton.isEnabled.toggle()
     }
     
     func didError(_ error: Error) {
@@ -156,12 +137,8 @@ extension TFLiteViewController: SpeechEventListener, PipelineDelegate {
     
     func didStart() {
         print("didStart")
-        self.toggleStartStop()
-    }
-    
-    func didStop() {
-        print("didStart")
-        self.toggleStartStop()
+        self.stopRecordingButton.isEnabled.toggle()
+        self.startRecordingButton.isEnabled.toggle()
     }
     
     func didTrace(_ trace: String) {

@@ -1,6 +1,6 @@
 //
 //  TFLiteWakewordRecognizer.swift
-//  SpokeStack
+//  Spokestack
 //
 //  Created by Noel Weichbrodt on 8/5/19.
 //  Copyright © 2019 Pylon AI, Inc. All rights reserved.
@@ -15,7 +15,7 @@ public class TFLiteWakewordRecognizer: NSObject {
     
     // MARK: Public (properties)
     
-    static let sharedInstance: TFLiteWakewordRecognizer = TFLiteWakewordRecognizer()
+    @objc public static let sharedInstance: TFLiteWakewordRecognizer = TFLiteWakewordRecognizer()
     
     public weak var delegate: SpeechEventListener?
     

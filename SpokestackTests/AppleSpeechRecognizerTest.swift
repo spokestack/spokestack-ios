@@ -1,6 +1,6 @@
 //
 //  AppleSpeechRecognizerTest.swift
-//  SpokeStackTests
+//  SpokestackTests
 //
 //  Created by Noel Weichbrodt on 9/16/19.
 //  Copyright © 2019 Pylon AI, Inc. All rights reserved.
@@ -8,7 +8,7 @@
 
 import Foundation
 import XCTest
-import SpokeStack
+import Spokestack
 import AVFoundation
 
 class AppleSpeechRecognizerTest: XCTestCase {

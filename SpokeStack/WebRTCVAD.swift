@@ -1,6 +1,6 @@
 //
 //  WebRTCVAD.swift
-//  SpokeStack
+//  Spokestack
 //
 //  Created by Noel Weichbrodt on 7/1/19.
 //  Copyright © 2019 Pylon AI, Inc. All rights reserved.

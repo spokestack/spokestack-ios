@@ -1,6 +1,6 @@
 //
 //  CoreMLWakewordRecognizer.swift
-//  SpokeStack
+//  Spokestack
 //
 //  Created by Noel Weichbrodt on 6/6/19.
 //  Copyright © 2019 Pylon AI, Inc. All rights reserved.
@@ -15,7 +15,7 @@ public class CoreMLWakewordRecognizer: NSObject {
     
     // MARK: Public properties
     
-    static let sharedInstance: CoreMLWakewordRecognizer = CoreMLWakewordRecognizer()
+    @objc public static let sharedInstance: CoreMLWakewordRecognizer = CoreMLWakewordRecognizer()
     
     public var configuration: SpeechConfiguration? = SpeechConfiguration() {
         didSet {

@@ -1,6 +1,6 @@
 //
 //  AppleWakewordRecognizer.swift
-//  SpokeStack
+//  Spokestack
 //
 //  Created by Noel Weichbrodt on 2/4/19.
 //  Copyright © 2019 Pylon AI, Inc. All rights reserved.
@@ -9,33 +9,42 @@
 import Foundation
 import Speech
 
-public class AppleWakewordRecognizer: NSObject, SpeechProcessor {
+@objc public class AppleWakewordRecognizer: NSObject, SpeechProcessor {
     
     // MARK: public properties
     
-    static let sharedInstance: AppleWakewordRecognizer = AppleWakewordRecognizer()
+    @objc public static let sharedInstance: AppleWakewordRecognizer = AppleWakewordRecognizer()
     public var configuration: SpeechConfiguration? = SpeechConfiguration() {
         didSet {
             if self.configuration != nil {
+                // wakeword
                 phrases = self.configuration!.wakePhrases.components(separatedBy: ",")
+                // Tracing
+                self.traceLevel = self.configuration!.tracing
+                /// VAD
+                do {
+                    try self.vad.create(mode: self.configuration!.vadMode, delegate: self, frameWidth: self.configuration!.frameWidth, sampleRate: self.configuration!.sampleRate)
+                } catch {
+                    assertionFailure("AppleWakewordRecognizer failed to create a valid VAD")
+                }
             }
         }
     }
     public weak var delegate: SpeechEventListener?
     public var context: SpeechContext = SpeechContext()
     
-    // MARK: wakeword properties
+    // MARK: private properties
     
     private var phrases: Array<String> = []
-    
-    // MARK: recognition properties
-    
     private let speechRecognizer: SFSpeechRecognizer = SFSpeechRecognizer(locale: NSLocale.current)!
     private var recognitionRequest: SFSpeechAudioBufferRecognitionRequest?
     private var recognitionTask: SFSpeechRecognitionTask?
     private let audioEngine: AVAudioEngine = AVAudioEngine()
     private var dispatchWorker: DispatchWorkItem?
     private var vad: WebRTCVAD = WebRTCVAD()
+    private var recognitionTaskRunning: Bool = false
+    
+    private var traceLevel: Trace.Level = Trace.Level.NONE
     
     // MARK: NSObject methods
     
@@ -71,7 +80,6 @@ public class AppleWakewordRecognizer: NSObject, SpeechProcessor {
     // MARK: private functions
     
     private func prepareAudioEngine() {
-        
         do {
             try self.vad.create(mode: .HighQuality,
                                 delegate: self,
@@ -100,6 +108,7 @@ public class AppleWakewordRecognizer: NSObject, SpeechProcessor {
             self.recognitionRequest = SFSpeechAudioBufferRecognitionRequest()
             self.recognitionRequest?.shouldReportPartialResults = true
             try self.createRecognitionTask()
+            self.recognitionTaskRunning = true
             
             // Automatically restart wakeword task if it goes over Apple's 1 minute listening limit
             self.dispatchWorker = DispatchWorkItem {[weak self] in
@@ -114,7 +123,9 @@ public class AppleWakewordRecognizer: NSObject, SpeechProcessor {
     
     private func stopRecognition() {
         self.recognitionTask?.cancel()
+        self.recognitionTask?.finish()
         self.recognitionTask = nil
+        self.recognitionTaskRunning = false
         self.recognitionRequest?.endAudio()
         self.recognitionRequest = nil
     }
@@ -136,7 +147,7 @@ public class AppleWakewordRecognizer: NSObject, SpeechProcessor {
                         if nse.domain == "kAFAssistantErrorDomain" {
                             switch nse.code {
                             case 0..<200: // Apple retry error: https://developer.nuance.com/public/Help/DragonMobileSDKReference_iOS/Error-codes.html
-                                Trace.trace(Trace.Level.INFO, configLevel: strongSelf.configuration?.tracing ?? Trace.Level.NONE, message: "resultHandler error \(nse.code.description)", delegate: strongSelf.delegate, caller: strongSelf)
+                                Trace.trace(Trace.Level.INFO, configLevel: strongSelf.traceLevel, message: "resultHandler error \(nse.code.description)", delegate: strongSelf.delegate, caller: strongSelf)
                                 break
                             case 203: // request timed out, retry
                                 strongSelf.stopRecognition()
@@ -147,7 +158,7 @@ public class AppleWakewordRecognizer: NSObject, SpeechProcessor {
                             case 216: // Apple internal error: https://stackoverflow.com/questions/53037789/sfspeechrecognizer-216-error-with-multiple-requests?noredirect=1&lq=1)
                                 break
                             case 300..<603: // Apple retry error: https://developer.nuance.com/public/Help/DragonMobileSDKReference_iOS/Error-codes.html
-                                Trace.trace(Trace.Level.INFO, configLevel: strongSelf.configuration?.tracing ?? Trace.Level.NONE, message: "resultHandler error \(nse.code.description)", delegate: strongSelf.delegate, caller: strongSelf)
+                                Trace.trace(Trace.Level.INFO, configLevel: strongSelf.traceLevel, message: "resultHandler error \(nse.code.description)", delegate: strongSelf.delegate, caller: strongSelf)
                                 break
                             default:
                                 delegate.didError(e)
@@ -158,7 +169,7 @@ public class AppleWakewordRecognizer: NSObject, SpeechProcessor {
                     }
                 }
                 if let r = result {
-                    Trace.trace(Trace.Level.DEBUG, configLevel: strongSelf.configuration?.tracing ?? Trace.Level.NONE, message: "hears \(r.bestTranscription.formattedString)", delegate: strongSelf.delegate, caller: strongSelf)
+                    Trace.trace(Trace.Level.DEBUG, configLevel: strongSelf.traceLevel, message: "hears \(r.bestTranscription.formattedString)", delegate: strongSelf.delegate, caller: strongSelf)
                     let wakewordDetected: Bool =
                         !strongSelf.phrases
                             .filter({
@@ -169,6 +180,7 @@ public class AppleWakewordRecognizer: NSObject, SpeechProcessor {
                                     .contains($0.lowercased())})
                             .isEmpty
                     if wakewordDetected {
+                        strongSelf.context.isActive = true
                         delegate.activate()
                     }
                 }
@@ -176,11 +188,14 @@ public class AppleWakewordRecognizer: NSObject, SpeechProcessor {
     }
 }
 
+// MARK: AudioControllerDelegate implementation
+
 extension AppleWakewordRecognizer: AudioControllerDelegate {
     func process(_ frame: Data) -> Void {
+        /// multiplex the audio frame data to both the vad and, if activated, the model pipelines
         audioProcessingQueue.async {[weak self] in
             guard let strongSelf = self else { return }
-            do { try strongSelf.vad.process(frame: frame, isSpeech: true) }
+            do { try strongSelf.vad.process(frame: frame, isSpeech: false) } // TODO: this will only trigger VAD activation the first time, and run the ASR continuously subsequently.
             catch let error {
                 strongSelf.delegate?.didError(error)
             }
@@ -188,11 +203,14 @@ extension AppleWakewordRecognizer: AudioControllerDelegate {
     }
 }
 
+// MARK: VADDelegate implementation
+
 extension AppleWakewordRecognizer: VADDelegate {
     public func activate(frame: Data) {
-        if (self.context.isActive) {
+        if (self.context.isActive || self.recognitionTaskRunning) {
             // asr is active, so don't interrupt
         } else if (self.context.isStarted){
+            self.context.isSpeech = true
             do {
                 try self.audioEngine.start()
                 self.startRecognition()
@@ -206,6 +224,7 @@ extension AppleWakewordRecognizer: VADDelegate {
         if (self.context.isActive) {
             // asr is active, so don't interrupt
         } else {
+            self.context.isSpeech = false
             self.stopRecognition()
             self.audioEngine.pause()
         }

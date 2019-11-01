@@ -1,6 +1,6 @@
 //
 //  Spit.swift
-//  SpokeStack
+//  Spokestack
 //
 //  Created by Noel Weichbrodt on 8/12/19.
 //  Copyright © 2019 Pylon AI, Inc. All rights reserved.
@@ -9,22 +9,22 @@
 import Foundation
 
 public struct Trace {
-    public enum Level: Int {
-        case NONE
-        case INFO
-        case PERF
-        case DEBUG
+    @objc public enum Level: Int {
+        case NONE = 100
+        case INFO = 30
+        case PERF = 20
+        case DEBUG = 10
     }
     
     public static func trace(_ level: Trace.Level, configLevel: Trace.Level, message: String, delegate: SpeechEventListener?, caller: Any) {
         if level.rawValue >= configLevel.rawValue {
-            delegate?.didTrace("\(level) \(String(describing: type(of: caller))) \(message)")
+            delegate?.didTrace("\(level.rawValue) \(String(describing: type(of: caller))) \(message)")
         }
     }
 
     public static func trace(_ level: Trace.Level, configLevel: Trace.Level, message: String, delegate: PipelineDelegate?, caller: Any) {
         if level.rawValue >= configLevel.rawValue {
-            delegate?.didTrace("\(level) \(String(describing: type(of: caller))) \(message)")
+            delegate?.didTrace("\(level.rawValue) \(String(describing: type(of: caller))) \(message)")
         }
     }
     

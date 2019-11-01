@@ -1,6 +1,6 @@
 //
 //  WakewordRecognizer.swift
-//  SpokeStack
+//  Spokestack
 //
 //  Created by Noel Weichbrodt on 2/5/19.
 //  Copyright © 2019 Pylon AI, Inc. All rights reserved.

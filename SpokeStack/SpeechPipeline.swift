@@ -1,6 +1,6 @@
 //
 //  SpeechPipeline.swift
-//  SpokeStack
+//  Spokestack
 //
 //  Created by Cory D. Wiles on 10/2/18.
 //  Copyright © 2018 Pylon AI, Inc. All rights reserved.
