@@ -96,7 +96,6 @@ class TFLiteViewController: UIViewController {
                                    speechConfiguration: c,
                                    speechDelegate: self,
                                    wakewordService: SpeechProcessors.tFLiteWakeword.processor,
-                                   wakewordDelegate: self,
                                    pipelineDelegate: self)
     }
     

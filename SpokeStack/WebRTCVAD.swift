@@ -9,13 +9,19 @@
 import Foundation
 import filter_audio
 
+/// Indicate to the VAD the level of permissiveness to non-speech activation.
 public enum VADMode: Int {
-    case HighQuality
-    case Quality
-    case Agressive
-    case HighlyAgressive
+    /// Most permissive of non-speech; least amount of missed speech detection
+    case HighlyPermissive
+    /// Allows more non-speech
+    case Permissive
+    /// Allows less non-speech
+    case Restrictive
+    /// Most restrictive of non-speech; most amount of missed speech detection
+    case HighlyRestrictive
 }
 
+/// VAD speech activation confidence level
 public enum VADDecision: Int {
     case None
     case Uncertain
@@ -34,8 +40,10 @@ private var sampleRate32: Int32 = 16000
 
 private var frameBuffer: RingBuffer<Int16>!
 
+/// Swift wrapper for WebRTC's voice activity detector.
 public class WebRTCVAD: NSObject {
     
+    /// Callback delegate for activation and error events.
     public var delegate: VADDelegate?
     
     deinit {
@@ -43,6 +51,13 @@ public class WebRTCVAD: NSObject {
         vad.deallocate()
     }
     
+    ///  Creates and configures a new WebRTC VAD component.
+    /// - Parameter mode: Indicate to the VAD the level of permissiveness to non-speech activation.
+    /// - Parameter delegate: Callback delegate for activation and error events.
+    /// - Parameter frameWidth: Number of samples in an audio frame.
+    /// - Parameter sampleRate: Rate of the samples in an audio frame.
+    ///
+    /// - Throws: VADError.invalidConfiguration if the frameWidth or sampleRate are not supported.
     public func create(mode: VADMode, delegate: VADDelegate, frameWidth: Int, sampleRate: Int) throws {
         
         /// validation of configurable parameters
@@ -82,6 +97,11 @@ public class WebRTCVAD: NSObject {
         }
     }
     
+    /// Processes an audio frame, detecting voiced speech.
+    /// - Parameter frame: Audio frame of samples.
+    /// - Parameter isSpeech: Whether speech was last detected.
+    ///
+    /// - Throws: RingBufferStateError.illegalState if the frame buffer enters an invalid state
     public func process(frame: Data, isSpeech: Bool) throws -> Void {
         do {
             var detected: Bool = false

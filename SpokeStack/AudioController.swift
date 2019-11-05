@@ -9,8 +9,12 @@
 import Foundation
 import AVFoundation
 
+/// DispatchQueue for handling Spokestack audio processing
 let audioProcessingQueue: DispatchQueue = DispatchQueue(label: "com.pylon.audio.callback")
 
+/// Required callback function for AudioUnitSetProperty's AURenderCallbackStruct.
+///
+/// - SeeAlso: AURenderCallbackStruct
 func recordingCallback(
     inRefCon: UnsafeMutableRawPointer,
     ioActionFlags: UnsafeMutablePointer<AudioUnitRenderActionFlags>,
@@ -54,13 +58,19 @@ func recordingCallback(
     return noErr
 }
 
+/// Singleton class for configuring and controlling a stream of audio frames.
 class AudioController {
     
     // MARK: Public (properties)
     
-    static let sharedInstance: AudioController = AudioController()
-    weak var delegate: AudioControllerDelegate?
-    weak var pipelineDelegate: PipelineDelegate?
+    /// Singleton instance
+    public static let sharedInstance: AudioController = AudioController()
+    /// Delegate for receivng the `recordingCallback`'s `process` function.
+    /// - SeeAlso: recordingCallback
+    public weak var delegate: AudioControllerDelegate?
+    /// Delegate for receiving `setupFailure` events in the speech pipeline.
+    public weak var pipelineDelegate: PipelineDelegate?
+    /// Configuration for the audio controller.
     public var configuration: SpeechConfiguration = SpeechConfiguration()
 
     // MARK: Private (properties)
@@ -97,19 +107,23 @@ class AudioController {
     
     // MARK: Public functions
     
+    /// Begin sending audio frames to the AudioControllerDelegate.
+    /// - SeeAlso: AudioControllerDelegate
+    /// - Parameter context: Global state for the speech pipeline.
     func startStreaming(context: SpeechContext) -> Void {
         self.checkAudioSession()
         do {
             try self.start()
         } catch AudioError.audioSessionSetup(let message) {
             self.pipelineDelegate?.setupFailed(message)
-        } catch AudioError.general(let message) {
-            self.pipelineDelegate?.setupFailed(message)
         } catch {
             self.pipelineDelegate?.setupFailed("An unknown error occured starting the stream")
         }
     }
     
+    /// Stop sending audio frames to the AudioControllerDelegate.
+    /// - SeeAlso: AudioControllerDelegate
+    /// - Parameter context: Global state for the speech pipeline.
     func stopStreaming(context: SpeechContext) -> Void {
         do {
             try self.stop()

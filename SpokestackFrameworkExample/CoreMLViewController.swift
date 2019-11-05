@@ -92,7 +92,6 @@ class CoreMLViewController: UIViewController {
                                    speechConfiguration: c,
                                    speechDelegate: self,
                                    wakewordService: SpeechProcessors.coremlWakeword.processor,
-                                   wakewordDelegate: self,
                                    pipelineDelegate: self)
     }
     

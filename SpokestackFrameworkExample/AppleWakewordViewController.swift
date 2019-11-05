@@ -56,7 +56,6 @@ class AppleWakewordViewController: UIViewController {
                                    speechConfiguration: c,
                                    speechDelegate: self,
                                    wakewordService: SpeechProcessors.appleWakeword.processor,
-                                   wakewordDelegate: self,
                                    pipelineDelegate: self)
     }()
     

@@ -9,11 +9,18 @@
 import Foundation
 import Speech
 
-@objc public class AppleWakewordRecognizer: NSObject, SpeechProcessor {
+/**
+This pipeline component uses the Apple `SFSpeech` API to stream audio samples for wakeword recognition.
+
+When the speech pipeline coordination event is started via the `SpeechProcessor` protocol implementation, the recognizer begins streaming buffered frames to the Apple ASR API for recognition. Upon wakeword or wakephrase recognition, the pipeline activation event is triggered and the recognizer completes the API request and awaits another coordination event. When the speech pipeline coordination is stopped via the `SpeechProcessor` protocol implementation, the recognizer completes the API request  and awaits another coordination event.
+*/
+@objc public class AppleWakewordRecognizer: NSObject {
     
     // MARK: public properties
     
+    /// Singleton instance.
     @objc public static let sharedInstance: AppleWakewordRecognizer = AppleWakewordRecognizer()
+    /// Configuration for the recognizer.
     public var configuration: SpeechConfiguration? = SpeechConfiguration() {
         didSet {
             if self.configuration != nil {
@@ -30,7 +37,9 @@ import Speech
             }
         }
     }
+    /// Delegate which gets sent speech pipeline control events.
     public weak var delegate: SpeechEventListener?
+    /// Global state for the speech pipeline.
     public var context: SpeechContext = SpeechContext()
     
     // MARK: private properties
@@ -56,32 +65,11 @@ import Speech
         super.init()
     }
     
-    // MARK: SpeechRecognizerService implementation
-    
-    public func startStreaming(context: SpeechContext) {
-        AudioController.sharedInstance.delegate = self
-        self.context = context
-        self.prepareAudioEngine()
-        self.audioEngine.prepare()
-        self.context.isStarted = true
-    }
-    
-    public func stopStreaming(context: SpeechContext) {
-        AudioController.sharedInstance.delegate = nil
-        self.context = context
-        self.stopRecognition()
-        self.dispatchWorker?.cancel()
-        self.dispatchWorker = nil
-        self.audioEngine.stop()
-        self.audioEngine.inputNode.removeTap(onBus: 0)
-        self.context.isStarted = false
-    }
-    
     // MARK: private functions
     
     private func prepareAudioEngine() {
         do {
-            try self.vad.create(mode: .HighQuality,
+            try self.vad.create(mode: .HighlyPermissive,
                                 delegate: self,
                                 frameWidth: self.configuration!.frameWidth,
                                 sampleRate: self.configuration!.sampleRate)
@@ -188,9 +176,42 @@ import Speech
     }
 }
 
+// MARK: SpeechProcessor implementation
+
+extension AppleWakewordRecognizer: SpeechProcessor {
+    
+    /// Triggered by the speech pipeline, indicating the recognizer to begin streaming audio and processing it.
+    /// - Parameter context: the current speech context
+    public func startStreaming(context: SpeechContext) {
+        AudioController.sharedInstance.delegate = self
+        self.context = context
+        self.prepareAudioEngine()
+        self.audioEngine.prepare()
+        self.context.isStarted = true
+    }
+    
+    /// Triggered by the speech pipeline, indicating the recognizer to stop streaming audio and complete processing.
+    /// - Parameter context: the current speech context
+    public func stopStreaming(context: SpeechContext) {
+        AudioController.sharedInstance.delegate = nil
+        self.context = context
+        self.stopRecognition()
+        self.dispatchWorker?.cancel()
+        self.dispatchWorker = nil
+        self.audioEngine.stop()
+        self.audioEngine.inputNode.removeTap(onBus: 0)
+        self.context.isStarted = false
+    }
+}
+
 // MARK: AudioControllerDelegate implementation
 
 extension AppleWakewordRecognizer: AudioControllerDelegate {
+    
+    /// Receives a frame of audio samples for processing. Interface between the `SpeechProcessor` and `AudioController` components.
+    ///
+    /// Processes audio in an async thread.
+    /// - Parameter frame: Frame of audio samples.
     func process(_ frame: Data) -> Void {
         /// multiplex the audio frame data to both the vad and, if activated, the model pipelines
         audioProcessingQueue.async {[weak self] in
@@ -206,6 +227,9 @@ extension AppleWakewordRecognizer: AudioControllerDelegate {
 // MARK: VADDelegate implementation
 
 extension AppleWakewordRecognizer: VADDelegate {
+    
+    /// Called when the VAD has detected speech.
+    /// - Parameter frame: The first frame of audio samples with speech detected in it.
     public func activate(frame: Data) {
         if (self.context.isActive || self.recognitionTaskRunning) {
             // asr is active, so don't interrupt
@@ -220,6 +244,7 @@ extension AppleWakewordRecognizer: VADDelegate {
         }
     }
     
+    /// Called when the VAD as stopped detecting speech.
     public func deactivate() {
         if (self.context.isActive) {
             // asr is active, so don't interrupt

@@ -8,14 +8,21 @@
 
 import Foundation
 
+/// Convenience enum for the singletons of the different implementors of the `SpeechProcessor` protocol
 @objc public enum SpeechProcessors: Int {
+    /// AppleWakewordRecognizer
     case appleWakeword
+    /// CoreMLWakewordRecognizer
     case coremlWakeword
+    /// TFLiteWakewordRecognizer
     case tFLiteWakeword
+    /// AppleSpeechRecognizer
     case appleSpeech
 }
 
 extension SpeechProcessors {
+    /// Convenience property accessor for the singletons of the different implementors of the `SpeechProcessor` protocol
+    /// - Returns: singleton instance of the specified `SpeechProcessor`
     public var processor: SpeechProcessor {
         switch self {
         case .appleWakeword:
