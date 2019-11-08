@@ -407,7 +407,7 @@ extension CoreMLWakewordRecognizer {
             self.frameWindow.rewind().seek(self.melWidth)
             for i in 0..<predictions.melspec_outputs__0.shape[2].intValue {
                 try? self.frameWindow.write(predictions.melspec_outputs__0[i].floatValue)
-                if self.traceLevel.rawValue > Trace.Level.PERF.rawValue { filterCollector.append(predictions.melspec_outputs__0[i].floatValue)
+                if self.traceLevel.rawValue > Trace.Level.PERF.rawValue { filterCollector?.append(predictions.melspec_outputs__0[i].floatValue)
                 }
             }
 
@@ -457,7 +457,7 @@ extension CoreMLWakewordRecognizer {
             }
             
             if self.traceLevel.rawValue > Trace.Level.PERF.rawValue {
-                detectCollector += "\(predictions.detect_outputs__0.debugDescription)\n"
+                detectCollector? += "\(predictions.detect_outputs__0.debugDescription)\n"
             }
 
             /// send the prediction posteriors through a smoothing window
@@ -556,11 +556,11 @@ extension CoreMLWakewordRecognizer {
     
     private func debug() -> Void {
         if self.traceLevel.rawValue >= Trace.Level.DEBUG.rawValue {
-            Spit.spit(data: sampleCollector.withUnsafeBufferPointer {Data(buffer: $0)}, fileName: "samples.txt")
-            Spit.spit(data: "[\((sampleCollector as NSArray).componentsJoined(by: ", "))]".data(using: .utf8)!, fileName: "samples.txt")
-            Spit.spit(data: fftFrameCollector.data(using: .utf8)!, fileName: "fftFrame.txt")
-            Spit.spit(data: "[\((filterCollector as NSArray).componentsJoined(by: ", "))]".data(using: .utf8)!, fileName: "filterPredictions.txt")
-            Spit.spit(data: detectCollector.data(using: .utf8)!, fileName: "detectPredictions.txt")
+            Trace.spit(data: sampleCollector!.withUnsafeBufferPointer {Data(buffer: $0)}, fileName: "samples.txt", delegate: self.delegate!)
+            Trace.spit(data: "[\((sampleCollector! as NSArray).componentsJoined(by: ", "))]".data(using: .utf8)!, fileName: "samples.txt", delegate: self.delegate!)
+            Trace.spit(data: fftFrameCollector!.data(using: .utf8)!, fileName: "fftFrame.txt", delegate: self.delegate!)
+            Trace.spit(data: "[\((filterCollector! as NSArray).componentsJoined(by: ", "))]".data(using: .utf8)!, fileName: "filterPredictions.txt", delegate: self.delegate!)
+            Trace.spit(data: detectCollector!.data(using: .utf8)!, fileName: "detectPredictions.txt", delegate: self.delegate!)
         }
     }
 }
