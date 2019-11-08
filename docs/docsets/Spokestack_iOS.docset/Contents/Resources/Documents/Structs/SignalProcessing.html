@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>SignalProcessing Structure Reference</title>
+    <link rel="stylesheet" type="text/css" href="../css/jazzy.css" />
+    <link rel="stylesheet" type="text/css" href="../css/highlight.css" />
+    <meta charset='utf-8'>
+    <script src="../js/jquery.min.js" defer></script>
+    <script src="../js/jazzy.js" defer></script>
+    
+  </head>
+  <body>
+    <a name="//apple_ref/swift/Struct/SignalProcessing" class="dashAnchor"></a>
+    <a title="SignalProcessing Structure Reference"></a>
+    <header>
+      <div class="content-wrapper">
+        <p><a href="../index.html">Spokestack_iOS Docs</a> (89% documented)</p>
+      </div>
+    </header>
+    <div class="content-wrapper">
+      <p id="breadcrumbs">
+        <a href="../index.html">Spokestack_iOS Reference</a>
+        <img id="carat" src="../img/carat.png" />
+        SignalProcessing Structure Reference
+      </p>
+    </div>
+    <div class="content-wrapper">
+      <nav class="sidebar">
+        <ul class="nav-groups">
+          <li class="nav-group-name">
+            <a href="../Classes.html">Classes</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="../Classes/AppleSpeechRecognizer.html">AppleSpeechRecognizer</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/AppleWakewordRecognizer.html">AppleWakewordRecognizer</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/CoreMLWakewordRecognizer.html">CoreMLWakewordRecognizer</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/SpeechConfiguration.html">SpeechConfiguration</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/SpeechContext.html">SpeechContext</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/SpeechPipeline.html">SpeechPipeline</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/TFLiteWakewordRecognizer.html">TFLiteWakewordRecognizer</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/WebRTCVAD.html">WebRTCVAD</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a href="../Enums.html">Enumerations</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="../Enums/AudioError.html">AudioError</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/SPSpeechRecognitionError.html">SPSpeechRecognitionError</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/SPSpeechRecognitionResult.html">SPSpeechRecognitionResult</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/SpeechPipelineError.html">SpeechPipelineError</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/SpeechProcessors.html">SpeechProcessors</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/VADDecision.html">VADDecision</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/VADError.html">VADError</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/VADMode.html">VADMode</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/WakewordModelError.html">WakewordModelError</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a href="../Protocols.html">Protocols</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="../Protocols/PipelineDelegate.html">PipelineDelegate</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Protocols/SpeechEventListener.html">SpeechEventListener</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Protocols/SpeechProcessor.html">SpeechProcessor</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Protocols/VADDelegate.html">VADDelegate</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a href="../Structs.html">Structures</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="../Structs/SignalProcessing.html">SignalProcessing</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/SignalProcessing/FFTWindowType.html">– FFTWindowType</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/Trace.html">Trace</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/Trace/Level.html">– Level</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a href="../Typealiases.html">Type Aliases</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="../Typealiases.html#/s:14Spokestack_iOS24SpeechRecognitionClosurea">SpeechRecognitionClosure</a>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </nav>
+      <article class="main-content">
+        <section>
+          <section class="section">
+            <h1>SignalProcessing</h1>
+              <div class="declaration">
+                <div class="language">
+                  <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">SignalProcessing</span></code></pre>
+
+                </div>
+              </div>
+            <p>Static namepsace for signal processing functions.</p>
+
+          </section>
+          <section class="section task-group-section">
+            <div class="task-group">
+              <ul>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:14Spokestack_iOS16SignalProcessingV3rmsySf10Foundation4DataV_Says5Int16VGtFZ"></a>
+                    <a name="//apple_ref/swift/Method/rms(_:_:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14Spokestack_iOS16SignalProcessingV3rmsySf10Foundation4DataV_Says5Int16VGtFZ">rms(_:_:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Find the root mean squared of a frame buffer of samples.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">static</span> <span class="kd">func</span> <span class="nf">rms</span><span class="p">(</span><span class="n">_</span> <span class="nv">frame</span><span class="p">:</span> <span class="kt">Data</span><span class="p">,</span> <span class="n">_</span> <span class="nv">dataElements</span><span class="p">:</span> <span class="kt">Array</span><span class="o">&lt;</span><span class="kt">Int16</span><span class="o">&gt;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Float</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>frame</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>frame of samples</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>dataElements</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Preallocated array of data elements in the frame</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>the RMS of the frame</p>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:14Spokestack_iOS16SignalProcessingV13FFTWindowTypeO"></a>
+                    <a name="//apple_ref/swift/Enum/FFTWindowType" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14Spokestack_iOS16SignalProcessingV13FFTWindowTypeO">FFTWindowType</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Convenience enum for fast fourier transform window types.</p>
+
+                        <a href="../Structs/SignalProcessing/FFTWindowType.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">enum</span> <span class="kt">FFTWindowType</span> <span class="p">:</span> <span class="kt">String</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:14Spokestack_iOS16SignalProcessingV17fftWindowDispatch10windowType0H6LengthSaySfGAC09FFTWindowI0O_SitFZ"></a>
+                    <a name="//apple_ref/swift/Method/fftWindowDispatch(windowType:windowLength:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14Spokestack_iOS16SignalProcessingV17fftWindowDispatch10windowType0H6LengthSaySfGAC09FFTWindowI0O_SitFZ">fftWindowDispatch(windowType:windowLength:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Convenience function to find the window of a FFT.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">static</span> <span class="kd">func</span> <span class="nf">fftWindowDispatch</span><span class="p">(</span><span class="nv">windowType</span><span class="p">:</span> <span class="kt"><a href="../Structs/SignalProcessing/FFTWindowType.html">FFTWindowType</a></span><span class="p">,</span> <span class="nv">windowLength</span><span class="p">:</span> <span class="kt">Int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Array</span><span class="o">&lt;</span><span class="kt">Float</span><span class="o">&gt;</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>windowType</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The FFT window type</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>windowLength</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The size of the window</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:14Spokestack_iOS16SignalProcessingV10hannWindowySaySfGSiFZ"></a>
+                    <a name="//apple_ref/swift/Method/hannWindow(_:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14Spokestack_iOS16SignalProcessingV10hannWindowySaySfGSiFZ">hannWindow(_:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Implentation of the Hann smoothing function algorithm.</p>
+<div class="aside aside-note">
+    <p class="aside-title">Note</p>
+    <a href="https://en.wikipedia.org/wiki/Hann_function">https://en.wikipedia.org/wiki/Hann_function</a>
+
+</div>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">static</span> <span class="kd">func</span> <span class="nf">hannWindow</span><span class="p">(</span><span class="n">_</span> <span class="nv">length</span><span class="p">:</span> <span class="kt">Int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Array</span><span class="o">&lt;</span><span class="kt">Float</span><span class="o">&gt;</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>length</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The size of the window to find</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>the Hann window</p>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </section>
+        </section>
+        <section id="footer">
+          <p>&copy; 2019 <a class="link" href="https://www.spokestack.io" target="_blank" rel="external">Spokestack</a>. All rights reserved. (Last updated: 2019-11-08)</p>
+          <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.11.2</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
+        </section>
+      </article>
+    </div>
+  </body>
+</div>
+</html>

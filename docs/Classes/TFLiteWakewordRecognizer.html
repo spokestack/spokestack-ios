@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>TFLiteWakewordRecognizer Class Reference</title>
+    <link rel="stylesheet" type="text/css" href="../css/jazzy.css" />
+    <link rel="stylesheet" type="text/css" href="../css/highlight.css" />
+    <meta charset='utf-8'>
+    <script src="../js/jquery.min.js" defer></script>
+    <script src="../js/jazzy.js" defer></script>
+    
+  </head>
+  <body>
+    <a name="//apple_ref/swift/Class/TFLiteWakewordRecognizer" class="dashAnchor"></a>
+    <a title="TFLiteWakewordRecognizer Class Reference"></a>
+    <header>
+      <div class="content-wrapper">
+        <p><a href="../index.html">Spokestack_iOS Docs</a> (89% documented)</p>
+      </div>
+    </header>
+    <div class="content-wrapper">
+      <p id="breadcrumbs">
+        <a href="../index.html">Spokestack_iOS Reference</a>
+        <img id="carat" src="../img/carat.png" />
+        TFLiteWakewordRecognizer Class Reference
+      </p>
+    </div>
+    <div class="content-wrapper">
+      <nav class="sidebar">
+        <ul class="nav-groups">
+          <li class="nav-group-name">
+            <a href="../Classes.html">Classes</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="../Classes/AppleSpeechRecognizer.html">AppleSpeechRecognizer</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/AppleWakewordRecognizer.html">AppleWakewordRecognizer</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/CoreMLWakewordRecognizer.html">CoreMLWakewordRecognizer</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/SpeechConfiguration.html">SpeechConfiguration</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/SpeechContext.html">SpeechContext</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/SpeechPipeline.html">SpeechPipeline</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/TFLiteWakewordRecognizer.html">TFLiteWakewordRecognizer</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/WebRTCVAD.html">WebRTCVAD</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a href="../Enums.html">Enumerations</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="../Enums/AudioError.html">AudioError</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/SPSpeechRecognitionError.html">SPSpeechRecognitionError</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/SPSpeechRecognitionResult.html">SPSpeechRecognitionResult</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/SpeechPipelineError.html">SpeechPipelineError</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/SpeechProcessors.html">SpeechProcessors</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/VADDecision.html">VADDecision</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/VADError.html">VADError</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/VADMode.html">VADMode</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/WakewordModelError.html">WakewordModelError</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a href="../Protocols.html">Protocols</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="../Protocols/PipelineDelegate.html">PipelineDelegate</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Protocols/SpeechEventListener.html">SpeechEventListener</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Protocols/SpeechProcessor.html">SpeechProcessor</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Protocols/VADDelegate.html">VADDelegate</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a href="../Structs.html">Structures</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="../Structs/SignalProcessing.html">SignalProcessing</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/SignalProcessing/FFTWindowType.html">– FFTWindowType</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/Trace.html">Trace</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/Trace/Level.html">– Level</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a href="../Typealiases.html">Type Aliases</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="../Typealiases.html#/s:14Spokestack_iOS24SpeechRecognitionClosurea">SpeechRecognitionClosure</a>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </nav>
+      <article class="main-content">
+        <section>
+          <section class="section">
+            <h1>TFLiteWakewordRecognizer</h1>
+              <div class="declaration">
+                <div class="language">
+                  <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kt">TFLiteWakewordRecognizer</span> <span class="p">:</span> <span class="kt">NSObject</span></code></pre>
+
+                </div>
+              </div>
+            <p>This pipeline component streams audio samples and uses a Tensorflow-Lite binary classifier to detect keyword phrases to process for wakeword recognition.  Once a wakeword phrase is detected, the speech pipeline is activated. The speech pipeline remains active until the user stops talking or the activation timeout is reached.</p>
+
+<p>When the speech pipeline coordination event is started via the <code><a href="../Protocols/SpeechProcessor.html">SpeechProcessor</a></code> protocol implementation, the recognizer begins streaming buffered frames  that are first normalized and then converted to the magnitude Short-Time Fourier Transform (STFT) representation over a hopped sliding window. This linear spectrogram is then converted to a mel spectrogram via a <q>filter</q> Tensorflow model. These mel frames are batched together into a sliding window.</p>
+
+<p>The mel spectrogram represents the features to be passed to the autoregressive encoder (usually an rnn or crnn), which is implemented in an <q>encode</q> Tensorflow model. This encoder outputs an encoded vector and a state vector. The encoded vectors are batched together into a sliding window for classification, and the state vector is used to perform the running autoregressive transduction over the mel frames.</p>
+
+<p>The <q>detect</q> Tensorflow model takes the encoded sliding window and outputs a single posterior value in the range [0, 1]. Values closer to 1 indicate a detected keyword phrase, values closer to 0 indicate non-keyword speech. This classifier is commonly implemented as an attention mechanism over the encoder window.</p>
+
+<p>The detector&rsquo;s outputs are then compared against a configured threshold, in order to determine whether to activate the pipeline. If the posterior is greater than the thresold, the activation occurs.</p>
+
+<p>Upon the pipeline activation event, the recognizer completes processing and awaits another coordination event. When the speech pipeline coordination is stopped via the <code><a href="../Protocols/SpeechProcessor.html">SpeechProcessor</a></code> protocol implementation, the recognizer stops processing and awaits another coordination event.</p>
+
+          </section>
+          <section class="section task-group-section">
+            <div class="task-group">
+              <div class="task-name-container">
+                <a name="/Public%20(properties)"></a>
+                <a name="//apple_ref/swift/Section/Public (properties)" class="dashAnchor"></a>
+                <a href="#/Public%20(properties)">
+                  <h3 class="section-name">Public (properties)</h3>
+                </a>
+              </div>
+              <ul>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:@M@Spokestack_iOS@objc(cs)TFLiteWakewordRecognizer(cpy)sharedInstance"></a>
+                    <a name="//apple_ref/swift/Variable/sharedInstance" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@M@Spokestack_iOS@objc(cs)TFLiteWakewordRecognizer(cpy)sharedInstance">sharedInstance</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Singleton instance.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@objc</span>
+<span class="kd">public</span> <span class="kd">static</span> <span class="k">let</span> <span class="nv">sharedInstance</span><span class="p">:</span> <span class="kt">TFLiteWakewordRecognizer</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:@M@Spokestack_iOS@objc(cs)TFLiteWakewordRecognizer(py)delegate"></a>
+                    <a name="//apple_ref/swift/Property/delegate" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@M@Spokestack_iOS@objc(cs)TFLiteWakewordRecognizer(py)delegate">delegate</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Delegate which gets sent speech pipeline control events.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">weak</span> <span class="k">var</span> <span class="nv">delegate</span><span class="p">:</span> <span class="kt"><a href="../Protocols/SpeechEventListener.html">SpeechEventListener</a></span><span class="p">?</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:@M@Spokestack_iOS@objc(cs)TFLiteWakewordRecognizer(py)configuration"></a>
+                    <a name="//apple_ref/swift/Property/configuration" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@M@Spokestack_iOS@objc(cs)TFLiteWakewordRecognizer(py)configuration">configuration</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Configuration for the recognizer.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">configuration</span><span class="p">:</span> <span class="kt"><a href="../Classes/SpeechConfiguration.html">SpeechConfiguration</a></span><span class="p">?</span> <span class="p">{</span> <span class="k">get</span> <span class="k">set</span> <span class="p">}</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:@M@Spokestack_iOS@objc(cs)TFLiteWakewordRecognizer(py)context"></a>
+                    <a name="//apple_ref/swift/Property/context" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@M@Spokestack_iOS@objc(cs)TFLiteWakewordRecognizer(py)context">context</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Global state for the speech pipeline.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">context</span><span class="p">:</span> <span class="kt"><a href="../Classes/SpeechContext.html">SpeechContext</a></span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <div class="task-name-container">
+                <a name="/NSObject%20methods"></a>
+                <a name="//apple_ref/swift/Section/NSObject methods" class="dashAnchor"></a>
+                <a href="#/NSObject%20methods">
+                  <h3 class="section-name">NSObject methods</h3>
+                </a>
+              </div>
+              <ul>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:@M@Spokestack_iOS@objc(cs)TFLiteWakewordRecognizer(im)init"></a>
+                    <a name="//apple_ref/swift/Method/init()" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@M@Spokestack_iOS@objc(cs)TFLiteWakewordRecognizer(im)init">init()</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">override</span> <span class="nf">init</span><span class="p">()</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <div class="task-name-container">
+                <a name="/SpeechProcessor%20implementation"></a>
+                <a name="//apple_ref/swift/Section/SpeechProcessor implementation" class="dashAnchor"></a>
+                <a href="#/SpeechProcessor%20implementation">
+                  <h3 class="section-name">SpeechProcessor implementation</h3>
+                </a>
+              </div>
+              <ul>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:@CM@Spokestack_iOS@objc(cs)TFLiteWakewordRecognizer(im)startStreamingWithContext:"></a>
+                    <a name="//apple_ref/swift/Method/startStreaming(context:)" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@CM@Spokestack_iOS@objc(cs)TFLiteWakewordRecognizer(im)startStreamingWithContext:">startStreaming(context:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Triggered by the speech pipeline, indicating the recognizer to begin streaming audio and processing it.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">startStreaming</span><span class="p">(</span><span class="nv">context</span><span class="p">:</span> <span class="kt"><a href="../Classes/SpeechContext.html">SpeechContext</a></span><span class="p">)</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>context</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>the current speech context</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:@CM@Spokestack_iOS@objc(cs)TFLiteWakewordRecognizer(im)stopStreamingWithContext:"></a>
+                    <a name="//apple_ref/swift/Method/stopStreaming(context:)" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@CM@Spokestack_iOS@objc(cs)TFLiteWakewordRecognizer(im)stopStreamingWithContext:">stopStreaming(context:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Triggered by the speech pipeline, indicating the recognizer to stop streaming audio and complete processing.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">stopStreaming</span><span class="p">(</span><span class="nv">context</span><span class="p">:</span> <span class="kt"><a href="../Classes/SpeechContext.html">SpeechContext</a></span><span class="p">)</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>context</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>the current speech context</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <div class="task-name-container">
+                <a name="/VADDelegate%20implementation"></a>
+                <a name="//apple_ref/swift/Section/VADDelegate implementation" class="dashAnchor"></a>
+                <a href="#/VADDelegate%20implementation">
+                  <h3 class="section-name">VADDelegate implementation</h3>
+                </a>
+              </div>
+              <ul>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:@CM@Spokestack_iOS@objc(cs)TFLiteWakewordRecognizer(im)activateWithFrame:"></a>
+                    <a name="//apple_ref/swift/Method/activate(frame:)" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@CM@Spokestack_iOS@objc(cs)TFLiteWakewordRecognizer(im)activateWithFrame:">activate(frame:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Called when the VAD has detected speech.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">activate</span><span class="p">(</span><span class="nv">frame</span><span class="p">:</span> <span class="kt">Data</span><span class="p">)</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>frame</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The first frame of audio samples with speech detected in it.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:@CM@Spokestack_iOS@objc(cs)TFLiteWakewordRecognizer(im)deactivate"></a>
+                    <a name="//apple_ref/swift/Method/deactivate()" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@CM@Spokestack_iOS@objc(cs)TFLiteWakewordRecognizer(im)deactivate">deactivate()</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Called when the VAD as stopped detecting speech.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">deactivate</span><span class="p">()</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </section>
+        </section>
+        <section id="footer">
+          <p>&copy; 2019 <a class="link" href="https://www.spokestack.io" target="_blank" rel="external">Spokestack</a>. All rights reserved. (Last updated: 2019-11-08)</p>
+          <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.11.2</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
+        </section>
+      </article>
+    </div>
+  </body>
+</div>
+</html>
