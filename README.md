@@ -9,7 +9,7 @@ Activity Detection (VAD), wakeword activation, and Automatic Speech Recognition 
   - Voice activity detection
   - Wakeword activation with three different models
   - Simplified Automated Speech Recognition interface
-  - Speech pipeline seamlessly integrates VAD-trigged wakeword detection using on-device machine learning models into ASR utterances.
+  - Speech pipeline seamlessly integrates VAD-triggered wakeword detection using on-device machine learning models with transcribing utterances using platform Automated Speech Recognition.
 
 ## Installation
 [![](https://img.shields.io/cocoapods/v/Spokestack-iOS.svg)](https://cocoapods.org/pods/Spokestack-iOS)
@@ -25,27 +25,27 @@ Activity Detection (VAD), wakeword activation, and Automatic Speech Recognition 
  ```
  // assume that self implements the SpeechEventListener and PipelineDelegate protocols
  let pipeline = SpeechPipeline(SpeechProcessors.appleSpeech.processor,
-                                speechConfiguration: SpeechConfiguration(),
-                                speechDelegate: self,
-                                wakewordService: SpeechProcessors.appleWakeword.processor,
-                                pipelineDelegate: self)
+                               speechConfiguration: SpeechConfiguration(),
+                               speechDelegate: self,
+                               wakewordService: SpeechProcessors.appleWakeword.processor,
+                               pipelineDelegate: self)
  pipeline.start()
  ```
 
-This example creates a speech recognition pipeline using an ASR-based wakeword detector that is triggered by VAD, which in turn activates Apple Speech based ASR, returning the resulting utterance to the `SpeechEventListener` event listener.
+This example creates a speech recognition pipeline using an ASR-based wakeword detector that is triggered by VAD, which in turn activates a full ASR, returning the resulting utterance to the `SpeechEventListener` event listener (`self` in this example).
 
 ### Reference implementation
 
 The `SpokestackFrameworkExample` project contains reference implementations for how to use the Spokestack library, along with runnable examples of the wakeword and ASR components.
 
-See `SpeechPipeline` and `SpeechConfiguration` for further configuration documentation
+See `SpeechPipeline` and `SpeechConfiguration` for further configuration documentation.
 
 ## Development
 
 ### Preconditions
 
-  1. Ensure that CocoaPods has been installed (via `gem`, not via `brew`).
-  2. Ensure that jazzy has been installed via `gem`.
+  1. Ensure that CocoaPods has been installed: `gem install cocoapods` ([not via `brew`](https://github.com/CocoaPods/CocoaPods/issues/8955)).
+  2. Ensure that jazzy has been installed: `gem install jazzy`.
 
 ### Process
   1. `jazzy --podspec Spokestack-iOS.podspec`

@@ -12,9 +12,9 @@ import Foundation
 @objc public protocol VADDelegate: AnyObject {
     
     /// The VAD has detected speech.
-    /// - Parameter frame: The first frame of audio samples with speech detected in it. 
+    /// - Parameter frame: The first frame of audio samples containing speech.
     func activate(frame: Data)
     
-    /// The VAD has stopped detected speech.
+    /// The VAD has stopped detecting speech.
     func deactivate()
 }

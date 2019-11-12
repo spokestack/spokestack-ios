@@ -9,7 +9,7 @@
 import Foundation
 import Accelerate
 
-/// Performs a fast fourier transform on a given buffer of samples.
+/// Performs a Fast Fourier Transform on a given buffer of samples.
 final class FFT {
     
     // MARK: Private (properties)
@@ -51,7 +51,7 @@ final class FFT {
     
     // MARK: Public (methods)
     
-    /// Perform a  fast fourier transform on the provided buffer of samples.
+    /// Perform a Fast Fourier Transform on the provided buffer of samples.
     /// - Parameter buffer: a buffer of samples.
     func forward(_ buffer: inout Array<Float>) -> Void {
         /// Pack the sample values into the FFT complex buffer

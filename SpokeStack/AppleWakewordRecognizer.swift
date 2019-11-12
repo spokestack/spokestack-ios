@@ -12,7 +12,7 @@ import Speech
 /**
 This pipeline component uses the Apple `SFSpeech` API to stream audio samples for wakeword recognition.
 
-When the speech pipeline coordination event is started via the `SpeechProcessor` protocol implementation, the recognizer begins streaming buffered frames to the Apple ASR API for recognition. Upon wakeword or wakephrase recognition, the pipeline activation event is triggered and the recognizer completes the API request and awaits another coordination event. When the speech pipeline coordination is stopped via the `SpeechProcessor` protocol implementation, the recognizer completes the API request  and awaits another coordination event.
+ Once speech pipeline coordination via `startStreaming` is received, the recognizer begins streaming buffered frames to the Apple ASR API for recognition. Upon wakeword or wakephrase recognition, the pipeline activation event is triggered and the recognizer completes the API request and awaits another coordination event. Once speech pipeline coordination via `stopStreaming` is received, the recognizer completes the API request and awaits another coordination event.
 */
 @objc public class AppleWakewordRecognizer: NSObject {
     
@@ -37,7 +37,7 @@ When the speech pipeline coordination event is started via the `SpeechProcessor`
             }
         }
     }
-    /// Delegate which gets sent speech pipeline control events.
+    /// Delegate which receives speech pipeline control events.
     public weak var delegate: SpeechEventListener?
     /// Global state for the speech pipeline.
     public var context: SpeechContext = SpeechContext()
@@ -180,8 +180,8 @@ When the speech pipeline coordination event is started via the `SpeechProcessor`
 
 extension AppleWakewordRecognizer: SpeechProcessor {
     
-    /// Triggered by the speech pipeline, indicating the recognizer to begin streaming audio and processing it.
-    /// - Parameter context: the current speech context
+    /// Triggered by the speech pipeline, instructing the recognizer to begin streaming and processing audio.
+    /// - Parameter context: The current speech context.
     public func startStreaming(context: SpeechContext) {
         AudioController.sharedInstance.delegate = self
         self.context = context
@@ -190,8 +190,8 @@ extension AppleWakewordRecognizer: SpeechProcessor {
         self.context.isStarted = true
     }
     
-    /// Triggered by the speech pipeline, indicating the recognizer to stop streaming audio and complete processing.
-    /// - Parameter context: the current speech context
+    /// Triggered by the speech pipeline, instructing the recognizer to stop streaming audio and complete processing.
+    /// - Parameter context: The current speech context.
     public func stopStreaming(context: SpeechContext) {
         AudioController.sharedInstance.delegate = nil
         self.context = context
@@ -244,7 +244,7 @@ extension AppleWakewordRecognizer: VADDelegate {
         }
     }
     
-    /// Called when the VAD as stopped detecting speech.
+    /// Called when the VAD has stopped detecting speech.
     public func deactivate() {
         if (self.context.isActive) {
             // asr is active, so don't interrupt

@@ -38,16 +38,16 @@ public enum WakewordModelError: Error, Equatable {
     case model(String)
     /// The WakewordRecognizer encountered an error during the processing of the audio frame.
     case process(String)
-    /// The WakewordRecognizer encountered and error during the configuration or running of the filter model.
+    /// The WakewordRecognizer encountered an error during the configuration or running of the filter model.
     case filter(String)
-    /// The WakewordRecognizer encountered and error during the configuration or running of the encode model.
+    /// The WakewordRecognizer encountered an error during the configuration or running of the encode model.
     case encode(String)
-    /// The WakewordRecognizer encountered and error during the configuration or running of the detect model.
+    /// The WakewordRecognizer encountered an error during the configuration or running of the detect model.
     case detect(String)
 }
 
 /// Errors thrown by RingBuffer instances.
 enum RingBufferStateError: Error {
-    /// The RingBuffer instance has entered an illegal state during a `read` or `write`.
+    /// The RingBuffer instance entered an illegal state during a `read` or `write`.
     case illegalState(message: String)
 }

@@ -25,6 +25,6 @@ import Foundation
     func setupFailed(_ error: String) -> Void
     
     /// A trace event from the speech pipeline.
-    /// - Parameter trace: The debugging trace message
+    /// - Parameter trace: The debugging trace message.
     func didTrace(_ trace: String) -> Void
 }

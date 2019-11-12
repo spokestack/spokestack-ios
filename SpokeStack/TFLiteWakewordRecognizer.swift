@@ -12,17 +12,17 @@ import Speech
 import TensorFlowLite
 
 /**
-This pipeline component streams audio samples and uses a Tensorflow-Lite binary classifier to detect keyword phrases to process for wakeword recognition.  Once a wakeword phrase is detected, the speech pipeline is activated. The speech pipeline remains active until the user stops talking or the activation timeout is reached.
+ This pipeline component streams audio samples and uses a TensorFlow Lite binary classifier to detect keyword phrases to process for wakeword recognition. Once a wakeword phrase is detected, the speech pipeline is activated.
+ 
+ Upon activating the speech pipeline, the recognizer completes processing and awaits another coordination call. Once speech pipeline coordination via `stopStreaming` is received, the recognizer stops processing and awaits another coordination event.
 
-When the speech pipeline coordination event is started via the `SpeechProcessor` protocol implementation, the recognizer begins streaming buffered frames  that are first normalized and then converted to the magnitude Short-Time Fourier Transform (STFT) representation over a hopped sliding window. This linear spectrogram is then converted to a mel spectrogram via a "filter" Tensorflow model. These mel frames are batched together into a sliding window.
+ Once speech pipeline coordination via `startStreaming` is received,, the recognizer begins streaming buffered frames that are first normalized and then converted to the magnitude Short-Time Fourier Transform (STFT) representation over a hopped sliding window. This linear spectrogram is then converted to a mel spectrogram via a "filter" TensorFlow model. These mel frames are batched together into a sliding window.
 
- The mel spectrogram represents the features to be passed to the autoregressive encoder (usually an rnn or crnn), which is implemented in an "encode" Tensorflow model. This encoder outputs an encoded vector and a state vector. The encoded vectors are batched together into a sliding window for classification, and the state vector is used to perform the running autoregressive transduction over the mel frames.
+ The mel spectrogram represents the features to be passed to the autoregressive encoder (usually an rnn or crnn), which is implemented in an "encode" TensorFlow model. This encoder outputs an encoded vector and a state vector. The encoded vectors are batched together into a sliding window for classification, and the state vector is used to perform the autoregressive transduction over the mel frames.
  
- The "detect" Tensorflow model takes the encoded sliding window and outputs a single posterior value in the range [0, 1]. Values closer to 1 indicate a detected keyword phrase, values closer to 0 indicate non-keyword speech. This classifier is commonly implemented as an attention mechanism over the encoder window.
+ The "detect" TensorFlow model takes the encoded sliding window and outputs a single posterior value in the range [0, 1]. The higher the value, the more likely a keyword phrase is detected. This classifier is commonly implemented as an attention mechanism over the encoder window.
  
- The detector's outputs are then compared against a configured threshold, in order to determine whether to activate the pipeline. If the posterior is greater than the thresold, the activation occurs.
- 
-Upon the pipeline activation event, the recognizer completes processing and awaits another coordination event. When the speech pipeline coordination is stopped via the `SpeechProcessor` protocol implementation, the recognizer stops processing and awaits another coordination event.
+ The detector's outputs are then compared against a configured threshold in order to determine whether to activate the pipeline. If the posterior is greater than the thresold, the pipeline is activated.
 */
 public class TFLiteWakewordRecognizer: NSObject {
     
@@ -31,7 +31,7 @@ public class TFLiteWakewordRecognizer: NSObject {
     /// Singleton instance.
     @objc public static let sharedInstance: TFLiteWakewordRecognizer = TFLiteWakewordRecognizer()
     
-    /// Delegate which gets sent speech pipeline control events.
+    /// Delegate which receives speech pipeline control events.
     public weak var delegate: SpeechEventListener?
     
     /// Configuration for the recognizer.
@@ -450,15 +450,15 @@ public class TFLiteWakewordRecognizer: NSObject {
 
 extension TFLiteWakewordRecognizer : SpeechProcessor {
 
-    /// Triggered by the speech pipeline, indicating the recognizer to begin streaming audio and processing it.
-    /// - Parameter context: the current speech context
+    /// Triggered by the speech pipeline, instructing the recognizer to begin streaming and processing audio.
+    /// - Parameter context: The current speech context.
     public func startStreaming(context: SpeechContext) -> Void {
         AudioController.sharedInstance.delegate = self
         self.context = context
     }
     
-    /// Triggered by the speech pipeline, indicating the recognizer to stop streaming audio and complete processing.
-    /// - Parameter context: the current speech context
+    /// Triggered by the speech pipeline, instructing the recognizer to stop streaming audio and complete processing.
+    /// - Parameter context: The current speech context.
     public func stopStreaming(context: SpeechContext) -> Void {
         AudioController.sharedInstance.delegate = nil
         self.context = context

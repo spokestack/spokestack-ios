@@ -18,14 +18,14 @@ import Foundation
  ```
  // assume that self implements the SpeechEventListener and PipelineDelegate protocols
  let pipeline = SpeechPipeline(SpeechProcessors.appleSpeech.processor,
-                                speechConfiguration: SpeechConfiguration(),
-                                speechDelegate: self,
-                                wakewordService: SpeechProcessors.appleWakeword.processor,
-                                pipelineDelegate: self)
+                               speechConfiguration: SpeechConfiguration(),
+                               speechDelegate: self,
+                               wakewordService: SpeechProcessors.appleWakeword.processor,
+                               pipelineDelegate: self)
  pipeline.start()
  ```
  
- - Warning: All calls to delegate event handlers are made in the context of the pipeline's thread, so event handlers should not perform blocking operations, and should use message passing when communicating with UI components, etc.
+ - Warning: All calls to delegate event handlers are made in the context of the pipeline's thread, so event handlers should not perform blocking operations, and they should use message passing when communicating with UI components, etc.
 */
 @objc public final class SpeechPipeline: NSObject {
     
@@ -54,12 +54,11 @@ import Foundation
     }
     
     /// Initializes a new speech pipeline instance.
-    /// - Parameter speechService: a `SpeechProcessor` protocol implementer.
-    /// - Parameter speechConfiguration: configuration parameters for the speech pipeline.
-    /// - Parameter speechDelegate: a `SpeechEventListener` protocol implementer.
-    /// - Parameter wakewordService: a `SpeechProcessor` protocol implementer.
-    /// - Parameter pipelineDelegate: a `PipelineDelegate` protocol implementer.
-    /// - SeeAlso: SpeechPipeline
+    /// - Parameter speechService: An implementation of `SpeechProcessor`.
+    /// - Parameter speechConfiguration: Configuration parameters for the speech pipeline.
+    /// - Parameter speechDelegate: An implementation of `SpeechEventListener`.
+    /// - Parameter wakewordService: An implementation of `SpeechProcessor`.
+    /// - Parameter pipelineDelegate: An implementation of `PipelineDelegate`.
     @objc public init(_ speechService: SpeechProcessor,
                       speechConfiguration: SpeechConfiguration,
                       speechDelegate: SpeechEventListener,
@@ -86,7 +85,9 @@ import Foundation
         self.pipelineDelegate!.didInit()
     }
     
-    /// Checks the status of the delegate properties.
+    /// Checks the status of the delegates provided in the constructor.
+    ///
+    /// - Remarks: Verifies that a strong reference to the delegates is being held.
     /// - SeeAlso: `setDelegates`
     /// - Returns: whether the delegate properties are currently set
     @objc public func status() -> Bool {
@@ -99,21 +100,22 @@ import Foundation
         return true
     }
     
-    /// Sets the `SpeechEventListener` delegate property.
+    /// Sets the property for the`SpeechEventListener` delegate .
     /// - Parameter speechDelegate: a `SpeechEventListener` protocol implementer.
-    /// - Parameter pipelineDelegate: a `PipelineDelegate` protocol implementer.
-    @objc public func setDelegates(_ speechDelegate: SpeechEventListener, pipelineDelegate: PipelineDelegate) -> Void {
+    @objc public func setDelegates(_ speechDelegate: SpeechEventListener) -> Void {
         self.speechDelegate = speechDelegate
         self.speechRecognizerService.delegate = self.speechDelegate
         self.wakewordRecognizerService.delegate = self.speechDelegate
     }
     
     /**
-     Activates speech recognition.  The pipeline remains active until the user stops talking or the activation timeout is reached.
+     Activates speech recognition. The pipeline remains active until the user stops talking or the activation timeout is reached.
  
-     Activations have configurable minimum/maximum lengths. The minimum length prevents the activation from being aborted if the user pauses after saying the wakeword (which untriggers the VAD). The maximum activation length allows the activation to timeout if the user doesn't say anything after saying the wakeword.
+     Activations have configurable minimum/maximum lengths. The minimum length prevents the activation from being aborted if the user pauses after saying the wakeword (which deactivates the VAD). The maximum activation length allows the activation to timeout if the user doesn't say anything after saying the wakeword.
     
     The wakeword detector can be used in a multi-turn dialogue system. In such an environment, the user is not expected to say the wakeword during each turn. Therefore, an application can manually activate the pipeline by calling `activate` (after a system turn), and the wakeword detector will apply its minimum/maximum activation lengths to control the duration of the activation.
+     
+     - SeeAlso: `wakeActiveMin`, `wakeActiveMax`
     */
     @objc public func activate() -> Void {
         self.wakewordRecognizerService.stopStreaming(context: self.context)
@@ -127,7 +129,9 @@ import Foundation
         self.wakewordRecognizerService.startStreaming(context: self.context)
     }
     
-    /// Starts up the speech pipeline.
+    /// Starts  the speech pipeline.
+    ///
+    /// The pipeline starts in a deactivated state, awaiting either a wakeword activation or an explicit call to `activate`.
     @objc public func start() -> Void {
         if (self.context.isActive) {
             self.stop()
@@ -138,6 +142,8 @@ import Foundation
     }
     
     /// Stops the speech pipeline.
+    ///
+    /// All pipeline activity is stopped, and the pipeline cannot be activated until it is `start`ed again.
     @objc public func stop() -> Void {
         self.speechRecognizerService.stopStreaming(context: self.context)
         self.wakewordRecognizerService.stopStreaming(context: self.context)

@@ -12,15 +12,13 @@ import CoreML
 import Speech
 
 /**
-This pipeline component streams audio samples and uses a CoreML classifier to detect keywords (i.e. [null], up, dog) and aggregates them into phrases (up dog) to process for wakeword recognition. Once a wakeword phrase is detected, the speech pipeline is activated. The speech pipeline remains active until the user stops talking or the activation timeout is reached.
+This pipeline component streams audio samples and uses CoreML models to detect and aggregate keywords (i.e. [null], up, dog) into phrases (up dog) to process for wakeword recognition. Once a wakeword phrase is detected, speech pipeline activation is called. 
 
-When the speech pipeline coordination event is started via the `SpeechProcessor` protocol implementation, the recognizer begins streaming buffered frames that are normalized and then converted to the magnitude Short-Time Fourier Transform (STFT) representation over a hopped sliding window. This linear spectrogram is then converted to a mel spectrogram via a "filter" Tensorflow model. These mel frames are batched together into a sliding window.
-
- The mel spectrogram represents the features to be passed to the keyword classifier, which is implemented in a "detect" CoreML model. This classifier outputs posterior probabilities for each keyword (and a null output 0, which represents non-keyword speech).
+Once speech pipeline coordination via `startStreaming`is received, the recognizer begins streaming buffered frames that are normalized and then converted to the magnitude Short-Time Fourier Transform (STFT) representation over a hopped sliding window. This linear spectrogram is then converted to a mel spectrogram via a "filter" CoreML model.  The mel spectrogram represents the features to be passed to the keyword classifier, which is implemented in a "detect" CoreML model. This classifier outputs posterior probabilities for each keyword (and a null output 0, which represents non-keyword speech). These mel frames are batched together into a sliding window.
  
  The detector's outputs are considered noisy, so they are maintained in a sliding window and passed through a moving mean filter. The smoothed posteriors are then maintained in another sliding window for phrasing. The phraser attempts to match one of the configured keyword sequences using the maximum posterior for each word. If a sequence match is found, the speech pipeline is activated.
  
-Upon the pipeline activation event, the recognizer completes processing and awaits another coordination event. When the speech pipeline coordination is stopped via the `SpeechProcessor` protocol implementation, the recognizer stops processing and awaits another coordination event.
+Upon pipeline activation, the recognizer completes processing and awaits another coordination event. Once speech pipeline coordination via `stopStreaming` is received, the recognizer stops processing and awaits another coordination event.
 */
 public class CoreMLWakewordRecognizer: NSObject {
     
@@ -44,7 +42,7 @@ public class CoreMLWakewordRecognizer: NSObject {
     /// Global state for the speech pipeline.
     public var context: SpeechContext = SpeechContext()
     
-    /// Delegate which gets sent speech pipeline control events.
+    /// Delegate which receives speech pipeline control events.
     public weak var delegate: SpeechEventListener?
 
     // MARK: Private properties
@@ -569,15 +567,15 @@ extension CoreMLWakewordRecognizer {
 
 extension CoreMLWakewordRecognizer: SpeechProcessor {
 
-    /// Triggered by the speech pipeline, indicating the recognizer to begin streaming audio and processing it.
-    /// - Parameter context: the current speech context
+    /// Triggered by the speech pipeline, instructing the recognizer to begin streaming and processing audio.
+    /// - Parameter context: The current speech context.
     public func startStreaming(context: SpeechContext) -> Void {
         AudioController.sharedInstance.delegate = self
         self.context = context
     }
     
-    /// Triggered by the speech pipeline, indicating the recognizer to stop streaming audio and complete processing.
-    /// - Parameter context: the current speech context
+    /// Triggered by the speech pipeline, instructing the recognizer to stop streaming audio and complete processing.
+    /// - Parameter context: The current speech context.
     public func stopStreaming(context: SpeechContext) -> Void {
         AudioController.sharedInstance.delegate = nil
         self.context = context
@@ -621,7 +619,7 @@ extension CoreMLWakewordRecognizer: VADDelegate {
         self.process(frame, isSpeech: true)
     }
     
-    /// Called when the VAD as stopped detecting speech.
+    /// Called when the VAD has stopped detecting speech.
     public func deactivate() {
         if self.activeLength >= self.maxActive {
             self.context.isSpeech = false

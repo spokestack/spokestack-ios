@@ -9,27 +9,16 @@
 import Foundation
 import filter_audio
 
-/// Indicate to the VAD the level of permissiveness to non-speech activation.
+/// Indicate how likely it is that non-speech will activate the VAD.
 public enum VADMode: Int {
-    /// Most permissive of non-speech; least amount of missed speech detection
-    case HighlyPermissive
-    /// Allows more non-speech
-    case Permissive
-    /// Allows less non-speech
-    case Restrictive
-    /// Most restrictive of non-speech; most amount of missed speech detection
-    case HighlyRestrictive
-}
-
-/// VAD speech activation confidence level
-public enum VADDecision: Int {
-    case None
-    case Uncertain
-    case Possible
-    case Low
-    case Medium
-    case High
-    case Highest
+    /// Most permissive of non-speech; least likely to not detection speech; most likely to detect speech.
+    case HighlyPermissive = 1
+    /// Allows more non-speech than .higher levels.
+    case Permissive = 2
+    /// Allows less non-speech than higher levels.
+    case Restrictive = 3
+    /// Most restrictive of non-speech; most amount of miss speech.
+    case HighlyRestrictive = 4
 }
 
 private var vad: UnsafeMutablePointer<OpaquePointer?> = UnsafeMutablePointer<OpaquePointer?>.allocate(capacity: 1)
@@ -97,9 +86,9 @@ public class WebRTCVAD: NSObject {
         }
     }
     
-    /// Processes an audio frame, detecting voiced speech.
+    /// Processes an audio frame, detecting speech.
     /// - Parameter frame: Audio frame of samples.
-    /// - Parameter isSpeech: Whether speech was last detected.
+    /// - Parameter isSpeech: Whether speech was detected in the last frame.
     ///
     /// - Throws: RingBufferStateError.illegalState if the frame buffer enters an invalid state
     public func process(frame: Data, isSpeech: Bool) throws -> Void {
@@ -122,12 +111,13 @@ public class WebRTCVAD: NSObject {
                         let sampleWindowUBP = Array(UnsafeBufferPointer(start: sampleWindow, count: sampleWindow.count))
                         let result = WebRtcVad_Process(vad.pointee, sampleRate32, sampleWindowUBP, frameBufferStride32)
                         switch result {
-                        /// if activation state changes, stop the detecting loop but finish writing the samples to the buffer (in the outer for loop)
+                        // if activation state changes, stop the detecting loop but finish writing the samples to the buffer (in the outer for loop)
                         case 1:
+                            // only activate at the highest VAD confidence level
                             detected = true
                             break detecting
                         default:
-                            /// WebRtcVad_Process error case
+                            // WebRtcVad_Process error case
                             // self.delegate?.deactivate()
                             break
                         }

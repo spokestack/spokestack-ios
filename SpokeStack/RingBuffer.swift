@@ -29,7 +29,7 @@ final class RingBuffer <T> {
     }
     
     /// Internal state information for debugging purposes
-    /// - Returns: a string representation of internal RingBuffer state.
+    /// - Returns: A string representation of internal RingBuffer state.
     func debug() -> String {
         return ("RingBuffer \(self.data.count) \(self.wpos) \(self.rpos)")
     }
@@ -42,9 +42,9 @@ final class RingBuffer <T> {
     
     // MARK: Initializers
     
-    ///  Constructs a new ring buffer instance.
-    /// - Parameter capacity: the maximum number of elements to store
-    /// - Parameter repeating: Initially fill the buffer with these values
+    ///  Constructs a new instance.
+    /// - Parameter capacity: The maximum number of elements to store.
+    /// - Parameter repeating: Initial value for all buffer elements.
     required init(_ capacity: Int, repeating: T) {
         let reservedCapacity: Int = capacity + 1
         self.data = ContiguousArray(repeating: repeating, count: reservedCapacity)
@@ -62,14 +62,14 @@ final class RingBuffer <T> {
     /// Seeks the read head forward.
     ///
     /// Care must be taken by the caller to avoid read overflow.
-    /// - Parameter elems: the number of elements to move forward/backward
+    /// - Parameter elems: The number of elements to move forward/backward.
     @discardableResult
     func seek(_ elems: Int) -> RingBuffer {
         self.rpos = self.pos(self.rpos + elems)
         return self
     }
     
-    /// Resets the read head buffer, marking the buffer empty, but not modifying any elements.
+    /// Resets the read head of the buffer, marking the buffer empty, but not modifying any elements.
     @discardableResult
     func reset() -> RingBuffer {
         self.rpos = self.wpos
@@ -99,7 +99,7 @@ final class RingBuffer <T> {
     }
     
     /// Fills the remaining positions in the buffer with the specified value.
-    /// - Parameter value: the value to write
+    /// - Parameter value: The value to write.
     @discardableResult
     func fill(_ value: T) -> RingBuffer {
         while !self.isFull {

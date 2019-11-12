@@ -10,9 +10,9 @@ import Foundation
 
 /// This class maintains global state for the speech pipeline, allowing pipeline components to communicate information among themselves and event handlers.
 @objc public class SpeechContext: NSObject {
-    /// The current speech transcript
+    /// Current speech transcript
     @objc public var transcript: String = ""
-    /// The current speech recognition confidence: [0-1)
+    /// Current speech recognition confidence: [0-1)
     @objc public var confidence: Float = 0.0
     /// Speech pipeline active indicator
     @objc public var isStarted: Bool = false
