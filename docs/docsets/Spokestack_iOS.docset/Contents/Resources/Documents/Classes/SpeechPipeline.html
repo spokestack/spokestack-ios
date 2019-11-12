@@ -14,7 +14,7 @@
     <a title="SpeechPipeline Class Reference"></a>
     <header>
       <div class="content-wrapper">
-        <p><a href="../index.html">Spokestack_iOS Docs</a> (89% documented)</p>
+        <p><a href="../index.html">Spokestack_iOS Docs</a> (93% documented)</p>
       </div>
     </header>
     <div class="content-wrapper">
@@ -73,9 +73,6 @@
               </li>
               <li class="nav-group-task">
                 <a href="../Enums/SpeechProcessors.html">SpeechProcessors</a>
-              </li>
-              <li class="nav-group-task">
-                <a href="../Enums/VADDecision.html">VADDecision</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Enums/VADError.html">VADError</a>
@@ -150,15 +147,15 @@
 <p>When running, the pipeline communicates with the client via delegates that receive events.</p>
 <pre class="highlight swift"><code><span class="c1">// assume that self implements the SpeechEventListener and PipelineDelegate protocols</span>
 <span class="k">let</span> <span class="nv">pipeline</span> <span class="o">=</span> <span class="kt">SpeechPipeline</span><span class="p">(</span><span class="kt">SpeechProcessors</span><span class="o">.</span><span class="n">appleSpeech</span><span class="o">.</span><span class="n">processor</span><span class="p">,</span>
-                               <span class="nv">speechConfiguration</span><span class="p">:</span> <span class="kt">SpeechConfiguration</span><span class="p">(),</span>
-                               <span class="nv">speechDelegate</span><span class="p">:</span> <span class="k">self</span><span class="p">,</span>
-                               <span class="nv">wakewordService</span><span class="p">:</span> <span class="kt">SpeechProcessors</span><span class="o">.</span><span class="n">appleWakeword</span><span class="o">.</span><span class="n">processor</span><span class="p">,</span>
-                               <span class="nv">pipelineDelegate</span><span class="p">:</span> <span class="k">self</span><span class="p">)</span>
+                              <span class="nv">speechConfiguration</span><span class="p">:</span> <span class="kt">SpeechConfiguration</span><span class="p">(),</span>
+                              <span class="nv">speechDelegate</span><span class="p">:</span> <span class="k">self</span><span class="p">,</span>
+                              <span class="nv">wakewordService</span><span class="p">:</span> <span class="kt">SpeechProcessors</span><span class="o">.</span><span class="n">appleWakeword</span><span class="o">.</span><span class="n">processor</span><span class="p">,</span>
+                              <span class="nv">pipelineDelegate</span><span class="p">:</span> <span class="k">self</span><span class="p">)</span>
 <span class="n">pipeline</span><span class="o">.</span><span class="nf">start</span><span class="p">()</span>
 </code></pre>
 <div class="aside aside-warning">
     <p class="aside-title">Warning</p>
-    All calls to delegate event handlers are made in the context of the pipeline&rsquo;s thread, so event handlers should not perform blocking operations, and should use message passing when communicating with UI components, etc.
+    All calls to delegate event handlers are made in the context of the pipeline&rsquo;s thread, so event handlers should not perform blocking operations, and they should use message passing when communicating with UI components, etc.
 
 </div>
 
@@ -306,11 +303,6 @@
                       <div class="pointer"></div>
                       <div class="abstract">
                         <p>Initializes a new speech pipeline instance.</p>
-<div class="aside aside-see-also">
-    <p class="aside-title">See also</p>
-    SpeechPipeline
-
-</div>
 
                       </div>
                       <div class="declaration">
@@ -338,7 +330,7 @@
                               </td>
                               <td>
                                 <div>
-                                  <p>a <code><a href="../Protocols/SpeechProcessor.html">SpeechProcessor</a></code> protocol implementer.</p>
+                                  <p>An implementation of <code><a href="../Protocols/SpeechProcessor.html">SpeechProcessor</a></code>.</p>
                                 </div>
                               </td>
                             </tr>
@@ -350,7 +342,7 @@
                               </td>
                               <td>
                                 <div>
-                                  <p>configuration parameters for the speech pipeline.</p>
+                                  <p>Configuration parameters for the speech pipeline.</p>
                                 </div>
                               </td>
                             </tr>
@@ -362,7 +354,7 @@
                               </td>
                               <td>
                                 <div>
-                                  <p>a <code><a href="../Protocols/SpeechEventListener.html">SpeechEventListener</a></code> protocol implementer.</p>
+                                  <p>An implementation of <code><a href="../Protocols/SpeechEventListener.html">SpeechEventListener</a></code>.</p>
                                 </div>
                               </td>
                             </tr>
@@ -374,7 +366,7 @@
                               </td>
                               <td>
                                 <div>
-                                  <p>a <code><a href="../Protocols/SpeechProcessor.html">SpeechProcessor</a></code> protocol implementer.</p>
+                                  <p>An implementation of <code><a href="../Protocols/SpeechProcessor.html">SpeechProcessor</a></code>.</p>
                                 </div>
                               </td>
                             </tr>
@@ -386,7 +378,7 @@
                               </td>
                               <td>
                                 <div>
-                                  <p>a <code><a href="../Protocols/PipelineDelegate.html">PipelineDelegate</a></code> protocol implementer.</p>
+                                  <p>An implementation of <code><a href="../Protocols/PipelineDelegate.html">PipelineDelegate</a></code>.</p>
                                 </div>
                               </td>
                             </tr>
@@ -409,7 +401,12 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Checks the status of the delegate properties.</p>
+                        <p>Checks the status of the delegates provided in the constructor.</p>
+<div class="aside aside-remarks">
+    <p class="aside-title">Remarks</p>
+    Verifies that a strong reference to the delegates is being held.
+
+</div>
 <div class="aside aside-see-also">
     <p class="aside-title">See also</p>
     <code>setDelegates</code>
@@ -436,9 +433,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/c:@M@Spokestack_iOS@objc(cs)SpeechPipeline(im)setDelegates:pipelineDelegate:"></a>
-                    <a name="//apple_ref/swift/Method/setDelegates(_:pipelineDelegate:)" class="dashAnchor"></a>
-                    <a class="token" href="#/c:@M@Spokestack_iOS@objc(cs)SpeechPipeline(im)setDelegates:pipelineDelegate:">setDelegates(_:pipelineDelegate:)</a>
+                    <a name="/c:@M@Spokestack_iOS@objc(cs)SpeechPipeline(im)setDelegates:"></a>
+                    <a name="//apple_ref/swift/Method/setDelegates(_:)" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@M@Spokestack_iOS@objc(cs)SpeechPipeline(im)setDelegates:">setDelegates(_:)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -446,7 +443,7 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Sets the <code><a href="../Protocols/SpeechEventListener.html">SpeechEventListener</a></code> delegate property.</p>
+                        <p>Sets the property for the<code><a href="../Protocols/SpeechEventListener.html">SpeechEventListener</a></code> delegate .</p>
 
                       </div>
                       <div class="declaration">
@@ -454,7 +451,7 @@
                         <div class="language">
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="kd">@objc</span>
-<span class="kd">public</span> <span class="kd">func</span> <span class="nf">setDelegates</span><span class="p">(</span><span class="n">_</span> <span class="nv">speechDelegate</span><span class="p">:</span> <span class="kt"><a href="../Protocols/SpeechEventListener.html">SpeechEventListener</a></span><span class="p">,</span> <span class="nv">pipelineDelegate</span><span class="p">:</span> <span class="kt"><a href="../Protocols/PipelineDelegate.html">PipelineDelegate</a></span><span class="p">)</span></code></pre>
+<span class="kd">public</span> <span class="kd">func</span> <span class="nf">setDelegates</span><span class="p">(</span><span class="n">_</span> <span class="nv">speechDelegate</span><span class="p">:</span> <span class="kt"><a href="../Protocols/SpeechEventListener.html">SpeechEventListener</a></span><span class="p">)</span></code></pre>
 
                         </div>
                       </div>
@@ -471,18 +468,6 @@
                               <td>
                                 <div>
                                   <p>a <code><a href="../Protocols/SpeechEventListener.html">SpeechEventListener</a></code> protocol implementer.</p>
-                                </div>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>pipelineDelegate</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p>a <code><a href="../Protocols/PipelineDelegate.html">PipelineDelegate</a></code> protocol implementer.</p>
                                 </div>
                               </td>
                             </tr>
@@ -505,11 +490,16 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Activates speech recognition.  The pipeline remains active until the user stops talking or the activation timeout is reached.</p>
+                        <p>Activates speech recognition. The pipeline remains active until the user stops talking or the activation timeout is reached.</p>
 
-<p>Activations have configurable minimum/maximum lengths. The minimum length prevents the activation from being aborted if the user pauses after saying the wakeword (which untriggers the VAD). The maximum activation length allows the activation to timeout if the user doesn&rsquo;t say anything after saying the wakeword.</p>
+<p>Activations have configurable minimum/maximum lengths. The minimum length prevents the activation from being aborted if the user pauses after saying the wakeword (which deactivates the VAD). The maximum activation length allows the activation to timeout if the user doesn&rsquo;t say anything after saying the wakeword.</p>
 
 <p>The wakeword detector can be used in a multi-turn dialogue system. In such an environment, the user is not expected to say the wakeword during each turn. Therefore, an application can manually activate the pipeline by calling <code>activate</code> (after a system turn), and the wakeword detector will apply its minimum/maximum activation lengths to control the duration of the activation.</p>
+<div class="aside aside-see-also">
+    <p class="aside-title">See also</p>
+    <code>wakeActiveMin</code>, <code>wakeActiveMax</code>
+
+</div>
 
                       </div>
                       <div class="declaration">
@@ -570,7 +560,9 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Starts up the speech pipeline.</p>
+                        <p>Starts  the speech pipeline.</p>
+
+<p>The pipeline starts in a deactivated state, awaiting either a wakeword activation or an explicit call to <code>activate</code>.</p>
 
                       </div>
                       <div class="declaration">
@@ -600,6 +592,8 @@
                       <div class="abstract">
                         <p>Stops the speech pipeline.</p>
 
+<p>All pipeline activity is stopped, and the pipeline cannot be activated until it is <code>start</code>ed again.</p>
+
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
@@ -618,7 +612,7 @@
           </section>
         </section>
         <section id="footer">
-          <p>&copy; 2019 <a class="link" href="https://www.spokestack.io" target="_blank" rel="external">Spokestack</a>. All rights reserved. (Last updated: 2019-11-08)</p>
+          <p>&copy; 2019 <a class="link" href="https://www.spokestack.io" target="_blank" rel="external">Spokestack</a>. All rights reserved. (Last updated: 2019-11-12)</p>
           <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.11.2</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
         </section>
       </article>

@@ -14,7 +14,7 @@
     <a title="SpeechConfiguration Class Reference"></a>
     <header>
       <div class="content-wrapper">
-        <p><a href="../index.html">Spokestack_iOS Docs</a> (89% documented)</p>
+        <p><a href="../index.html">Spokestack_iOS Docs</a> (93% documented)</p>
       </div>
     </header>
     <div class="content-wrapper">
@@ -73,9 +73,6 @@
               </li>
               <li class="nav-group-task">
                 <a href="../Enums/SpeechProcessors.html">SpeechProcessors</a>
-              </li>
-              <li class="nav-group-task">
-                <a href="../Enums/VADDecision.html">VADDecision</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Enums/VADError.html">VADError</a>
@@ -307,7 +304,7 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>The name of the windowing function to apply to each audio frame before calculating the STFT.</p>
+                        <p>The name of the window function to apply to each audio frame before calculating the STFT.</p>
 <div class="aside aside-remark">
     <p class="aside-title">Remark</p>
     Currently the <q>hann</q> window is supported.
@@ -377,7 +374,7 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>The Exponentially-Weighted Moving Average (EWMA) update rate for the current RMS signal energy (0 for no RMS normalization).</p>
+                        <p>The Exponentially Weighted Moving Average (EWMA) update rate for the current  Root Mean Squared (RMS) signal energy (0 for no RMS normalization).</p>
 <div class="aside aside-see-also">
     <p class="aside-title">See also</p>
     <code><a href="../Classes/CoreMLWakewordRecognizer.html">CoreMLWakewordRecognizer</a></code>, <code><a href="../Classes/TFLiteWakewordRecognizer.html">TFLiteWakewordRecognizer</a></code>
@@ -476,7 +473,7 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>The length of the mel spectrogram used as an input to the wakeword recognizer encoder, in milliseconds.</p>
+                        <p>The length of a frame in the mel spectrogram used as an input to the wakeword recognizer encoder, in milliseconds.</p>
 <div class="aside aside-remark">
     <p class="aside-title">Remark</p>
     for CoreML: 400, for TFLite: 10
@@ -514,7 +511,7 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>The size of each mel spectrogram frame in the wakeword recognizer, in number of filterbank components.</p>
+                        <p>The number of filterbank components in each mel spectrogram frame sent to the wakeword recognizer.</p>
 <div class="aside aside-see-also">
     <p class="aside-title">See also</p>
     <code><a href="../Classes/CoreMLWakewordRecognizer.html">CoreMLWakewordRecognizer</a></code>, <code><a href="../Classes/TFLiteWakewordRecognizer.html">TFLiteWakewordRecognizer</a></code>
@@ -547,7 +544,45 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>The size of the encoder state in the wakeword recognizer, in vector units (defaults to encodeWidth).</p>
+                        <p>The size of the wakeword recognizer&rsquo;s encoder state output.</p>
+<div class="aside aside-see-also">
+    <p class="aside-title">See also</p>
+    <code><a href="../Classes/TFLiteWakewordRecognizer.html">TFLiteWakewordRecognizer</a></code>, <code><a href="../Classes/SpeechConfiguration.html#/c:@M@Spokestack_iOS@objc(cs)SpeechConfiguration(py)encodeWidth">encodeWidth</a></code>
+
+</div>
+<div class="aside aside-remarks">
+    <p class="aside-title">Remarks</p>
+    Defaults to matching the <code><a href="../Classes/SpeechConfiguration.html#/c:@M@Spokestack_iOS@objc(cs)SpeechConfiguration(py)encodeWidth">encodeWidth</a></code> value.
+
+</div>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@objc</span>
+<span class="kd">public</span> <span class="k">var</span> <span class="nv">stateWidth</span><span class="p">:</span> <span class="kt">Int</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:@M@Spokestack_iOS@objc(cs)SpeechConfiguration(py)encodeWidth"></a>
+                    <a name="//apple_ref/swift/Property/encodeWidth" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@M@Spokestack_iOS@objc(cs)SpeechConfiguration(py)encodeWidth">encodeWidth</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The size of the wakeword recognizer&rsquo;s encoder window output.</p>
 <div class="aside aside-see-also">
     <p class="aside-title">See also</p>
     <code><a href="../Classes/TFLiteWakewordRecognizer.html">TFLiteWakewordRecognizer</a></code>
@@ -560,7 +595,7 @@
                         <div class="language">
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="kd">@objc</span>
-<span class="kd">public</span> <span class="k">var</span> <span class="nv">stateWidth</span><span class="p">:</span> <span class="kt">Int</span></code></pre>
+<span class="kd">public</span> <span class="k">var</span> <span class="nv">encodeWidth</span><span class="p">:</span> <span class="kt">Int</span></code></pre>
 
                         </div>
                       </div>
@@ -594,39 +629,6 @@
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="kd">@objc</span>
 <span class="kd">public</span> <span class="k">var</span> <span class="nv">encodeLength</span><span class="p">:</span> <span class="kt">Int</span></code></pre>
-
-                        </div>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/c:@M@Spokestack_iOS@objc(cs)SpeechConfiguration(py)encodeWidth"></a>
-                    <a name="//apple_ref/swift/Property/encodeWidth" class="dashAnchor"></a>
-                    <a class="token" href="#/c:@M@Spokestack_iOS@objc(cs)SpeechConfiguration(py)encodeWidth">encodeWidth</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>The size of the wakeword recognizer encoder output, in vector units.</p>
-<div class="aside aside-see-also">
-    <p class="aside-title">See also</p>
-    <code><a href="../Classes/TFLiteWakewordRecognizer.html">TFLiteWakewordRecognizer</a></code>
-
-</div>
-
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">@objc</span>
-<span class="kd">public</span> <span class="k">var</span> <span class="nv">encodeWidth</span><span class="p">:</span> <span class="kt">Int</span></code></pre>
 
                         </div>
                       </div>
@@ -679,7 +681,7 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>The minimum length of an activation, in milliseconds, used to ignore a VAD deactivation after the wakeword.</p>
+                        <p>The minimum length of an activation, in milliseconds. Used to ignore a Voice Activity Detector (VAD) deactivation after the wakeword.</p>
 <div class="aside aside-see-also">
     <p class="aside-title">See also</p>
     <code><a href="../Classes/CoreMLWakewordRecognizer.html">CoreMLWakewordRecognizer</a></code>, <code><a href="../Classes/TFLiteWakewordRecognizer.html">TFLiteWakewordRecognizer</a></code>
@@ -712,7 +714,12 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>The maximum length of an activation, in milliseconds, used to time out the activation.</p>
+                        <p>The maximum length of an activation, in milliseconds. Used to time out the speech pipeline activation.</p>
+<div class="aside aside-remarks">
+    <p class="aside-title">Remarks</p>
+    Defaults to 5 seconds to improve perceived responsiveness, although most NLUs use a longer timeout (eg 7s).
+
+</div>
 <div class="aside aside-see-also">
     <p class="aside-title">See also</p>
     <code><a href="../Classes/AppleWakewordRecognizer.html">AppleWakewordRecognizer</a></code>, <code><a href="../Classes/CoreMLWakewordRecognizer.html">CoreMLWakewordRecognizer</a></code>, <code><a href="../Classes/TFLiteWakewordRecognizer.html">TFLiteWakewordRecognizer</a></code>
@@ -745,7 +752,7 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Indicate to the Voice Activity Detector the level of permissiveness to non-speech activation.</p>
+                        <p>Indicate to the VAD the level of permissiveness to non-speech activation.</p>
 <div class="aside aside-see-also">
     <p class="aside-title">See also</p>
     <code><a href="../Classes/AppleWakewordRecognizer.html">AppleWakewordRecognizer</a></code>, <code><a href="../Classes/CoreMLWakewordRecognizer.html">CoreMLWakewordRecognizer</a></code>, <code><a href="../Classes/TFLiteWakewordRecognizer.html">TFLiteWakewordRecognizer</a></code>
@@ -842,7 +849,7 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Audio frame width, in ms.</p>
+                        <p>Audio frame width, in milliseconds.</p>
 <div class="aside aside-to-do">
     <p class="aside-title">To do</p>
     Should be renamed wakeFrameWidth.
@@ -875,7 +882,7 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Length of time in ms to allow an Apple ASR request to run.</p>
+                        <p>Length of time to allow an Apple ASR request to run, in milliseconds.</p>
 <div class="aside aside-see-also">
     <p class="aside-title">See also</p>
     <code><a href="../Classes/AppleWakewordRecognizer.html">AppleWakewordRecognizer</a></code>
@@ -914,7 +921,7 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>The pre-emphasis filter weight to apply to the normalized audio signal (0 for no pre-emphasis).</p>
+                        <p>The pre-emphasis filter weight to apply to the normalized audio signal, in a range of [0, 1].</p>
 <div class="aside aside-see-also">
     <p class="aside-title">See also</p>
     <code><a href="../Classes/CoreMLWakewordRecognizer.html">CoreMLWakewordRecognizer</a></code>, <code><a href="../Classes/TFLiteWakewordRecognizer.html">TFLiteWakewordRecognizer</a></code>
@@ -947,10 +954,10 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>The machine learning model file name for the filtering step.</p>
-<div class="aside aside-see-also">
-    <p class="aside-title">See also</p>
-    <code><a href="../Classes/CoreMLWakewordRecognizer.html">CoreMLWakewordRecognizer</a></code>, <code><a href="../Classes/TFLiteWakewordRecognizer.html">TFLiteWakewordRecognizer</a></code>
+                        <p>The filename of the machine learning model used for the filtering step.</p>
+<div class="aside aside-remarks">
+    <p class="aside-title">Remarks</p>
+    Both the file name and the file path are configurable to allow for flexibility in constructing the path that the recognizer will attempt to load the model from.
 
 </div>
 
@@ -980,10 +987,10 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>The machine learning model file name for the encoding step.</p>
-<div class="aside aside-see-also">
-    <p class="aside-title">See also</p>
-    <code><a href="../Classes/TFLiteWakewordRecognizer.html">TFLiteWakewordRecognizer</a></code>
+                        <p>The filename of the machine learning model used for the encoding step.</p>
+<div class="aside aside-remarks">
+    <p class="aside-title">Remarks</p>
+    Both the file name and the file path are configurable to allow for flexibility in constructing the path that the recognizer will attempt to load the model from.
 
 </div>
 
@@ -1013,10 +1020,10 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>The machine learning model file name for the detect step.</p>
-<div class="aside aside-see-also">
-    <p class="aside-title">See also</p>
-    <code><a href="../Classes/CoreMLWakewordRecognizer.html">CoreMLWakewordRecognizer</a></code>, <code><a href="../Classes/TFLiteWakewordRecognizer.html">TFLiteWakewordRecognizer</a></code>
+                        <p>The filename of the machine learning model used for the detect step.</p>
+<div class="aside aside-remarks">
+    <p class="aside-title">Remarks</p>
+    Both the file name and the file path are configurable to allow for flexibility in constructing the path that the recognizer will attempt to load the model from.
 
 </div>
 
@@ -1046,12 +1053,7 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>The file system path to the machine learning model for the filtering step.</p>
-<div class="aside aside-see-also">
-    <p class="aside-title">See also</p>
-    <code><a href="../Classes/CoreMLWakewordRecognizer.html">CoreMLWakewordRecognizer</a></code>, <code><a href="../Classes/TFLiteWakewordRecognizer.html">TFLiteWakewordRecognizer</a></code>
-
-</div>
+                        <p>The filesystem path to the machine learning model for the filtering step.</p>
 
                       </div>
                       <div class="declaration">
@@ -1079,7 +1081,7 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>The file system path to the machine learning model for the encoding step.</p>
+                        <p>The filesystem path to the machine learning model for the encoding step.</p>
 <div class="aside aside-see-also">
     <p class="aside-title">See also</p>
     <code><a href="../Classes/TFLiteWakewordRecognizer.html">TFLiteWakewordRecognizer</a></code>
@@ -1112,7 +1114,7 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>The file system path to the machine learning model for the detect step.</p>
+                        <p>The filesystem path to the machine learning model for the detect step.</p>
 <div class="aside aside-see-also">
     <p class="aside-title">See also</p>
     <code><a href="../Classes/CoreMLWakewordRecognizer.html">CoreMLWakewordRecognizer</a></code>, <code><a href="../Classes/TFLiteWakewordRecognizer.html">TFLiteWakewordRecognizer</a></code>
@@ -1165,7 +1167,7 @@
           </section>
         </section>
         <section id="footer">
-          <p>&copy; 2019 <a class="link" href="https://www.spokestack.io" target="_blank" rel="external">Spokestack</a>. All rights reserved. (Last updated: 2019-11-08)</p>
+          <p>&copy; 2019 <a class="link" href="https://www.spokestack.io" target="_blank" rel="external">Spokestack</a>. All rights reserved. (Last updated: 2019-11-12)</p>
           <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.11.2</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
         </section>
       </article>

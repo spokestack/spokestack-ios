@@ -14,7 +14,7 @@
     <a title="Classes  Reference"></a>
     <header>
       <div class="content-wrapper">
-        <p><a href="index.html">Spokestack_iOS Docs</a> (89% documented)</p>
+        <p><a href="index.html">Spokestack_iOS Docs</a> (93% documented)</p>
       </div>
     </header>
     <div class="content-wrapper">
@@ -73,9 +73,6 @@
               </li>
               <li class="nav-group-task">
                 <a href="Enums/SpeechProcessors.html">SpeechProcessors</a>
-              </li>
-              <li class="nav-group-task">
-                <a href="Enums/VADDecision.html">VADDecision</a>
               </li>
               <li class="nav-group-task">
                 <a href="Enums/VADError.html">VADError</a>
@@ -157,7 +154,7 @@
                       <div class="abstract">
                         <p>This pipeline component uses the Apple <code>SFSpeech</code> API to stream audio samples for speech recognition.</p>
 
-<p>When the speech pipeline coordination event is started via the <code><a href="Protocols/SpeechProcessor.html">SpeechProcessor</a></code> protocol implementation, the recognizer begins streaming buffered frames to the Apple ASR API for recognition. Once the speech pipeline coordination is stopped via the <code><a href="Protocols/SpeechProcessor.html">SpeechProcessor</a></code> protocol implementation, or when the Apple ASR API indicates a completed speech event, the recognizer completes the API request and calls the <code><a href="Protocols/SpeechEventListener.html">SpeechEventListener</a></code> delegate&rsquo;s  <code>didRecognize</code> event  with the updated global speech context (including the audio transcript and confidence).</p>
+<p>Once speech pipeline coordination via <code>startStreaming</code> is received, the recognizer begins streaming buffered frames to the Apple ASR API for recognition. Once speech pipeline coordination via <code>stopStreaming</code> is received, or when the Apple ASR API indicates a completed speech event, the recognizer completes the API request and calls the <code><a href="Protocols/SpeechEventListener.html">SpeechEventListener</a></code> delegate&rsquo;s <code>didRecognize</code> event with the updated global speech context (including the audio transcript and confidence).</p>
 
                         <a href="Classes/AppleSpeechRecognizer.html" class="slightly-smaller">See more</a>
                       </div>
@@ -192,7 +189,7 @@
                       <div class="abstract">
                         <p>This pipeline component uses the Apple <code>SFSpeech</code> API to stream audio samples for wakeword recognition.</p>
 
-<p>When the speech pipeline coordination event is started via the <code><a href="Protocols/SpeechProcessor.html">SpeechProcessor</a></code> protocol implementation, the recognizer begins streaming buffered frames to the Apple ASR API for recognition. Upon wakeword or wakephrase recognition, the pipeline activation event is triggered and the recognizer completes the API request and awaits another coordination event. When the speech pipeline coordination is stopped via the <code><a href="Protocols/SpeechProcessor.html">SpeechProcessor</a></code> protocol implementation, the recognizer completes the API request  and awaits another coordination event.</p>
+<p>Once speech pipeline coordination via <code>startStreaming</code> is received, the recognizer begins streaming buffered frames to the Apple ASR API for recognition. Upon wakeword or wakephrase recognition, the pipeline activation event is triggered and the recognizer completes the API request and awaits another coordination event. Once speech pipeline coordination via <code>stopStreaming</code> is received, the recognizer completes the API request and awaits another coordination event.</p>
 
                         <a href="Classes/AppleWakewordRecognizer.html" class="slightly-smaller">See more</a>
                       </div>
@@ -225,15 +222,13 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>This pipeline component streams audio samples and uses a CoreML classifier to detect keywords (i.e. [null], up, dog) and aggregates them into phrases (up dog) to process for wakeword recognition. Once a wakeword phrase is detected, the speech pipeline is activated. The speech pipeline remains active until the user stops talking or the activation timeout is reached.</p>
+                        <p>This pipeline component streams audio samples and uses CoreML models to detect and aggregate keywords (i.e. [null], up, dog) into phrases (up dog) to process for wakeword recognition. Once a wakeword phrase is detected, speech pipeline activation is called. </p>
 
-<p>When the speech pipeline coordination event is started via the <code><a href="Protocols/SpeechProcessor.html">SpeechProcessor</a></code> protocol implementation, the recognizer begins streaming buffered frames that are normalized and then converted to the magnitude Short-Time Fourier Transform (STFT) representation over a hopped sliding window. This linear spectrogram is then converted to a mel spectrogram via a <q>filter</q> Tensorflow model. These mel frames are batched together into a sliding window.</p>
-
-<p>The mel spectrogram represents the features to be passed to the keyword classifier, which is implemented in a <q>detect</q> CoreML model. This classifier outputs posterior probabilities for each keyword (and a null output 0, which represents non-keyword speech).</p>
+<p>Once speech pipeline coordination via <code>startStreaming</code>is received, the recognizer begins streaming buffered frames that are normalized and then converted to the magnitude Short-Time Fourier Transform (STFT) representation over a hopped sliding window. This linear spectrogram is then converted to a mel spectrogram via a <q>filter</q> CoreML model.  The mel spectrogram represents the features to be passed to the keyword classifier, which is implemented in a <q>detect</q> CoreML model. This classifier outputs posterior probabilities for each keyword (and a null output 0, which represents non-keyword speech). These mel frames are batched together into a sliding window.</p>
 
 <p>The detector&rsquo;s outputs are considered noisy, so they are maintained in a sliding window and passed through a moving mean filter. The smoothed posteriors are then maintained in another sliding window for phrasing. The phraser attempts to match one of the configured keyword sequences using the maximum posterior for each word. If a sequence match is found, the speech pipeline is activated.</p>
 
-<p>Upon the pipeline activation event, the recognizer completes processing and awaits another coordination event. When the speech pipeline coordination is stopped via the <code><a href="Protocols/SpeechProcessor.html">SpeechProcessor</a></code> protocol implementation, the recognizer stops processing and awaits another coordination event.</p>
+<p>Upon pipeline activation, the recognizer completes processing and awaits another coordination event. Once speech pipeline coordination via <code>stopStreaming</code> is received, the recognizer stops processing and awaits another coordination event.</p>
 
                         <a href="Classes/CoreMLWakewordRecognizer.html" class="slightly-smaller">See more</a>
                       </div>
@@ -338,15 +333,15 @@
 <p>When running, the pipeline communicates with the client via delegates that receive events.</p>
 <pre class="highlight swift"><code><span class="c1">// assume that self implements the SpeechEventListener and PipelineDelegate protocols</span>
 <span class="k">let</span> <span class="nv">pipeline</span> <span class="o">=</span> <span class="kt">SpeechPipeline</span><span class="p">(</span><span class="kt">SpeechProcessors</span><span class="o">.</span><span class="n">appleSpeech</span><span class="o">.</span><span class="n">processor</span><span class="p">,</span>
-                               <span class="nv">speechConfiguration</span><span class="p">:</span> <span class="kt">SpeechConfiguration</span><span class="p">(),</span>
-                               <span class="nv">speechDelegate</span><span class="p">:</span> <span class="k">self</span><span class="p">,</span>
-                               <span class="nv">wakewordService</span><span class="p">:</span> <span class="kt">SpeechProcessors</span><span class="o">.</span><span class="n">appleWakeword</span><span class="o">.</span><span class="n">processor</span><span class="p">,</span>
-                               <span class="nv">pipelineDelegate</span><span class="p">:</span> <span class="k">self</span><span class="p">)</span>
+                              <span class="nv">speechConfiguration</span><span class="p">:</span> <span class="kt">SpeechConfiguration</span><span class="p">(),</span>
+                              <span class="nv">speechDelegate</span><span class="p">:</span> <span class="k">self</span><span class="p">,</span>
+                              <span class="nv">wakewordService</span><span class="p">:</span> <span class="kt">SpeechProcessors</span><span class="o">.</span><span class="n">appleWakeword</span><span class="o">.</span><span class="n">processor</span><span class="p">,</span>
+                              <span class="nv">pipelineDelegate</span><span class="p">:</span> <span class="k">self</span><span class="p">)</span>
 <span class="n">pipeline</span><span class="o">.</span><span class="nf">start</span><span class="p">()</span>
 </code></pre>
 <div class="aside aside-warning">
     <p class="aside-title">Warning</p>
-    All calls to delegate event handlers are made in the context of the pipeline&rsquo;s thread, so event handlers should not perform blocking operations, and should use message passing when communicating with UI components, etc.
+    All calls to delegate event handlers are made in the context of the pipeline&rsquo;s thread, so event handlers should not perform blocking operations, and they should use message passing when communicating with UI components, etc.
 
 </div>
 
@@ -381,17 +376,17 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>This pipeline component streams audio samples and uses a Tensorflow-Lite binary classifier to detect keyword phrases to process for wakeword recognition.  Once a wakeword phrase is detected, the speech pipeline is activated. The speech pipeline remains active until the user stops talking or the activation timeout is reached.</p>
+                        <p>This pipeline component streams audio samples and uses a TensorFlow Lite binary classifier to detect keyword phrases to process for wakeword recognition. Once a wakeword phrase is detected, the speech pipeline is activated.</p>
 
-<p>When the speech pipeline coordination event is started via the <code><a href="Protocols/SpeechProcessor.html">SpeechProcessor</a></code> protocol implementation, the recognizer begins streaming buffered frames  that are first normalized and then converted to the magnitude Short-Time Fourier Transform (STFT) representation over a hopped sliding window. This linear spectrogram is then converted to a mel spectrogram via a <q>filter</q> Tensorflow model. These mel frames are batched together into a sliding window.</p>
+<p>Upon activating the speech pipeline, the recognizer completes processing and awaits another coordination call. Once speech pipeline coordination via <code>stopStreaming</code> is received, the recognizer stops processing and awaits another coordination event.</p>
 
-<p>The mel spectrogram represents the features to be passed to the autoregressive encoder (usually an rnn or crnn), which is implemented in an <q>encode</q> Tensorflow model. This encoder outputs an encoded vector and a state vector. The encoded vectors are batched together into a sliding window for classification, and the state vector is used to perform the running autoregressive transduction over the mel frames.</p>
+<p>Once speech pipeline coordination via <code>startStreaming</code> is received,, the recognizer begins streaming buffered frames that are first normalized and then converted to the magnitude Short-Time Fourier Transform (STFT) representation over a hopped sliding window. This linear spectrogram is then converted to a mel spectrogram via a <q>filter</q> TensorFlow model. These mel frames are batched together into a sliding window.</p>
 
-<p>The <q>detect</q> Tensorflow model takes the encoded sliding window and outputs a single posterior value in the range [0, 1]. Values closer to 1 indicate a detected keyword phrase, values closer to 0 indicate non-keyword speech. This classifier is commonly implemented as an attention mechanism over the encoder window.</p>
+<p>The mel spectrogram represents the features to be passed to the autoregressive encoder (usually an rnn or crnn), which is implemented in an <q>encode</q> TensorFlow model. This encoder outputs an encoded vector and a state vector. The encoded vectors are batched together into a sliding window for classification, and the state vector is used to perform the autoregressive transduction over the mel frames.</p>
 
-<p>The detector&rsquo;s outputs are then compared against a configured threshold, in order to determine whether to activate the pipeline. If the posterior is greater than the thresold, the activation occurs.</p>
+<p>The <q>detect</q> TensorFlow model takes the encoded sliding window and outputs a single posterior value in the range [0, 1]. The higher the value, the more likely a keyword phrase is detected. This classifier is commonly implemented as an attention mechanism over the encoder window.</p>
 
-<p>Upon the pipeline activation event, the recognizer completes processing and awaits another coordination event. When the speech pipeline coordination is stopped via the <code><a href="Protocols/SpeechProcessor.html">SpeechProcessor</a></code> protocol implementation, the recognizer stops processing and awaits another coordination event.</p>
+<p>The detector&rsquo;s outputs are then compared against a configured threshold in order to determine whether to activate the pipeline. If the posterior is greater than the thresold, the pipeline is activated.</p>
 
                         <a href="Classes/TFLiteWakewordRecognizer.html" class="slightly-smaller">See more</a>
                       </div>
@@ -443,7 +438,7 @@
           </section>
         </section>
         <section id="footer">
-          <p>&copy; 2019 <a class="link" href="https://www.spokestack.io" target="_blank" rel="external">Spokestack</a>. All rights reserved. (Last updated: 2019-11-08)</p>
+          <p>&copy; 2019 <a class="link" href="https://www.spokestack.io" target="_blank" rel="external">Spokestack</a>. All rights reserved. (Last updated: 2019-11-12)</p>
           <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.11.2</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
         </section>
       </article>

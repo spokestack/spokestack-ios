@@ -13,7 +13,7 @@
     <a title="Spokestack_iOS  Reference"></a>
     <header>
       <div class="content-wrapper">
-        <p><a href="index.html">Spokestack_iOS Docs</a> (89% documented)</p>
+        <p><a href="index.html">Spokestack_iOS Docs</a> (93% documented)</p>
       </div>
     </header>
     <div class="content-wrapper">
@@ -72,9 +72,6 @@
               </li>
               <li class="nav-group-task">
                 <a href="Enums/SpeechProcessors.html">SpeechProcessors</a>
-              </li>
-              <li class="nav-group-task">
-                <a href="Enums/VADDecision.html">VADDecision</a>
               </li>
               <li class="nav-group-task">
                 <a href="Enums/VADError.html">VADError</a>
@@ -140,17 +137,49 @@
 <p>Spokestack provides an extensible speech recognition pipeline for the iOS
 platform. It includes a variety of built-in speech processors for Voice
 Activity Detection (VAD), wakeword activation, and Automatic Speech Recognition (ASR).</p>
+<h2 id='features' class='heading'>Features</h2>
+
+<ul>
+<li>Voice activity detection</li>
+<li>Wakeword activation with three different models</li>
+<li>Simplified Automated Speech Recognition interface</li>
+<li>Speech pipeline seamlessly integrates VAD-triggered wakeword detection using on-device machine learning models with transcribing utterances using platform Automated Speech Recognition.</li>
+</ul>
 <h2 id='installation' class='heading'>Installation</h2>
 
 <p><a href="https://cocoapods.org/pods/Spokestack-iOS"><img src="https://img.shields.io/cocoapods/v/Spokestack-iOS.svg" alt=""></a></p>
 
-<p><code>pod &#39;Spokestack-iOS&#39;</code></p>
-
 <p><a href="https://cocoapods.org">CocoaPods</a> is a dependency manager for Cocoa projects. For usage and installation instructions, visit their website. To integrate Spokestack into your Xcode project using CocoaPods, specify it in your Podfile:</p>
-<h2 id='release' class='heading'>Release</h2>
+
+<p><code>pod &#39;Spokestack-iOS&#39;</code></p>
+<h2 id='usage' class='heading'>Usage</h2>
+<h3 id='configure-wakeword-activated-automated-speech-recognition' class='heading'>Configure Wakeword-activated Automated Speech Recognition</h3>
+<pre class="highlight plaintext"><code> // assume that self implements the SpeechEventListener and PipelineDelegate protocols
+ let pipeline = SpeechPipeline(SpeechProcessors.appleSpeech.processor,
+                               speechConfiguration: SpeechConfiguration(),
+                               speechDelegate: self,
+                               wakewordService: SpeechProcessors.appleWakeword.processor,
+                               pipelineDelegate: self)
+ pipeline.start()
+</code></pre>
+
+<p>This example creates a speech recognition pipeline using an ASR-based wakeword detector that is triggered by VAD, which in turn activates a full ASR, returning the resulting utterance to the <code><a href="Protocols/SpeechEventListener.html">SpeechEventListener</a></code> event listener (<code>self</code> in this example).</p>
+<h3 id='reference-implementation' class='heading'>Reference implementation</h3>
+
+<p>The <code>SpokestackFrameworkExample</code> project contains reference implementations for how to use the Spokestack library, along with runnable examples of the wakeword and ASR components.</p>
+
+<p>See <code><a href="Classes/SpeechPipeline.html">SpeechPipeline</a></code> and <code><a href="Classes/SpeechConfiguration.html">SpeechConfiguration</a></code> for further configuration documentation.</p>
+<h2 id='development' class='heading'>Development</h2>
+<h3 id='preconditions' class='heading'>Preconditions</h3>
 
 <ol>
-<li>Ensure that CocoaPods has been installed via <code>gem</code>, not via <code>brew</code></li>
+<li>Ensure that CocoaPods has been installed: <code>gem install cocoapods</code> (<a href="https://github.com/CocoaPods/CocoaPods/issues/8955">not via <code>brew</code></a>).</li>
+<li>Ensure that jazzy has been installed: <code>gem install jazzy</code>.</li>
+</ol>
+<h3 id='process' class='heading'>Process</h3>
+
+<ol>
+<li><code>jazzy --podspec Spokestack-iOS.podspec</code></li>
 <li>Increment the <code>podspec</code> version in <code>Spokestack-iOS.podspec</code></li>
 <li><code>git commit -a -m &#39;YOUR_COMMIT_MESSAGE&#39; &amp;&amp; git tag YOUR_PODSPEC_VERSION &amp;&amp; git push --origin</code></li>
 <li><code>pod spec lint --use-libraries --allow-warnings --use-modular-headers</code>, which should pass all checks</li>
@@ -178,7 +207,7 @@ Activity Detection (VAD), wakeword activation, and Automatic Speech Recognition 
           </section>
         </section>
         <section id="footer">
-          <p>&copy; 2019 <a class="link" href="https://www.spokestack.io" target="_blank" rel="external">Spokestack</a>. All rights reserved. (Last updated: 2019-11-08)</p>
+          <p>&copy; 2019 <a class="link" href="https://www.spokestack.io" target="_blank" rel="external">Spokestack</a>. All rights reserved. (Last updated: 2019-11-12)</p>
           <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.11.2</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
         </section>
       </article>

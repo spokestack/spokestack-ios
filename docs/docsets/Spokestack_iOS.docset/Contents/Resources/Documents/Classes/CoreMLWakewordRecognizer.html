@@ -14,7 +14,7 @@
     <a title="CoreMLWakewordRecognizer Class Reference"></a>
     <header>
       <div class="content-wrapper">
-        <p><a href="../index.html">Spokestack_iOS Docs</a> (89% documented)</p>
+        <p><a href="../index.html">Spokestack_iOS Docs</a> (93% documented)</p>
       </div>
     </header>
     <div class="content-wrapper">
@@ -73,9 +73,6 @@
               </li>
               <li class="nav-group-task">
                 <a href="../Enums/SpeechProcessors.html">SpeechProcessors</a>
-              </li>
-              <li class="nav-group-task">
-                <a href="../Enums/VADDecision.html">VADDecision</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Enums/VADError.html">VADError</a>
@@ -142,15 +139,13 @@
 
                 </div>
               </div>
-            <p>This pipeline component streams audio samples and uses a CoreML classifier to detect keywords (i.e. [null], up, dog) and aggregates them into phrases (up dog) to process for wakeword recognition. Once a wakeword phrase is detected, the speech pipeline is activated. The speech pipeline remains active until the user stops talking or the activation timeout is reached.</p>
+            <p>This pipeline component streams audio samples and uses CoreML models to detect and aggregate keywords (i.e. [null], up, dog) into phrases (up dog) to process for wakeword recognition. Once a wakeword phrase is detected, speech pipeline activation is called. </p>
 
-<p>When the speech pipeline coordination event is started via the <code><a href="../Protocols/SpeechProcessor.html">SpeechProcessor</a></code> protocol implementation, the recognizer begins streaming buffered frames that are normalized and then converted to the magnitude Short-Time Fourier Transform (STFT) representation over a hopped sliding window. This linear spectrogram is then converted to a mel spectrogram via a <q>filter</q> Tensorflow model. These mel frames are batched together into a sliding window.</p>
-
-<p>The mel spectrogram represents the features to be passed to the keyword classifier, which is implemented in a <q>detect</q> CoreML model. This classifier outputs posterior probabilities for each keyword (and a null output 0, which represents non-keyword speech).</p>
+<p>Once speech pipeline coordination via <code>startStreaming</code>is received, the recognizer begins streaming buffered frames that are normalized and then converted to the magnitude Short-Time Fourier Transform (STFT) representation over a hopped sliding window. This linear spectrogram is then converted to a mel spectrogram via a <q>filter</q> CoreML model.  The mel spectrogram represents the features to be passed to the keyword classifier, which is implemented in a <q>detect</q> CoreML model. This classifier outputs posterior probabilities for each keyword (and a null output 0, which represents non-keyword speech). These mel frames are batched together into a sliding window.</p>
 
 <p>The detector&rsquo;s outputs are considered noisy, so they are maintained in a sliding window and passed through a moving mean filter. The smoothed posteriors are then maintained in another sliding window for phrasing. The phraser attempts to match one of the configured keyword sequences using the maximum posterior for each word. If a sequence match is found, the speech pipeline is activated.</p>
 
-<p>Upon the pipeline activation event, the recognizer completes processing and awaits another coordination event. When the speech pipeline coordination is stopped via the <code><a href="../Protocols/SpeechProcessor.html">SpeechProcessor</a></code> protocol implementation, the recognizer stops processing and awaits another coordination event.</p>
+<p>Upon pipeline activation, the recognizer completes processing and awaits another coordination event. Once speech pipeline coordination via <code>stopStreaming</code> is received, the recognizer stops processing and awaits another coordination event.</p>
 
           </section>
           <section class="section task-group-section">
@@ -258,7 +253,7 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Delegate which gets sent speech pipeline control events.</p>
+                        <p>Delegate which receives speech pipeline control events.</p>
 
                       </div>
                       <div class="declaration">
@@ -334,7 +329,7 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Triggered by the speech pipeline, indicating the recognizer to begin streaming audio and processing it.</p>
+                        <p>Triggered by the speech pipeline, instructing the recognizer to begin streaming and processing audio.</p>
 
                       </div>
                       <div class="declaration">
@@ -357,7 +352,7 @@
                               </td>
                               <td>
                                 <div>
-                                  <p>the current speech context</p>
+                                  <p>The current speech context.</p>
                                 </div>
                               </td>
                             </tr>
@@ -380,7 +375,7 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Triggered by the speech pipeline, indicating the recognizer to stop streaming audio and complete processing.</p>
+                        <p>Triggered by the speech pipeline, instructing the recognizer to stop streaming audio and complete processing.</p>
 
                       </div>
                       <div class="declaration">
@@ -403,7 +398,7 @@
                               </td>
                               <td>
                                 <div>
-                                  <p>the current speech context</p>
+                                  <p>The current speech context.</p>
                                 </div>
                               </td>
                             </tr>
@@ -483,7 +478,7 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Called when the VAD as stopped detecting speech.</p>
+                        <p>Called when the VAD has stopped detecting speech.</p>
 
                       </div>
                       <div class="declaration">
@@ -502,7 +497,7 @@
           </section>
         </section>
         <section id="footer">
-          <p>&copy; 2019 <a class="link" href="https://www.spokestack.io" target="_blank" rel="external">Spokestack</a>. All rights reserved. (Last updated: 2019-11-08)</p>
+          <p>&copy; 2019 <a class="link" href="https://www.spokestack.io" target="_blank" rel="external">Spokestack</a>. All rights reserved. (Last updated: 2019-11-12)</p>
           <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.11.2</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
         </section>
       </article>
