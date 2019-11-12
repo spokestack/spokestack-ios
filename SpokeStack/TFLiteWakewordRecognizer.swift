@@ -22,7 +22,7 @@ import TensorFlowLite
  
  The "detect" TensorFlow model takes the encoded sliding window and outputs a single posterior value in the range [0, 1]. The higher the value, the more likely a keyword phrase is detected. This classifier is commonly implemented as an attention mechanism over the encoder window.
  
- The detector's outputs are then compared against a configured threshold in order to determine whether to activate the pipeline. If the posterior is greater than the thresold, the pipeline is activated.
+ The detector's outputs are then compared against a configured threshold in order to determine whether to activate the pipeline. If the posterior is greater than the threshold, the pipeline is activated.
 */
 public class TFLiteWakewordRecognizer: NSObject {
     
