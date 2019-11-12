@@ -11,13 +11,13 @@ import filter_audio
 
 /// Indicate how likely it is that non-speech will activate the VAD.
 public enum VADMode: Int {
-    /// Most permissive of non-speech; least likely to not detection speech; most likely to detect speech.
+    /// Most permissive of non-speech; most likely to detect speech.
     case HighlyPermissive = 1
-    /// Allows more non-speech than .higher levels.
+    /// Allows more non-speech than higher levels.
     case Permissive = 2
     /// Allows less non-speech than higher levels.
     case Restrictive = 3
-    /// Most restrictive of non-speech; most amount of miss speech.
+    /// Most restrictive of non-speech; most amount of missed speech.
     case HighlyRestrictive = 4
 }
 

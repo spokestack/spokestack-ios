@@ -16,7 +16,7 @@ import TensorFlowLite
  
  Upon activating the speech pipeline, the recognizer completes processing and awaits another coordination call. Once speech pipeline coordination via `stopStreaming` is received, the recognizer stops processing and awaits another coordination event.
 
- Once speech pipeline coordination via `startStreaming` is received,, the recognizer begins streaming buffered frames that are first normalized and then converted to the magnitude Short-Time Fourier Transform (STFT) representation over a hopped sliding window. This linear spectrogram is then converted to a mel spectrogram via a "filter" TensorFlow model. These mel frames are batched together into a sliding window.
+ Once speech pipeline coordination via `startStreaming` is received, the recognizer begins streaming buffered frames that are first normalized and then converted to the magnitude Short-Time Fourier Transform (STFT) representation over a hopped sliding window. This linear spectrogram is then converted to a mel spectrogram via a "filter" TensorFlow model. These mel frames are batched together into a sliding window.
 
  The mel spectrogram represents the features to be passed to the autoregressive encoder (usually an rnn or crnn), which is implemented in an "encode" TensorFlow model. This encoder outputs an encoded vector and a state vector. The encoded vectors are batched together into a sliding window for classification, and the state vector is used to perform the autoregressive transduction over the mel frames.
  
