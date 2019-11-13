@@ -45,15 +45,13 @@ See `SpeechPipeline` and `SpeechConfiguration` for further configuration documen
 ### Preconditions
 
   1. Ensure that CocoaPods has been installed: `gem install cocoapods` ([not via `brew`](https://github.com/CocoaPods/CocoaPods/issues/8955)).
-  2. Ensure that jazzy has been installed: `gem install jazzy`.
+  2. Ensure that you are registered in CocoaPods: `pod trunk register YOUR_EMAIL --description='release YOUR_PODSPEC_VERSION'`
 
 ### Process
-  1. `jazzy --podspec Spokestack-iOS.podspec`
-  2. Increment the `podspec` version in `Spokestack-iOS.podspec`
-  3. `git commit -a -m 'YOUR_COMMIT_MESSAGE' && git tag YOUR_PODSPEC_VERSION && git push --origin`
-  4. `pod spec lint --use-libraries --allow-warnings --use-modular-headers`, which should pass all checks 
-  6. `pod trunk register YOUR_EMAIL --description='release YOUR_PODSPEC_VERSION'`
-  7. `pod trunk push  --use-libraries --allow-warnings --use-modular-headers`
+  1. Increment the `podspec` version in `Spokestack-iOS.podspec`
+  2. `git commit -a -m 'YOUR_COMMIT_MESSAGE' && git tag YOUR_PODSPEC_VERSION && git push --origin`
+  3. `pod spec lint --use-libraries --allow-warnings --use-modular-headers`, which should pass all checks 
+  4. `pod trunk push  --use-libraries --allow-warnings --use-modular-headers`
 
 ## License
 [![License](https://img.shields.io/badge/License-Apache%202.0-green.svg)](https://opensource.org/licenses/Apache-2.0)
