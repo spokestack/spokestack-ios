@@ -53,6 +53,30 @@ import Foundation
         wakewordRecognizerService.delegate = nil
     }
     
+    /// Initializes a new speech pipeline instance with reasonable defaults for configuration, wakeword, and asr recognizers.
+    /// - Parameter speechDelegate: An implementation of `SpeechEventListener`.
+    /// - Parameter pipelineDelegate: An implementation of `PipelineDelegate`.
+    @objc public init(_ speechDelegate: SpeechEventListener,
+                      pipelineDelegate: PipelineDelegate) throws {
+        self.speechConfiguration = SpeechConfiguration()
+        self.speechDelegate = speechDelegate
+        
+        self.speechRecognizerService = SpeechProcessors.appleSpeech.processor
+        /// order is important: set the delegate first so that configuration errors/tracing can be sent back
+        self.speechRecognizerService.delegate = self.speechDelegate
+        self.speechRecognizerService.configuration = SpeechConfiguration()
+        self.wakewordRecognizerService = SpeechProcessors.appleWakeword.processor
+        /// see previous comment
+        self.wakewordRecognizerService.delegate = self.speechDelegate
+        self.wakewordRecognizerService.configuration = speechConfiguration
+        
+        AudioController.sharedInstance.configuration = SpeechConfiguration()
+        
+        self.pipelineDelegate = pipelineDelegate
+        AudioController.sharedInstance.pipelineDelegate = self.pipelineDelegate
+        self.pipelineDelegate!.didInit()
+    }
+    
     /// Initializes a new speech pipeline instance.
     /// - Parameter speechService: An implementation of `SpeechProcessor`.
     /// - Parameter speechConfiguration: Configuration parameters for the speech pipeline.
@@ -71,8 +95,6 @@ import Foundation
         /// order is important: set the delegate first so that configuration errors/tracing can be sent back
         self.speechRecognizerService.delegate = self.speechDelegate
         self.speechRecognizerService.configuration = speechConfiguration
-        
-        
         self.wakewordRecognizerService = wakewordService
         /// see previous comment
         self.wakewordRecognizerService.delegate = self.speechDelegate

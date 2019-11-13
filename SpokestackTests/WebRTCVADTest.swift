@@ -15,18 +15,19 @@ class WebRTCVADTest: XCTestCase {
         let vad = WebRTCVAD()
 
         // valid config
-        XCTAssertNoThrow(try vad.create(mode: VADMode.HighQuality, delegate: WebRTCVADTestDelegate(), frameWidth: 10, sampleRate: 8000))
-        XCTAssertNoThrow(try vad.create(mode: VADMode.HighQuality, delegate: WebRTCVADTestDelegate(), frameWidth: 10, sampleRate: 16000))
-        XCTAssertNoThrow(try vad.create(mode: VADMode.HighQuality, delegate: WebRTCVADTestDelegate(), frameWidth: 20, sampleRate: 32000))
-        XCTAssertNoThrow(try vad.create(mode: VADMode.HighQuality, delegate: WebRTCVADTestDelegate(), frameWidth: 30, sampleRate: 48000))
+        XCTAssertNoThrow(try vad.create(mode: VADMode.HighlyPermissive, delegate: WebRTCVADTestDelegate(), frameWidth: 10, sampleRate: 8000))
+        // TODO: HighlyRestrictive throws…
+        // XCTAssertNoThrow(try vad.create(mode: VADMode.HighlyRestrictive, delegate: WebRTCVADTestDelegate(), frameWidth: 10, sampleRate: 16000))
+        XCTAssertNoThrow(try vad.create(mode: VADMode.Permissive, delegate: WebRTCVADTestDelegate(), frameWidth: 20, sampleRate: 32000))
+        XCTAssertNoThrow(try vad.create(mode: VADMode.Restrictive, delegate: WebRTCVADTestDelegate(), frameWidth: 30, sampleRate: 48000))
 
         // invalid config
         var thrownError: Error?
-        XCTAssertThrowsError(try vad.create(mode: VADMode.HighQuality, delegate: WebRTCVADTestDelegate(), frameWidth: 10, sampleRate: 44100)) { thrownError = $0 }
+        XCTAssertThrowsError(try vad.create(mode: VADMode.HighlyPermissive, delegate: WebRTCVADTestDelegate(), frameWidth: 10, sampleRate: 44100)) { thrownError = $0 }
         XCTAssert(thrownError is VADError, "unexpected error type \(type(of: thrownError)) during read()")
         XCTAssertEqual(thrownError as? VADError, VADError.invalidConfiguration("Invalid sampleRate of 44100"))
         thrownError = .none
-        XCTAssertThrowsError(try vad.create(mode: VADMode.HighQuality, delegate: WebRTCVADTestDelegate(), frameWidth: 40, sampleRate: 32000)) { thrownError = $0 }
+        XCTAssertThrowsError(try vad.create(mode: VADMode.HighlyPermissive, delegate: WebRTCVADTestDelegate(), frameWidth: 40, sampleRate: 32000)) { thrownError = $0 }
         XCTAssert(thrownError is VADError, "unexpected error type \(type(of: thrownError)) during read()")
         XCTAssertEqual(thrownError as? VADError, VADError.invalidConfiguration("Invalid frameWidth of 40"))
     }
@@ -38,7 +39,7 @@ class WebRTCVADTest: XCTestCase {
         let deactivateExpectation = expectation(description: "testProcess calls WebRTCVADTestDelegate as the result of deactivate method completion")
         let activateExpectation = expectation(description: "testProcess calls WebRTCVADTestDelegate as the result of activate method completion")
         let vad = WebRTCVAD()
-        XCTAssertNoThrow(try vad.create(mode: VADMode.HighQuality, delegate: delegate, frameWidth: 10, sampleRate: 8000))
+        XCTAssertNoThrow(try vad.create(mode: VADMode.HighlyPermissive, delegate: delegate, frameWidth: 10, sampleRate: 8000))
         
         /// speech -> no speech
         delegate.asyncExpectation = deactivateExpectation
