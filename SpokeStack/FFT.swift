@@ -9,6 +9,7 @@
 import Foundation
 import Accelerate
 
+/// Performs a Fast Fourier Transform on a given buffer of samples.
 final class FFT {
     
     // MARK: Private (properties)
@@ -27,6 +28,8 @@ final class FFT {
         vDSP_destroy_fftsetup(fftSetup)
     }
     
+    /// Initializes a new FFT instance.
+    /// - Parameter size: size of sample buffer that will be given in `forward`.
     required init(_ size: Int) {
         let sizeFloat: Float = Float(size)
 
@@ -48,6 +51,8 @@ final class FFT {
     
     // MARK: Public (methods)
     
+    /// Perform a Fast Fourier Transform on the provided buffer of samples.
+    /// - Parameter buffer: a buffer of samples.
     func forward(_ buffer: inout Array<Float>) -> Void {
         /// Pack the sample values into the FFT complex buffer
         for i in 0..<self.halfSize {

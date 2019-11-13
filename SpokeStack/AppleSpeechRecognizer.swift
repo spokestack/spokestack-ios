@@ -9,13 +9,22 @@
 import Foundation
 import Speech
 
+/**
+ This pipeline component uses the Apple `SFSpeech` API to stream audio samples for speech recognition.
+ 
+ Once speech pipeline coordination via `startStreaming` is received, the recognizer begins streaming buffered frames to the Apple ASR API for recognition. Once speech pipeline coordination via `stopStreaming` is received, or when the Apple ASR API indicates a completed speech event, the recognizer completes the API request and calls the `SpeechEventListener` delegate's `didRecognize` event with the updated global speech context (including the audio transcript and confidence).
+ */
 @objc public class AppleSpeechRecognizer: NSObject, SpeechProcessor {
     
     // MARK: public properties
     
+    /// Singleton instance.
     @objc public static let sharedInstance: AppleSpeechRecognizer = AppleSpeechRecognizer()
+    /// Configuration for the recognizer.
     public var configuration: SpeechConfiguration?
+    /// Delegate which receives speech pipeline control events.
     public weak var delegate: SpeechEventListener?
+    /// Global state for the speech pipeline.
     public var context: SpeechContext = SpeechContext()
     
     // MARK: private properties
@@ -39,6 +48,8 @@ import Speech
     
     // MARK: SpeechRecognizerService implementation
     
+    /// Triggered by the speech pipeline, instructing the recognizer to begin streaming and processing audio.
+    /// - Parameter context: The current speech context.
     public func startStreaming(context: SpeechContext) {
         do {
             context.isActive = true
@@ -59,6 +70,8 @@ import Speech
         }
     }
     
+    /// Triggered by the speech pipeline, instructing the recognizer to stop streaming audio and complete processing.
+    /// - Parameter context: The current speech context.
     public func stopStreaming(context: SpeechContext) {
         self.recognitionTask?.cancel()
         self.recognitionTask = nil

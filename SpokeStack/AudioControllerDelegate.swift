@@ -8,7 +8,11 @@
 
 import Foundation
 
+/// Receives audio frames from the AudioController's stream.
+/// - SeeAlso: AudioController
 protocol AudioControllerDelegate: AnyObject {
-        
+    
+    /// Receives a frame of audio samples for processing. Interface between the `SpeechProcessor` and `AudioController` components.
+    /// - Parameter frame: Audio frame of samples.
     func process(_ frame: Data) -> Void
 }

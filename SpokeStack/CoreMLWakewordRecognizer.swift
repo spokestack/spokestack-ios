@@ -11,12 +11,23 @@ import AVFoundation
 import CoreML
 import Speech
 
+/**
+This pipeline component streams audio samples and uses CoreML models to detect and aggregate keywords (i.e. [null], up, dog) into phrases (up dog) to process for wakeword recognition. Once a wakeword phrase is detected, speech pipeline activation is called. 
+
+Once speech pipeline coordination via `startStreaming`is received, the recognizer begins streaming buffered frames that are normalized and then converted to the magnitude Short-Time Fourier Transform (STFT) representation over a hopped sliding window. This linear spectrogram is then converted to a mel spectrogram via a "filter" CoreML model.  The mel spectrogram represents the features to be passed to the keyword classifier, which is implemented in a "detect" CoreML model. This classifier outputs posterior probabilities for each keyword (and a null output 0, which represents non-keyword speech). These mel frames are batched together into a sliding window.
+ 
+ The detector's outputs are considered noisy, so they are maintained in a sliding window and passed through a moving mean filter. The smoothed posteriors are then maintained in another sliding window for phrasing. The phraser attempts to match one of the configured keyword sequences using the maximum posterior for each word. If a sequence match is found, the speech pipeline is activated.
+ 
+Upon pipeline activation, the recognizer completes processing and awaits another coordination event. Once speech pipeline coordination via `stopStreaming` is received, the recognizer stops processing and awaits another coordination event.
+*/
 public class CoreMLWakewordRecognizer: NSObject {
     
     // MARK: Public properties
     
+    /// Singleton instance.
     @objc public static let sharedInstance: CoreMLWakewordRecognizer = CoreMLWakewordRecognizer()
     
+    /// Configuration for the recognizer.
     public var configuration: SpeechConfiguration? = SpeechConfiguration() {
         didSet {
             if configuration != nil {
@@ -27,7 +38,11 @@ public class CoreMLWakewordRecognizer: NSObject {
             }
         }
     }
+    
+    /// Global state for the speech pipeline.
     public var context: SpeechContext = SpeechContext()
+    
+    /// Delegate which receives speech pipeline control events.
     public weak var delegate: SpeechEventListener?
 
     // MARK: Private properties
@@ -98,12 +113,12 @@ public class CoreMLWakewordRecognizer: NSObject {
 
             /// Parse the list of keywords.
             /// Reserve the 0th index in words for the non-keyword class.
-            let wakeWords: Array<String> = c.wakeWords.components(separatedBy: ",")
-            self.words = Array(repeating: "", count: wakeWords.count +  1)
+            let wakewords: Array<String> = c.wakewords.components(separatedBy: ",")
+            self.words = Array(repeating: "", count: wakewords.count +  1)
             for (index, _) in self.words.enumerated() {
                 let indexOffset: Int = index + 1
                 if indexOffset < self.words.count {
-                    self.words[indexOffset] = wakeWords[indexOffset - 1]
+                    self.words[indexOffset] = wakewords[indexOffset - 1]
                 }
             }
 
@@ -119,8 +134,8 @@ public class CoreMLWakewordRecognizer: NSObject {
                 self.phrases[i] = Array<Int>.init(repeating: 0, count: wakePhrases.count + 1)
                 for (j, keyword) in wakePhraseArray.enumerated() {
                     // verify that each keyword in the phrase is a known keyword
-                    guard let k: Int = wakeWords.index(of: keyword) else {
-                        assertionFailure("CoreMLWakewordRecognizer parseConfiguration wakeWords did not contain \(keyword)")
+                    guard let k: Int = wakewords.index(of: keyword) else {
+                        assertionFailure("CoreMLWakewordRecognizer parseConfiguration wakewords did not contain \(keyword)")
                         return
                     }
                     // TODO: verify this check is not necessary because the wakePhraseArray.count == phrases.count
@@ -160,7 +175,7 @@ public class CoreMLWakewordRecognizer: NSObject {
             
             /// VAD
             do {
-                try self.vad.create(mode: .HighQuality, delegate: self, frameWidth: c.frameWidth, sampleRate: c.sampleRate)
+                try self.vad.create(mode: .HighlyPermissive, delegate: self, frameWidth: c.frameWidth, sampleRate: c.sampleRate)
             } catch {
                 assertionFailure("CoreMLWakewordRecognizer failed to create a valid VAD")
             }
@@ -282,8 +297,9 @@ public class CoreMLWakewordRecognizer: NSObject {
             sample -= self.preEmphasis * self.prevSample
             self.prevSample = currentSample
             
-            //sampleCollector.append(sample)
-            
+            if self.traceLevel.rawValue > Trace.Level.PERF.rawValue {
+              self.sampleCollector?.append(sample)
+            }
             /// Process the sample
             /// - write it to the sample sliding window
             /// - run the remainder of the detection pipleline if speech
@@ -319,7 +335,9 @@ public class CoreMLWakewordRecognizer: NSObject {
         /// Compute the stft
         self.fft.forward(&self.fftFrame)
         
-        //self.fftFrameCollector += "\(self.fftFrame)\n"
+        if self.traceLevel.rawValue > Trace.Level.PERF.rawValue {
+            self.fftFrameCollector? += "\(self.fftFrame)\n"
+        }
         
         /// Decode the FFT outputs into the filter model's input
         self.filter()
@@ -387,7 +405,8 @@ extension CoreMLWakewordRecognizer {
             self.frameWindow.rewind().seek(self.melWidth)
             for i in 0..<predictions.melspec_outputs__0.shape[2].intValue {
                 try? self.frameWindow.write(predictions.melspec_outputs__0[i].floatValue)
-            //filterCollector.append(predictions.melspec_outputs__0[i].floatValue)
+                if self.traceLevel.rawValue > Trace.Level.PERF.rawValue { filterCollector?.append(predictions.melspec_outputs__0[i].floatValue)
+                }
             }
 
             /// Detect
@@ -435,7 +454,9 @@ extension CoreMLWakewordRecognizer {
                 }
             }
             
-            //detectCollector += "\(predictions.detect_outputs__0.debugDescription)\n"
+            if self.traceLevel.rawValue > Trace.Level.PERF.rawValue {
+                detectCollector? += "\(predictions.detect_outputs__0.debugDescription)\n"
+            }
 
             /// send the prediction posteriors through a smoothing window
             self.smooth()
@@ -530,24 +551,45 @@ extension CoreMLWakewordRecognizer {
         }
         Trace.trace(Trace.Level.DEBUG, configLevel: self.configuration?.tracing ?? Trace.Level.NONE, message: "words to maxes: \n\(self.words)\n\(self.phraseMax)", delegate: self.delegate, caller: self)
     }
+    
+    private func debug() -> Void {
+        if self.traceLevel.rawValue >= Trace.Level.DEBUG.rawValue {
+            Trace.spit(data: sampleCollector!.withUnsafeBufferPointer {Data(buffer: $0)}, fileName: "samples.txt", delegate: self.delegate!)
+            Trace.spit(data: "[\((sampleCollector! as NSArray).componentsJoined(by: ", "))]".data(using: .utf8)!, fileName: "samples.txt", delegate: self.delegate!)
+            Trace.spit(data: fftFrameCollector!.data(using: .utf8)!, fileName: "fftFrame.txt", delegate: self.delegate!)
+            Trace.spit(data: "[\((filterCollector! as NSArray).componentsJoined(by: ", "))]".data(using: .utf8)!, fileName: "filterPredictions.txt", delegate: self.delegate!)
+            Trace.spit(data: detectCollector!.data(using: .utf8)!, fileName: "detectPredictions.txt", delegate: self.delegate!)
+        }
+    }
 }
 
-// MARK: SpeechRecognizerService implementation
+// MARK: SpeechProcessor implementation
+
 extension CoreMLWakewordRecognizer: SpeechProcessor {
 
+    /// Triggered by the speech pipeline, instructing the recognizer to begin streaming and processing audio.
+    /// - Parameter context: The current speech context.
     public func startStreaming(context: SpeechContext) -> Void {
         AudioController.sharedInstance.delegate = self
         self.context = context
     }
     
+    /// Triggered by the speech pipeline, instructing the recognizer to stop streaming audio and complete processing.
+    /// - Parameter context: The current speech context.
     public func stopStreaming(context: SpeechContext) -> Void {
         AudioController.sharedInstance.delegate = nil
         self.context = context
     }
 }
 
-// MARK: Delegate Protocol implementation
+// MARK: AudioControllerDelegate implementation
+
 extension CoreMLWakewordRecognizer: AudioControllerDelegate {
+    
+    /// Receives a frame of audio samples for processing. Interface between the `SpeechProcessor` and `AudioController` components.
+    ///
+    /// Processes audio in an async thread.
+    /// - Parameter frame: Frame of audio samples.
     func process(_ frame: Data) -> Void {
         /// multiplex the audio frame data to both the vad and, if activated, the model pipelines
         audioProcessingQueue.async {[weak self] in
@@ -564,8 +606,12 @@ extension CoreMLWakewordRecognizer: AudioControllerDelegate {
     }
 }
 
+// MARK: VADDelegate implementation
+
 extension CoreMLWakewordRecognizer: VADDelegate {
     
+    /// Called when the VAD has detected speech.
+    /// - Parameter frame: The first frame of audio samples with speech detected in it.
     public func activate(frame: Data) {
         /// activate the speech context
         self.context.isSpeech = true
@@ -573,14 +619,11 @@ extension CoreMLWakewordRecognizer: VADDelegate {
         self.process(frame, isSpeech: true)
     }
     
+    /// Called when the VAD has stopped detecting speech.
     public func deactivate() {
         if self.activeLength >= self.maxActive {
             self.context.isSpeech = false
-            //Spit.spit(data: sampleCollector.withUnsafeBufferPointer {Data(buffer: $0)}, fileName: "samples.txt")
-            //Spit.spit(data: "[\((sampleCollector as NSArray).componentsJoined(by: ", "))]".data(using: .utf8)!, fileName: "samples.txt")
-            //Spit.spit(data: fftFrameCollector.data(using: .utf8)!, fileName: "fftFrame.txt")
-            //Spit.spit(data: "[\((filterCollector as NSArray).componentsJoined(by: ", "))]".data(using: .utf8)!, fileName: "filterPredictions.txt")
-            //Spit.spit(data: detectCollector.data(using: .utf8)!, fileName: "detectPredictions.txt")
+            self.debug()
         }
     }
 }

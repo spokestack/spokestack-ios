@@ -51,7 +51,6 @@ class AppleASRViewController: UIViewController {
                                    speechConfiguration: appleConfiguration,
                                    speechDelegate: self,
                                    wakewordService: SpeechProcessors.appleWakeword.processor,
-                                   wakewordDelegate: self,
                                    pipelineDelegate: self)
     }()
     

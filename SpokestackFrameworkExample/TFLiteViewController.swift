@@ -95,8 +95,7 @@ class TFLiteViewController: UIViewController {
         return try! SpeechPipeline(SpeechProcessors.appleSpeech.processor,
                                    speechConfiguration: c,
                                    speechDelegate: self,
-                                   wakewordService: SpeechProcessors.tFLiteWakeword.processor,
-                                   wakewordDelegate: self,
+                                   wakewordService: SpeechProcessors.tfLiteWakeword.processor,
                                    pipelineDelegate: self)
     }
     

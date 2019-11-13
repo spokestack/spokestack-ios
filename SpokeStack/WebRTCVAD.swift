@@ -9,21 +9,16 @@
 import Foundation
 import filter_audio
 
+/// Indicate how likely it is that non-speech will activate the VAD.
 public enum VADMode: Int {
-    case HighQuality
-    case Quality
-    case Agressive
-    case HighlyAgressive
-}
-
-public enum VADDecision: Int {
-    case None
-    case Uncertain
-    case Possible
-    case Low
-    case Medium
-    case High
-    case Highest
+    /// Most permissive of non-speech; most likely to detect speech.
+    case HighlyPermissive = 1
+    /// Allows more non-speech than higher levels.
+    case Permissive = 2
+    /// Allows less non-speech than higher levels.
+    case Restrictive = 3
+    /// Most restrictive of non-speech; most amount of missed speech.
+    case HighlyRestrictive = 4
 }
 
 private var vad: UnsafeMutablePointer<OpaquePointer?> = UnsafeMutablePointer<OpaquePointer?>.allocate(capacity: 1)
@@ -34,8 +29,10 @@ private var sampleRate32: Int32 = 16000
 
 private var frameBuffer: RingBuffer<Int16>!
 
+/// Swift wrapper for WebRTC's voice activity detector.
 public class WebRTCVAD: NSObject {
     
+    /// Callback delegate for activation and error events.
     public var delegate: VADDelegate?
     
     deinit {
@@ -43,6 +40,13 @@ public class WebRTCVAD: NSObject {
         vad.deallocate()
     }
     
+    ///  Creates and configures a new WebRTC VAD component.
+    /// - Parameter mode: Indicate to the VAD the level of permissiveness to non-speech activation.
+    /// - Parameter delegate: Callback delegate for activation and error events.
+    /// - Parameter frameWidth: Number of samples in an audio frame.
+    /// - Parameter sampleRate: Rate of the samples in an audio frame.
+    ///
+    /// - Throws: VADError.invalidConfiguration if the frameWidth or sampleRate are not supported.
     public func create(mode: VADMode, delegate: VADDelegate, frameWidth: Int, sampleRate: Int) throws {
         
         /// validation of configurable parameters
@@ -82,6 +86,11 @@ public class WebRTCVAD: NSObject {
         }
     }
     
+    /// Processes an audio frame, detecting speech.
+    /// - Parameter frame: Audio frame of samples.
+    /// - Parameter isSpeech: Whether speech was detected in the last frame.
+    ///
+    /// - Throws: RingBufferStateError.illegalState if the frame buffer enters an invalid state
     public func process(frame: Data, isSpeech: Bool) throws -> Void {
         do {
             var detected: Bool = false
@@ -102,12 +111,13 @@ public class WebRTCVAD: NSObject {
                         let sampleWindowUBP = Array(UnsafeBufferPointer(start: sampleWindow, count: sampleWindow.count))
                         let result = WebRtcVad_Process(vad.pointee, sampleRate32, sampleWindowUBP, frameBufferStride32)
                         switch result {
-                        /// if activation state changes, stop the detecting loop but finish writing the samples to the buffer (in the outer for loop)
+                        // if activation state changes, stop the detecting loop but finish writing the samples to the buffer (in the outer for loop)
                         case 1:
+                            // only activate at the highest VAD confidence level
                             detected = true
                             break detecting
                         default:
-                            /// WebRtcVad_Process error case
+                            // WebRtcVad_Process error case
                             // self.delegate?.deactivate()
                             break
                         }
