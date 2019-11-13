@@ -1,0 +1,8 @@
+sdk: iphoneos
+author: Spokestack
+author_url: https://spokestack.io
+readme: README.md
+podspec: Spokestack-iOS.podspec
+github_url: https://github.com/spokestack/spokestack-ios
+github_file_prefix: https://github.com/spokestack/spokestack-ios/tree/master
+theme: fullwidth
