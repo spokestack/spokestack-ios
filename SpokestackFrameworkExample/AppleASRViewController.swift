@@ -47,11 +47,11 @@ class AppleASRViewController: UIViewController {
         
         let appleConfiguration: SpeechConfiguration = SpeechConfiguration()
         
-        return try! SpeechPipeline(SpeechProcessors.appleSpeech.processor,
-                                   speechConfiguration: appleConfiguration,
-                                   speechDelegate: self,
-                                   wakewordService: SpeechProcessors.appleWakeword.processor,
-                                   pipelineDelegate: self)
+        return SpeechPipeline(SpeechProcessors.appleSpeech.processor,
+                              speechConfiguration: appleConfiguration,
+                              speechDelegate: self,
+                              wakewordService: SpeechProcessors.appleWakeword.processor,
+                              pipelineDelegate: self)
     }()
     
     override func loadView() {

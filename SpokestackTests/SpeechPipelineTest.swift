@@ -12,6 +12,18 @@ import Spokestack
 
 class SpeechPipelineTest: XCTestCase {
     
+    /// convenience init
+    func testConvenienceInit() {
+        let delegate = SpeechPipelineTestDelegate()
+        let didInitExpectation = expectation(description: "testInit calls SpeechPipelineTestDelegate as the result of didInit method completion")
+        delegate.asyncExpectation = didInitExpectation
+
+        /// successful init calls didInit
+        _ = SpeechPipeline(delegate, pipelineDelegate: delegate)
+        wait(for: [didInitExpectation], timeout: 1)
+        XCTAssert(delegate.didDidInit)
+    }
+    
     /// init
     func testInit() {
         let delegate = SpeechPipelineTestDelegate()
@@ -19,20 +31,14 @@ class SpeechPipelineTest: XCTestCase {
         delegate.asyncExpectation = didInitExpectation
         let config = SpeechConfiguration()
         config.fftHopLength = 30
+
+        /// successful init calls didInit
+        let p = SpeechPipeline(TestProcessor(true), speechConfiguration: config, speechDelegate: delegate, wakewordService: TestProcessor(), pipelineDelegate: delegate)
+        wait(for: [didInitExpectation], timeout: 1)
+        XCTAssert(delegate.didDidInit)
         
-        do {
-            /// successful init calls didInit
-            let p = try SpeechPipeline(TestProcessor(true), speechConfiguration: config, speechDelegate: delegate, wakewordService: TestProcessor(), wakewordDelegate: delegate, pipelineDelegate: delegate)
-            wait(for: [didInitExpectation], timeout: 1)
-            XCTAssert(delegate.didDidInit)
-            
-            /// successful init sets config property
-            XCTAssert(p.speechConfiguration?.fftHopLength == 30)
-        } catch let error {
-            XCTFail(error.localizedDescription)
-        }
-        
-        /// NB init is marked as throws because it force-unwraps the pipelineDelegate, but since the pipelineDelegate is required in the constructor, init cannot actually throw.
+        /// successful init sets config property
+        XCTAssert(p.speechConfiguration?.fftHopLength == 30)
     }
     
     /// status
@@ -44,7 +50,7 @@ class SpeechPipelineTest: XCTestCase {
             /// ensure that the pipeline retains a reference to the delegate
             delegate = SpeechPipelineTestDelegate()
             delegate.asyncExpectation = didInitExpectation
-            let p = try SpeechPipeline(TestProcessor(true), speechConfiguration: SpeechConfiguration(), speechDelegate: delegate, wakewordService: TestProcessor(), wakewordDelegate: delegate, pipelineDelegate: delegate)
+            let p = try SpeechPipeline(TestProcessor(true), speechConfiguration: SpeechConfiguration(), speechDelegate: delegate, wakewordService: TestProcessor(), pipelineDelegate: delegate)
             wait(for: [didInitExpectation], timeout: 1)
             XCTAssert(p.status())
             delegate = SpeechPipelineTestDelegate()
@@ -65,7 +71,7 @@ class SpeechPipelineTest: XCTestCase {
             /// init the pipeline
             delegate = SpeechPipelineTestDelegate()
             delegate.asyncExpectation = didInitExpectation
-            let p = try SpeechPipeline(TestProcessor(true), speechConfiguration: SpeechConfiguration(), speechDelegate: delegate, wakewordService: TestProcessor(), wakewordDelegate: delegate, pipelineDelegate: delegate)
+            let p = try SpeechPipeline(TestProcessor(true), speechConfiguration: SpeechConfiguration(), speechDelegate: delegate, wakewordService: TestProcessor(), pipelineDelegate: delegate)
             wait(for: [didInitExpectation], timeout: 1)
             
             /// change the pipeline's delegates
@@ -75,7 +81,6 @@ class SpeechPipelineTest: XCTestCase {
             
             /// assert that the pipeline's delegate references (and pipeline's service delegates) have changed
             XCTAssert(delegate === p.speechDelegate)
-            XCTAssert(delegate === p.wakewordDelegate)
             p.speechDelegate?.activate()
             wait(for: [activateExpectation], timeout: 1)
             XCTAssert(delegate.didActivate)
@@ -93,7 +98,7 @@ class SpeechPipelineTest: XCTestCase {
 
         do {
             /// init the pipeline
-            let p = try SpeechPipeline(TestProcessor(true), speechConfiguration: config, speechDelegate: delegate, wakewordService: TestProcessor(), wakewordDelegate: delegate, pipelineDelegate: delegate)
+            let p = try SpeechPipeline(TestProcessor(true), speechConfiguration: config, speechDelegate: delegate, wakewordService: TestProcessor(), pipelineDelegate: delegate)
             wait(for: [didInitExpectation], timeout: 1)
             
             /// activate and deactivate the pipeline
@@ -116,7 +121,7 @@ class SpeechPipelineTest: XCTestCase {
         do {
             /// init the pipeline
             delegate.asyncExpectation = didInitExpectation
-            let p = try SpeechPipeline(TestProcessor(true), speechConfiguration: context, speechDelegate: delegate, wakewordService: TestProcessor(), wakewordDelegate: delegate, pipelineDelegate: delegate)
+            let p = try SpeechPipeline(TestProcessor(true), speechConfiguration: context, speechDelegate: delegate, wakewordService: TestProcessor(), pipelineDelegate: delegate)
             wait(for: [didInitExpectation], timeout: 1)
             
             /// start and stop the pipeline
@@ -144,7 +149,7 @@ class SpeechPipelineTest: XCTestCase {
         do {
             /// init the pipeline
             delegate.asyncExpectation = didInitExpectation
-            let p = try SpeechPipeline(SpeechProcessors.appleSpeech.processor, speechConfiguration: context, speechDelegate: delegate, wakewordService: SpeechProcessors.appleWakeword.processor, wakewordDelegate: delegate, pipelineDelegate: delegate)
+            let p = try SpeechPipeline(SpeechProcessors.appleSpeech.processor, speechConfiguration: context, speechDelegate: delegate, wakewordService: SpeechProcessors.appleWakeword.processor, pipelineDelegate: delegate)
             wait(for: [didInitExpectation], timeout: 1)
             
             /// start and stop the pipeline

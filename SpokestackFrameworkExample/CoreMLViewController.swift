@@ -88,11 +88,11 @@ class CoreMLViewController: UIViewController {
         }
         c.detectModelPath = detectPath
         c.tracing = Trace.Level.PERF
-        return try! SpeechPipeline(SpeechProcessors.appleSpeech.processor,
-                                   speechConfiguration: c,
-                                   speechDelegate: self,
-                                   wakewordService: SpeechProcessors.coremlWakeword.processor,
-                                   pipelineDelegate: self)
+        return SpeechPipeline(SpeechProcessors.appleSpeech.processor,
+                              speechConfiguration: c,
+                              speechDelegate: self,
+                              wakewordService: SpeechProcessors.coremlWakeword.processor,
+                              pipelineDelegate: self)
     }
     
     @objc func startRecordingAction(_ sender: Any) {
