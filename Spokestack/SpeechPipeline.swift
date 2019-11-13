@@ -57,24 +57,25 @@ import Foundation
     /// - Parameter speechDelegate: An implementation of `SpeechEventListener`.
     /// - Parameter pipelineDelegate: An implementation of `PipelineDelegate`.
     @objc public init(_ speechDelegate: SpeechEventListener,
-                      pipelineDelegate: PipelineDelegate) throws {
+                      pipelineDelegate: PipelineDelegate) {
+        let c = SpeechConfiguration()
         self.speechConfiguration = SpeechConfiguration()
         self.speechDelegate = speechDelegate
         
         self.speechRecognizerService = SpeechProcessors.appleSpeech.processor
         /// order is important: set the delegate first so that configuration errors/tracing can be sent back
         self.speechRecognizerService.delegate = self.speechDelegate
-        self.speechRecognizerService.configuration = SpeechConfiguration()
+        self.speechRecognizerService.configuration = c
         self.wakewordRecognizerService = SpeechProcessors.appleWakeword.processor
         /// see previous comment
         self.wakewordRecognizerService.delegate = self.speechDelegate
-        self.wakewordRecognizerService.configuration = speechConfiguration
+        self.wakewordRecognizerService.configuration = c
         
-        AudioController.sharedInstance.configuration = SpeechConfiguration()
+        AudioController.sharedInstance.configuration = c
         
         self.pipelineDelegate = pipelineDelegate
         AudioController.sharedInstance.pipelineDelegate = self.pipelineDelegate
-        self.pipelineDelegate!.didInit()
+        self.pipelineDelegate?.didInit()
     }
     
     /// Initializes a new speech pipeline instance.
@@ -87,7 +88,7 @@ import Foundation
                       speechConfiguration: SpeechConfiguration,
                       speechDelegate: SpeechEventListener,
                       wakewordService: SpeechProcessor,
-                      pipelineDelegate: PipelineDelegate) throws {
+                      pipelineDelegate: PipelineDelegate) {
         self.speechConfiguration = speechConfiguration
         self.speechDelegate = speechDelegate
         
@@ -104,7 +105,7 @@ import Foundation
         
         self.pipelineDelegate = pipelineDelegate
         AudioController.sharedInstance.pipelineDelegate = self.pipelineDelegate
-        self.pipelineDelegate!.didInit()
+        self.pipelineDelegate?.didInit()
     }
     
     /// Checks the status of the delegates provided in the constructor.

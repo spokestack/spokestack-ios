@@ -17,18 +17,11 @@ class SpeechPipelineTest: XCTestCase {
         let delegate = SpeechPipelineTestDelegate()
         let didInitExpectation = expectation(description: "testInit calls SpeechPipelineTestDelegate as the result of didInit method completion")
         delegate.asyncExpectation = didInitExpectation
-        
-        do {
-            /// successful init calls didInit
-            try SpeechPipeline(delegate, pipelineDelegate: delegate)
-            wait(for: [didInitExpectation], timeout: 1)
-            XCTAssert(delegate.didDidInit)
-            
-        } catch let error {
-            XCTFail(error.localizedDescription)
-        }
-        
-        /// NB init is marked as throws because it force-unwraps the pipelineDelegate, but since the pipelineDelegate is required in the constructor, init cannot actually throw.
+
+        /// successful init calls didInit
+        _ = SpeechPipeline(delegate, pipelineDelegate: delegate)
+        wait(for: [didInitExpectation], timeout: 1)
+        XCTAssert(delegate.didDidInit)
     }
     
     /// init
@@ -38,20 +31,14 @@ class SpeechPipelineTest: XCTestCase {
         delegate.asyncExpectation = didInitExpectation
         let config = SpeechConfiguration()
         config.fftHopLength = 30
+
+        /// successful init calls didInit
+        let p = SpeechPipeline(TestProcessor(true), speechConfiguration: config, speechDelegate: delegate, wakewordService: TestProcessor(), pipelineDelegate: delegate)
+        wait(for: [didInitExpectation], timeout: 1)
+        XCTAssert(delegate.didDidInit)
         
-        do {
-            /// successful init calls didInit
-            let p = try SpeechPipeline(TestProcessor(true), speechConfiguration: config, speechDelegate: delegate, wakewordService: TestProcessor(), pipelineDelegate: delegate)
-            wait(for: [didInitExpectation], timeout: 1)
-            XCTAssert(delegate.didDidInit)
-            
-            /// successful init sets config property
-            XCTAssert(p.speechConfiguration?.fftHopLength == 30)
-        } catch let error {
-            XCTFail(error.localizedDescription)
-        }
-        
-        /// NB init is marked as throws because it force-unwraps the pipelineDelegate, but since the pipelineDelegate is required in the constructor, init cannot actually throw.
+        /// successful init sets config property
+        XCTAssert(p.speechConfiguration?.fftHopLength == 30)
     }
     
     /// status
