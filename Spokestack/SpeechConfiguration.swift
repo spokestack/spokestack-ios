@@ -98,13 +98,13 @@ import Foundation
     /// - Remarks: Both the file name and the file path are configurable to allow for flexibility in constructing the path that the recognizer will attempt to load the model from.
     @objc public var detectModelName: String = "Detect"
     /// The filesystem path to the machine learning model for the filtering step.
-    @objc public var filterModelPath: String = "Filter.model"
+    @objc public var filterModelPath: String = "Filter.lite"
     /// The filesystem path to the machine learning model for the encoding step.
     /// - SeeAlso: `TFLiteWakewordRecognizer`
-    @objc public var encodeModelPath: String = "Encode.model"
+    @objc public var encodeModelPath: String = "Encode.lite"
     /// The filesystem path to the machine learning model for the detect step.
     /// - SeeAlso: `CoreMLWakewordRecognizer`, `TFLiteWakewordRecognizer`
-    @objc public var detectModelPath: String = "Detect.model"
+    @objc public var detectModelPath: String = "Detect.lite"
     /// Debugging trace levels, for simple filtering.
     @objc public var tracing: Trace.Level = Trace.Level.NONE
 }

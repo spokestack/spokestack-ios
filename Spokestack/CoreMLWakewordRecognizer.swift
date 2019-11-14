@@ -20,6 +20,7 @@ Once speech pipeline coordination via `startStreaming`is received, the recognize
  
 Upon pipeline activation, the recognizer completes processing and awaits another coordination event. Once speech pipeline coordination via `stopStreaming` is received, the recognizer stops processing and awaits another coordination event.
 */
+@available(*, deprecated, message: "Training is no longer supported for convolutional wakeword models, use TFLiteWakewordRecognizer instead.")
 public class CoreMLWakewordRecognizer: NSObject {
     
     // MARK: Public properties
