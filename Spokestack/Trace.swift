@@ -28,7 +28,7 @@ public struct Trace {
     /// - Parameter delegate: The delegate that should receive the debugging trace message.
     /// - Parameter caller: The sender of the debugging trace message.
     public static func trace(_ level: Trace.Level, configLevel: Trace.Level, message: String, delegate: SpeechEventListener?, caller: Any) {
-        if level.rawValue >= configLevel.rawValue {
+        if level.rawValue <= configLevel.rawValue {
             delegate?.didTrace("\(level.rawValue) \(String(describing: type(of: caller))) \(message)")
         }
     }
@@ -40,7 +40,7 @@ public struct Trace {
     /// - Parameter delegate: The delegate that should receive the debugging trace message.
     /// - Parameter caller: The sender of the debugging trace message.
     public static func trace(_ level: Trace.Level, configLevel: Trace.Level, message: String, delegate: PipelineDelegate?, caller: Any) {
-        if level.rawValue >= configLevel.rawValue {
+        if level.rawValue <= configLevel.rawValue {
             delegate?.didTrace("\(level.rawValue) \(String(describing: type(of: caller))) \(message)")
         }
     }
