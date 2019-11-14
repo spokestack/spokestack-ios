@@ -134,7 +134,7 @@ public class CoreMLWakewordRecognizer: NSObject {
                 self.phrases[i] = Array<Int>.init(repeating: 0, count: wakePhrases.count + 1)
                 for (j, keyword) in wakePhraseArray.enumerated() {
                     // verify that each keyword in the phrase is a known keyword
-                    guard let k: Int = wakewords.index(of: keyword) else {
+                    guard let k: Int = wakewords.firstIndex(of: keyword) else {
                         assertionFailure("CoreMLWakewordRecognizer parseConfiguration wakewords did not contain \(keyword)")
                         return
                     }
