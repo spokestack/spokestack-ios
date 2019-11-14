@@ -14,11 +14,11 @@ import Foundation
     /// - Remark: ex: "up,dog"
     /// - Warning: cannot contain spaces
     /// - SeeAlso: `CoreMLWakewordRecognizer`, `AppleWakewordRecognizer`
-    @objc public var wakewords: String = "marvin"
+    @objc public var wakewords: String = "spokestack"
     /// A comma-separated list of space-separated wakeword keyword phrases to detect, which defaults to no phrases (just individual keywords).
     /// - Remark: ex: "up dog,dog dog"
     /// - SeeAlso: `CoreMLWakewordRecognizer`, `AppleWakewordRecognizer`
-    @objc public var wakePhrases: String = "marvin"
+    @objc public var wakePhrases: String = "spokestack"
     /// The length of the wakeword phraser's sliding window, in milliseconds - this value should be long enough to fit the longest supported phrase.
     /// - SeeAlso: `CoreMLWakewordRecognizer`
     public var wakePhraseLength: Int = 2000
@@ -63,18 +63,18 @@ import Foundation
     @objc public var wakeThreshold: Float = 0.9
     /// The minimum length of an activation, in milliseconds. Used to ignore a Voice Activity Detector (VAD) deactivation after the wakeword.
     /// - SeeAlso: `CoreMLWakewordRecognizer`, `TFLiteWakewordRecognizer`
-    @objc public var wakeActiveMin: Int = 600
+    @objc public var wakeActiveMin: Int = 2000
     /// The maximum length of an activation, in milliseconds. Used to time out the speech pipeline activation.
     /// - Remarks: Defaults to 5 seconds to improve perceived responsiveness, although most NLUs use a longer timeout (eg 7s).
     /// - SeeAlso: `AppleWakewordRecognizer`, `CoreMLWakewordRecognizer`, `TFLiteWakewordRecognizer`
     @objc public var wakeActiveMax: Int = 5000
     /// Indicate to the VAD the level of permissiveness to non-speech activation.
     /// - SeeAlso: `AppleWakewordRecognizer`, `CoreMLWakewordRecognizer`, `TFLiteWakewordRecognizer`
-    public var vadMode: VADMode = VADMode.HighlyPermissive
+    public var vadMode: VADMode = VADMode.Restrictive
     /// Delay between a VAD deactivation and the delivery of the recognition results.
     /// - SeeAlso: `AppleWakewordRecognizer`
     /// - Remark: unique to iOS
-    @objc public var vadFallDelay: Int = 600
+    @objc public var vadFallDelay: Int = 800
     /// Audio sampling rate, in Hz.
     public var sampleRate = 16000
     /// Audio frame width, in milliseconds.
