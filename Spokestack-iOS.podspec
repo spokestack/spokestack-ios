@@ -1,5 +1,6 @@
 Pod::Spec.new do |s|
   s.name = 'Spokestack-iOS'
+  s.module_name = 'Spokestack'
   s.version = '4.1.2'
   s.license = 'Apache'
   s.summary = 'Spokestack provides an extensible speech recognition pipeline for the iOS platform.'
