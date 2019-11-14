@@ -4,6 +4,16 @@ Spokestack provides an extensible speech recognition pipeline for the iOS
 platform. It includes a variety of built-in speech processors for Voice
 Activity Detection (VAD), wakeword activation, and Automatic Speech Recognition (ASR).
 
+<!--ts-->
+## Table of Contents
+* [Features](#features)
+* [Installation](#installation)
+* [Usage](#usage)
+* [API Reference](#api-reference)
+* [Deployment](#Deployment)
+* [License](#license)
+<!--te-->
+
 ## Features
 
   - Voice activity detection
@@ -40,7 +50,11 @@ The `SpokestackFrameworkExample` project contains reference implementations for 
 
 See `SpeechPipeline` and `SpeechConfiguration` for further configuration documentation.
 
-## Development
+## API Reference
+
+API reference is [available on Github](https://spokestack.github.io/spokestack-ios/index.html).
+
+## Deployment
 
 ### Preconditions
 
