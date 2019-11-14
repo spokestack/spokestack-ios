@@ -31,7 +31,7 @@ final class RingBuffer <T> {
     /// Internal state information for debugging purposes
     /// - Returns: A string representation of internal RingBuffer state.
     func debug() -> String {
-        return ("RingBuffer \(self.data.count) \(self.wpos) \(self.rpos)")
+        return ("RingBuffer count: \(self.data.count) wpos: \(self.wpos) rpos: \(self.rpos)")
     }
     
     // MARK: Private (properties)
