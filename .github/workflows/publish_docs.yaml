@@ -1,7 +1,8 @@
 name: PublishDocumentation
 
 on: 
-  release:
+  push:
+    tags: '*.*.*'
 
 jobs:
   deploy_docs:
