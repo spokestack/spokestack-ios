@@ -20,6 +20,7 @@ Once speech pipeline coordination via `startStreaming`is received, the recognize
  
 Upon pipeline activation, the recognizer completes processing and awaits another coordination event. Once speech pipeline coordination via `stopStreaming` is received, the recognizer stops processing and awaits another coordination event.
 */
+@available(*, deprecated, message: "Training is no longer supported for convolutional wakeword models, use TFLiteWakewordRecognizer instead.")
 public class CoreMLWakewordRecognizer: NSObject {
     
     // MARK: Public properties
@@ -134,7 +135,7 @@ public class CoreMLWakewordRecognizer: NSObject {
                 self.phrases[i] = Array<Int>.init(repeating: 0, count: wakePhrases.count + 1)
                 for (j, keyword) in wakePhraseArray.enumerated() {
                     // verify that each keyword in the phrase is a known keyword
-                    guard let k: Int = wakewords.index(of: keyword) else {
+                    guard let k: Int = wakewords.firstIndex(of: keyword) else {
                         assertionFailure("CoreMLWakewordRecognizer parseConfiguration wakewords did not contain \(keyword)")
                         return
                     }
@@ -166,7 +167,7 @@ public class CoreMLWakewordRecognizer: NSObject {
         if let c = self.configuration {
             /// Tracing
             self.traceLevel = c.tracing
-            if self.traceLevel.rawValue > Trace.Level.PERF.rawValue {
+            if self.traceLevel.rawValue < Trace.Level.PERF.rawValue {
                 self.sampleCollector = []
                 self.fftFrameCollector = ""
                 self.filterCollector = []
@@ -297,7 +298,7 @@ public class CoreMLWakewordRecognizer: NSObject {
             sample -= self.preEmphasis * self.prevSample
             self.prevSample = currentSample
             
-            if self.traceLevel.rawValue > Trace.Level.PERF.rawValue {
+            if self.traceLevel.rawValue < Trace.Level.PERF.rawValue {
               self.sampleCollector?.append(sample)
             }
             /// Process the sample
@@ -335,7 +336,7 @@ public class CoreMLWakewordRecognizer: NSObject {
         /// Compute the stft
         self.fft.forward(&self.fftFrame)
         
-        if self.traceLevel.rawValue > Trace.Level.PERF.rawValue {
+        if self.traceLevel.rawValue < Trace.Level.PERF.rawValue {
             self.fftFrameCollector? += "\(self.fftFrame)\n"
         }
         
@@ -405,7 +406,7 @@ extension CoreMLWakewordRecognizer {
             self.frameWindow.rewind().seek(self.melWidth)
             for i in 0..<predictions.melspec_outputs__0.shape[2].intValue {
                 try? self.frameWindow.write(predictions.melspec_outputs__0[i].floatValue)
-                if self.traceLevel.rawValue > Trace.Level.PERF.rawValue { filterCollector?.append(predictions.melspec_outputs__0[i].floatValue)
+                if self.traceLevel.rawValue < Trace.Level.PERF.rawValue { filterCollector?.append(predictions.melspec_outputs__0[i].floatValue)
                 }
             }
 
@@ -454,7 +455,7 @@ extension CoreMLWakewordRecognizer {
                 }
             }
             
-            if self.traceLevel.rawValue > Trace.Level.PERF.rawValue {
+            if self.traceLevel.rawValue < Trace.Level.PERF.rawValue {
                 detectCollector? += "\(predictions.detect_outputs__0.debugDescription)\n"
             }
 
@@ -553,7 +554,7 @@ extension CoreMLWakewordRecognizer {
     }
     
     private func debug() -> Void {
-        if self.traceLevel.rawValue >= Trace.Level.DEBUG.rawValue {
+        if self.traceLevel.rawValue <= Trace.Level.DEBUG.rawValue {
             Trace.spit(data: sampleCollector!.withUnsafeBufferPointer {Data(buffer: $0)}, fileName: "samples.txt", delegate: self.delegate!)
             Trace.spit(data: "[\((sampleCollector! as NSArray).componentsJoined(by: ", "))]".data(using: .utf8)!, fileName: "samples.txt", delegate: self.delegate!)
             Trace.spit(data: fftFrameCollector!.data(using: .utf8)!, fileName: "fftFrame.txt", delegate: self.delegate!)

@@ -88,6 +88,9 @@ class CoreMLViewController: UIViewController {
         }
         c.detectModelPath = detectPath
         c.tracing = Trace.Level.PERF
+        c.melFrameLength = 400
+        c.wakewords =  "up,dog"
+        c.wakePhrases = "up dog"
         return SpeechPipeline(SpeechProcessors.appleSpeech.processor,
                               speechConfiguration: c,
                               speechDelegate: self,

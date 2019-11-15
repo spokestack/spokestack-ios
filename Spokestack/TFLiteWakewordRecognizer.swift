@@ -165,7 +165,7 @@ public class TFLiteWakewordRecognizer: NSObject {
             
             /// Tracing
             self.traceLevel = c.tracing
-            if self.traceLevel.rawValue > Trace.Level.PERF.rawValue {
+            if self.traceLevel.rawValue <= Trace.Level.DEBUG.rawValue {
                 self.posteriorMax = 0
                 self.sampleCollector = []
                 self.fftFrameCollector = ""
@@ -245,7 +245,7 @@ public class TFLiteWakewordRecognizer: NSObject {
             sample -= self.preEmphasis * self.prevSample
             self.prevSample = currentSample
             
-            if self.traceLevel.rawValue > Trace.Level.PERF.rawValue {
+            if self.traceLevel.rawValue < Trace.Level.PERF.rawValue {
               self.sampleCollector?.append(sample)
             }
             
@@ -274,7 +274,7 @@ public class TFLiteWakewordRecognizer: NSObject {
         /// rewind the sample window for another run
         self.sampleWindow.rewind().seek(self.hopLength)
         
-        if self.traceLevel.rawValue > Trace.Level.PERF.rawValue {
+        if self.traceLevel.rawValue < Trace.Level.PERF.rawValue {
             self.fftFrameCollector? += "\(self.fftFrame)\n"
         }
         
@@ -307,7 +307,7 @@ public class TFLiteWakewordRecognizer: NSObject {
                 self.frameWindow.rewind().seek(self.melWidth)
                 for r in results {
                     try self.frameWindow.write(r)
-                    if self.traceLevel.rawValue > Trace.Level.PERF.rawValue {
+                    if self.traceLevel.rawValue < Trace.Level.PERF.rawValue {
                         self.filterCollector?.append(r)
                     }
                 }
@@ -355,7 +355,7 @@ public class TFLiteWakewordRecognizer: NSObject {
                 self.encodeWindow.rewind().seek(self.encodeWidth)
                 for r in encodeResults {
                     try self.encodeWindow.write(r)
-                    if self.traceLevel.rawValue > Trace.Level.PERF.rawValue {
+                    if self.traceLevel.rawValue < Trace.Level.PERF.rawValue {
                         self.encodeCollector?.append(r)
                     }
                 }
@@ -396,7 +396,7 @@ public class TFLiteWakewordRecognizer: NSObject {
                     let posterior = detectResults[0]
                     
                     if let pmax = self.posteriorMax {
-                        if self.traceLevel.rawValue > Trace.Level.INFO.rawValue {
+                        if self.traceLevel.rawValue < Trace.Level.INFO.rawValue {
                             if posterior > pmax {
                                 self.posteriorMax = posterior
                             }
@@ -436,7 +436,7 @@ public class TFLiteWakewordRecognizer: NSObject {
     private func debug() -> Void {
         Trace.trace(Trace.Level.PERF, configLevel: self.traceLevel, message: "wake: \(self.posteriorMax!)", delegate: self.delegate, caller: self)
         
-        if self.traceLevel.rawValue >= Trace.Level.DEBUG.rawValue {
+        if self.traceLevel.rawValue <= Trace.Level.DEBUG.rawValue {
             Trace.spit(data: "[\((self.sampleCollector! as NSArray).componentsJoined(by: ", "))]".data(using: .utf8)!, fileName: "samples.txt", delegate: self.delegate!)
             Trace.spit(data: self.fftFrameCollector!.data(using: .utf8)!, fileName: "fftFrame.txt", delegate: self.delegate!)
             Trace.spit(data: "[\((self.filterCollector! as NSArray).componentsJoined(by: ", "))]".data(using: .utf8)!, fileName: "filterOutput.txt", delegate: self.delegate!)
