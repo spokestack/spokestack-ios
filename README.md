@@ -33,6 +33,7 @@ Activity Detection (VAD), wakeword activation, and Automatic Speech Recognition 
 ### Configure Wakeword-activated Automated Speech Recognition
 
  ```
+ import Spokestack
  // assume that self implements the SpeechEventListener and PipelineDelegate protocols
  let pipeline = SpeechPipeline(SpeechProcessors.appleSpeech.processor,
                                speechConfiguration: SpeechConfiguration(),
@@ -42,7 +43,7 @@ Activity Detection (VAD), wakeword activation, and Automatic Speech Recognition 
  pipeline.start()
  ```
 
-This example creates a speech recognition pipeline using an ASR-based wakeword detector that is triggered by VAD, which in turn activates a full ASR, returning the resulting utterance to the `SpeechEventListener` event listener (`self` in this example).
+This example creates a speech recognition pipeline using a wakeword detector that is triggered by VAD, which in turn activates an ASR, returning the resulting utterance to the `SpeechEventListener` event listener (`self` in this example).
 
 ### Reference implementation
 

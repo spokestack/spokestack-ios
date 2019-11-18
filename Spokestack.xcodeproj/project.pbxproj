@@ -38,6 +38,9 @@
 		5936594E220A1A7A00C0365F /* SpeechProcessors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5936594D220A1A7A00C0365F /* SpeechProcessors.swift */; };
 		5937579322D5281900AA7516 /* VADDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5937579222D5281900AA7516 /* VADDelegate.swift */; };
 		594154B822F8AD2200E3624E /* TFLiteWakewordRecognizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 594154B722F8AD2200E3624E /* TFLiteWakewordRecognizer.swift */; };
+		5942C430237F4B5A00EC0B13 /* TTSManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5942C42F237F4B5A00EC0B13 /* TTSManager.swift */; };
+		5942C431237F4B6100EC0B13 /* TTSManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5942C42F237F4B5A00EC0B13 /* TTSManager.swift */; };
+		5942C433237F4ED600EC0B13 /* TTSManagerTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5942C432237F4ED600EC0B13 /* TTSManagerTest.swift */; };
 		5967108E21F7AE6B00CBFC88 /* AppleSpeechRecognizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5967108D21F7AE6B00CBFC88 /* AppleSpeechRecognizer.swift */; };
 		59A0D5C02204E786003709C3 /* AppleASRViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59A0D5BD2204E786003709C3 /* AppleASRViewController.swift */; };
 		59A0D5C22204E786003709C3 /* AppleWakewordViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59A0D5BF2204E786003709C3 /* AppleWakewordViewController.swift */; };
@@ -161,6 +164,8 @@
 		5936594D220A1A7A00C0365F /* SpeechProcessors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeechProcessors.swift; sourceTree = "<group>"; };
 		5937579222D5281900AA7516 /* VADDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VADDelegate.swift; sourceTree = "<group>"; };
 		594154B722F8AD2200E3624E /* TFLiteWakewordRecognizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TFLiteWakewordRecognizer.swift; sourceTree = "<group>"; };
+		5942C42F237F4B5A00EC0B13 /* TTSManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = TTSManager.swift; path = "../../spokestack-ios/Spokestack/TTSManager.swift"; sourceTree = "<group>"; };
+		5942C432237F4ED600EC0B13 /* TTSManagerTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = TTSManagerTest.swift; path = "../../spokestack-ios/SpokestackTests/TTSManagerTest.swift"; sourceTree = "<group>"; };
 		5967108D21F7AE6B00CBFC88 /* AppleSpeechRecognizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppleSpeechRecognizer.swift; sourceTree = "<group>"; };
 		59A0D5BD2204E786003709C3 /* AppleASRViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppleASRViewController.swift; sourceTree = "<group>"; };
 		59A0D5BF2204E786003709C3 /* AppleWakewordViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppleWakewordViewController.swift; sourceTree = "<group>"; };
@@ -296,6 +301,7 @@
 				59C2AFD92319CB7100E47AC5 /* RingBufferTest.swift */,
 				59D78F5E2322D13700728A98 /* AudioControllerTest.swift */,
 				59D78F602322EAE000728A98 /* SpeechPipelineTest.swift */,
+				5942C432237F4ED600EC0B13 /* TTSManagerTest.swift */,
 				01D31F4B216BAF260055FD45 /* Info.plist */,
 				59C2AFED231ED07100E47AC5 /* WebRTCVADTest.swift */,
 				59EF51BE233013A9006BA0BD /* AppleSpeechRecognizerTest.swift */,
@@ -334,6 +340,7 @@
 			isa = PBXGroup;
 			children = (
 				01D31F69216BAFC60055FD45 /* SpeechPipeline.swift */,
+				5942C42F237F4B5A00EC0B13 /* TTSManager.swift */,
 			);
 			name = Managers;
 			sourceTree = "<group>";
@@ -552,6 +559,7 @@
 					};
 					01D31F43216BAF260055FD45 = {
 						CreatedOnToolsVersion = 10.0;
+						LastSwiftMigration = 1100;
 					};
 				};
 			};
@@ -703,6 +711,7 @@
 				59A0D5C72204E8E4003709C3 /* SpeechConfiguration.swift in Sources */,
 				59FB0C8D22B0640700FB9662 /* RingBuffer.swift in Sources */,
 				01D31F8E216BB0370055FD45 /* Typealiases.swift in Sources */,
+				5942C430237F4B5A00EC0B13 /* TTSManager.swift in Sources */,
 				01D31F66216BAFB50055FD45 /* Error.swift in Sources */,
 				01D31F6A216BAFC60055FD45 /* SpeechPipeline.swift in Sources */,
 				5937579322D5281900AA7516 /* VADDelegate.swift in Sources */,
@@ -729,7 +738,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				59C2AFE02319CEA100E47AC5 /* AppleWakewordRecognizer.swift in Sources */,
+				5942C431237F4B6100EC0B13 /* TTSManager.swift in Sources */,
 				5936077E236B687F00FFA29F /* Filter.swift in Sources */,
+				5942C433237F4ED600EC0B13 /* TTSManagerTest.swift in Sources */,
 				59D78F612322EAE000728A98 /* SpeechPipelineTest.swift in Sources */,
 				59C2AFEA2319CF8A00E47AC5 /* Data+Extensions.swift in Sources */,
 				59C2AFE22319CEAE00E47AC5 /* TFLiteWakewordRecognizer.swift in Sources */,
@@ -1069,17 +1080,7 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = S55ZL97588;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/Frameworks/gRPC-RxLibrary",
-					"$(PROJECT_DIR)/Frameworks/gRPC-ProtoRPC",
-					"$(PROJECT_DIR)/Frameworks/googleapis",
-					"$(PROJECT_DIR)/Frameworks/gRPC",
-					"$(PROJECT_DIR)/Frameworks/BoringSSL-GRPC",
-					"$(PROJECT_DIR)/Frameworks/nanopb",
-					"$(PROJECT_DIR)/Frameworks/Protobuf",
-					"$(PROJECT_DIR)/Frameworks/gRPC-Core",
-				);
+				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				INFOPLIST_FILE = SpokestackTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1088,7 +1089,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = io.spokestack.SpokestackTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 4.2;
+				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -1100,17 +1101,7 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = S55ZL97588;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/Frameworks/gRPC-RxLibrary",
-					"$(PROJECT_DIR)/Frameworks/gRPC-ProtoRPC",
-					"$(PROJECT_DIR)/Frameworks/googleapis",
-					"$(PROJECT_DIR)/Frameworks/gRPC",
-					"$(PROJECT_DIR)/Frameworks/BoringSSL-GRPC",
-					"$(PROJECT_DIR)/Frameworks/nanopb",
-					"$(PROJECT_DIR)/Frameworks/Protobuf",
-					"$(PROJECT_DIR)/Frameworks/gRPC-Core",
-				);
+				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				INFOPLIST_FILE = SpokestackTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1119,7 +1110,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = io.spokestack.SpokestackTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 4.2;
+				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
