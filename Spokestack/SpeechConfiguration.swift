@@ -105,6 +105,8 @@ import Foundation
     /// The filesystem path to the machine learning model for the detect step.
     /// - SeeAlso: `CoreMLWakewordRecognizer`, `TFLiteWakewordRecognizer`
     @objc public var detectModelPath: String = "Detect.lite"
+    /// Text To Speech API authorization key
+    @objc public var authorization: String = "Key f854fbf30a5f40c189ecb1b38bc78059"
     /// Debugging trace levels, for simple filtering.
     @objc public var tracing: Trace.Level = Trace.Level.NONE
 }

@@ -53,7 +53,7 @@ enum RingBufferStateError: Error {
 }
 
 /// Errors thrown by TTS
-enum TTSErrors: Error {
-    /// Error during request
-    case request(String)
+enum TextToSpeechErrors: Error {
+    /// Synthesis response was missing data
+    case deserialization(String)
 }
