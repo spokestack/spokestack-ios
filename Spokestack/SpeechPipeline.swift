@@ -108,6 +108,8 @@ import Foundation
         self.pipelineDelegate?.didInit()
     }
     
+    /// MARK: Pipeline status
+    
     /// Checks the status of the delegates provided in the constructor.
     ///
     /// - Remarks: Verifies that a strong reference to the delegates is being held.
@@ -130,6 +132,8 @@ import Foundation
         self.speechRecognizerService.delegate = self.speechDelegate
         self.wakewordRecognizerService.delegate = self.speechDelegate
     }
+    
+    /// MARK: Pipeline control
     
     /**
      Activates speech recognition. The pipeline remains active until the user stops talking or the activation timeout is reached.

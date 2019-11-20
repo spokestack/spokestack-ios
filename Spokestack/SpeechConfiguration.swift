@@ -66,7 +66,7 @@ import Foundation
     @objc public var wakeActiveMin: Int = 2000
     /// The maximum length of an activation, in milliseconds. Used to time out the speech pipeline activation.
     /// - Remarks: Defaults to 5 seconds to improve perceived responsiveness, although most NLUs use a longer timeout (eg 7s).
-    /// - SeeAlso: `AppleWakewordRecognizer`, `CoreMLWakewordRecognizer`, `TFLiteWakewordRecognizer`
+    /// - SeeAlso: `AppleSpeechRecognizer`, `CoreMLWakewordRecognizer`, `TFLiteWakewordRecognizer`
     @objc public var wakeActiveMax: Int = 5000
     /// Indicate to the VAD the level of permissiveness to non-speech activation.
     /// - SeeAlso: `AppleWakewordRecognizer`, `CoreMLWakewordRecognizer`, `TFLiteWakewordRecognizer`

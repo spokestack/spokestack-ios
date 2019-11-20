@@ -11,6 +11,24 @@ import Foundation
 /// Input parameters for speech synthesis. Parameters are considered transient and may change each time `synthesize` is called.
 /// - SeeAlso: `TextToSpeech.synthesize`
 @objc public class TextToSpeechInput: NSObject {
+    
+    /// Convenience initializer for a new TextToSpeechInput instance.
+    /// - Parameter input: The text input to the speech synthesizer.
+    @objc public init(_ input: String) {
+        self.input = input
+        super.init()
+    }
+    
+    /// Convenience initializer for a new TextToSpeechInput instance.
+    /// - Parameter input: The text input to the speech synthesizer.
+    /// - Parameter voice: The synthetic voice used to generate speech.
+    /// - Parameter inputFormat: The formatting of the input.
+    @objc public init(_ input:String, voice: String, inputFormat: TTSInputType) {
+        self.input = input
+        self.voice = voice
+        self.inputFormat = inputFormat
+    }
+    
     /// The synthetic voice used to generate speech.
     @objc public var voice: String = "demo-male"
     /// The input to the synthetic voice.

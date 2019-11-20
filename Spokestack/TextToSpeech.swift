@@ -13,20 +13,20 @@ import Foundation
     case ssml
 }
 
-@objc class TextToSpeech: NSObject {
+@objc public class TextToSpeech: NSObject {
     private var delegate: TextToSpeechDelegate
     private var configuration: SpeechConfiguration
     
     /// Initializes a new text to speech instance.
     /// - Parameter delegate: Delegate that receives text to speech events.
     /// - Parameter configuration: Speech configuration parameters.
-    init(_ delegate: TextToSpeechDelegate, configuration: SpeechConfiguration) {
+    @objc public init(_ delegate: TextToSpeechDelegate, configuration: SpeechConfiguration) {
         self.delegate = delegate
         self.configuration = configuration
         super.init()
     }
     
-    /// Synthesize speech using the provided input parameters and speech configuration. A successful synthesis will return a URL to the streaming audio container of synthesized speech.
+    /// Synthesize speech using the provided input parameters and speech configuration. A successful synthesis will return a URL to the streaming audio container of synthesized speech to the `TextToSpeech`'s `delegate`.
     /// - Note: The URL will be invalidated within 60 seconds of generation.
     /// - Parameter input: Parameters that specify the speech to synthesize.
     @objc public func synthesize(_ input: TextToSpeechInput) -> Void {
