@@ -61,6 +61,13 @@ class ViewController: UIViewController {
         self.present(navigationViewController, animated: true, completion: nil)
     }
     
+    @IBAction func ttsAction(_ sender: UIButton) {
+        let controller: TTSViewController = TTSViewController()
+        let navigationViewController: UINavigationController = UINavigationController(rootViewController: controller)
+        
+        self.present(navigationViewController, animated: true, completion: nil)
+    }
+    
     @objc func dismissViewController(_ sender: Any?) -> Void {
         self.dismiss(animated: true, completion: nil)
     }

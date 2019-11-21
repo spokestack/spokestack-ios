@@ -66,7 +66,7 @@ import Foundation
     @objc public var wakeActiveMin: Int = 2000
     /// The maximum length of an activation, in milliseconds. Used to time out the speech pipeline activation.
     /// - Remarks: Defaults to 5 seconds to improve perceived responsiveness, although most NLUs use a longer timeout (eg 7s).
-    /// - SeeAlso: `AppleWakewordRecognizer`, `CoreMLWakewordRecognizer`, `TFLiteWakewordRecognizer`
+    /// - SeeAlso: `AppleSpeechRecognizer`, `CoreMLWakewordRecognizer`, `TFLiteWakewordRecognizer`
     @objc public var wakeActiveMax: Int = 5000
     /// Indicate to the VAD the level of permissiveness to non-speech activation.
     /// - SeeAlso: `AppleWakewordRecognizer`, `CoreMLWakewordRecognizer`, `TFLiteWakewordRecognizer`
@@ -105,6 +105,8 @@ import Foundation
     /// The filesystem path to the machine learning model for the detect step.
     /// - SeeAlso: `CoreMLWakewordRecognizer`, `TFLiteWakewordRecognizer`
     @objc public var detectModelPath: String = "Detect.lite"
+    /// Text To Speech API authorization key
+    @objc public var authorization: String = "Key f854fbf30a5f40c189ecb1b38bc78059"
     /// Debugging trace levels, for simple filtering.
     @objc public var tracing: Trace.Level = Trace.Level.NONE
 }

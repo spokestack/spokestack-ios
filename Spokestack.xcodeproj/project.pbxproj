@@ -29,6 +29,7 @@
 		01D31F8B216BB0220055FD45 /* Results.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01D31F89216BB0220055FD45 /* Results.swift */; };
 		01D31F8E216BB0370055FD45 /* Typealiases.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01D31F8D216BB0370055FD45 /* Typealiases.swift */; };
 		01D31F8F216BB0370055FD45 /* Typealiases.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01D31F8D216BB0370055FD45 /* Typealiases.swift */; };
+		592C0B7B2385B5E800308CCD /* TTSViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 592C0B7A2385B5E800308CCD /* TTSViewController.swift */; };
 		5936077D236B687C00FFA29F /* Detect.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59C15D55234E42F800B091F4 /* Detect.swift */; };
 		5936077E236B687F00FFA29F /* Filter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59C15D54234E42F700B091F4 /* Filter.swift */; };
 		5936077F236B688400FFA29F /* WebRTCVAD.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59C15D52234D322A00B091F4 /* WebRTCVAD.swift */; };
@@ -38,12 +39,19 @@
 		5936594E220A1A7A00C0365F /* SpeechProcessors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5936594D220A1A7A00C0365F /* SpeechProcessors.swift */; };
 		5937579322D5281900AA7516 /* VADDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5937579222D5281900AA7516 /* VADDelegate.swift */; };
 		594154B822F8AD2200E3624E /* TFLiteWakewordRecognizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 594154B722F8AD2200E3624E /* TFLiteWakewordRecognizer.swift */; };
+		5942C4352384764900EC0B13 /* TextToSpeechDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5942C4342384764900EC0B13 /* TextToSpeechDelegate.swift */; };
+		5942C4362384772600EC0B13 /* TextToSpeechDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5942C4342384764900EC0B13 /* TextToSpeechDelegate.swift */; };
+		596567812384AA1100CFCE23 /* TextToSpeechInput.swift in Sources */ = {isa = PBXBuildFile; fileRef = 596567802384AA1100CFCE23 /* TextToSpeechInput.swift */; };
 		5967108E21F7AE6B00CBFC88 /* AppleSpeechRecognizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5967108D21F7AE6B00CBFC88 /* AppleSpeechRecognizer.swift */; };
+		596B82482384A097004BAEF4 /* TextToSpeech.swift in Sources */ = {isa = PBXBuildFile; fileRef = 596B82472384A097004BAEF4 /* TextToSpeech.swift */; };
 		59A0D5C02204E786003709C3 /* AppleASRViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59A0D5BD2204E786003709C3 /* AppleASRViewController.swift */; };
 		59A0D5C22204E786003709C3 /* AppleWakewordViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59A0D5BF2204E786003709C3 /* AppleWakewordViewController.swift */; };
 		59A0D5C42204E799003709C3 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 59A0D5C32204E799003709C3 /* Assets.xcassets */; };
 		59A0D5C72204E8E4003709C3 /* SpeechConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59A0D5C52204E8E4003709C3 /* SpeechConfiguration.swift */; };
 		59A45E4F2243ED530089D023 /* PipelineDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59A45E4E2243ED530089D023 /* PipelineDelegate.swift */; };
+		59A8DBF92384ABF000F97700 /* TextToSpeechTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59A8DBF82384ABF000F97700 /* TextToSpeechTest.swift */; };
+		59A8DBFA2384AC0100F97700 /* TextToSpeech.swift in Sources */ = {isa = PBXBuildFile; fileRef = 596B82472384A097004BAEF4 /* TextToSpeech.swift */; };
+		59A8DBFB2384AC0500F97700 /* TextToSpeechInput.swift in Sources */ = {isa = PBXBuildFile; fileRef = 596567802384AA1100CFCE23 /* TextToSpeechInput.swift */; };
 		59C15D53234D322A00B091F4 /* WebRTCVAD.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59C15D52234D322A00B091F4 /* WebRTCVAD.swift */; };
 		59C15D56234E42F800B091F4 /* Filter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59C15D54234E42F700B091F4 /* Filter.swift */; };
 		59C15D57234E42F800B091F4 /* Detect.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59C15D55234E42F800B091F4 /* Detect.swift */; };
@@ -154,6 +162,7 @@
 		59062F0C22A5AA9D00613AD8 /* WITVad.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = WITVad.m; sourceTree = "<group>"; };
 		59062F0D22A5AA9E00613AD8 /* WITCvad.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = WITCvad.m; sourceTree = "<group>"; };
 		59062F0F22A5AA9E00613AD8 /* WITCvad.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WITCvad.h; sourceTree = "<group>"; };
+		592C0B7A2385B5E800308CCD /* TTSViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = TTSViewController.swift; path = "../../spokestack-ios/SpokestackFrameworkExample/TTSViewController.swift"; sourceTree = "<group>"; };
 		592D2651233C18D700354AF8 /* module.modulemap */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.module-map"; path = module.modulemap; sourceTree = "<group>"; };
 		59365947220889EE00C0365F /* AppleWakewordRecognizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppleWakewordRecognizer.swift; sourceTree = "<group>"; };
 		593659492209DDBA00C0365F /* SpeechEventListener.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeechEventListener.swift; sourceTree = "<group>"; };
@@ -161,12 +170,16 @@
 		5936594D220A1A7A00C0365F /* SpeechProcessors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeechProcessors.swift; sourceTree = "<group>"; };
 		5937579222D5281900AA7516 /* VADDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VADDelegate.swift; sourceTree = "<group>"; };
 		594154B722F8AD2200E3624E /* TFLiteWakewordRecognizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TFLiteWakewordRecognizer.swift; sourceTree = "<group>"; };
+		5942C4342384764900EC0B13 /* TextToSpeechDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextToSpeechDelegate.swift; sourceTree = "<group>"; };
+		596567802384AA1100CFCE23 /* TextToSpeechInput.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextToSpeechInput.swift; sourceTree = "<group>"; };
 		5967108D21F7AE6B00CBFC88 /* AppleSpeechRecognizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppleSpeechRecognizer.swift; sourceTree = "<group>"; };
+		596B82472384A097004BAEF4 /* TextToSpeech.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TextToSpeech.swift; sourceTree = "<group>"; };
 		59A0D5BD2204E786003709C3 /* AppleASRViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppleASRViewController.swift; sourceTree = "<group>"; };
 		59A0D5BF2204E786003709C3 /* AppleWakewordViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppleWakewordViewController.swift; sourceTree = "<group>"; };
 		59A0D5C32204E799003709C3 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		59A0D5C52204E8E4003709C3 /* SpeechConfiguration.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SpeechConfiguration.swift; sourceTree = "<group>"; };
 		59A45E4E2243ED530089D023 /* PipelineDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PipelineDelegate.swift; sourceTree = "<group>"; };
+		59A8DBF82384ABF000F97700 /* TextToSpeechTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TextToSpeechTest.swift; sourceTree = "<group>"; };
 		59C15D52234D322A00B091F4 /* WebRTCVAD.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = WebRTCVAD.swift; path = Spokestack/WebRTCVAD.swift; sourceTree = SOURCE_ROOT; };
 		59C15D54234E42F700B091F4 /* Filter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Filter.swift; sourceTree = "<group>"; };
 		59C15D55234E42F800B091F4 /* Detect.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Detect.swift; sourceTree = "<group>"; };
@@ -240,6 +253,7 @@
 				59A0D5BD2204E786003709C3 /* AppleASRViewController.swift */,
 				59FB0C9622B2DBC000FB9662 /* CoreMLViewController.swift */,
 				59E0E1382301FB920060F012 /* TFLiteViewController.swift */,
+				592C0B7A2385B5E800308CCD /* TTSViewController.swift */,
 				59A0D5BF2204E786003709C3 /* AppleWakewordViewController.swift */,
 				011C191F216BCA3200DB36FD /* AppDelegate.swift */,
 				011C1921216BCA3200DB36FD /* ViewController.swift */,
@@ -293,6 +307,7 @@
 		01D31F48216BAF260055FD45 /* SpokestackTests */ = {
 			isa = PBXGroup;
 			children = (
+				59A8DBF82384ABF000F97700 /* TextToSpeechTest.swift */,
 				59C2AFD92319CB7100E47AC5 /* RingBufferTest.swift */,
 				59D78F5E2322D13700728A98 /* AudioControllerTest.swift */,
 				59D78F602322EAE000728A98 /* SpeechPipelineTest.swift */,
@@ -334,6 +349,7 @@
 			isa = PBXGroup;
 			children = (
 				01D31F69216BAFC60055FD45 /* SpeechPipeline.swift */,
+				596B82472384A097004BAEF4 /* TextToSpeech.swift */,
 			);
 			name = Managers;
 			sourceTree = "<group>";
@@ -350,6 +366,7 @@
 				59E0E13422FE2C2B0060F012 /* SignalProcessing.swift */,
 				59A0D5C52204E8E4003709C3 /* SpeechConfiguration.swift */,
 				59E0E1362301F0A80060F012 /* Trace.swift */,
+				596567802384AA1100CFCE23 /* TextToSpeechInput.swift */,
 			);
 			name = Models;
 			sourceTree = "<group>";
@@ -362,6 +379,7 @@
 				5936594B2209EA1800C0365F /* SpeechProcessor.swift */,
 				593659492209DDBA00C0365F /* SpeechEventListener.swift */,
 				5937579222D5281900AA7516 /* VADDelegate.swift */,
+				5942C4342384764900EC0B13 /* TextToSpeechDelegate.swift */,
 			);
 			name = Protocols;
 			sourceTree = "<group>";
@@ -552,6 +570,7 @@
 					};
 					01D31F43216BAF260055FD45 = {
 						CreatedOnToolsVersion = 10.0;
+						LastSwiftMigration = 1100;
 					};
 				};
 			};
@@ -682,6 +701,7 @@
 				011C1922216BCA3200DB36FD /* ViewController.swift in Sources */,
 				011C1920216BCA3200DB36FD /* AppDelegate.swift in Sources */,
 				59E0E1392301FB920060F012 /* TFLiteViewController.swift in Sources */,
+				592C0B7B2385B5E800308CCD /* TTSViewController.swift in Sources */,
 				59A0D5C02204E786003709C3 /* AppleASRViewController.swift in Sources */,
 				59A0D5C22204E786003709C3 /* AppleWakewordViewController.swift in Sources */,
 				59FB0C9722B2DBC100FB9662 /* CoreMLViewController.swift in Sources */,
@@ -695,7 +715,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				59365948220889EE00C0365F /* AppleWakewordRecognizer.swift in Sources */,
+				5942C4352384764900EC0B13 /* TextToSpeechDelegate.swift in Sources */,
 				59FB0C8822A98E1900FB9662 /* CoreMLWakewordRecognizer.swift in Sources */,
+				596B82482384A097004BAEF4 /* TextToSpeech.swift in Sources */,
 				01D31F6F216BAFD90055FD45 /* SpeechContext.swift in Sources */,
 				59C15D57234E42F800B091F4 /* Detect.swift in Sources */,
 				59E0E1372301F0A80060F012 /* Trace.swift in Sources */,
@@ -704,6 +726,7 @@
 				59FB0C8D22B0640700FB9662 /* RingBuffer.swift in Sources */,
 				01D31F8E216BB0370055FD45 /* Typealiases.swift in Sources */,
 				01D31F66216BAFB50055FD45 /* Error.swift in Sources */,
+				596567812384AA1100CFCE23 /* TextToSpeechInput.swift in Sources */,
 				01D31F6A216BAFC60055FD45 /* SpeechPipeline.swift in Sources */,
 				5937579322D5281900AA7516 /* VADDelegate.swift in Sources */,
 				5967108E21F7AE6B00CBFC88 /* AppleSpeechRecognizer.swift in Sources */,
@@ -739,9 +762,12 @@
 				59C2AFE72319CEF600E47AC5 /* VADDelegate.swift in Sources */,
 				59C2AFE62319CEEF00E47AC5 /* RingBuffer.swift in Sources */,
 				01D31F70216BAFD90055FD45 /* SpeechContext.swift in Sources */,
+				59A8DBFA2384AC0100F97700 /* TextToSpeech.swift in Sources */,
 				59C2AFDF2319CE8000E47AC5 /* SpeechProcessor.swift in Sources */,
 				5936077F236B688400FFA29F /* WebRTCVAD.swift in Sources */,
 				59D78F5F2322D13700728A98 /* AudioControllerTest.swift in Sources */,
+				5942C4362384772600EC0B13 /* TextToSpeechDelegate.swift in Sources */,
+				59A8DBF92384ABF000F97700 /* TextToSpeechTest.swift in Sources */,
 				59C2AFE82319CF3900E47AC5 /* FFT.swift in Sources */,
 				59C2AFE12319CEA800E47AC5 /* CoreMLWakewordRecognizer.swift in Sources */,
 				01D31F63216BAFA40055FD45 /* AudioController.swift in Sources */,
@@ -755,6 +781,7 @@
 				59C2AFDA2319CB7100E47AC5 /* RingBufferTest.swift in Sources */,
 				59C2AFE42319CEC300E47AC5 /* Trace.swift in Sources */,
 				5936077D236B687C00FFA29F /* Detect.swift in Sources */,
+				59A8DBFB2384AC0500F97700 /* TextToSpeechInput.swift in Sources */,
 				59C2AFE52319CED100E47AC5 /* AppleSpeechRecognizer.swift in Sources */,
 				59C2AFDB2319CE5800E47AC5 /* SpeechConfiguration.swift in Sources */,
 				59EF51C32332E57B006BA0BD /* Frame.swift in Sources */,
@@ -1069,17 +1096,7 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = S55ZL97588;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/Frameworks/gRPC-RxLibrary",
-					"$(PROJECT_DIR)/Frameworks/gRPC-ProtoRPC",
-					"$(PROJECT_DIR)/Frameworks/googleapis",
-					"$(PROJECT_DIR)/Frameworks/gRPC",
-					"$(PROJECT_DIR)/Frameworks/BoringSSL-GRPC",
-					"$(PROJECT_DIR)/Frameworks/nanopb",
-					"$(PROJECT_DIR)/Frameworks/Protobuf",
-					"$(PROJECT_DIR)/Frameworks/gRPC-Core",
-				);
+				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				INFOPLIST_FILE = SpokestackTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1088,7 +1105,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = io.spokestack.SpokestackTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 4.2;
+				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -1100,17 +1117,7 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = S55ZL97588;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/Frameworks/gRPC-RxLibrary",
-					"$(PROJECT_DIR)/Frameworks/gRPC-ProtoRPC",
-					"$(PROJECT_DIR)/Frameworks/googleapis",
-					"$(PROJECT_DIR)/Frameworks/gRPC",
-					"$(PROJECT_DIR)/Frameworks/BoringSSL-GRPC",
-					"$(PROJECT_DIR)/Frameworks/nanopb",
-					"$(PROJECT_DIR)/Frameworks/Protobuf",
-					"$(PROJECT_DIR)/Frameworks/gRPC-Core",
-				);
+				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				INFOPLIST_FILE = SpokestackTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1119,7 +1126,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = io.spokestack.SpokestackTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 4.2;
+				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;

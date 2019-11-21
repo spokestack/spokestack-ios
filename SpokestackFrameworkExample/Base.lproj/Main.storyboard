@@ -41,11 +41,19 @@
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Kmz-5x-JBe" userLabel="TensorFlow Wakeword Button">
-                                <rect key="frame" x="111" y="281" width="154" height="30"/>
+                                <rect key="frame" x="111" y="276" width="154" height="30"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <state key="normal" title="TensorFlow Wakeword"/>
                                 <connections>
                                     <action selector="tensorFlowWakewordAction:" destination="BYZ-38-t0r" eventType="touchUpInside" id="uuB-4p-fK8"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="6e2-y1-L2l" userLabel="TTS Button">
+                                <rect key="frame" x="137" y="333" width="103" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="Text to Speech"/>
+                                <connections>
+                                    <action selector="ttsAction:" destination="BYZ-38-t0r" eventType="touchUpInside" id="srU-eY-u4B"/>
                                 </connections>
                             </button>
                         </subviews>
