@@ -23,6 +23,15 @@ import Foundation
         self.input = input
         super.init()
     }
+
+    /// Convenience initializer for a new TextToSpeechInput instance.
+    /// - Parameter input: The text input to the speech synthesizer.
+    /// - Parameter voice: The synthetic voice used to generate speech.
+    /// - Parameter inputFormat: The formatting of the input.
+    @objc public init(_ input:String, inputFormat: TTSInputFormat) {
+        self.input = input
+        self.inputFormat = inputFormat
+    }
     
     /// Convenience initializer for a new TextToSpeechInput instance.
     /// - Parameter input: The text input to the speech synthesizer.
