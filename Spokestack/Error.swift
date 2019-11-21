@@ -52,8 +52,8 @@ enum RingBufferStateError: Error {
     case illegalState(message: String)
 }
 
-/// Errors thrown by TTS
+/// Errors thrown by TTS instances.
 enum TextToSpeechErrors: Error {
-    /// Synthesis response was missing data
+    /// The synthesize response was missing data.
     case deserialization(String)
 }

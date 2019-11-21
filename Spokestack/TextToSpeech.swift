@@ -14,8 +14,13 @@ import Foundation
 }
 
 @objc public class TextToSpeech: NSObject {
-    private var delegate: TextToSpeechDelegate
+    
+    // MARK: Properties
+    
+    weak public var delegate: TextToSpeechDelegate?
     private var configuration: SpeechConfiguration
+    
+    // MARK: Initializers
     
     /// Initializes a new text to speech instance.
     /// - Parameter delegate: Delegate that receives text to speech events.
@@ -25,6 +30,8 @@ import Foundation
         self.configuration = configuration
         super.init()
     }
+    
+    // MARK: Public Functions
     
     /// Synthesize speech using the provided input parameters and speech configuration. A successful synthesis will return a URL to the streaming audio container of synthesized speech to the `TextToSpeech`'s `delegate`.
     /// - Note: The URL will be invalidated within 60 seconds of generation.
@@ -44,33 +51,33 @@ import Foundation
             Trace.trace(Trace.Level.DEBUG, configLevel: self.configuration.tracing, message: "task callback \(String(describing: response)) \(String(describing: String(data: data ?? Data(), encoding: String.Encoding.utf8)))) \(String(describing: error))", delegate: self.delegate, caller: self)
 
             if let error = error {
-                self.delegate.failure(error: error)
+                self.delegate?.failure(error: error)
             } else {
                 // unwrap the matryoshka doll that is the response body, responding with a failure if any layer is awry
                 guard let data = data else {
-                    self.delegate.failure(error: TextToSpeechErrors.deserialization("response body had no data"))
+                    self.delegate?.failure(error: TextToSpeechErrors.deserialization("response body had no data"))
                     return
                 }
                 guard let dataObject = try? JSONSerialization.jsonObject(with: data, options: []) else {
-                    self.delegate.failure(error: TextToSpeechErrors.deserialization("could not deserialize response body"))
+                    self.delegate?.failure(error: TextToSpeechErrors.deserialization("could not deserialize response body"))
                     return
                 }
                 guard let body = dataObject as? [String: String] else {
-                    self.delegate.failure(error: TextToSpeechErrors.deserialization("deserialized response body was not a dictionary of strings"))
+                    self.delegate?.failure(error: TextToSpeechErrors.deserialization("deserialized response body was not a dictionary of strings"))
                     return
                 }
                 guard let urlString = body["url"] else {
-                    self.delegate.failure(error: TextToSpeechErrors.deserialization("deserialize response body dictionary did not contain the expected key"))
+                    self.delegate?.failure(error: TextToSpeechErrors.deserialization("deserialize response body dictionary did not contain the expected key"))
                     return
                 }
                 guard let url = URL(string: urlString) else {
-                    self.delegate.failure(error: TextToSpeechErrors.deserialization("could not generate a URL from the deserialize response body dictionary url key"))
+                    self.delegate?.failure(error: TextToSpeechErrors.deserialization("could not generate a URL from the deserialize response body dictionary url key"))
                     return
                 }
                 // we have finally arrived at the single key-value pair in the response body
                 Trace.trace(Trace.Level.PERF, configLevel: self.configuration.tracing, message: "response body url \(url)", delegate: self.delegate, caller: self)
                 
-                self.delegate.success(url: url)
+                self.delegate?.success(url: url)
             }
         }
         task.resume()

@@ -12,6 +12,11 @@ import Foundation
 /// - SeeAlso: `TextToSpeech.synthesize`
 @objc public class TextToSpeechInput: NSObject {
     
+    /// Initializer for a new TextToSpeechInput instance.
+    @objc public override init() {
+        super.init()
+    }
+    
     /// Convenience initializer for a new TextToSpeechInput instance.
     /// - Parameter input: The text input to the speech synthesizer.
     @objc public init(_ input: String) {
