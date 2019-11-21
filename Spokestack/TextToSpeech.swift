@@ -8,7 +8,7 @@
 
 import Foundation
 
-@objc public enum TTSInputType: Int {
+@objc public enum TTSInputFormat: Int {
     case text
     case ssml
 }
@@ -42,8 +42,17 @@ import Foundation
         request.addValue(self.configuration.authorization, forHTTPHeaderField: "Authorization")
         request.addValue("application/json", forHTTPHeaderField: "Content-Type")
         request.httpMethod = "POST"
+        var inputFormat: String
+        switch input.inputFormat {
+        case .text:
+            inputFormat = "text"
+            break
+        case .ssml:
+            inputFormat = "ssml"
+            break
+        }
         let body = ["voice": input.voice,
-                    "text": input.input]
+                    inputFormat: input.input]
         request.httpBody =  try? JSONSerialization.data(withJSONObject: body, options: [])
         Trace.trace(Trace.Level.DEBUG, configLevel: self.configuration.tracing, message: "request \(request.debugDescription) \(String(describing: request.allHTTPHeaderFields)) \(String(data: request.httpBody!, encoding: String.Encoding.ascii) ?? "no body")", delegate: self.delegate, caller: self)
         

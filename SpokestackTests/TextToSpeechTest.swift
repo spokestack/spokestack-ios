@@ -40,6 +40,15 @@ class TextToSpeechTest: XCTestCase {
         XCTAssert(delegate.didSucceed)
         XCTAssertFalse(delegate.didFail)
         
+        delegate.reset()
+        let didSucceedExpectation2 = expectation(description: "successful request calls TestTTSGenerationDelegate.success")
+        delegate.asyncExpectation = didSucceedExpectation2
+        let ssmlInput = TextToSpeechInput("<speak>Yet right now the average age of this 52nd Parliament is 49 years old, <break time='500ms'/> OK Boomer.</speak>", voice: "demo-male", inputFormat: .ssml)
+        tts.synthesize(ssmlInput)
+        wait(for: [didSucceedExpectation2], timeout: 5)
+        XCTAssert(delegate.didSucceed)
+        XCTAssertFalse(delegate.didFail)
+        
         // bad input results in a failed request that calls failure
         delegate.reset()
         let didFailInputExpectation = expectation(description: "bad input results in a failed request that calls TestTTSGenerationDelegate.failure")

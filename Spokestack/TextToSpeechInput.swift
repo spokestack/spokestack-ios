@@ -28,7 +28,7 @@ import Foundation
     /// - Parameter input: The text input to the speech synthesizer.
     /// - Parameter voice: The synthetic voice used to generate speech.
     /// - Parameter inputFormat: The formatting of the input.
-    @objc public init(_ input:String, voice: String, inputFormat: TTSInputType) {
+    @objc public init(_ input:String, voice: String, inputFormat: TTSInputFormat) {
         self.input = input
         self.voice = voice
         self.inputFormat = inputFormat
@@ -40,5 +40,5 @@ import Foundation
     /// - Note: SSML should be unescaped.
     @objc public var input: String = "Here I am, a brain the size of a planet."
     /// The formatting of the input.
-    @objc public var inputFormat: TTSInputType = .text
+    @objc public var inputFormat: TTSInputFormat = .text
 }
