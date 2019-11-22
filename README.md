@@ -45,11 +45,15 @@ Activity Detection (VAD), wakeword activation, and Automatic Speech Recognition 
 
 This example creates a speech recognition pipeline using a wakeword detector that is triggered by VAD, which in turn activates an ASR, returning the resulting utterance to the `SpeechEventListener` event listener (`self` in this example).
 
+See `SpeechPipeline` and `SpeechConfiguration` for further configuration documentation.
+
 ### Reference implementation
 
-The `SpokestackFrameworkExample` project contains reference implementations for how to use the Spokestack library, along with runnable examples of the wakeword and ASR components.
+The `SpokestackFrameworkExample` project contains reference implementations for how to use the Spokestack library, along with runnable examples of the wakeword and ASR components. Each component has a corresponding screen from the main screen, and can be started, stopped, or synthesized, as appropriate. The component screens have full debug tracing enabled, so the system control logic and debug events will appear in the XCode Console.
 
-See `SpeechPipeline` and `SpeechConfiguration` for further configuration documentation.
+#### Troubleshooting
+
+A build error similar to `Code Sign error: No unexpired provisioning profiles found that contain any of the keychain's signing certificates` will occur if the bundle identifier is not changed from `io.Spokestack.SpokestackFrameworkExample`, which is tied to the Spokestack organization. 
 
 ## API Reference
 

@@ -127,10 +127,12 @@ import Foundation
     
     /// Sets the property for the`SpeechEventListener` delegate .
     /// - Parameter speechDelegate: a `SpeechEventListener` protocol implementer.
-    @objc public func setDelegates(_ speechDelegate: SpeechEventListener) -> Void {
+    @objc public func setDelegates(_ speechDelegate: SpeechEventListener, pipelineDelegate: PipelineDelegate) -> Void {
         self.speechDelegate = speechDelegate
         self.speechRecognizerService.delegate = self.speechDelegate
         self.wakewordRecognizerService.delegate = self.speechDelegate
+        self.pipelineDelegate = pipelineDelegate
+        AudioController.sharedInstance.pipelineDelegate = self.pipelineDelegate
     }
     
     /// MARK: Pipeline control

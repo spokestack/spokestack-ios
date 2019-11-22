@@ -72,7 +72,7 @@ class SpeechPipelineTest: XCTestCase {
         /// change the pipeline's delegates
         delegate = SpeechPipelineTestDelegate()
         delegate.asyncExpectation = activateExpectation
-        p.setDelegates(delegate)
+        p.setDelegates(delegate, pipelineDelegate: delegate)
         
         /// assert that the pipeline's delegate references (and pipeline's service delegates) have changed
         XCTAssert(delegate === p.speechDelegate)
