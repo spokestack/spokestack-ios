@@ -1,24 +1,28 @@
 PODS:
   - filter_audio (0.4.3)
+  - MicrosoftCognitiveServicesSpeech-iOS (1.8.0)
   - TensorFlowLiteC (1.14.0)
   - TensorFlowLiteSwift (1.14.0):
     - TensorFlowLiteC (= 1.14.0)
 
 DEPENDENCIES:
   - filter_audio (~> 0.4.3)
+  - MicrosoftCognitiveServicesSpeech-iOS (~> 1.7)
   - TensorFlowLiteSwift (~> 1.14.0)
 
 SPEC REPOS:
   trunk:
     - filter_audio
+    - MicrosoftCognitiveServicesSpeech-iOS
     - TensorFlowLiteC
     - TensorFlowLiteSwift
 
 SPEC CHECKSUMS:
   filter_audio: 93822826dcc07a70f41a5a4b103cae97c9efde83
+  MicrosoftCognitiveServicesSpeech-iOS: f9054c9e11dbe0ab1ba055c78729a62450795a8b
   TensorFlowLiteC: a6702011fb661928634e59565b5fe262f69692d0
   TensorFlowLiteSwift: ac8c816ae2d65f631a96151e7991c46412aec7eb
 
-PODFILE CHECKSUM: e154c62f41ddf69b04594a2acf6847e5aa3cb527
+PODFILE CHECKSUM: 457078607fe95501016b9a19a0f88fc5b6eb8071
 
 COCOAPODS: 1.8.4

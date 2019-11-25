@@ -18,6 +18,7 @@ Pod::Spec.new do |s|
   s.public_header_files = 'Spokestack/Spokestack.h'
   s.dependency 'TensorFlowLiteSwift', '~> 1.14.0'
   s.dependency 'filter_audio', '~> 0.4.3'
+  s.dependency 'MicrosoftCognitiveServicesSpeech-iOS', '~> 1.7'
   s.static_framework = true
 
 end

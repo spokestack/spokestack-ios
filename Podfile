@@ -6,6 +6,7 @@ target 'Spokestack' do
   use_frameworks!
 
   # Pods for Spokestack
+  pod 'MicrosoftCognitiveServicesSpeech-iOS', '~> 1.7', :modular_headers => true
   pod 'TensorFlowLiteSwift', '~> 1.14.0'
   pod 'filter_audio', '~> 0.4.3', :modular_headers => true
 
