@@ -59,34 +59,36 @@ import Foundation
         let task: URLSessionDataTask = session.dataTask(with: request) { (data, response, error) -> Void in
             Trace.trace(Trace.Level.DEBUG, configLevel: self.configuration.tracing, message: "task callback \(String(describing: response)) \(String(describing: String(data: data ?? Data(), encoding: String.Encoding.utf8)))) \(String(describing: error))", delegate: self.delegate, caller: self)
 
-            if let error = error {
-                self.delegate?.failure(error: error)
-            } else {
-                // unwrap the matryoshka doll that is the response body, responding with a failure if any layer is awry
-                guard let data = data else {
-                    self.delegate?.failure(error: TextToSpeechErrors.deserialization("response body had no data"))
-                    return
+            DispatchQueue.main.async {
+                if let error = error {
+                    self.delegate?.failure(error: error)
+                } else {
+                    // unwrap the matryoshka doll that is the response body, responding with a failure if any layer is awry
+                    guard let data = data else {
+                        self.delegate?.failure(error: TextToSpeechErrors.deserialization("response body had no data"))
+                        return
+                    }
+                    guard let dataObject = try? JSONSerialization.jsonObject(with: data, options: []) else {
+                        self.delegate?.failure(error: TextToSpeechErrors.deserialization("could not deserialize response body"))
+                        return
+                    }
+                    guard let body = dataObject as? [String: String] else {
+                        self.delegate?.failure(error: TextToSpeechErrors.deserialization("deserialized response body was not a dictionary of strings"))
+                        return
+                    }
+                    guard let urlString = body["url"] else {
+                        self.delegate?.failure(error: TextToSpeechErrors.deserialization("deserialize response body dictionary did not contain the expected key"))
+                        return
+                    }
+                    guard let url = URL(string: urlString) else {
+                        self.delegate?.failure(error: TextToSpeechErrors.deserialization("could not generate a URL from the deserialize response body dictionary url key"))
+                        return
+                    }
+                    // we have finally arrived at the single key-value pair in the response body
+                    Trace.trace(Trace.Level.PERF, configLevel: self.configuration.tracing, message: "response body url \(url)", delegate: self.delegate, caller: self)
+                    
+                    self.delegate?.success(url: url)
                 }
-                guard let dataObject = try? JSONSerialization.jsonObject(with: data, options: []) else {
-                    self.delegate?.failure(error: TextToSpeechErrors.deserialization("could not deserialize response body"))
-                    return
-                }
-                guard let body = dataObject as? [String: String] else {
-                    self.delegate?.failure(error: TextToSpeechErrors.deserialization("deserialized response body was not a dictionary of strings"))
-                    return
-                }
-                guard let urlString = body["url"] else {
-                    self.delegate?.failure(error: TextToSpeechErrors.deserialization("deserialize response body dictionary did not contain the expected key"))
-                    return
-                }
-                guard let url = URL(string: urlString) else {
-                    self.delegate?.failure(error: TextToSpeechErrors.deserialization("could not generate a URL from the deserialize response body dictionary url key"))
-                    return
-                }
-                // we have finally arrived at the single key-value pair in the response body
-                Trace.trace(Trace.Level.PERF, configLevel: self.configuration.tracing, message: "response body url \(url)", delegate: self.delegate, caller: self)
-                
-                self.delegate?.success(url: url)
             }
         }
         task.resume()
