@@ -14,7 +14,7 @@ import Foundation
     /// - Remark: ex: "up,dog"
     /// - Warning: cannot contain spaces
     /// - SeeAlso: `CoreMLWakewordRecognizer`, `AppleWakewordRecognizer`
-    @objc public var wakewords: String = "spokestack"
+    @objc public var wakewords: String = "spokestack, spoke stack"
     /// A comma-separated list of space-separated wakeword keyword phrases to detect, which defaults to no phrases (just individual keywords).
     /// - Remark: ex: "up dog,dog dog"
     /// - SeeAlso: `CoreMLWakewordRecognizer`, `AppleWakewordRecognizer`
