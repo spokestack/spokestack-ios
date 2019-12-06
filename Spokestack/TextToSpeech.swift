@@ -85,7 +85,7 @@ import Foundation
                         return
                     }
                     // we have finally arrived at the single key-value pair in the response body
-                    Trace.trace(Trace.Level.PERF, configLevel: self.configuration.tracing, message: "response body url \(url)", delegate: self.delegate, caller: self)
+                    Trace.trace(Trace.Level.DEBUG, configLevel: self.configuration.tracing, message: "response body url \(url)", delegate: self.delegate, caller: self)
                     
                     self.delegate?.success(url: url)
                 }
