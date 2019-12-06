@@ -14,14 +14,16 @@ import Foundation
     /// - Remark: ex: "up,dog"
     /// - Warning: cannot contain spaces
     /// - SeeAlso: `CoreMLWakewordRecognizer`, `AppleWakewordRecognizer`
-    @objc public var wakewords: String = "spokestack"
+    @objc public var wakewords: String = "spokestack, spoke stack"
     /// A comma-separated list of space-separated wakeword keyword phrases to detect, which defaults to no phrases (just individual keywords).
     /// - Remark: ex: "up dog,dog dog"
     /// - SeeAlso: `CoreMLWakewordRecognizer`, `AppleWakewordRecognizer`
     @objc public var wakePhrases: String = "spokestack"
+    @available(*, deprecated, message: "Training is no longer supported for convolutional wakeword models, use TFLiteWakewordRecognizer instead.")
     /// The length of the wakeword phraser's sliding window, in milliseconds - this value should be long enough to fit the longest supported phrase.
     /// - SeeAlso: `CoreMLWakewordRecognizer`
     public var wakePhraseLength: Int = 2000
+    @available(*, deprecated, message: "Training is no longer supported for convolutional wakeword models, use TFLiteWakewordRecognizer instead.")
     /// The length of the posterior smoothing window to use with the wakeword classifier's outputs, in milliseconds.
     /// - SeeAlso: `CoreMLWakewordRecognizer`
     public var wakeSmoothLength: Int = 50

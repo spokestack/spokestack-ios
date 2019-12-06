@@ -17,8 +17,6 @@ class ViewController: UIViewController {
     
     @IBOutlet weak var appleWakewordButton: UIButton!
 
-    @IBOutlet weak var coreMLWakewordButton: UIButton!
-
     @IBOutlet weak var tensorFlowWakewordButton: UIButton!
 
     // MARK: View Life Cycle
@@ -40,14 +38,6 @@ class ViewController: UIViewController {
     @IBAction func appleWakewordAction(_ sender: Any) {
         
         let controller: AppleWakewordViewController = AppleWakewordViewController()
-        let navigationViewController: UINavigationController = UINavigationController(rootViewController: controller)
-        
-        self.present(navigationViewController, animated: true, completion: nil)
-    }
-
-    @IBAction func coreMLWakewordAction(_ sender: Any) {
-        
-        let controller: CoreMLViewController = CoreMLViewController()
         let navigationViewController: UINavigationController = UINavigationController(rootViewController: controller)
         
         self.present(navigationViewController, animated: true, completion: nil)

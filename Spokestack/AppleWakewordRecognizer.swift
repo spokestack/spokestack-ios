@@ -25,7 +25,7 @@ This pipeline component uses the Apple `SFSpeech` API to stream audio samples fo
         didSet {
             if self.configuration != nil {
                 // wakeword
-                phrases = self.configuration!.wakePhrases.components(separatedBy: ",")
+                phrases = self.configuration!.wakewords.components(separatedBy: ",")
                 // Tracing
                 self.traceLevel = self.configuration!.tracing
                 /// VAD
