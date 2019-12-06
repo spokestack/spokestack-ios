@@ -108,6 +108,8 @@ import Foundation
         self.pipelineDelegate?.didInit()
     }
     
+    /// MARK: Pipeline status
+    
     /// Checks the status of the delegates provided in the constructor.
     ///
     /// - Remarks: Verifies that a strong reference to the delegates is being held.
@@ -125,11 +127,15 @@ import Foundation
     
     /// Sets the property for the`SpeechEventListener` delegate .
     /// - Parameter speechDelegate: a `SpeechEventListener` protocol implementer.
-    @objc public func setDelegates(_ speechDelegate: SpeechEventListener) -> Void {
+    @objc public func setDelegates(_ speechDelegate: SpeechEventListener, pipelineDelegate: PipelineDelegate) -> Void {
         self.speechDelegate = speechDelegate
         self.speechRecognizerService.delegate = self.speechDelegate
         self.wakewordRecognizerService.delegate = self.speechDelegate
+        self.pipelineDelegate = pipelineDelegate
+        AudioController.sharedInstance.pipelineDelegate = self.pipelineDelegate
     }
+    
+    /// MARK: Pipeline control
     
     /**
      Activates speech recognition. The pipeline remains active until the user stops talking or the activation timeout is reached.

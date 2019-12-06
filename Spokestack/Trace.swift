@@ -45,6 +45,18 @@ public struct Trace {
         }
     }
     
+    /// Traces a debugging message.
+    /// - Parameter level: The debugging trace level for this message.
+    /// - Parameter configLevel: The speech pipeline's configured debugging trace level.
+    /// - Parameter message: The debugging trace message.
+    /// - Parameter delegate: The delegate that should receive the debugging trace message.
+    /// - Parameter caller: The sender of the debugging trace message.
+    public static func trace(_ level: Trace.Level, configLevel: Trace.Level, message: String, delegate: TextToSpeechDelegate?, caller: Any) {
+        if level.rawValue <= configLevel.rawValue {
+            delegate?.didTrace("\(level.rawValue) \(String(describing: type(of: caller))) \(message)")
+        }
+    }
+    
     /// Write data to a file, after clojure/core's `spit`.
     /// - Parameter data: The data to write to the file.
     /// - Parameter fileName: The name of the file that will be created/appended with the data.

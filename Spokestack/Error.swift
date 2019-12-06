@@ -48,6 +48,12 @@ public enum WakewordModelError: Error, Equatable {
 
 /// Errors thrown by RingBuffer instances.
 enum RingBufferStateError: Error {
-    /// The RingBuffer instance entered an illegal state during a `read` or `write`.
+    // The RingBuffer instance entered an illegal state during a `read` or `write`.
     case illegalState(message: String)
+}
+
+/// Errors thrown by TTS instances.
+enum TextToSpeechErrors: Error {
+    /// The synthesize response was missing data.
+    case deserialization(String)
 }

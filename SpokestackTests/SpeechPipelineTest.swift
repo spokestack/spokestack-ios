@@ -45,20 +45,16 @@ class SpeechPipelineTest: XCTestCase {
     func testStatus() {
         var delegate: SpeechPipelineTestDelegate
         let didInitExpectation = expectation(description: "testStatus calls SpeechPipelineTestDelegate as the result of didInit method completion")
-
-        do {
-            /// ensure that the pipeline retains a reference to the delegate
-            delegate = SpeechPipelineTestDelegate()
-            delegate.asyncExpectation = didInitExpectation
-            let p = try SpeechPipeline(TestProcessor(true), speechConfiguration: SpeechConfiguration(), speechDelegate: delegate, wakewordService: TestProcessor(), pipelineDelegate: delegate)
-            wait(for: [didInitExpectation], timeout: 1)
-            XCTAssert(p.status())
-            delegate = SpeechPipelineTestDelegate()
-            delegate.asyncExpectation = didInitExpectation
-            XCTAssert(p.status())
-        } catch let error {
-            XCTFail(error.localizedDescription)
-        }
+        
+        /// ensure that the pipeline retains a reference to the delegate
+        delegate = SpeechPipelineTestDelegate()
+        delegate.asyncExpectation = didInitExpectation
+        let p = SpeechPipeline(TestProcessor(true), speechConfiguration: SpeechConfiguration(), speechDelegate: delegate, wakewordService: TestProcessor(), pipelineDelegate: delegate)
+        wait(for: [didInitExpectation], timeout: 1)
+        XCTAssert(p.status())
+        delegate = SpeechPipelineTestDelegate()
+        delegate.asyncExpectation = didInitExpectation
+        XCTAssert(p.status())
     }
     
     /// setDelegates
@@ -66,27 +62,23 @@ class SpeechPipelineTest: XCTestCase {
         var delegate: SpeechPipelineTestDelegate
         let didInitExpectation = expectation(description: "didInitExpectation fulfills when testSetDelegates calls SpeechPipelineTestDelegate as the result of didInit method completion")
         let activateExpectation = expectation(description: "activateExpectation fulfills when testSetDelegates calls SpeechPipelineTestDelegate as the result of activate method completion")
-
-        do {
-            /// init the pipeline
-            delegate = SpeechPipelineTestDelegate()
-            delegate.asyncExpectation = didInitExpectation
-            let p = try SpeechPipeline(TestProcessor(true), speechConfiguration: SpeechConfiguration(), speechDelegate: delegate, wakewordService: TestProcessor(), pipelineDelegate: delegate)
-            wait(for: [didInitExpectation], timeout: 1)
-            
-            /// change the pipeline's delegates
-            delegate = SpeechPipelineTestDelegate()
-            delegate.asyncExpectation = activateExpectation
-            p.setDelegates(delegate)
-            
-            /// assert that the pipeline's delegate references (and pipeline's service delegates) have changed
-            XCTAssert(delegate === p.speechDelegate)
-            p.speechDelegate?.activate()
-            wait(for: [activateExpectation], timeout: 1)
-            XCTAssert(delegate.didActivate)
-        } catch let error {
-            XCTFail(error.localizedDescription)
-        }
+        
+        /// init the pipeline
+        delegate = SpeechPipelineTestDelegate()
+        delegate.asyncExpectation = didInitExpectation
+        let p = SpeechPipeline(TestProcessor(true), speechConfiguration: SpeechConfiguration(), speechDelegate: delegate, wakewordService: TestProcessor(), pipelineDelegate: delegate)
+        wait(for: [didInitExpectation], timeout: 1)
+        
+        /// change the pipeline's delegates
+        delegate = SpeechPipelineTestDelegate()
+        delegate.asyncExpectation = activateExpectation
+        p.setDelegates(delegate, pipelineDelegate: delegate)
+        
+        /// assert that the pipeline's delegate references (and pipeline's service delegates) have changed
+        XCTAssert(delegate === p.speechDelegate)
+        p.speechDelegate?.activate()
+        wait(for: [activateExpectation], timeout: 1)
+        XCTAssert(delegate.didActivate)
     }
     
     /// activate & deactivate
@@ -96,19 +88,15 @@ class SpeechPipelineTest: XCTestCase {
         delegate.asyncExpectation = didInitExpectation
         let config = SpeechConfiguration()
 
-        do {
-            /// init the pipeline
-            let p = try SpeechPipeline(TestProcessor(true), speechConfiguration: config, speechDelegate: delegate, wakewordService: TestProcessor(), pipelineDelegate: delegate)
-            wait(for: [didInitExpectation], timeout: 1)
-            
-            /// activate and deactivate the pipeline
-            p.activate()
-            XCTAssert(p.context.isActive)
-            p.deactivate()
-            XCTAssert(!p.context.isActive)
-        } catch let error {
-            XCTFail(error.localizedDescription)
-        }
+        /// init the pipeline
+        let p = SpeechPipeline(TestProcessor(true), speechConfiguration: config, speechDelegate: delegate, wakewordService: TestProcessor(), pipelineDelegate: delegate)
+        wait(for: [didInitExpectation], timeout: 1)
+        
+        /// activate and deactivate the pipeline
+        p.activate()
+        XCTAssert(p.context.isActive)
+        p.deactivate()
+        XCTAssert(!p.context.isActive)
     }
     
     /// start & stop
@@ -118,24 +106,21 @@ class SpeechPipelineTest: XCTestCase {
         let didStopExpectation = expectation(description: "didStopExpectation fulfills when testStartStop calls SpeechPipelineTestDelegate as the result of didStop method completion")
         let delegate = SpeechPipelineTestDelegate()
         let context = SpeechConfiguration()
-        do {
-            /// init the pipeline
-            delegate.asyncExpectation = didInitExpectation
-            let p = try SpeechPipeline(TestProcessor(true), speechConfiguration: context, speechDelegate: delegate, wakewordService: TestProcessor(), pipelineDelegate: delegate)
-            wait(for: [didInitExpectation], timeout: 1)
-            
-            /// start and stop the pipeline
-            delegate.asyncExpectation = didStartExpectation
-            p.start()
-            wait(for: [didStartExpectation], timeout: 1)
-            XCTAssert(!p.context.isActive)
-            delegate.asyncExpectation = didStopExpectation
-            p.stop()
-            wait(for: [didStopExpectation], timeout: 1)
-            XCTAssert(!p.context.isActive)
-        } catch let error {
-            XCTFail(error.localizedDescription)
-        }
+
+        /// init the pipeline
+        delegate.asyncExpectation = didInitExpectation
+        let p = SpeechPipeline(TestProcessor(true), speechConfiguration: context, speechDelegate: delegate, wakewordService: TestProcessor(), pipelineDelegate: delegate)
+        wait(for: [didInitExpectation], timeout: 1)
+        
+        /// start and stop the pipeline
+        delegate.asyncExpectation = didStartExpectation
+        p.start()
+        wait(for: [didStartExpectation], timeout: 1)
+        XCTAssert(!p.context.isActive)
+        delegate.asyncExpectation = didStopExpectation
+        p.stop()
+        wait(for: [didStopExpectation], timeout: 1)
+        XCTAssert(!p.context.isActive)
     }
     
     /// integration test
@@ -146,24 +131,20 @@ class SpeechPipelineTest: XCTestCase {
         let delegate = SpeechPipelineTestDelegate()
         let context = SpeechConfiguration()
         
-        do {
-            /// init the pipeline
-            delegate.asyncExpectation = didInitExpectation
-            let p = try SpeechPipeline(SpeechProcessors.appleSpeech.processor, speechConfiguration: context, speechDelegate: delegate, wakewordService: SpeechProcessors.appleWakeword.processor, pipelineDelegate: delegate)
-            wait(for: [didInitExpectation], timeout: 1)
-            
-            /// start and stop the pipeline
-            delegate.asyncExpectation = didStartExpectation
-            p.start()
-            wait(for: [didStartExpectation], timeout: 1)
-            XCTAssert(!p.context.isActive)
-            delegate.asyncExpectation = didStopExpectation
-            p.stop()
-            wait(for: [didStopExpectation], timeout: 1)
-            XCTAssert(!p.context.isActive)
-        } catch let error {
-            XCTFail(error.localizedDescription)
-        }
+        /// init the pipeline
+        delegate.asyncExpectation = didInitExpectation
+        let p = SpeechPipeline(SpeechProcessors.appleSpeech.processor, speechConfiguration: context, speechDelegate: delegate, wakewordService: SpeechProcessors.appleWakeword.processor, pipelineDelegate: delegate)
+        wait(for: [didInitExpectation], timeout: 1)
+        
+        /// start and stop the pipeline
+        delegate.asyncExpectation = didStartExpectation
+        p.start()
+        wait(for: [didStartExpectation], timeout: 1)
+        XCTAssert(!p.context.isActive)
+        delegate.asyncExpectation = didStopExpectation
+        p.stop()
+        wait(for: [didStopExpectation], timeout: 1)
+        XCTAssert(!p.context.isActive)
     }
 }
 
