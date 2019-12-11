@@ -7,18 +7,22 @@
 //
 
 import Foundation
+import AVFoundation
 
 @objc public enum TTSInputFormat: Int {
     case text
     case ssml
 }
 
+
+/// <#Description#>
 @objc public class TextToSpeech: NSObject {
     
     // MARK: Properties
     
     weak public var delegate: TextToSpeechDelegate?
     private var configuration: SpeechConfiguration
+    private lazy var player: AVPlayer = AVPlayer()
     
     // MARK: Initializers
     
@@ -31,12 +35,32 @@ import Foundation
         super.init()
     }
     
+    deinit {
+        NotificationCenter.default.removeObserver(self, name: .AVPlayerItemDidPlayToEndTime, object: self.player.currentItem)
+    }
+    
     // MARK: Public Functions
+    
+    @objc public func speak(_ input: TextToSpeechInput) -> Void {
+        func play(url: URL) {
+            DispatchQueue.main.async {
+                let playerItem = AVPlayerItem(url: url)
+                NotificationCenter.default.addObserver(self, selector: #selector(self.playerDidFinishPlaying(sender:)), name: .AVPlayerItemDidPlayToEndTime, object: playerItem)
+                playerItem.addObserver(self, forKeyPath: #keyPath(AVPlayerItem.isPlaybackBufferEmpty), options: [.new], context: nil)
+                self.player.replaceCurrentItem(with: playerItem)
+            }
+        }
+        self.synthesize(input: input, success: play)
+    }
     
     /// Synthesize speech using the provided input parameters and speech configuration. A successful synthesis will return a URL to the streaming audio container of synthesized speech to the `TextToSpeech`'s `delegate`.
     /// - Note: The URL will be invalidated within 60 seconds of generation.
     /// - Parameter input: Parameters that specify the speech to synthesize.
     @objc public func synthesize(_ input: TextToSpeechInput) -> Void {
+        self.synthesize(input: input, success: successHandler)
+    }
+    
+    private func synthesize(input: TextToSpeechInput, success: ((URL) -> Void)?) {
         let session = URLSession(configuration: URLSessionConfiguration.default)
         var request = URLRequest(url: URL(string: "https://core.pylon.com/speech/v1/tts/synthesize")!)
         request.addValue(self.configuration.authorization, forHTTPHeaderField: "Authorization")
@@ -58,7 +82,7 @@ import Foundation
         
         let task: URLSessionDataTask = session.dataTask(with: request) { (data, response, error) -> Void in
             Trace.trace(Trace.Level.DEBUG, configLevel: self.configuration.tracing, message: "task callback \(String(describing: response)) \(String(describing: String(data: data ?? Data(), encoding: String.Encoding.utf8)))) \(String(describing: error))", delegate: self.delegate, caller: self)
-
+            
             DispatchQueue.main.async {
                 if let error = error {
                     self.delegate?.failure(error: error)
@@ -87,11 +111,34 @@ import Foundation
                     // we have finally arrived at the single key-value pair in the response body
                     Trace.trace(Trace.Level.DEBUG, configLevel: self.configuration.tracing, message: "response body url \(url)", delegate: self.delegate, caller: self)
                     
-                    self.delegate?.success(url: url)
+                    success?(url)
                 }
             }
         }
         task.resume()
         Trace.trace(Trace.Level.DEBUG, configLevel: self.configuration.tracing, message: "task \(task.state) \(task.progress) \(String(describing: task.response)) \(String(describing: task.error))", delegate: self.delegate, caller: self)
+    }
+    
+    private func successHandler(url: URL) {
+        self.delegate?.success(url: url)
+    }
+    
+    @objc func playerDidFinishPlaying(sender: Notification) {
+        print("player didFinishSpeaking")
+        self.delegate?.didFinishSpeaking()
+        NotificationCenter.default.removeObserver(self, name: .AVPlayerItemDidPlayToEndTime, object: self.player.currentItem)
+    }
+    
+    override public func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
+        DispatchQueue.main.async {
+            switch keyPath {
+            case #keyPath(AVPlayerItem.isPlaybackBufferEmpty):
+                self.player.play()
+                self.delegate?.didBeginSpeaking()
+                break
+            default:
+                break
+            }
+        }
     }
 }

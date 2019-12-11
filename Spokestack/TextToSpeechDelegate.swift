@@ -23,4 +23,7 @@ import Foundation
     /// A trace event from the TTS system.
     /// - Parameter trace: The debugging trace message.
     func didTrace(_ trace: String) -> Void
+    
+    func didBeginSpeaking() -> Void
+    func didFinishSpeaking() -> Void
 }
