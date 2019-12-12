@@ -15,12 +15,28 @@ import AVFoundation
 }
 
 
-/// <#Description#>
+/**
+ This is the client entry point for the Spokestack Text to Speech (TTS) system. It provides the capability to synthesize textual input, and speak back the synthesis as audio system output. The synthesis and speech occur on asynchronous blocks so as to not block the client while it performs network and audio system activities.
+ 
+ When inititalized,  the TTS system communicates with the client via delegates that receive events.
+ 
+ ```
+ // assume that self implements the TextToSpeechDelegate protocol.
+ let configuration = SpeechConfiguration()
+ let tts = TextToSpeech(self, configuration: configuration)
+ let input = TextToSpeechInput()
+ input.text = "Hello world!"
+ tts.synthesize(input) // synthesize the provided default text input using the default synthetic voice and api key.
+ tts.speak(input) // synthesize the same input as above, and play back the result using the default audio system.
+ ```
+ */
 @objc public class TextToSpeech: NSObject {
     
     // MARK: Properties
     
+    /// Delegate that receives TTS events.
     weak public var delegate: TextToSpeechDelegate?
+    
     private var configuration: SpeechConfiguration
     private lazy var player: AVPlayer = AVPlayer()
     
@@ -41,6 +57,10 @@ import AVFoundation
     
     // MARK: Public Functions
     
+    /// Synthesize speech using the provided input parameters and speech configuration, and play back the result using the default audio system.
+    /// - Parameter input:  Parameters that specify the speech to synthesize.
+    /// - Note: Playback will begin immediately after  the synthesis results are received and buffered. Uses `AVPlayer` for playback.
+    /// - Warning: `AVAudioSession.Category` and `AVAudioSession.CategoryOptions` must be set by the client to compatible settings that allow for playback through the desired audio sytem ouputs. For performance reasons, this is only verified upon class initialization and not when calling this function.
     @objc public func speak(_ input: TextToSpeechInput) -> Void {
         func play(url: URL) {
             DispatchQueue.main.async {
@@ -123,12 +143,19 @@ import AVFoundation
         self.delegate?.success(url: url)
     }
     
-    @objc func playerDidFinishPlaying(sender: Notification) {
+    /// Internal function that must be public for Objective-C compatibility reasons.
+    /// - Warning: Client should never call this function.
+    @available(*, deprecated, message: "Internal function that must be public for Objective-C compatibility reasons. Client should never call this function.")
+    @objc
+    func playerDidFinishPlaying(sender: Notification) {
         print("player didFinishSpeaking")
         self.delegate?.didFinishSpeaking()
         NotificationCenter.default.removeObserver(self, name: .AVPlayerItemDidPlayToEndTime, object: self.player.currentItem)
     }
     
+    /// Internal function that must be public for Objective-C compatibility reasons.
+    /// - Warning: Client should never call this function.
+    @available(*, deprecated, message: "Internal function that must be public for Objective-C compatibility reasons. Client should never call this function.")
     override public func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
         DispatchQueue.main.async {
             switch keyPath {
