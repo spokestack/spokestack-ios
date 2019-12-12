@@ -58,9 +58,13 @@ import AVFoundation
     // MARK: Public Functions
     
     /// Synthesize speech using the provided input parameters and speech configuration, and play back the result using the default audio system.
+    ///
+    /// Playback is provided as a convenience for the client. The client is responsible for coordinating the audio system resources and utilization required by `SpeechPipeline` and/or other media playback. The `TextToSpeechDelegate.didBeginSpeaking` and `TextToSpeechDelegate.didFinishSpeaking` callbacks may be utilized for this purpose.
+    ///
+    /// The `TextToSpeech` class handles all memory management for the playback components it utilizes.
     /// - Parameter input:  Parameters that specify the speech to synthesize.
-    /// - Note: Playback will begin immediately after the synthesis results are received and buffered. Uses `AVPlayer` for playback.
-    /// - Warning: `AVAudioSession.Category` and `AVAudioSession.CategoryOptions` must be set by the client to compatible settings that allow for playback through the desired audio sytem ouputs. For performance reasons, this is only verified upon class initialization and not when calling this function.
+    /// - Note: Playback will begin immediately after the synthesis results are received and sufficiently buffered.
+    /// - Warning: `AVAudioSession.Category` and `AVAudioSession.CategoryOptions` must be set by the client to compatible settings that allow for playback through the desired audio sytem ouputs.
     @objc public func speak(_ input: TextToSpeechInput) -> Void {
         func play(url: URL) {
             DispatchQueue.main.async {
