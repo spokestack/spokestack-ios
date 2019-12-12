@@ -59,7 +59,7 @@ import AVFoundation
     
     /// Synthesize speech using the provided input parameters and speech configuration, and play back the result using the default audio system.
     /// - Parameter input:  Parameters that specify the speech to synthesize.
-    /// - Note: Playback will begin immediately after  the synthesis results are received and buffered. Uses `AVPlayer` for playback.
+    /// - Note: Playback will begin immediately after the synthesis results are received and buffered. Uses `AVPlayer` for playback.
     /// - Warning: `AVAudioSession.Category` and `AVAudioSession.CategoryOptions` must be set by the client to compatible settings that allow for playback through the desired audio sytem ouputs. For performance reasons, this is only verified upon class initialization and not when calling this function.
     @objc public func speak(_ input: TextToSpeechInput) -> Void {
         func play(url: URL) {
@@ -148,7 +148,6 @@ import AVFoundation
     @available(*, deprecated, message: "Internal function that must be public for Objective-C compatibility reasons. Client should never call this function.")
     @objc
     func playerDidFinishPlaying(sender: Notification) {
-        print("player didFinishSpeaking")
         self.delegate?.didFinishSpeaking()
         NotificationCenter.default.removeObserver(self, name: .AVPlayerItemDidPlayToEndTime, object: self.player.currentItem)
     }
