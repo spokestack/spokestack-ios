@@ -44,6 +44,22 @@ class TTSViewController: UIViewController {
         return button
     }()
     
+    lazy var speakButton: UIButton = {
+        
+        let button: UIButton = UIButton(frame: .zero)
+        
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.setTitle("Speak", for: .normal)
+        button.addTarget(self,
+                         action: #selector(TTSViewController.speakAction(_:)),
+                         for: .touchUpInside)
+        
+        button.setTitleColor(.purple, for: .normal)
+        
+        
+        return button
+    }()
+
     lazy var testButton: UIButton = {
         
         let button: UIButton = UIButton(frame: .zero)
@@ -102,6 +118,7 @@ class TTSViewController: UIViewController {
         
         self.view.addSubview(self.synthesizeButton)
         self.view.addSubview(self.playButton)
+        self.view.addSubview(self.speakButton)
         self.view.addSubview(self.testButton)
         
         self.synthesizeButton.centerYAnchor.constraint(equalTo: self.view.centerYAnchor).isActive = true
@@ -111,16 +128,20 @@ class TTSViewController: UIViewController {
         self.playButton.topAnchor.constraint(equalTo: self.synthesizeButton.bottomAnchor, constant: 50.0).isActive = true
         self.playButton.leftAnchor.constraint(equalTo: self.synthesizeButton.leftAnchor).isActive = true
         self.playButton.rightAnchor.constraint(equalTo: self.synthesizeButton.rightAnchor).isActive = true
+
+        self.speakButton.topAnchor.constraint(equalTo: self.playButton.bottomAnchor, constant: 50.0).isActive = true
+        self.speakButton.leftAnchor.constraint(equalTo: self.playButton.leftAnchor).isActive = true
+        self.speakButton.rightAnchor.constraint(equalTo: self.playButton.rightAnchor).isActive = true
         
-        self.testButton.topAnchor.constraint(equalTo: self.playButton.bottomAnchor, constant: 50.0).isActive = true
-        self.testButton.leftAnchor.constraint(equalTo: self.playButton.leftAnchor).isActive = true
-        self.testButton.rightAnchor.constraint(equalTo: self.playButton.rightAnchor).isActive = true
+        self.testButton.topAnchor.constraint(equalTo: self.speakButton.bottomAnchor, constant: 50.0).isActive = true
+        self.testButton.leftAnchor.constraint(equalTo: self.speakButton.leftAnchor).isActive = true
+        self.testButton.rightAnchor.constraint(equalTo: self.speakButton.rightAnchor).isActive = true
         
         self.view.addSubview(ttsInput)
         
         self.player.automaticallyWaitsToMinimizeStalling = false
         
-        self.configuration.tracing = .DEBUG
+        self.configuration.tracing = .PERF
         
         self.tts = TextToSpeech(self, configuration: configuration)
     }
@@ -147,6 +168,14 @@ class TTSViewController: UIViewController {
         let playerItem = AVPlayerItem(url: streamingFile)
         self.player = AVPlayer(playerItem: playerItem)
         self.player.play()
+    }
+    
+    @objc func speakAction(_ sender: Any) {
+        print("speak")
+        var text = self.ttsInput.text ?? ""
+        if (text == "") { text = "You didn't enter any text to synthesize." }
+        let input = TextToSpeechInput(text)
+        self.tts?.speak(input)
     }
     
     @objc func testAction(_ sender: Any) {
@@ -195,7 +224,6 @@ extension TTSViewController {
         TICK() // play timer
         DispatchQueue.main.async {
             self.playerItem = AVPlayerItem(url: self.streamingFile!) //URL(string: "http://devimages.apple.com/iphone/samples/bipbop/bipbopall.m3u8")!)
-            NotificationCenter.default.removeObserver(self, name: .AVPlayerItemDidPlayToEndTime, object: self.player.currentItem)
             self.playerItem!.addObserver(self, forKeyPath: #keyPath(AVPlayerItem.duration), options: [.old, .new], context: nil)
             self.playerItem!.addObserver(self, forKeyPath: #keyPath(AVPlayerItem.status), options: [.old, .new], context: nil)
             self.playerItem!.addObserver(self, forKeyPath: #keyPath(AVPlayerItem.isPlaybackBufferEmpty), options: [.old, .new], context: nil)
@@ -250,6 +278,14 @@ extension TTSViewController {
 // MARK: TextToSpeechDelegate implementation
 
 extension TTSViewController: TextToSpeechDelegate {
+    func didBeginSpeaking() {
+        print("didBeginSpeaking")
+    }
+    
+    func didFinishSpeaking() {
+        print("didFinishSpeaking")
+    }
+    
     func success(url: URL) {
         TOCK() // synthesize timer
         print(url)

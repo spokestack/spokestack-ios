@@ -9,7 +9,7 @@
 import Foundation
 
 /**
- This is the primary client entry point to the SpokeStack framework. It dynamically binds to configured components that implement the pipeline interfaces for reading audio frames and performing speech recognition tasks.
+ This is the primary client entry point to the Spokestack voice input system. It dynamically binds to configured components that implement the pipeline interfaces for reading audio frames and performing speech recognition tasks.
 
  The pipeline may be stopped/restarted any number of times during its lifecycle. While stopped, the pipeline consumes as few resources as possible. The pipeline runs asynchronously on a dedicated thread, so it does not block the caller when performing I/O and speech processing.
 

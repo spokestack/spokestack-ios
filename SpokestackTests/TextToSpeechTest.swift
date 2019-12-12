@@ -19,7 +19,7 @@ class TextToSpeechTest: XCTestCase {
 
         // bad config results in a failed request that calls failure
         let badConfig = SpeechConfiguration()
-        let didFailConfigExpectation = expectation(description: "bad config results in a failed request that calls TestTTSGenerationDelegate.failure")
+        let didFailConfigExpectation = expectation(description: "bad config results in a failed request that calls TestTextToSpeechDelegate.failure")
         badConfig.authorization = "BADBADNOTGOOD"
         let badTTS = TextToSpeech(delegate, configuration: badConfig)
         delegate.asyncExpectation = didFailConfigExpectation
@@ -33,7 +33,7 @@ class TextToSpeechTest: XCTestCase {
         
         // successful request calls success
         delegate.reset()
-        let didSucceedExpectation = expectation(description: "successful request calls TestTTSGenerationDelegate.success")
+        let didSucceedExpectation = expectation(description: "successful request calls TestTextToSpeechDelegate.success")
         delegate.asyncExpectation = didSucceedExpectation
         tts.synthesize(input)
         wait(for: [didSucceedExpectation], timeout: 5)
@@ -41,7 +41,7 @@ class TextToSpeechTest: XCTestCase {
         XCTAssertFalse(delegate.didFail)
         
         delegate.reset()
-        let didSucceedExpectation2 = expectation(description: "successful request calls TestTTSGenerationDelegate.success")
+        let didSucceedExpectation2 = expectation(description: "successful request calls TestTextToSpeechDelegate.success")
         delegate.asyncExpectation = didSucceedExpectation2
         let ssmlInput = TextToSpeechInput("<speak>Yet right now the average age of this 52nd Parliament is 49 years old, <break time='500ms'/> OK Boomer.</speak>", voice: "demo-male", inputFormat: .ssml)
         tts.synthesize(ssmlInput)
@@ -51,7 +51,7 @@ class TextToSpeechTest: XCTestCase {
         
         // bad input results in a failed request that calls failure
         delegate.reset()
-        let didFailInputExpectation = expectation(description: "bad input results in a failed request that calls TestTTSGenerationDelegate.failure")
+        let didFailInputExpectation = expectation(description: "bad input results in a failed request that calls TestTextToSpeechDelegate.failure")
         let badInput = TextToSpeechInput()
         badInput.voice = "marvin"
         delegate.asyncExpectation = didFailInputExpectation
@@ -60,20 +60,42 @@ class TextToSpeechTest: XCTestCase {
         XCTAssert(delegate.didFail)
         XCTAssertFalse(delegate.didSucceed)
     }
+    
+    /// MARK:  Speak
+    func testSpeak() {
+        
+        // speak() calls didBeginSpeaking and didFinishSpeaking
+        let didBeginExpectation = expectation(description: "successful request calls TestTextToSpeechDelegate.didBeginSpeaking")
+        let didFinishExpectation = expectation(description: "successful request calls TestTextToSpeechDelegate.didFinishSpeaking")
+        let delegate = TestTextToSpeechDelegate()
+        delegate.asyncExpectation = didBeginExpectation
+        delegate.didFinishExpectation = didFinishExpectation
+        let input = TextToSpeechInput()
+        let config = SpeechConfiguration()
+        let tts = TextToSpeech(delegate, configuration: config)
+        tts.speak(input)
+        wait(for: [didBeginExpectation, didFinishExpectation], timeout: 10)
+        XCTAssert(delegate.didBegin)
+        XCTAssert(delegate.didFinish)
+    }
 }
 
 class TestTextToSpeechDelegate: TextToSpeechDelegate {
+
     /// Spy pattern for the system under test.
     /// asyncExpectation lets the caller's test know when the delegate has been called.
     var didSucceed: Bool = false
     var didFail: Bool = false
-    var didDidStart: Bool = false
-    var didDidStop: Bool = false
+    var didBegin: Bool = false
+    var didFinish: Bool = false
     var asyncExpectation: XCTestExpectation?
+    var didFinishExpectation: XCTestExpectation?
     
     func reset() {
         didSucceed = false
         didFail = false
+        didBegin = false
+        didFinish = false
         asyncExpectation = .none
     }
     
@@ -85,6 +107,16 @@ class TestTextToSpeechDelegate: TextToSpeechDelegate {
     func failure(error: Error) {
         asyncExpectation?.fulfill()
         didFail = true
+    }
+    
+    func didBeginSpeaking() {
+        asyncExpectation?.fulfill()
+        didBegin = true
+    }
+    
+    func didFinishSpeaking() {
+        didFinishExpectation?.fulfill()
+        didFinish = true
     }
     
     func didTrace(_ trace: String) -> Void {
