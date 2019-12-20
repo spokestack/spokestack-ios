@@ -141,7 +141,7 @@ class TTSViewController: UIViewController {
         
         self.player.automaticallyWaitsToMinimizeStalling = false
         
-        self.configuration.tracing = .PERF
+        self.configuration.tracing = .DEBUG
         
         self.tts = TextToSpeech(self, configuration: configuration)
     }
@@ -156,7 +156,7 @@ class TTSViewController: UIViewController {
         print("synthesize")
         var text = self.ttsInput.text ?? ""
         if (text == "") { text = "You didn't enter any text to synthesize." }
-        let input = TextToSpeechInput(text)
+        let input = TextToSpeechInput("<speak>\(text)</speak>")
         self.tts?.synthesize(input)
     }
     
@@ -278,6 +278,7 @@ extension TTSViewController {
 // MARK: TextToSpeechDelegate implementation
 
 extension TTSViewController: TextToSpeechDelegate {
+    
     func didBeginSpeaking() {
         print("didBeginSpeaking")
     }
@@ -286,10 +287,10 @@ extension TTSViewController: TextToSpeechDelegate {
         print("didFinishSpeaking")
     }
     
-    func success(url: URL) {
+    func success(result: TextToSpeechResult) {
         TOCK() // synthesize timer
-        print(url)
-        self.streamingFile = url
+        print(result)
+        self.streamingFile = result.url
         if (self.amTesting) {
             self.playTest()
             //self.download(url)

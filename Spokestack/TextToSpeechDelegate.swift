@@ -14,7 +14,7 @@ import Foundation
     /// The TTS synthesis request has resulted in a successful response.
     /// - Note: The URL will be invalidated within 60 seconds of generation.
     /// - Parameter url: The url pointing to the TTS media container
-    func success(url: URL) -> Void
+    func success(result: TextToSpeechResult) -> Void
     
     /// The TTS synthesis request has resulted in an error response.
     /// - Parameter error: The error representing the TTS response.

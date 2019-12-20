@@ -29,6 +29,7 @@
 		01D31F8B216BB0220055FD45 /* Results.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01D31F89216BB0220055FD45 /* Results.swift */; };
 		01D31F8E216BB0370055FD45 /* Typealiases.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01D31F8D216BB0370055FD45 /* Typealiases.swift */; };
 		01D31F8F216BB0370055FD45 /* Typealiases.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01D31F8D216BB0370055FD45 /* Typealiases.swift */; };
+		5912341C23AD675500BBAA3A /* TextToSpeechResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5912341B23AD675500BBAA3A /* TextToSpeechResult.swift */; };
 		592C0B7B2385B5E800308CCD /* TTSViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 592C0B7A2385B5E800308CCD /* TTSViewController.swift */; };
 		5936077D236B687C00FFA29F /* Detect.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59C15D55234E42F800B091F4 /* Detect.swift */; };
 		5936077E236B687F00FFA29F /* Filter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59C15D54234E42F700B091F4 /* Filter.swift */; };
@@ -159,6 +160,7 @@
 		59062F0C22A5AA9D00613AD8 /* WITVad.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = WITVad.m; sourceTree = "<group>"; };
 		59062F0D22A5AA9E00613AD8 /* WITCvad.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = WITCvad.m; sourceTree = "<group>"; };
 		59062F0F22A5AA9E00613AD8 /* WITCvad.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WITCvad.h; sourceTree = "<group>"; };
+		5912341B23AD675500BBAA3A /* TextToSpeechResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = TextToSpeechResult.swift; path = "../../spokestack-ios/Spokestack/TextToSpeechResult.swift"; sourceTree = "<group>"; };
 		592C0B7A2385B5E800308CCD /* TTSViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = TTSViewController.swift; path = "../../spokestack-ios/SpokestackFrameworkExample/TTSViewController.swift"; sourceTree = "<group>"; };
 		592D2651233C18D700354AF8 /* module.modulemap */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.module-map"; path = module.modulemap; sourceTree = "<group>"; };
 		59365947220889EE00C0365F /* AppleWakewordRecognizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppleWakewordRecognizer.swift; sourceTree = "<group>"; };
@@ -358,6 +360,7 @@
 				59A0D5C52204E8E4003709C3 /* SpeechConfiguration.swift */,
 				59E0E1362301F0A80060F012 /* Trace.swift */,
 				596567802384AA1100CFCE23 /* TextToSpeechInput.swift */,
+				5912341B23AD675500BBAA3A /* TextToSpeechResult.swift */,
 			);
 			name = Models;
 			sourceTree = "<group>";
@@ -703,6 +706,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				59365948220889EE00C0365F /* AppleWakewordRecognizer.swift in Sources */,
+				5912341C23AD675500BBAA3A /* TextToSpeechResult.swift in Sources */,
 				5942C4352384764900EC0B13 /* TextToSpeechDelegate.swift in Sources */,
 				59FB0C8822A98E1900FB9662 /* CoreMLWakewordRecognizer.swift in Sources */,
 				596B82482384A097004BAEF4 /* TextToSpeech.swift in Sources */,
@@ -830,6 +834,7 @@
 				DEVELOPMENT_TEAM = S55ZL97588;
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				INFOPLIST_FILE = SpokestackFrameworkExample/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -854,6 +859,7 @@
 				DEVELOPMENT_TEAM = S55ZL97588;
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				INFOPLIST_FILE = SpokestackFrameworkExample/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1014,6 +1020,7 @@
 				);
 				INFOPLIST_FILE = Spokestack/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1057,6 +1064,7 @@
 				);
 				INFOPLIST_FILE = Spokestack/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

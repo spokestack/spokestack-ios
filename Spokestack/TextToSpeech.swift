@@ -8,12 +8,7 @@
 
 import Foundation
 import AVFoundation
-
-@objc public enum TTSInputFormat: Int {
-    case text
-    case ssml
-}
-
+import CryptoKit
 
 /**
  This is the client entry point for the Spokestack Text to Speech (TTS) system. It provides the capability to synthesize textual input, and speak back the synthesis as audio system output. The synthesis and speech occur on asynchronous blocks so as to not block the client while it performs network and audio system activities.
@@ -30,6 +25,7 @@ import AVFoundation
  tts.speak(input) // synthesize the same input as above, and play back the result using the default audio system.
  ```
  */
+@available(iOS 13.0, *)
 @objc public class TextToSpeech: NSObject {
     
     // MARK: Properties
@@ -39,6 +35,8 @@ import AVFoundation
     
     private var configuration: SpeechConfiguration
     private lazy var player: AVPlayer = AVPlayer()
+    private var apiKey: SymmetricKey?
+    private let ttsInputVoices = [0: "demo-male"]
     
     // MARK: Initializers
     
@@ -48,6 +46,12 @@ import AVFoundation
     @objc public init(_ delegate: TextToSpeechDelegate, configuration: SpeechConfiguration) {
         self.delegate = delegate
         self.configuration = configuration
+        // create a symmetric key using the configured api key
+        if let apiKeyEncoded = self.configuration.apiKey.data(using: .utf8) {
+            self.apiKey = SymmetricKey(data: apiKeyEncoded)
+        } else {
+            self.delegate?.failure(error: TextToSpeechErrors.apiKey("Unable to encode apiKey."))
+        }
         super.init()
     }
     
@@ -66,9 +70,9 @@ import AVFoundation
     /// - Note: Playback will begin immediately after the synthesis results are received and sufficiently buffered.
     /// - Warning: `AVAudioSession.Category` and `AVAudioSession.CategoryOptions` must be set by the client to compatible settings that allow for playback through the desired audio sytem ouputs.
     @objc public func speak(_ input: TextToSpeechInput) -> Void {
-        func play(url: URL) {
+        func play(result: TextToSpeechResult) {
             DispatchQueue.main.async {
-                let playerItem = AVPlayerItem(url: url)
+                let playerItem = AVPlayerItem(url: result.url)
                 NotificationCenter.default.addObserver(self, selector: #selector(self.playerDidFinishPlaying(sender:)), name: .AVPlayerItemDidPlayToEndTime, object: playerItem)
                 playerItem.addObserver(self, forKeyPath: #keyPath(AVPlayerItem.isPlaybackBufferEmpty), options: [.new], context: nil)
                 self.player.replaceCurrentItem(with: playerItem)
@@ -81,29 +85,39 @@ import AVFoundation
     /// - Note: The URL will be invalidated within 60 seconds of generation.
     /// - Parameter input: Parameters that specify the speech to synthesize.
     @objc public func synthesize(_ input: TextToSpeechInput) -> Void {
-        self.synthesize(input: input, success: successHandler)
+        self.synthesize(input: input, success: successHandler(result:))
     }
     
-    private func synthesize(input: TextToSpeechInput, success: ((URL) -> Void)?) {
-        let session = URLSession(configuration: URLSessionConfiguration.default)
-        var request = URLRequest(url: URL(string: "https://core.pylon.com/speech/v1/tts/synthesize")!)
-        request.addValue(self.configuration.authorization, forHTTPHeaderField: "Authorization")
-        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
-        request.httpMethod = "POST"
-        var inputFormat: String
-        switch input.inputFormat {
-        case .text:
-            inputFormat = "text"
-            break
-        case .ssml:
-            inputFormat = "ssml"
-            break
-        }
-        let body = ["voice": input.voice,
-                    inputFormat: input.input]
-        request.httpBody =  try? JSONSerialization.data(withJSONObject: body, options: [])
-        Trace.trace(Trace.Level.DEBUG, configLevel: self.configuration.tracing, message: "request \(request.debugDescription) \(String(describing: request.allHTTPHeaderFields)) \(String(data: request.httpBody!, encoding: String.Encoding.ascii) ?? "no body")", delegate: self.delegate, caller: self)
+    private func synthesize(input: TextToSpeechInput, success: ((TextToSpeechResult) -> Void)?) {
         
+        let session = URLSession(configuration: URLSessionConfiguration.default)
+        var request = URLRequest(url: URL(string: "https://api.spokestack.io/v1")!)
+        DispatchQueue.main.async {
+        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.addValue(input.id, forHTTPHeaderField: "x-request-id")
+        request.httpMethod = "POST"
+        let body: [String:Any] = [
+            "query":"query synthesis($voice: String!, $ssml: String!) {synthesize(voice: $voice, ssml: $ssml) {url}}",
+            "variables":[
+                "voice":self.ttsInputVoices[input.voice.rawValue],
+                "ssml":input.input
+            ]
+        ]
+        request.httpBody = try? JSONSerialization.data(withJSONObject: body, options: [.withoutEscapingSlashes])
+        
+        // create an authentication code for this request using the symmetric key
+        guard let key = self.apiKey else {
+            self.delegate?.failure(error: TextToSpeechErrors.apiKey("apiKey is not configured."))
+            return
+        }
+        let code = HMAC<SHA256>.authenticationCode(for: request.httpBody!, using: key)
+        // turn the code into a string, base64 encoded
+        let codeEncoded = Data(code).base64EncodedString()
+        // the request header must include the encoded code as "keyId"
+        request.addValue("Spokestack \(self.configuration.apiId):\(codeEncoded)", forHTTPHeaderField: "Authorization")
+        
+        Trace.trace(Trace.Level.DEBUG, configLevel: self.configuration.tracing, message: "request \(request.debugDescription) \(String(describing: request.allHTTPHeaderFields)) \(String(data: request.httpBody!, encoding: String.Encoding.ascii) ?? "no body")", delegate: self.delegate, caller: self)
+        }
         let task: URLSessionDataTask = session.dataTask(with: request) { (data, response, error) -> Void in
             Trace.trace(Trace.Level.DEBUG, configLevel: self.configuration.tracing, message: "task callback \(String(describing: response)) \(String(describing: String(data: data ?? Data(), encoding: String.Encoding.utf8)))) \(String(describing: error))", delegate: self.delegate, caller: self)
             
@@ -116,26 +130,17 @@ import AVFoundation
                         self.delegate?.failure(error: TextToSpeechErrors.deserialization("response body had no data"))
                         return
                     }
-                    guard let dataObject = try? JSONSerialization.jsonObject(with: data, options: []) else {
-                        self.delegate?.failure(error: TextToSpeechErrors.deserialization("could not deserialize response body"))
-                        return
+                    let decoder = JSONDecoder()
+                    do {
+                        let response = try decoder.decode(SynthesizeResponseData.self, from: data)
+                        let result = TextToSpeechResult()
+                        // we have arrived at the single key-value pair in the response body
+                        result.url = response.data.synthesize.url
+                        Trace.trace(Trace.Level.DEBUG, configLevel: self.configuration.tracing, message: "response body url \(result.url)", delegate: self.delegate, caller: self)
+                        success?(result)
+                    } catch let error {
+                        self.delegate?.failure(error: error)
                     }
-                    guard let body = dataObject as? [String: String] else {
-                        self.delegate?.failure(error: TextToSpeechErrors.deserialization("deserialized response body was not a dictionary of strings"))
-                        return
-                    }
-                    guard let urlString = body["url"] else {
-                        self.delegate?.failure(error: TextToSpeechErrors.deserialization("deserialize response body dictionary did not contain the expected key"))
-                        return
-                    }
-                    guard let url = URL(string: urlString) else {
-                        self.delegate?.failure(error: TextToSpeechErrors.deserialization("could not generate a URL from the deserialize response body dictionary url key"))
-                        return
-                    }
-                    // we have finally arrived at the single key-value pair in the response body
-                    Trace.trace(Trace.Level.DEBUG, configLevel: self.configuration.tracing, message: "response body url \(url)", delegate: self.delegate, caller: self)
-                    
-                    success?(url)
                 }
             }
         }
@@ -143,8 +148,8 @@ import AVFoundation
         Trace.trace(Trace.Level.DEBUG, configLevel: self.configuration.tracing, message: "task \(task.state) \(task.progress) \(String(describing: task.response)) \(String(describing: task.error))", delegate: self.delegate, caller: self)
     }
     
-    private func successHandler(url: URL) {
-        self.delegate?.success(url: url)
+    private func successHandler(result: TextToSpeechResult) {
+        self.delegate?.success(result: result)
     }
     
     /// Internal function that must be public for Objective-C compatibility reasons.
@@ -171,4 +176,16 @@ import AVFoundation
             }
         }
     }
+}
+
+fileprivate struct SynthesizeResponseURL: Codable {
+    let url: URL
+}
+
+fileprivate struct SynthesizeResponseSynthesize: Codable {
+    let synthesize: SynthesizeResponseURL
+}
+
+fileprivate struct SynthesizeResponseData: Codable {
+    let data: SynthesizeResponseSynthesize
 }
