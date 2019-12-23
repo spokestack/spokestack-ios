@@ -72,7 +72,11 @@ import CryptoKit
     @objc public func speak(_ input: TextToSpeechInput) -> Void {
         func play(result: TextToSpeechResult) {
             DispatchQueue.main.async {
-                let playerItem = AVPlayerItem(url: result.url)
+                guard let url = result.url else {
+                    self.delegate?.failure(error: TextToSpeechErrors.speak("URL to play back was not set."))
+                    return
+                }
+                let playerItem = AVPlayerItem(url: url)
                 NotificationCenter.default.addObserver(self, selector: #selector(self.playerDidFinishPlaying(sender:)), name: .AVPlayerItemDidPlayToEndTime, object: playerItem)
                 playerItem.addObserver(self, forKeyPath: #keyPath(AVPlayerItem.isPlaybackBufferEmpty), options: [.new], context: nil)
                 self.player.replaceCurrentItem(with: playerItem)
@@ -89,12 +93,11 @@ import CryptoKit
     }
     
     private func synthesize(input: TextToSpeechInput, success: ((TextToSpeechResult) -> Void)?) {
-        
         let session = URLSession(configuration: URLSessionConfiguration.default)
         var request = URLRequest(url: URL(string: "https://api.spokestack.io/v1")!)
-        DispatchQueue.main.async {
         request.addValue("application/json", forHTTPHeaderField: "Content-Type")
-        request.addValue(input.id, forHTTPHeaderField: "x-request-id")
+        let xRequestID = "x-request-id"
+        request.addValue(input.id, forHTTPHeaderField: xRequestID)
         request.httpMethod = "POST"
         let body: [String:Any] = [
             "query":"query synthesis($voice: String!, $ssml: String!) {synthesize(voice: $voice, ssml: $ssml) {url}}",
@@ -116,8 +119,8 @@ import CryptoKit
         // the request header must include the encoded code as "keyId"
         request.addValue("Spokestack \(self.configuration.apiId):\(codeEncoded)", forHTTPHeaderField: "Authorization")
         
-        Trace.trace(Trace.Level.DEBUG, configLevel: self.configuration.tracing, message: "request \(request.debugDescription) \(String(describing: request.allHTTPHeaderFields)) \(String(data: request.httpBody!, encoding: String.Encoding.ascii) ?? "no body")", delegate: self.delegate, caller: self)
-        }
+        Trace.trace(Trace.Level.DEBUG, configLevel: self.configuration.tracing, message: "request \(request.debugDescription) \(String(describing: request.allHTTPHeaderFields)) \(String(data: request.httpBody!, encoding: String.Encoding.utf8) ?? "no body")", delegate: self.delegate, caller: self)
+        
         let task: URLSessionDataTask = session.dataTask(with: request) { (data, response, error) -> Void in
             Trace.trace(Trace.Level.DEBUG, configLevel: self.configuration.tracing, message: "task callback \(String(describing: response)) \(String(describing: String(data: data ?? Data(), encoding: String.Encoding.utf8)))) \(String(describing: error))", delegate: self.delegate, caller: self)
             
@@ -126,17 +129,22 @@ import CryptoKit
                     self.delegate?.failure(error: error)
                 } else {
                     // unwrap the matryoshka doll that is the response body, responding with a failure if any layer is awry
-                    guard let data = data else {
-                        self.delegate?.failure(error: TextToSpeechErrors.deserialization("response body had no data"))
-                        return
-                    }
                     let decoder = JSONDecoder()
                     do {
-                        let response = try decoder.decode(SynthesizeResponseData.self, from: data)
-                        let result = TextToSpeechResult()
-                        // we have arrived at the single key-value pair in the response body
-                        result.url = response.data.synthesize.url
-                        Trace.trace(Trace.Level.DEBUG, configLevel: self.configuration.tracing, message: "response body url \(result.url)", delegate: self.delegate, caller: self)
+                        guard let r = response as? HTTPURLResponse else {
+                            self.delegate?.failure(error: TextToSpeechErrors.deserialization("response cannot be deserialized"))
+                            return
+                        }
+                        guard let data = data else {
+                            self.delegate?.failure(error: TextToSpeechErrors.deserialization("response body had no data"))
+                            return
+                        }
+                        guard let id = r.value(forHTTPHeaderField: xRequestID) else {
+                            self.delegate?.failure(error: TextToSpeechErrors.deserialization("response headers did not contain request id"))
+                            return
+                        }
+                        let body = try decoder.decode(SynthesizeResponseData.self, from: data)
+                        let result = TextToSpeechResult(id: id, url: body.data.synthesize.url)
                         success?(result)
                     } catch let error {
                         self.delegate?.failure(error: error)
@@ -145,7 +153,6 @@ import CryptoKit
             }
         }
         task.resume()
-        Trace.trace(Trace.Level.DEBUG, configLevel: self.configuration.tracing, message: "task \(task.state) \(task.progress) \(String(describing: task.response)) \(String(describing: task.error))", delegate: self.delegate, caller: self)
     }
     
     private func successHandler(result: TextToSpeechResult) {

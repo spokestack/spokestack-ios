@@ -60,4 +60,6 @@ enum TextToSpeechErrors: Error {
     case serialization(String)
     /// The api key provided is not valid.
     case apiKey(String)
+    /// The speak command could not be executed.
+    case speak(String)
 }

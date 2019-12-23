@@ -289,8 +289,10 @@ extension TTSViewController: TextToSpeechDelegate {
     
     func success(result: TextToSpeechResult) {
         TOCK() // synthesize timer
-        print(result)
-        self.streamingFile = result.url
+        guard let url = result.url else {
+            return
+        }
+        self.streamingFile = url
         if (self.amTesting) {
             self.playTest()
             //self.download(url)
