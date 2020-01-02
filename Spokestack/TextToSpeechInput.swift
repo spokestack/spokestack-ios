@@ -31,7 +31,7 @@ import Foundation
     /// - Parameter voice: The synthetic voice used to generate speech.
     /// - Parameter inputFormat: The formatting of the input.
     /// - Parameter id: A unique identifier for this input request.
-    @objc public init(_ input:String,
+    @objc public init(_ input:String = "<speak>Here I am, a brain the size of a planet.</speak>",
                       voice: TTSInputVoice = .demoMale,
                       inputFormat: TTSInputFormat = .ssml,
                       id: String = UUID().description) {
@@ -39,13 +39,14 @@ import Foundation
         self.voice = voice
         self.inputFormat = inputFormat
         self.id = id
+        super.init()
     }
     
     /// The synthetic voice used to generate speech.
     @objc public var voice: TTSInputVoice = .demoMale
     /// The input to the synthetic voice.
     /// - Note: SSML should be unescaped.
-    @objc public var input: String = "Here I am, a brain the size of a planet."
+    @objc public var input: String = "<speak>Here I am, a brain the size of a planet.</speak>"
     /// The formatting of the input.
     @objc public var inputFormat: TTSInputFormat = .ssml
     /// A unique identifier for this input request.

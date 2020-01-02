@@ -45,6 +45,7 @@
 		596567812384AA1100CFCE23 /* TextToSpeechInput.swift in Sources */ = {isa = PBXBuildFile; fileRef = 596567802384AA1100CFCE23 /* TextToSpeechInput.swift */; };
 		5967108E21F7AE6B00CBFC88 /* AppleSpeechRecognizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5967108D21F7AE6B00CBFC88 /* AppleSpeechRecognizer.swift */; };
 		596B82482384A097004BAEF4 /* TextToSpeech.swift in Sources */ = {isa = PBXBuildFile; fileRef = 596B82472384A097004BAEF4 /* TextToSpeech.swift */; };
+		5989319723BE8C8800310589 /* TextToSpeechResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5912341B23AD675500BBAA3A /* TextToSpeechResult.swift */; };
 		59A0D5C02204E786003709C3 /* AppleASRViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59A0D5BD2204E786003709C3 /* AppleASRViewController.swift */; };
 		59A0D5C22204E786003709C3 /* AppleWakewordViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59A0D5BF2204E786003709C3 /* AppleWakewordViewController.swift */; };
 		59A0D5C42204E799003709C3 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 59A0D5C32204E799003709C3 /* Assets.xcassets */; };
@@ -757,6 +758,7 @@
 				59A8DBFA2384AC0100F97700 /* TextToSpeech.swift in Sources */,
 				59C2AFDF2319CE8000E47AC5 /* SpeechProcessor.swift in Sources */,
 				5936077F236B688400FFA29F /* WebRTCVAD.swift in Sources */,
+				5989319723BE8C8800310589 /* TextToSpeechResult.swift in Sources */,
 				59D78F5F2322D13700728A98 /* AudioControllerTest.swift in Sources */,
 				5942C4362384772600EC0B13 /* TextToSpeechDelegate.swift in Sources */,
 				59A8DBF92384ABF000F97700 /* TextToSpeechTest.swift in Sources */,

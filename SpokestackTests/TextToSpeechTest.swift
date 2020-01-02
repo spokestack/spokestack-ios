@@ -71,7 +71,6 @@ class TextToSpeechTest: XCTestCase {
 }
 
 class TestTextToSpeechDelegate: TextToSpeechDelegate {
-
     /// Spy pattern for the system under test.
     /// asyncExpectation lets the caller's test know when the delegate has been called.
     var didSucceed: Bool = false
@@ -89,7 +88,7 @@ class TestTextToSpeechDelegate: TextToSpeechDelegate {
         asyncExpectation = .none
     }
     
-    func success(url: URL) {
+    func success(result: TextToSpeechResult) {
         asyncExpectation?.fulfill()
         didSucceed = true
     }

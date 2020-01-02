@@ -9,12 +9,13 @@
 import Foundation
 
 /// Result of the `TextToSpeech.synthesize` request.
-public class TextToSpeechResult: NSObject {
-    public var url: URL?
-    public var id: String?
+@objc public class TextToSpeechResult: NSObject {
+    @objc public var url: URL?
+    @objc public var id: String?
     
-    public init (id: String, url: URL) {
+    @objc public init (id: String, url: URL) {
         self.id = id
         self.url = url
+        super.init()
     }
 }
