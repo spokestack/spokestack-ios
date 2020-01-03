@@ -157,6 +157,7 @@ class TTSViewController: UIViewController {
         var text = self.ttsInput.text ?? ""
         if (text == "") { text = "You didn't enter any text to synthesize." }
         let input = TextToSpeechInput("<speak>\(text)</speak>")
+        input.inputFormat = .ssml
         self.tts?.synthesize(input)
     }
     
@@ -200,7 +201,6 @@ extension TTSViewController {
             print("\(function) Time: \(CACurrentMediaTime()-startTime)\nLine:\(line) File: \(file)")
         }
     }
-    
     
     /**
      Initiates a test run with internal timing and status marks for measuring the request/response and playback of a HTTP2 chunked streaming audio file.

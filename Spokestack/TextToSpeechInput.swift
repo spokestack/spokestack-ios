@@ -10,7 +10,6 @@ import Foundation
 
 /// Designate the format the input is provided in.
 @objc public enum TTSInputFormat: Int {
-    @available(*, unavailable, message: "Text-only input is not currently supported. Encase your text with <speak>text</speak> for SSML compatibility.")
     /// Plain text
     case text
     /// Speech Synthesis Markup Language
@@ -31,9 +30,9 @@ import Foundation
     /// - Parameter voice: The synthetic voice used to generate speech.
     /// - Parameter inputFormat: The formatting of the input.
     /// - Parameter id: A unique identifier for this input request.
-    @objc public init(_ input:String = "<speak>Here I am, a brain the size of a planet.</speak>",
+    @objc public init(_ input:String = "Here I am, a brain the size of a planet.",
                       voice: TTSInputVoice = .demoMale,
-                      inputFormat: TTSInputFormat = .ssml,
+                      inputFormat: TTSInputFormat = .text,
                       id: String = UUID().description) {
         self.input = input
         self.voice = voice
@@ -45,10 +44,10 @@ import Foundation
     /// The synthetic voice used to generate speech.
     @objc public var voice: TTSInputVoice = .demoMale
     /// The input to the synthetic voice.
-    /// - Note: SSML should be unescaped.
-    @objc public var input: String = "<speak>Here I am, a brain the size of a planet.</speak>"
+    /// - Note: SSML must be valid XML.
+    @objc public var input: String = "Here I am, a brain the size of a planet."
     /// The formatting of the input.
-    @objc public var inputFormat: TTSInputFormat = .ssml
+    @objc public var inputFormat: TTSInputFormat = .text
     /// A unique identifier for this input request.
     @objc public var id: String = UUID().description
 }

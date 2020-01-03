@@ -41,6 +41,7 @@ class TextToSpeechTest: XCTestCase {
         XCTAssert(delegate.didSucceed)
         XCTAssertFalse(delegate.didFail)
         
+        // successful request with ssml formatting
         delegate.reset()
         let didSucceedExpectation2 = expectation(description: "successful request calls TestTextToSpeechDelegate.success")
         delegate.asyncExpectation = didSucceedExpectation2

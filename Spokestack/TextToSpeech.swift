@@ -73,7 +73,7 @@ import CryptoKit
         func play(result: TextToSpeechResult) {
             DispatchQueue.main.async {
                 guard let url = result.url else {
-                    self.delegate?.failure(error: TextToSpeechErrors.speak("URL to play back was not set."))
+                    self.delegate?.failure(error: TextToSpeechErrors.speak("Synthesis response is invalid."))
                     return
                 }
                 let playerItem = AVPlayerItem(url: url)
@@ -94,18 +94,33 @@ import CryptoKit
     
     private func synthesize(input: TextToSpeechInput, success: ((TextToSpeechResult) -> Void)?) {
         let session = URLSession(configuration: URLSessionConfiguration.default)
+        let inputFormat = input.inputFormat
         var request = URLRequest(url: URL(string: "https://api.spokestack.io/v1")!)
         request.addValue("application/json", forHTTPHeaderField: "Content-Type")
         let xRequestID = "x-request-id"
         request.addValue(input.id, forHTTPHeaderField: xRequestID)
         request.httpMethod = "POST"
-        let body: [String:Any] = [
-            "query":"query synthesis($voice: String!, $ssml: String!) {synthesize(voice: $voice, ssml: $ssml) {url}}",
-            "variables":[
-                "voice":self.ttsInputVoices[input.voice.rawValue],
-                "ssml":input.input
+        var body: [String:Any] = [:]
+        switch inputFormat {
+        case .ssml:
+            body = [
+                "query":"query synthesis($voice: String!, $ssml: String!) {synthesizeSsml(voice: $voice, ssml: $ssml) {url}}",
+                "variables":[
+                    "voice":self.ttsInputVoices[input.voice.rawValue],
+                    "ssml":input.input
+                ]
             ]
-        ]
+            break
+        case .text:
+            body = [
+                "query":"query synthesis($voice: String!, $text: String!) {synthesizeText(voice: $voice, text: $text) {url}}",
+                "variables":[
+                    "voice":self.ttsInputVoices[input.voice.rawValue],
+                    "text":input.input
+                ]
+            ]
+            break
+        }
         request.httpBody = try? JSONSerialization.data(withJSONObject: body, options: [.withoutEscapingSlashes])
         
         // create an authentication code for this request using the symmetric key
@@ -143,9 +158,18 @@ import CryptoKit
                             self.delegate?.failure(error: TextToSpeechErrors.deserialization("response headers did not contain request id"))
                             return
                         }
-                        let body = try decoder.decode(SynthesizeResponseData.self, from: data)
-                        let result = TextToSpeechResult(id: id, url: body.data.synthesize.url)
-                        success?(result)
+                        switch inputFormat {
+                        case .ssml:
+                            let body = try decoder.decode(TTSSSMLResponseData.self, from: data)
+                            let result = TextToSpeechResult(id: id, url: body.data.synthesizeSsml.url)
+                            success?(result)
+                            break
+                        case .text:
+                            let body = try decoder.decode(TTSTextResponseData.self, from: data)
+                            let result = TextToSpeechResult(id: id, url: body.data.synthesizeText.url)
+                            success?(result)
+                            break
+                        }
                     } catch let error {
                         self.delegate?.failure(error: error)
                     }
@@ -185,14 +209,26 @@ import CryptoKit
     }
 }
 
-fileprivate struct SynthesizeResponseURL: Codable {
+fileprivate struct TTSSSMLResponseURL: Codable {
     let url: URL
 }
 
-fileprivate struct SynthesizeResponseSynthesize: Codable {
-    let synthesize: SynthesizeResponseURL
+fileprivate struct TTSSSMLResponseSynthesize: Codable {
+    let synthesizeSsml: TTSSSMLResponseURL
 }
 
-fileprivate struct SynthesizeResponseData: Codable {
-    let data: SynthesizeResponseSynthesize
+fileprivate struct TTSSSMLResponseData: Codable {
+    let data: TTSSSMLResponseSynthesize
+}
+
+fileprivate struct TTSTextResponseURL: Codable {
+    let url: URL
+}
+
+fileprivate struct TTSTextResponseSynthesize: Codable {
+    let synthesizeText: TTSTextResponseURL
+}
+
+fileprivate struct TTSTextResponseData: Codable {
+    let data: TTSTextResponseSynthesize
 }
