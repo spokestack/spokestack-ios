@@ -42,12 +42,12 @@ import Foundation
     }
     
     /// The synthetic voice used to generate speech.
-    @objc public var voice: TTSInputVoice = .demoMale
+    @objc public var voice: TTSInputVoice
     /// The input to the synthetic voice.
     /// - Note: SSML must be valid XML.
-    @objc public var input: String = "Here I am, a brain the size of a planet."
+    @objc public var input: String
     /// The formatting of the input.
-    @objc public var inputFormat: TTSInputFormat = .text
+    @objc public var inputFormat: TTSInputFormat
     /// A unique identifier for this input request.
-    @objc public var id: String = UUID().description
+    @objc public var id: String
 }
