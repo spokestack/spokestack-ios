@@ -10,6 +10,7 @@ import Foundation
 import XCTest
 import Spokestack
 
+@available(iOS 13, *)
 class TextToSpeechTest: XCTestCase {
     
     /// MARK: Synthesize
@@ -20,7 +21,7 @@ class TextToSpeechTest: XCTestCase {
         // bad config results in a failed request that calls failure
         let badConfig = SpeechConfiguration()
         let didFailConfigExpectation = expectation(description: "bad config results in a failed request that calls TestTextToSpeechDelegate.failure")
-        badConfig.authorization = "BADBADNOTGOOD"
+        badConfig.apiId = "BADBADNOTGOOD"
         let badTTS = TextToSpeech(delegate, configuration: badConfig)
         delegate.asyncExpectation = didFailConfigExpectation
         badTTS.synthesize(input)
@@ -40,25 +41,15 @@ class TextToSpeechTest: XCTestCase {
         XCTAssert(delegate.didSucceed)
         XCTAssertFalse(delegate.didFail)
         
+        // successful request with ssml formatting
         delegate.reset()
         let didSucceedExpectation2 = expectation(description: "successful request calls TestTextToSpeechDelegate.success")
         delegate.asyncExpectation = didSucceedExpectation2
-        let ssmlInput = TextToSpeechInput("<speak>Yet right now the average age of this 52nd Parliament is 49 years old, <break time='500ms'/> OK Boomer.</speak>", voice: "demo-male", inputFormat: .ssml)
+        let ssmlInput = TextToSpeechInput("<speak>Yet right now the average age of this 52nd Parliament is 49 years old, <break time='500ms'/> OK Boomer.</speak>", voice: .demoMale, inputFormat: .ssml)
         tts.synthesize(ssmlInput)
         wait(for: [didSucceedExpectation2], timeout: 5)
         XCTAssert(delegate.didSucceed)
         XCTAssertFalse(delegate.didFail)
-        
-        // bad input results in a failed request that calls failure
-        delegate.reset()
-        let didFailInputExpectation = expectation(description: "bad input results in a failed request that calls TestTextToSpeechDelegate.failure")
-        let badInput = TextToSpeechInput()
-        badInput.voice = "marvin"
-        delegate.asyncExpectation = didFailInputExpectation
-        tts.synthesize(badInput)
-        wait(for: [didFailInputExpectation], timeout: 5)
-        XCTAssert(delegate.didFail)
-        XCTAssertFalse(delegate.didSucceed)
     }
     
     /// MARK:  Speak
@@ -81,7 +72,6 @@ class TextToSpeechTest: XCTestCase {
 }
 
 class TestTextToSpeechDelegate: TextToSpeechDelegate {
-
     /// Spy pattern for the system under test.
     /// asyncExpectation lets the caller's test know when the delegate has been called.
     var didSucceed: Bool = false
@@ -99,7 +89,7 @@ class TestTextToSpeechDelegate: TextToSpeechDelegate {
         asyncExpectation = .none
     }
     
-    func success(url: URL) {
+    func success(result: TextToSpeechResult) {
         asyncExpectation?.fulfill()
         didSucceed = true
     }

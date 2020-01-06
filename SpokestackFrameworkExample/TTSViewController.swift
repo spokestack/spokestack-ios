@@ -141,7 +141,7 @@ class TTSViewController: UIViewController {
         
         self.player.automaticallyWaitsToMinimizeStalling = false
         
-        self.configuration.tracing = .PERF
+        self.configuration.tracing = .DEBUG
         
         self.tts = TextToSpeech(self, configuration: configuration)
     }
@@ -156,7 +156,8 @@ class TTSViewController: UIViewController {
         print("synthesize")
         var text = self.ttsInput.text ?? ""
         if (text == "") { text = "You didn't enter any text to synthesize." }
-        let input = TextToSpeechInput(text)
+        let input = TextToSpeechInput("<speak>\(text)</speak>")
+        input.inputFormat = .ssml
         self.tts?.synthesize(input)
     }
     
@@ -200,7 +201,6 @@ extension TTSViewController {
             print("\(function) Time: \(CACurrentMediaTime()-startTime)\nLine:\(line) File: \(file)")
         }
     }
-    
     
     /**
      Initiates a test run with internal timing and status marks for measuring the request/response and playback of a HTTP2 chunked streaming audio file.
@@ -278,6 +278,7 @@ extension TTSViewController {
 // MARK: TextToSpeechDelegate implementation
 
 extension TTSViewController: TextToSpeechDelegate {
+    
     func didBeginSpeaking() {
         print("didBeginSpeaking")
     }
@@ -286,9 +287,11 @@ extension TTSViewController: TextToSpeechDelegate {
         print("didFinishSpeaking")
     }
     
-    func success(url: URL) {
+    func success(result: TextToSpeechResult) {
         TOCK() // synthesize timer
-        print(url)
+        guard let url = result.url else {
+            return
+        }
         self.streamingFile = url
         if (self.amTesting) {
             self.playTest()

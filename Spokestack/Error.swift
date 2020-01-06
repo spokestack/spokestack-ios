@@ -56,4 +56,10 @@ enum RingBufferStateError: Error {
 enum TextToSpeechErrors: Error {
     /// The synthesize response was missing data.
     case deserialization(String)
+    /// The synthesize request was unable to be serialized.
+    case serialization(String)
+    /// The api key provided is not valid.
+    case apiKey(String)
+    /// The speak command could not be executed.
+    case speak(String)
 }
