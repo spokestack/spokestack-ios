@@ -12,8 +12,6 @@ import Foundation
 @objc public enum SpeechProcessors: Int {
     /// AppleWakewordRecognizer
     case appleWakeword
-    /// CoreMLWakewordRecognizer
-    case coremlWakeword
     /// TFLiteWakewordRecognizer
     case tfLiteWakeword
     /// AppleSpeechRecognizer
@@ -27,8 +25,6 @@ extension SpeechProcessors {
         switch self {
         case .appleWakeword:
             return AppleWakewordRecognizer.sharedInstance
-        case .coremlWakeword:
-            return CoreMLWakewordRecognizer.sharedInstance
         case .tfLiteWakeword:
             return TFLiteWakewordRecognizer.sharedInstance
         case .appleSpeech:
