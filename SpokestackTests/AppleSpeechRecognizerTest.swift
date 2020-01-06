@@ -77,11 +77,11 @@ class AppleSpeechRecognizerTestDelegate: PipelineDelegate, SpeechEventListener {
         self.didDeactivate = true
     }
     
-    func didInit() {}
+    func didStop() {}
     
     func didStart() {}
     
-    func didStop() {}
+    func didInit() {}
     
     func setupFailed(_ error: String) {}
     

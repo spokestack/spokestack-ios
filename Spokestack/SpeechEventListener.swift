@@ -28,12 +28,6 @@ import Foundation
     /// - Parameter trace: The debugging trace message.
     func didTrace(_ trace: String) -> Void
     
-    /// The pipeline stop event. The pipeline was stopped.
-    func didStop() -> Void
-    
-    /// The pipeline start event. The pipeline was started and is in the deactivated state.
-    func didStart() -> Void
-    
     /// The pipeline speech recognition result event. The pipeline was activated and recognized speech.
     /// - Parameter result: The speech recognition result.
     func didRecognize(_ result: SpeechContext) -> Void
