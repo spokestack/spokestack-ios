@@ -104,7 +104,7 @@ import CryptoKit
         switch inputFormat {
         case .ssml:
             body = [
-                "query":"query synthesis($voice: String!, $ssml: String!) {synthesizeSsml(voice: $voice, ssml: $ssml) {url}}",
+                "query":"query iOSSynthesisSSML($voice: String!, $ssml: String!) {synthesizeSsml(voice: $voice, ssml: $ssml) {url}}",
                 "variables":[
                     "voice":self.ttsInputVoices[input.voice.rawValue],
                     "ssml":input.input
@@ -113,7 +113,7 @@ import CryptoKit
             break
         case .text:
             body = [
-                "query":"query synthesis($voice: String!, $text: String!) {synthesizeText(voice: $voice, text: $text) {url}}",
+                "query":"query iOSSynthesisText($voice: String!, $text: String!) {synthesizeText(voice: $voice, text: $text) {url}}",
                 "variables":[
                     "voice":self.ttsInputVoices[input.voice.rawValue],
                     "text":input.input
