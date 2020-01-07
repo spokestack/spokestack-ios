@@ -87,22 +87,18 @@ class WebRTCVADTestDelegate: VADDelegate, PipelineDelegate {
     
     func didInit() {
         Trace.trace(Trace.Level.DEBUG, configLevel: Trace.Level.DEBUG, message: "didInit", delegate: self, caller: self)
-
     }
     
     func didStart() {
         Trace.trace(Trace.Level.DEBUG, configLevel: Trace.Level.DEBUG, message: "didStart", delegate: self, caller: self)
-
     }
     
     func didStop() {
         Trace.trace(Trace.Level.DEBUG, configLevel: Trace.Level.DEBUG, message: "didStop", delegate: self, caller: self)
-
     }
     
     func setupFailed(_ error: String) {
         Trace.trace(Trace.Level.DEBUG, configLevel: Trace.Level.DEBUG, message: "setupFailed", delegate: self, caller: self)
-
     }
     
     func didTrace(_ trace: String) {
