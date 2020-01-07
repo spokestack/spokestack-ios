@@ -302,8 +302,9 @@ public class TFLiteWakewordRecognizer: NSObject {
                 
                 /// outputs
                 let output = try model.output(at: 0)
-                let results = output.data.withUnsafeBytes { (pointer: UnsafePointer<Float32>) -> [Float32] in
-                    Array<Float32>(UnsafeBufferPointer(start: pointer, count: output.data.count / 4))}
+                let results = output.data.withUnsafeBytes { (pointer: UnsafeRawBufferPointer) -> [Float32] in
+                    Array<Float32>(UnsafeBufferPointer(start: pointer.bindMemory(to: Float32.self).baseAddress, count: output.data.count / 4))
+                }
                 self.frameWindow.rewind().seek(self.melWidth)
                 for r in results {
                     try self.frameWindow.write(r)
@@ -350,8 +351,8 @@ public class TFLiteWakewordRecognizer: NSObject {
                 
                 /// outputs
                 let encodeOutput = try model.output(at: Tensors.encode.rawValue)
-                let encodeResults = encodeOutput.data.withUnsafeBytes { (pointer: UnsafePointer<Float32>) -> [Float32] in
-                    Array<Float32>(UnsafeBufferPointer(start: pointer, count: encodeOutput.data.count / 4))}
+                let encodeResults = encodeOutput.data.withUnsafeBytes { (pointer: UnsafeRawBufferPointer) -> [Float32] in
+                    Array<Float32>(UnsafeBufferPointer(start: pointer.bindMemory(to: Float32.self).baseAddress, count: encodeOutput.data.count / 4))}
                 self.encodeWindow.rewind().seek(self.encodeWidth)
                 for r in encodeResults {
                     try self.encodeWindow.write(r)
@@ -360,8 +361,8 @@ public class TFLiteWakewordRecognizer: NSObject {
                     }
                 }
                 let stateOutput = try model.output(at: Tensors.state.rawValue)
-                let stateResults = stateOutput.data.withUnsafeBytes { (pointer: UnsafePointer<Float32>) -> [Float32] in
-                    Array<Float32>(UnsafeBufferPointer(start: pointer, count: stateOutput.data.count / 4))}
+                let stateResults = stateOutput.data.withUnsafeBytes { (pointer: UnsafeRawBufferPointer) -> [Float32] in
+                    Array<Float32>(UnsafeBufferPointer(start: pointer.bindMemory(to: Float32.self).baseAddress, count: stateOutput.data.count / 4))}
                 for r in stateResults {
                     try self.encodeState.write(r)
                 }
@@ -391,8 +392,8 @@ public class TFLiteWakewordRecognizer: NSObject {
                     
                     /// outputs
                     let detectOutput = try model.output(at: 0)
-                    let detectResults = detectOutput.data.withUnsafeBytes { (pointer: UnsafePointer<Float32>) -> [Float32] in
-                        Array<Float32>(UnsafeBufferPointer(start: pointer, count: detectOutput.data.count / 4))}
+                    let detectResults = detectOutput.data.withUnsafeBytes { (pointer: UnsafeRawBufferPointer) -> [Float32] in
+                        Array<Float32>(UnsafeBufferPointer(start: pointer.bindMemory(to: Float32.self).baseAddress, count: detectOutput.data.count / 4))}
                     let posterior = detectResults[0]
                     
                     if let pmax = self.posteriorMax {
