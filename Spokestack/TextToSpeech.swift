@@ -9,6 +9,10 @@
 import Foundation
 import AVFoundation
 import CryptoKit
+import Combine
+
+private let TTSSpeechQueueName: String = "com.spokestack.ttsspeech.queue"
+private let apiQueue = DispatchQueue(label: TTSSpeechQueueName, qos: .userInitiated, attributes: [])
 
 /**
  This is the client entry point for the Spokestack Text to Speech (TTS) system. It provides the capability to synthesize textual input, and speak back the synthesis as audio system output. The synthesis and speech occur on asynchronous blocks so as to not block the client while it performs network and audio system activities.
@@ -37,6 +41,7 @@ import CryptoKit
     private lazy var player: AVPlayer = AVPlayer()
     private var apiKey: SymmetricKey?
     private let ttsInputVoices = [0: "demo-male"]
+    private let decoder = JSONDecoder()
     
     // MARK: Initializers
     
@@ -85,12 +90,59 @@ import CryptoKit
         self.synthesize(input: input, success: play)
     }
     
+    @available(iOS 13.0, *)
+    public func synthesizePublisher(_ input: TextToSpeechInput) -> AnyPublisher<TextToSpeechResult, Error> {
+        var request = URLRequest(url: URL(string: "https://api.spokestack.io/v1")!)
+        request.addValue(input.id, forHTTPHeaderField: "x-request-id")
+        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.httpMethod = "POST"
+
+        let body: Dictionary<String, Any> = [
+            "query":"query iOSSynthesisText($voice: String!, $text: String!) {synthesizeText(voice: $voice, text: $text) {url}}",
+            "variables":[
+                "voice":self.ttsInputVoices[input.voice.rawValue],
+                "text":input.input
+            ]
+        ]
+        
+        request.httpBody =  try? JSONSerialization.data(withJSONObject: body, options: [])
+        
+        return URLSession.shared
+            .dataTaskPublisher(for: request)
+            .handleEvents(receiveSubscription: { _ in
+              print("Network request will start")
+            }, receiveOutput: { output in
+                print("Network request data received \(output.response)")
+            }, receiveCancel: {
+              print("Network request cancelled")
+            })
+            .receive(on: apiQueue)
+            .tryMap { data, response -> TextToSpeechResult in
+                
+                guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
+                    throw TextToSpeechErrors.deserialization("response cannot be deserialized")
+                }
+
+                guard let id = httpResponse.value(forHTTPHeaderField: "x-request-id") else {
+                    throw TextToSpeechErrors.deserialization("response headers did not contain request id")
+                }
+                
+                let body = try self.decoder.decode(TTSTextResponseData.self, from: data)
+                let result: TextToSpeechResult = TextToSpeechResult(id: id, url: body.data.synthesizeText.url)
+                
+                return result
+            }
+            .eraseToAnyPublisher()
+    }
+    
     /// Synthesize speech using the provided input parameters and speech configuration. A successful synthesis will return a URL to the streaming audio container of synthesized speech to the `TextToSpeech`'s `delegate`.
     /// - Note: The URL will be invalidated within 60 seconds of generation.
     /// - Parameter input: Parameters that specify the speech to synthesize.
     @objc public func synthesize(_ input: TextToSpeechInput) -> Void {
         self.synthesize(input: input, success: successHandler(result:))
     }
+    
+    // MARK: Private Functions
     
     private func synthesize(input: TextToSpeechInput, success: ((TextToSpeechResult) -> Void)?) {
         let session = URLSession(configuration: URLSessionConfiguration.default)
@@ -209,26 +261,26 @@ import CryptoKit
     }
 }
 
-fileprivate struct TTSSSMLResponseURL: Codable {
-    let url: URL
+public struct TTSSSMLResponseURL: Codable {
+    public let url: URL
 }
 
-fileprivate struct TTSSSMLResponseSynthesize: Codable {
-    let synthesizeSsml: TTSSSMLResponseURL
+public struct TTSSSMLResponseSynthesize: Codable {
+    public let synthesizeSsml: TTSSSMLResponseURL
 }
 
-fileprivate struct TTSSSMLResponseData: Codable {
-    let data: TTSSSMLResponseSynthesize
+public struct TTSSSMLResponseData: Codable {
+    public let data: TTSSSMLResponseSynthesize
 }
 
-fileprivate struct TTSTextResponseURL: Codable {
-    let url: URL
+public struct TTSTextResponseURL: Codable {
+    public let url: URL
 }
 
-fileprivate struct TTSTextResponseSynthesize: Codable {
-    let synthesizeText: TTSTextResponseURL
+public struct TTSTextResponseSynthesize: Codable {
+    public let synthesizeText: TTSTextResponseURL
 }
 
-fileprivate struct TTSTextResponseData: Codable {
-    let data: TTSTextResponseSynthesize
+public struct TTSTextResponseData: Codable {
+    public let data: TTSTextResponseSynthesize
 }
