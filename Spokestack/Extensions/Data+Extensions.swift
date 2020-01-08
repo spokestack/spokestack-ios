@@ -14,7 +14,7 @@ extension Data {
     
     func elements<T>() -> [T] {
         return withUnsafeBytes {
-            Array(UnsafeBufferPointer<T>(start: $0, count: count/MemoryLayout<T>.size))
+            Array(UnsafeBufferPointer(start: $0.bindMemory(to: T.self).baseAddress, count: count/MemoryLayout<T>.size))
         }
     }
 }
