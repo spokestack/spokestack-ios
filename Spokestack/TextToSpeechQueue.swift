@@ -8,30 +8,36 @@
 
 import Foundation
 import Combine
+import CryptoKit
 
 private let TTSSpeechQueueName: String = "com.spokestack.ttsspeech.queue"
-
 private let apiQueue = DispatchQueue(label: TTSSpeechQueueName, qos: .userInitiated, attributes: .concurrent)
-
-public struct TTSQueueURL: Codable {
-    
-    public let url: String
-}
 
 @available(iOS 13.0, *)
 @objc public class TextToSpeechQueue: NSObject {
     
     // MARK: Properties
     
-    private var configuration: SpeechConfiguration
+    private var configuration: SpeechConfiguration {
+        
+        didSet {
+            
+            if let apiKeyEncoded = self.configuration.apiKey.data(using: .utf8) {
+                self.apiKey = SymmetricKey(data: apiKeyEncoded)
+            }
+        }
+    }
     
     private let decoder = JSONDecoder()
     
     private let ttsInputVoices = [0: "demo-male"]
     
+    private var apiKey: SymmetricKey?
+    
     // MARK: Initializers
     
     @objc public init(_ configuration: SpeechConfiguration) {
+        
         self.configuration = configuration
         super.init()
     }
@@ -53,20 +59,46 @@ public struct TTSQueueURL: Codable {
     
     public func synthesize(_ input: TextToSpeechInput) -> AnyPublisher<TextToSpeechResult, Error> {
         
+        precondition(self.apiKey != nil, "apiKey is not configured.")
+        
+        let inputFormat = input.inputFormat
+        var body: [String: Any] = [:]
+
         var request = URLRequest(url: URL(string: "https://api.spokestack.io/v1")!)
         request.addValue(input.id, forHTTPHeaderField: "x-request-id")
         request.addValue("application/json", forHTTPHeaderField: "Content-Type")
         request.httpMethod = "POST"
 
-        let body: Dictionary<String, Any> = [
-            "query":"query iOSSynthesisText($voice: String!, $text: String!) {synthesizeText(voice: $voice, text: $text) {url}}",
-            "variables": [
-                "voice": self.ttsInputVoices[input.voice.rawValue],
-                "text": input.input
+        switch inputFormat {
+        case .ssml:
+            body = [
+                "query":"query iOSSynthesisSSML($voice: String!, $ssml: String!) {synthesizeSsml(voice: $voice, ssml: $ssml) {url}}",
+                "variables":[
+                    "voice":self.ttsInputVoices[input.voice.rawValue],
+                    "ssml":input.input
+                ]
             ]
-        ]
+            break
+        case .text:
+            body = [
+                "query":"query iOSSynthesisText($voice: String!, $text: String!) {synthesizeText(voice: $voice, text: $text) {url}}",
+                "variables":[
+                    "voice":self.ttsInputVoices[input.voice.rawValue],
+                    "text":input.input
+                ]
+            ]
+            break
+        }
+
+        request.httpBody = try? JSONSerialization.data(withJSONObject: body, options: [.withoutEscapingSlashes])
         
-        request.httpBody =  try? JSONSerialization.data(withJSONObject: body, options: [])
+        // create an authentication code for this request using the symmetric key
+
+        let code = HMAC<SHA256>.authenticationCode(for: request.httpBody!, using: self.apiKey!)
+        // turn the code into a string, base64 encoded
+        let codeEncoded = Data(code).base64EncodedString()
+        // the request header must include the encoded code as "keyId"
+        request.addValue("Spokestack \(self.configuration.apiId):\(codeEncoded)", forHTTPHeaderField: "Authorization")
         
         return URLSession.shared
             .dataTaskPublisher(for: request)
