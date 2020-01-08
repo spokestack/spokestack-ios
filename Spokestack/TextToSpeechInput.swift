@@ -8,46 +8,46 @@
 
 import Foundation
 
+/// Designate the format the input is provided in.
+@objc public enum TTSInputFormat: Int {
+    /// Plain text
+    case text
+    /// Speech Synthesis Markup Language
+    /// see https://spokestack.io/docs/Concepts/tts for the supported SSML subset.
+    case ssml
+}
+
+@objc public enum TTSInputVoice: Int {
+    case demoMale
+}
+
 /// Input parameters for speech synthesis. Parameters are considered transient and may change each time `synthesize` is called.
 /// - SeeAlso: `TextToSpeech.synthesize`
 @objc public class TextToSpeechInput: NSObject {
     
     /// Initializer for a new TextToSpeechInput instance.
-    @objc public override init() {
-        super.init()
-    }
-    
-    /// Convenience initializer for a new TextToSpeechInput instance.
-    /// - Parameter input: The text input to the speech synthesizer.
-    @objc public init(_ input: String) {
-        self.input = input
-        super.init()
-    }
-
-    /// Convenience initializer for a new TextToSpeechInput instance.
     /// - Parameter input: The text input to the speech synthesizer.
     /// - Parameter voice: The synthetic voice used to generate speech.
     /// - Parameter inputFormat: The formatting of the input.
-    @objc public init(_ input:String, inputFormat: TTSInputFormat) {
-        self.input = input
-        self.inputFormat = inputFormat
-    }
-    
-    /// Convenience initializer for a new TextToSpeechInput instance.
-    /// - Parameter input: The text input to the speech synthesizer.
-    /// - Parameter voice: The synthetic voice used to generate speech.
-    /// - Parameter inputFormat: The formatting of the input.
-    @objc public init(_ input:String, voice: String, inputFormat: TTSInputFormat) {
+    /// - Parameter id: A unique identifier for this input request.
+    @objc public init(_ input:String = "Here I am, a brain the size of a planet.",
+                      voice: TTSInputVoice = .demoMale,
+                      inputFormat: TTSInputFormat = .text,
+                      id: String = UUID().description) {
         self.input = input
         self.voice = voice
         self.inputFormat = inputFormat
+        self.id = id
+        super.init()
     }
     
     /// The synthetic voice used to generate speech.
-    @objc public var voice: String = "demo-male"
+    @objc public var voice: TTSInputVoice
     /// The input to the synthetic voice.
-    /// - Note: SSML should be unescaped.
-    @objc public var input: String = "Here I am, a brain the size of a planet."
+    /// - Note: SSML must be valid XML.
+    @objc public var input: String
     /// The formatting of the input.
-    @objc public var inputFormat: TTSInputFormat = .text
+    @objc public var inputFormat: TTSInputFormat
+    /// A unique identifier for this input request.
+    @objc public var id: String
 }
