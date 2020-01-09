@@ -39,11 +39,17 @@ private let apiQueue = DispatchQueue(label: TTSSpeechQueueName, qos: .userInitia
     @objc public init(_ configuration: SpeechConfiguration) {
         
         self.configuration = configuration
+        if let apiKeyEncoded = self.configuration.apiKey.data(using: .utf8) {
+            self.apiKey = SymmetricKey(data: apiKeyEncoded)
+        }
         super.init()
     }
     
     @objc public override init() {
         self.configuration = SpeechConfiguration()
+        if let apiKeyEncoded = self.configuration.apiKey.data(using: .utf8) {
+            self.apiKey = SymmetricKey(data: apiKeyEncoded)
+        }
         super.init()
     }
     
