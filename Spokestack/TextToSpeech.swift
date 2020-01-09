@@ -119,7 +119,7 @@ private let apiQueue = DispatchQueue(label: TTSSpeechQueueName, qos: .userInitia
         /// Since `createSynthesizeRequest` throws it can't be called directly without a publisher
         /// Using `Just` won't work because errors can't be returned.
         ///
-        /// Using `Future`
+        /// Using `Future`allows for the appropriate error to be returned
         
         let createSynthesizeRequestFuture = Future<URLRequest, Error> { promise in
             
