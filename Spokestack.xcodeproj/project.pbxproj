@@ -29,7 +29,6 @@
 		01D31F8B216BB0220055FD45 /* Results.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01D31F89216BB0220055FD45 /* Results.swift */; };
 		01D31F8E216BB0370055FD45 /* Typealiases.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01D31F8D216BB0370055FD45 /* Typealiases.swift */; };
 		01D31F8F216BB0370055FD45 /* Typealiases.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01D31F8D216BB0370055FD45 /* Typealiases.swift */; };
-		01D972BA23C5911E0002FF79 /* TextToSpeechQueue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01D972B923C5911E0002FF79 /* TextToSpeechQueue.swift */; };
 		01D972BC23C592A00002FF79 /* TextToSpeechResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01D972BB23C592A00002FF79 /* TextToSpeechResult.swift */; };
 		592C0B7B2385B5E800308CCD /* TTSViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 592C0B7A2385B5E800308CCD /* TTSViewController.swift */; };
 		5936077F236B688400FFA29F /* WebRTCVAD.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59C15D52234D322A00B091F4 /* WebRTCVAD.swift */; };
@@ -147,7 +146,6 @@
 		01D31F75216BAFEF0055FD45 /* AudioControllerDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AudioControllerDelegate.swift; sourceTree = "<group>"; };
 		01D31F89216BB0220055FD45 /* Results.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Results.swift; sourceTree = "<group>"; };
 		01D31F8D216BB0370055FD45 /* Typealiases.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Typealiases.swift; sourceTree = "<group>"; };
-		01D972B923C5911E0002FF79 /* TextToSpeechQueue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextToSpeechQueue.swift; sourceTree = "<group>"; };
 		01D972BB23C592A00002FF79 /* TextToSpeechResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextToSpeechResult.swift; sourceTree = "<group>"; };
 		0983B0EE40DA914769988A20 /* Pods-SpokestackTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SpokestackTests.release.xcconfig"; path = "Target Support Files/Pods-SpokestackTests/Pods-SpokestackTests.release.xcconfig"; sourceTree = "<group>"; };
 		2E5DAE627A148F64B7FFBCD0 /* Pods_SpokestackFrameworkExample.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SpokestackFrameworkExample.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -336,7 +334,6 @@
 			children = (
 				01D31F69216BAFC60055FD45 /* SpeechPipeline.swift */,
 				596B82472384A097004BAEF4 /* TextToSpeech.swift */,
-				01D972B923C5911E0002FF79 /* TextToSpeechQueue.swift */,
 			);
 			name = Managers;
 			sourceTree = "<group>";
@@ -712,7 +709,6 @@
 				5937579322D5281900AA7516 /* VADDelegate.swift in Sources */,
 				5967108E21F7AE6B00CBFC88 /* AppleSpeechRecognizer.swift in Sources */,
 				5936594C2209EA1800C0365F /* SpeechProcessor.swift in Sources */,
-				01D972BA23C5911E0002FF79 /* TextToSpeechQueue.swift in Sources */,
 				594154B822F8AD2200E3624E /* TFLiteWakewordRecognizer.swift in Sources */,
 				59FB0C8B22AEE4F100FB9662 /* Data+Extensions.swift in Sources */,
 				59A45E4F2243ED530089D023 /* PipelineDelegate.swift in Sources */,
