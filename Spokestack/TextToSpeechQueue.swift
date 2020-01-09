@@ -36,7 +36,9 @@ private let apiQueue = DispatchQueue(label: TTSSpeechQueueName, qos: .userInitia
     
     // MARK: Initializers
     
-    @objc public init(_ configuration: SpeechConfiguration) {
+    /// Initializer
+    /// - Parameter configuration: `SpeechConfiguration`
+    @objc public init(_ configuration: SpeechConfiguration = SpeechConfiguration()) {
         
         self.configuration = configuration
         if let apiKeyEncoded = self.configuration.apiKey.data(using: .utf8) {
@@ -45,16 +47,11 @@ private let apiQueue = DispatchQueue(label: TTSSpeechQueueName, qos: .userInitia
         super.init()
     }
     
-    @objc public override init() {
-        self.configuration = SpeechConfiguration()
-        if let apiKeyEncoded = self.configuration.apiKey.data(using: .utf8) {
-            self.apiKey = SymmetricKey(data: apiKeyEncoded)
-        }
-        super.init()
-    }
-    
     // MARK: Public methods
     
+    /// Maps a list of `TextToSpeechResults`
+    /// - Parameter inputs: `Array` of `TextToSpeechInput`
+    /// - Returns: `AnyPublisher<[TextToSpeechResult], Error>`
     public func synthesize(_ inputs: Array<TextToSpeechInput>) -> AnyPublisher<[TextToSpeechResult], Error> {
 
         return Publishers.MergeMany(
@@ -64,6 +61,9 @@ private let apiQueue = DispatchQueue(label: TTSSpeechQueueName, qos: .userInitia
         .eraseToAnyPublisher()
     }
     
+    /// Executes a synthesized text-to-speech request from a `TextToSpeechInput` input
+    /// - Parameter input: `TextToSpeechInput`
+    /// - Returns: `AnyPublisher<TextToSpeechResult, Error>`
     public func synthesize(_ input: TextToSpeechInput) -> AnyPublisher<TextToSpeechResult, Error> {
         
         precondition(self.apiKey != nil, "apiKey is not configured.")
