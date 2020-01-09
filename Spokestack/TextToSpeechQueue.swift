@@ -57,9 +57,10 @@ private let apiQueue = DispatchQueue(label: TTSSpeechQueueName, qos: .userInitia
     
     public func synthesize(_ inputs: Array<TextToSpeechInput>) -> AnyPublisher<[TextToSpeechResult], Error> {
 
-        return self.mergedInputs(inputs).scan([]) { inputs, input -> [TextToSpeechResult] in
-            return inputs + [input]
-        }
+        return Publishers.MergeMany(
+            inputs.map(self.synthesize)
+        )
+        .collect()
         .eraseToAnyPublisher()
     }
     
@@ -132,21 +133,5 @@ private let apiQueue = DispatchQueue(label: TTSSpeechQueueName, qos: .userInitia
                 return result
             }
             .eraseToAnyPublisher()
-    }
-    
-    // MARK: Private methods)
-    
-    private func mergedInputs(_ inputs: Array<TextToSpeechInput>) -> AnyPublisher<TextToSpeechResult, Error> {
-        
-        precondition(!inputs.isEmpty)
-        
-        let initialPublisher = self.synthesize(inputs[0])
-        let remainder = Array(inputs.dropFirst())
-        
-        return remainder.reduce(initialPublisher) { combined, ttsInput in
-            return combined
-                .merge(with: synthesize(ttsInput))
-                .eraseToAnyPublisher()
-        }
     }
 }
