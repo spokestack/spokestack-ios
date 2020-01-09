@@ -9,6 +9,10 @@
 import Foundation
 import AVFoundation
 import CryptoKit
+import Combine
+
+private let TTSSpeechQueueName: String = "com.spokestack.ttsspeech.queue"
+private let apiQueue = DispatchQueue(label: TTSSpeechQueueName, qos: .userInitiated, attributes: .concurrent)
 
 /**
  This is the client entry point for the Spokestack Text to Speech (TTS) system. It provides the capability to synthesize textual input, and speak back the synthesis as audio system output. The synthesis and speech occur on asynchronous blocks so as to not block the client while it performs network and audio system activities.
@@ -37,6 +41,7 @@ import CryptoKit
     private lazy var player: AVPlayer = AVPlayer()
     private var apiKey: SymmetricKey?
     private let ttsInputVoices = [0: "demo-male"]
+    private let decoder = JSONDecoder()
     
     // MARK: Initializers
     
@@ -90,6 +95,68 @@ import CryptoKit
     /// - Parameter input: Parameters that specify the speech to synthesize.
     @objc public func synthesize(_ input: TextToSpeechInput) -> Void {
         self.synthesize(input: input, success: successHandler(result:))
+    }
+    
+    // MARK: Public methods
+    
+    /// Maps a list of `TextToSpeechResults`
+    /// - Parameter inputs: `Array` of `TextToSpeechInput`
+    /// - Returns: `AnyPublisher<[TextToSpeechResult], Error>`
+    public func synthesize(_ inputs: Array<TextToSpeechInput>) -> AnyPublisher<[TextToSpeechResult], Error> {
+
+        return Publishers.MergeMany(
+            inputs.map(self.synthesize)
+        )
+        .collect()
+        .eraseToAnyPublisher()
+    }
+    
+    /// Executes a synthesized text-to-speech request from a `TextToSpeechInput` input
+    /// - Parameter input: `TextToSpeechInput`
+    /// - Returns: `AnyPublisher<TextToSpeechResult, Error>`
+    public func synthesize(_ input: TextToSpeechInput) -> AnyPublisher<TextToSpeechResult, Error> {
+        
+        /// Since `createSynthesizeRequest` throws it can't be called directly without a publisher
+        /// Using `Just` won't work because errors can't be returned.
+        ///
+        /// Using `Future`allows for the appropriate error to be returned
+        
+        let createSynthesizeRequestFuture = Future<URLRequest, Error> { promise in
+            
+            do {
+                let request = try self.createSynthesizeRequest(input)
+                promise(.success(request))
+            } catch TextToSpeechErrors.apiKey(let message) {
+                promise(.failure(TextToSpeechErrors.apiKey(message)))
+            } catch let error {
+                promise(.failure(error))
+            }
+            
+        }.eraseToAnyPublisher()
+        
+        return
+            createSynthesizeRequestFuture
+            .flatMap{urlRequst in
+                
+                URLSession.shared
+                .dataTaskPublisher(for: urlRequst)
+                .receive(on: apiQueue)
+                .tryMap { data, response -> TextToSpeechResult in
+                    
+                    guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
+                        throw TextToSpeechErrors.deserialization("response cannot be deserialized")
+                    }
+
+                    guard let id = httpResponse.value(forHTTPHeaderField: "x-request-id") else {
+                        throw TextToSpeechErrors.deserialization("response headers did not contain request id")
+                    }
+                    
+                    let body = try self.decoder.decode(TTSTextResponseData.self, from: data)
+                    let result: TextToSpeechResult = TextToSpeechResult(id: id, url: body.data.synthesizeText.url)
+                    
+                    return result
+                }
+            }.eraseToAnyPublisher()
     }
     
     private func synthesize(input: TextToSpeechInput, success: ((TextToSpeechResult) -> Void)?) {
