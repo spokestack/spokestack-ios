@@ -140,13 +140,6 @@ private let apiQueue = DispatchQueue(label: TTSSpeechQueueName, qos: .userInitia
                 
                 URLSession.shared
                 .dataTaskPublisher(for: urlRequst)
-                .handleEvents(receiveSubscription: { _ in
-                  print("Network request will start")
-                }, receiveOutput: { output in
-                    print("Network request data received \(output.response)")
-                }, receiveCancel: {
-                  print("Network request cancelled")
-                })
                 .receive(on: apiQueue)
                 .tryMap { data, response -> TextToSpeechResult in
                     
