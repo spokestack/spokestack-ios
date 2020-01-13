@@ -24,7 +24,7 @@ class TextToSpeechTest: XCTestCase {
         badConfig.apiId = "BADBADNOTGOOD"
         let badTTS = TextToSpeech(delegate, configuration: badConfig)
         delegate.asyncExpectation = didFailConfigExpectation
-        badTTS.synthesize(input)
+        let _: Void = badTTS.synthesize(input)
         wait(for: [didFailConfigExpectation], timeout: 5)
         XCTAssert(delegate.didFail)
         XCTAssertFalse(delegate.didSucceed)
@@ -36,7 +36,7 @@ class TextToSpeechTest: XCTestCase {
         delegate.reset()
         let didSucceedExpectation = expectation(description: "successful request calls TestTextToSpeechDelegate.success")
         delegate.asyncExpectation = didSucceedExpectation
-        tts.synthesize(input)
+        let _: Void = tts.synthesize(input)
         wait(for: [didSucceedExpectation], timeout: 5)
         XCTAssert(delegate.didSucceed)
         XCTAssertFalse(delegate.didFail)
@@ -46,10 +46,37 @@ class TextToSpeechTest: XCTestCase {
         let didSucceedExpectation2 = expectation(description: "successful request calls TestTextToSpeechDelegate.success")
         delegate.asyncExpectation = didSucceedExpectation2
         let ssmlInput = TextToSpeechInput("<speak>Yet right now the average age of this 52nd Parliament is 49 years old, <break time='500ms'/> OK Boomer.</speak>", voice: .demoMale, inputFormat: .ssml)
-        tts.synthesize(ssmlInput)
+        let _: Void = tts.synthesize(ssmlInput)
         wait(for: [didSucceedExpectation2], timeout: 5)
         XCTAssert(delegate.didSucceed)
         XCTAssertFalse(delegate.didFail)
+    }
+    
+    func testSynthesizePublisher() {
+        let config = SpeechConfiguration()
+        let tts = TextToSpeech(configuration: config)
+        let input = TextToSpeechInput()
+
+        // successful request
+        let didCompleteExpectation = expectation(description: "successful request publishes completion")
+        let publisher = tts.synthesize([input])
+            .sink(
+                receiveCompletion: {completion in
+                    switch completion {
+                    case .failure(let error):
+                        XCTFail(error.localizedDescription)
+                        break
+                    case .finished:
+                        didCompleteExpectation.fulfill()
+                        break
+                    }
+            },
+                receiveValue: {result in
+                    XCTAssertTrue(result.count > 0)
+                    XCTAssertNotNil(result.first?.url)
+            })
+        XCTAssertNotNil(publisher)
+        wait(for: [didCompleteExpectation], timeout: 10)
     }
     
     /// MARK:  Speak
