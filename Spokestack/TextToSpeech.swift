@@ -17,7 +17,7 @@ private let apiQueue = DispatchQueue(label: TTSSpeechQueueName, qos: .userInitia
 /**
  This is the client entry point for the Spokestack Text to Speech (TTS) system. It provides the capability to synthesize textual input, and speak back the synthesis as audio system output. The synthesis and speech occur on asynchronous blocks so as to not block the client while it performs network and audio system activities.
  
- When inititalized,  the TTS system communicates with the client via delegates that receive events.
+ When inititalized, the TTS system communicates with the client either via a delegate that receive events, or via a publisher-subscriber pattern.
  
  ```
  // assume that self implements the TextToSpeechDelegate protocol.
@@ -28,6 +28,8 @@ private let apiQueue = DispatchQueue(label: TTSSpeechQueueName, qos: .userInitia
  tts.synthesize(input) // synthesize the provided default text input using the default synthetic voice and api key.
  tts.speak(input) // synthesize the same input as above, and play back the result using the default audio system.
  ```
+ 
+ Using the TTS system requires setting an API client identifier (`SpeechConfgiruation.apiId`) and API client secret (`SpeechConfgiruation.apiSecret`) , which are used to cryptographically sign and meter TTS API usage.
  */
 @available(iOS 13.0, *)
 @objc public class TextToSpeech: NSObject {
@@ -45,8 +47,8 @@ private let apiQueue = DispatchQueue(label: TTSSpeechQueueName, qos: .userInitia
     
     // MARK: Initializers
 
-    /// Initializes a new text to speech instance.
-    /// - Parameter delegate: Delegate that receives text to speech events.
+    /// Initializes a new text to speech instance without a delegate.
+    /// - Note: An instance initialized this was is expected to use the pub/sub Combine interface, not the delegate interface, when calling `synthesize`.
     /// - Parameter configuration: Speech configuration parameters.
     @objc public init(configuration: SpeechConfiguration) throws {
         self.configuration = configuration
