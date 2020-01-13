@@ -29,7 +29,7 @@ private let apiQueue = DispatchQueue(label: TTSSpeechQueueName, qos: .userInitia
  tts.speak(input) // synthesize the same input as above, and play back the result using the default audio system.
  ```
  
- Using the TTS system requires setting an API client identifier (`SpeechConfgiruation.apiId`) and API client secret (`SpeechConfgiruation.apiSecret`) , which are used to cryptographically sign and meter TTS API usage.
+ Using the TTS system requires setting an API client identifier (`SpeechConfiguration.apiId`) and API client secret (`SpeechConfiguration.apiSecret`) , which are used to cryptographically sign and meter TTS API usage.
  */
 @available(iOS 13.0, *)
 @objc public class TextToSpeech: NSObject {
@@ -48,7 +48,8 @@ private let apiQueue = DispatchQueue(label: TTSSpeechQueueName, qos: .userInitia
     // MARK: Initializers
 
     /// Initializes a new text to speech instance without a delegate.
-    /// - Note: An instance initialized this was is expected to use the pub/sub Combine interface, not the delegate interface, when calling `synthesize`.
+    /// - Note: An instance initialized this way is expected to use the pub/sub Combine interface, not the delegate interface, when calling `synthesize`.
+    /// - Requires: `SpeechConfiguration.apiId` and `SpeechConfiguration.apiSecret`.
     /// - Parameter configuration: Speech configuration parameters.
     @objc public init(configuration: SpeechConfiguration) throws {
         self.configuration = configuration
@@ -63,6 +64,7 @@ private let apiQueue = DispatchQueue(label: TTSSpeechQueueName, qos: .userInitia
     
     /// Initializes a new text to speech instance.
     /// - Parameter delegate: Delegate that receives text to speech events.
+    /// - Requires: `SpeechConfiguration.apiId` and `SpeechConfiguration.apiSecret`.
     /// - Parameter configuration: Speech configuration parameters.
     @objc public init(_ delegate: TextToSpeechDelegate, configuration: SpeechConfiguration) {
         self.delegate = delegate
