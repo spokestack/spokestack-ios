@@ -51,11 +51,11 @@ private let apiQueue = DispatchQueue(label: TTSSpeechQueueName, qos: .userInitia
     @objc public init(_ delegate: TextToSpeechDelegate, configuration: SpeechConfiguration) {
         self.delegate = delegate
         self.configuration = configuration
-        // create a symmetric key using the configured api key
-        if let apiKeyEncoded = self.configuration.apiKey.data(using: .utf8) {
-            self.apiKey = SymmetricKey(data: apiKeyEncoded)
+        // create a symmetric key using the configured api secret key
+        if let apiSecretEncoded = self.configuration.apiSecret.data(using: .utf8) {
+            self.apiKey = SymmetricKey(data: apiSecretEncoded)
         } else {
-            self.delegate?.failure(error: TextToSpeechErrors.apiKey("Unable to encode apiKey."))
+            self.delegate?.failure(error: TextToSpeechErrors.apiKey("Unable to encode apiSecret."))
         }
         super.init()
     }
@@ -247,7 +247,7 @@ private let apiQueue = DispatchQueue(label: TTSSpeechQueueName, qos: .userInitia
         
         // create an authentication code for this request using the symmetric key
         guard let key = self.apiKey else {
-            throw TextToSpeechErrors.apiKey("apiKey is not configured.")
+            throw TextToSpeechErrors.apiKey("apiSecret is not configured.")
         }
         let code = HMAC<SHA256>.authenticationCode(for: request.httpBody!, using: key)
         // turn the code into a string, base64 encoded
