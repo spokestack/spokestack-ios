@@ -44,6 +44,20 @@ private let apiQueue = DispatchQueue(label: TTSSpeechQueueName, qos: .userInitia
     private let decoder = JSONDecoder()
     
     // MARK: Initializers
+
+    /// Initializes a new text to speech instance.
+    /// - Parameter delegate: Delegate that receives text to speech events.
+    /// - Parameter configuration: Speech configuration parameters.
+    @objc public init(configuration: SpeechConfiguration) throws {
+        self.configuration = configuration
+        // create a symmetric key using the configured api secret key
+        if let apiSecretEncoded = self.configuration.apiSecret.data(using: .utf8) {
+            self.apiKey = SymmetricKey(data: apiSecretEncoded)
+        } else {
+            throw TextToSpeechErrors.apiKey("Unable to encode apiSecret.")
+        }
+        super.init()
+    }
     
     /// Initializes a new text to speech instance.
     /// - Parameter delegate: Delegate that receives text to speech events.

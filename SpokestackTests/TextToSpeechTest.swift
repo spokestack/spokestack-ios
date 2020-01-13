@@ -54,7 +54,10 @@ class TextToSpeechTest: XCTestCase {
     
     func testSynthesizePublisher() {
         let config = SpeechConfiguration()
-        let tts = TextToSpeech(configuration: config)
+        guard let tts = try? TextToSpeech(configuration: config) else {
+            XCTFail("could not initialize TextToSpeech class")
+            return
+        }
         let input = TextToSpeechInput()
 
         // successful request
