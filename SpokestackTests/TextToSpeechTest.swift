@@ -24,7 +24,7 @@ class TextToSpeechTest: XCTestCase {
         badConfig.apiId = "BADBADNOTGOOD"
         let badTTS = TextToSpeech(delegate, configuration: badConfig)
         delegate.asyncExpectation = didFailConfigExpectation
-        let _: Void = badTTS.synthesize(input)
+        badTTS.synthesize(input)
         wait(for: [didFailConfigExpectation], timeout: 5)
         XCTAssert(delegate.didFail)
         XCTAssertFalse(delegate.didSucceed)
@@ -36,7 +36,7 @@ class TextToSpeechTest: XCTestCase {
         delegate.reset()
         let didSucceedExpectation = expectation(description: "successful request calls TestTextToSpeechDelegate.success")
         delegate.asyncExpectation = didSucceedExpectation
-        let _: Void = tts.synthesize(input)
+        tts.synthesize(input)
         wait(for: [didSucceedExpectation], timeout: 5)
         XCTAssert(delegate.didSucceed)
         XCTAssertFalse(delegate.didFail)
@@ -46,7 +46,7 @@ class TextToSpeechTest: XCTestCase {
         let didSucceedExpectation2 = expectation(description: "successful request calls TestTextToSpeechDelegate.success")
         delegate.asyncExpectation = didSucceedExpectation2
         let ssmlInput = TextToSpeechInput("<speak>Yet right now the average age of this 52nd Parliament is 49 years old, <break time='500ms'/> OK Boomer.</speak>", voice: .demoMale, inputFormat: .ssml)
-        let _: Void = tts.synthesize(ssmlInput)
+        tts.synthesize(ssmlInput)
         wait(for: [didSucceedExpectation2], timeout: 5)
         XCTAssert(delegate.didSucceed)
         XCTAssertFalse(delegate.didFail)

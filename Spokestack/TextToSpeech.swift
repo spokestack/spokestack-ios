@@ -113,65 +113,54 @@ private let apiQueue = DispatchQueue(label: TTSSpeechQueueName, qos: .userInitia
     
     // MARK: Public methods
     
-    /// Maps a list of `TextToSpeechResults`
+    /// Synthesize speech using the provided input parameters and speech configuration. A successful synthesis will return a URL to the streaming audio container of synthesized speech to the `TextToSpeech`'s `delegate`. Maps a list of `TextToSpeechResults`
     /// - Parameter inputs: `Array` of `TextToSpeechInput`
     /// - Returns: `AnyPublisher<[TextToSpeechResult], Error>`
     public func synthesize(_ inputs: Array<TextToSpeechInput>) -> AnyPublisher<[TextToSpeechResult], Error> {
-
-        return Publishers.MergeMany(
-            inputs.map(self.synthesize)
-        )
-        .collect()
-        .eraseToAnyPublisher()
-    }
-    
-    /// Executes a synthesized text-to-speech request from a `TextToSpeechInput` input
-    /// - Parameter input: `TextToSpeechInput`
-    /// - Returns: `AnyPublisher<TextToSpeechResult, Error>`
-    public func synthesize(_ input: TextToSpeechInput) -> AnyPublisher<TextToSpeechResult, Error> {
         
-        /// Since `createSynthesizeRequest` throws it can't be called directly without a publisher
-        /// Using `Just` won't work because errors can't be returned.
-        ///
-        /// Using `Future`allows for the appropriate error to be returned
-        
-        let createSynthesizeRequestFuture = Future<URLRequest, Error> { promise in
-            
-            do {
-                let request = try self.createSynthesizeRequest(input)
-                promise(.success(request))
-            } catch TextToSpeechErrors.apiKey(let message) {
-                promise(.failure(TextToSpeechErrors.apiKey(message)))
-            } catch let error {
-                promise(.failure(error))
-            }
-            
-        }.eraseToAnyPublisher()
-        
-        return
-            createSynthesizeRequestFuture
-            .flatMap{urlRequst in
-                
-                URLSession.shared
-                .dataTaskPublisher(for: urlRequst)
-                .receive(on: apiQueue)
-                .tryMap { data, response -> TextToSpeechResult in
-                    
-                    guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
-                        throw TextToSpeechErrors.deserialization("response cannot be deserialized")
-                    }
-
-                    guard let id = httpResponse.value(forHTTPHeaderField: "x-request-id") else {
-                        throw TextToSpeechErrors.deserialization("response headers did not contain request id")
-                    }
-                    
-                    let body = try self.decoder.decode(TTSTextResponseData.self, from: data)
-                    let result: TextToSpeechResult = TextToSpeechResult(id: id, url: body.data.synthesizeText.url)
-                    
-                    return result
+        // define an internal publishing function to accomplish the synthesis of a single tts input
+        func synthesize(_ input: TextToSpeechInput) -> AnyPublisher<TextToSpeechResult, Error> {
+            /// Since `createSynthesizeRequest` throws it can't be called directly without a publisher
+            /// Using `Just` won't work because errors can't be returned.
+            ///
+            /// Using `Future`allows for the appropriate error to be returned
+            let createSynthesizeRequestFuture = Future<URLRequest, Error> { promise in
+                do {
+                    let request = try self.createSynthesizeRequest(input)
+                    promise(.success(request))
+                } catch TextToSpeechErrors.apiKey(let message) {
+                    promise(.failure(TextToSpeechErrors.apiKey(message)))
+                } catch let error {
+                    promise(.failure(error))
                 }
             }.eraseToAnyPublisher()
+            
+            return
+                createSynthesizeRequestFuture
+                    .flatMap{urlRequst in
+                        URLSession.shared
+                            .dataTaskPublisher(for: urlRequst)
+                            .receive(on: apiQueue)
+                            .tryMap { data, response -> TextToSpeechResult in
+                                guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
+                                    throw TextToSpeechErrors.deserialization("response cannot be deserialized")
+                                }
+                                do {
+                                    let result = try self.createSynthesizeResponse(data: data, response: httpResponse, inputFormat: input.inputFormat)
+                                    return result
+                                }
+                        }
+                }.eraseToAnyPublisher()
+        }
+        
+        // map the list of tts inputs into the internal publishing function and merge the tts results into a list
+        return Publishers.MergeMany(inputs.map(synthesize))
+            .collect()
+            .eraseToAnyPublisher()
     }
+    
+
+    // MARK: Private functions
     
     private func synthesize(input: TextToSpeechInput, success: ((TextToSpeechResult) -> Void)?) {
         let session = URLSession(configuration: URLSessionConfiguration.default)
@@ -196,32 +185,17 @@ private let apiQueue = DispatchQueue(label: TTSSpeechQueueName, qos: .userInitia
                     self.delegate?.failure(error: error)
                 } else {
                     // unwrap the matryoshka doll that is the response body, responding with a failure if any layer is awry
-                    let decoder = JSONDecoder()
                     do {
-                        guard let r = response as? HTTPURLResponse else {
+                        guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
                             self.delegate?.failure(error: TextToSpeechErrors.deserialization("response cannot be deserialized"))
                             return
                         }
-                        guard let data = data else {
-                            self.delegate?.failure(error: TextToSpeechErrors.deserialization("response body had no data"))
+                        guard let d = data else {
+                            self.delegate?.failure(error: TextToSpeechErrors.deserialization("response body has no data"))
                             return
                         }
-                        guard let id = r.value(forHTTPHeaderField: "x-request-id") else {
-                            self.delegate?.failure(error: TextToSpeechErrors.deserialization("response headers did not contain request id"))
-                            return
-                        }
-                        switch input.inputFormat {
-                        case .ssml:
-                            let body = try decoder.decode(TTSSSMLResponseData.self, from: data)
-                            let result = TextToSpeechResult(id: id, url: body.data.synthesizeSsml.url)
-                            success?(result)
-                            break
-                        case .text:
-                            let body = try decoder.decode(TTSTextResponseData.self, from: data)
-                            let result = TextToSpeechResult(id: id, url: body.data.synthesizeText.url)
-                            success?(result)
-                            break
-                        }
+                        let result = try self.createSynthesizeResponse(data: d, response: httpResponse, inputFormat: input.inputFormat)
+                        success?(result)
                     } catch let error {
                         self.delegate?.failure(error: error)
                     }
@@ -230,6 +204,12 @@ private let apiQueue = DispatchQueue(label: TTSSpeechQueueName, qos: .userInitia
         }
         task.resume()
     }
+    
+    private func successHandler(result: TextToSpeechResult) {
+        self.delegate?.success(result: result)
+    }
+    
+    // MARK: Internal functions
     
     internal func createSynthesizeRequest(_ input: TextToSpeechInput) throws -> URLRequest {
         var request = URLRequest(url: URL(string: "https://api.spokestack.io/v1")!)
@@ -272,8 +252,21 @@ private let apiQueue = DispatchQueue(label: TTSSpeechQueueName, qos: .userInitia
         return request
     }
     
-    private func successHandler(result: TextToSpeechResult) {
-        self.delegate?.success(result: result)
+    internal func createSynthesizeResponse(data: Data, response: HTTPURLResponse, inputFormat: TTSInputFormat) throws -> TextToSpeechResult {
+        // unwrap the matryoshka doll that is the response body, responding with a failure if any layer is awry
+        guard let id = response.value(forHTTPHeaderField: "x-request-id") else {
+            throw TextToSpeechErrors.deserialization("response headers did not contain request id")
+        }
+        switch inputFormat {
+        case .ssml:
+            let body = try self.decoder.decode(TTSSSMLResponseData.self, from: data)
+            let result = TextToSpeechResult(id: id, url: body.data.synthesizeSsml.url)
+            return result
+        case .text:
+            let body = try self.decoder.decode(TTSTextResponseData.self, from: data)
+            let result = TextToSpeechResult(id: id, url: body.data.synthesizeText.url)
+            return result
+        }
     }
     
     /// Internal function that must be public for Objective-C compatibility reasons.
@@ -301,6 +294,8 @@ private let apiQueue = DispatchQueue(label: TTSSpeechQueueName, qos: .userInitia
         }
     }
 }
+
+// MARK: Internal data structures
 
 fileprivate struct TTSSSMLResponseURL: Codable {
     let url: URL

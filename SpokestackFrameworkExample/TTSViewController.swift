@@ -158,7 +158,7 @@ class TTSViewController: UIViewController {
         if (text == "") { text = "You didn't enter any text to synthesize." }
         let input = TextToSpeechInput("<speak>\(text)</speak>")
         input.inputFormat = .ssml
-        let _: Void? = self.tts?.synthesize(input)
+        self.tts?.synthesize(input)
     }
     
     @objc func playAction(_ sender: Any) {
