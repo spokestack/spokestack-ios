@@ -101,10 +101,12 @@ import Foundation
     /// Text To Speech API authorization key
     @available(*, deprecated, message: "Authorization key is no longer supported for Text To Speech service, use apiId + apiKey instead.")
     @objc public var authorization: String = "Key f854fbf30a5f40c189ecb1b38bc78059"
-    /// Text To Speech API client identifier.
+    /// Text To Speech API client identifier key.
+    /// - SeeAlso: `TextToSpeech`
     @objc public var apiId: String = "f0bc990c-e9db-4a0c-a2b1-6a6395a3d97e"
-    /// Text To Speech API client secret key
-    @objc public var apiKey: String = "5BD5483F573D691A15CFA493C1782F451D4BD666E39A9E7B2EBE287E6A72C6B6"
+    /// Text To Speech API client secret key.
+    /// - SeeAlso: `TextToSpeech`
+    @objc public var apiSecret: String = "5BD5483F573D691A15CFA493C1782F451D4BD666E39A9E7B2EBE287E6A72C6B6"
     /// Debugging trace levels, for simple filtering.
     @objc public var tracing: Trace.Level = Trace.Level.NONE
 }

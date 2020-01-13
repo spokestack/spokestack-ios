@@ -52,6 +52,36 @@ class TextToSpeechTest: XCTestCase {
         XCTAssertFalse(delegate.didFail)
     }
     
+    func testSynthesizePublisher() {
+        let config = SpeechConfiguration()
+        guard let tts = try? TextToSpeech(configuration: config) else {
+            XCTFail("could not initialize TextToSpeech class")
+            return
+        }
+        let input = TextToSpeechInput()
+
+        // successful request
+        let didCompleteExpectation = expectation(description: "successful request publishes completion")
+        let publisher = tts.synthesize([input])
+            .sink(
+                receiveCompletion: {completion in
+                    switch completion {
+                    case .failure(let error):
+                        XCTFail(error.localizedDescription)
+                        break
+                    case .finished:
+                        didCompleteExpectation.fulfill()
+                        break
+                    }
+            },
+                receiveValue: {result in
+                    XCTAssertTrue(result.count > 0)
+                    XCTAssertNotNil(result.first?.url)
+            })
+        XCTAssertNotNil(publisher)
+        wait(for: [didCompleteExpectation], timeout: 10)
+    }
+    
     /// MARK:  Speak
     func testSpeak() {
         
