@@ -113,7 +113,7 @@ private let apiQueue = DispatchQueue(label: TTSSpeechQueueName, qos: .userInitia
     
     // MARK: Public methods
     
-    /// Synthesize speech using the provided input parameters and speech configuration. A successful synthesis will return a URL to the streaming audio container of synthesized speech to the `TextToSpeech`'s `delegate`. Maps a list of `TextToSpeechResults`
+    /// Synthesize speech using the provided list of inputs. A successful set of synthesises returns a list of synthesis results.
     /// - Parameter inputs: `Array` of `TextToSpeechInput`
     /// - Returns: `AnyPublisher<[TextToSpeechResult], Error>`
     public func synthesize(_ inputs: Array<TextToSpeechInput>) -> AnyPublisher<[TextToSpeechResult], Error> {
