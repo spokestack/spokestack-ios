@@ -107,6 +107,12 @@ import Foundation
     /// Text To Speech API client secret key.
     /// - SeeAlso: `TextToSpeech`
     @objc public var apiSecret: String = "5BD5483F573D691A15CFA493C1782F451D4BD666E39A9E7B2EBE287E6A72C6B6"
+    /// The filesystem path to the vocabulary used for tokenizer encoding.
+    /// - SeeAlso: `Tokenizer`
+    @objc public var vocabularyPath: String = "vocab.txt"
+    /// The filesystem path to the machine learning model for Natural Language Understanding processing.
+    /// - SeeAlso: `NaturalLanguageUnderstanding`
+    @objc public var nluModelPath: String = "nlu.tflite"
     /// Debugging trace levels, for simple filtering.
     @objc public var tracing: Trace.Level = Trace.Level.NONE
 }

@@ -63,3 +63,14 @@ enum TextToSpeechErrors: Error {
     /// The speak command could not be executed.
     case speak(String)
 }
+
+enum TokenizerError: Error {
+    case tooLong(String)
+    case invalidConfiguration(String)
+}
+
+public enum NLUError: Error {
+    case invalidConfiguration(String)
+    case tokenizer(String)
+    case model(String)
+}
