@@ -83,31 +83,29 @@ import TensorFlowLite
                 try model.copy(Data($0), toInputAt: InputTensors.input.rawValue)})
         try model.invoke()
         let encodedIntentsTensor = try model.output(at: OutputTensors.intent.rawValue)
-        let encodedIntents = encodedIntentsTensor.data.withUnsafeBytes({ (pointer: UnsafeRawBufferPointer) -> [Int] in
-            Array<Int>(UnsafeBufferPointer(start: pointer.bindMemory(to: Int.self).baseAddress, count: encodedIntentsTensor.data.count))
+        let encodedIntents = encodedIntentsTensor.data.withUnsafeBytes({ (pointer: UnsafeRawBufferPointer) -> [Float32] in
+            Array<Float32>(UnsafeBufferPointer(start: pointer.bindMemory(to: Float32.self).baseAddress, count: encodedIntentsTensor.data.count))
         })
-        let intents = try tokenizer.decode(encodedIntents)
-        let intent = try tokenizer.decodeAndDetokenize(encodedIntents)
+        let intentsArgmax = encodedIntents.argmax()
+        let intent = try tokenizer.decodeAndDetokenize([intentsArgmax.0])
         let encodedTagTensor = try model.output(at: OutputTensors.tag.rawValue)
-        let encodedTags = encodedTagTensor.data.withUnsafeBytes({ (pointer: UnsafeRawBufferPointer) -> [Int] in
-            Array<Int>(UnsafeBufferPointer(start: pointer.bindMemory(to: Int.self).baseAddress, count: encodedTagTensor.data.count))
+        let encodedTags = encodedTagTensor.data.withUnsafeBytes({ (pointer: UnsafeRawBufferPointer) -> [Float32] in
+            Array<Float32>(UnsafeBufferPointer(start: pointer.bindMemory(to: Float32.self).baseAddress, count: encodedTagTensor.data.count))
         })
-        let decodedTags = try tokenizer.decode(encodedTags)
-        let slots = Dictionary(decodedTags.map({ ($0, Slot(type: $0, value: NSNumber(0))) })) { first, _ in first }
-        return Prediction(intent: intents.first!, confidence: 0.0, slots: slots, tags: decodedTags)
+        let tagsArgsmax = encodedTags.argmax()
+        let tag = try tokenizer.decodeAndDetokenize([tagsArgsmax.0])
+        return Prediction(intent: intent, confidence: intentsArgmax.1, slots: [:])
     }
 }
 
 @objc public class Prediction: NSObject {
     @objc public var intent: String
     @objc public var confidence: Float
-    @objc public var tags: [String]
     @objc public var slots: [String:Slot]
-    public init(intent: String, confidence: Float, slots: [String:Slot], tags: [String]) {
+    public init(intent: String, confidence: Float, slots: [String:Slot]) {
         self.intent = intent
         self.confidence = confidence
         self.slots = slots
-        self.tags = tags
     }
 }
 
