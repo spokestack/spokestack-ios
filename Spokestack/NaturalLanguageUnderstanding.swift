@@ -83,15 +83,11 @@ import TensorFlowLite
                 try model.copy(Data($0), toInputAt: InputTensors.input.rawValue)})
         try model.invoke()
         let encodedIntentsTensor = try model.output(at: OutputTensors.intent.rawValue)
-        let encodedIntents = encodedIntentsTensor.data.withUnsafeBytes({ (pointer: UnsafeRawBufferPointer) -> [Float32] in
-            Array<Float32>(UnsafeBufferPointer(start: pointer.bindMemory(to: Float32.self).baseAddress, count: encodedIntentsTensor.data.count))
-        })
+        let encodedIntents = encodedIntentsTensor.data.toArray(type: Float32.self, count: encodedIntentsTensor.data.count)
         let intentsArgmax = encodedIntents.argmax()
         let intent = try tokenizer.decodeAndDetokenize([intentsArgmax.0])
         let encodedTagTensor = try model.output(at: OutputTensors.tag.rawValue)
-        let encodedTags = encodedTagTensor.data.withUnsafeBytes({ (pointer: UnsafeRawBufferPointer) -> [Float32] in
-            Array<Float32>(UnsafeBufferPointer(start: pointer.bindMemory(to: Float32.self).baseAddress, count: encodedTagTensor.data.count))
-        })
+        let encodedTags = encodedTagTensor.data.toArray(type: Float32.self, count: encodedTagTensor.data.count)
         let tagsArgsmax = encodedTags.argmax()
         let tag = try tokenizer.decodeAndDetokenize([tagsArgsmax.0])
         return Prediction(intent: intent, confidence: intentsArgmax.1, slots: [:])
