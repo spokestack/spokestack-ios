@@ -85,6 +85,9 @@
 		59E895A123E0B45900C424D3 /* vocab.txt in Resources */ = {isa = PBXBuildFile; fileRef = 59E895A023E0B45800C424D3 /* vocab.txt */; };
 		59E895A323E0F44900C424D3 /* Array+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59E895A223E0F44900C424D3 /* Array+Extensions.swift */; };
 		59E895A423E0F44900C424D3 /* Array+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59E895A223E0F44900C424D3 /* Array+Extensions.swift */; };
+		59E895A623E2140400C424D3 /* NLUModelMetadata.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59E895A523E2140400C424D3 /* NLUModelMetadata.swift */; };
+		59E895A723E2140400C424D3 /* NLUModelMetadata.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59E895A523E2140400C424D3 /* NLUModelMetadata.swift */; };
+		59E895A923E3831200C424D3 /* nlu.json in Resources */ = {isa = PBXBuildFile; fileRef = 59E895A823E3831200C424D3 /* nlu.json */; };
 		59ECA8C823C939AA003CDB57 /* TextToSpeechResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01D972BB23C592A00002FF79 /* TextToSpeechResult.swift */; };
 		59EF51BF233013A9006BA0BD /* AppleSpeechRecognizerTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59EF51BE233013A9006BA0BD /* AppleSpeechRecognizerTest.swift */; };
 		59EF51C123328D57006BA0BD /* AppleWakewordRecognizerTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59EF51C023328D57006BA0BD /* AppleWakewordRecognizerTest.swift */; };
@@ -201,6 +204,8 @@
 		59E8959E23E0AE5C00C424D3 /* NLUViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NLUViewController.swift; sourceTree = "<group>"; };
 		59E895A023E0B45800C424D3 /* vocab.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = vocab.txt; sourceTree = "<group>"; };
 		59E895A223E0F44900C424D3 /* Array+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Array+Extensions.swift"; sourceTree = "<group>"; };
+		59E895A523E2140400C424D3 /* NLUModelMetadata.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NLUModelMetadata.swift; sourceTree = "<group>"; };
+		59E895A823E3831200C424D3 /* nlu.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = nlu.json; sourceTree = "<group>"; };
 		59EF51BE233013A9006BA0BD /* AppleSpeechRecognizerTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppleSpeechRecognizerTest.swift; sourceTree = "<group>"; };
 		59EF51C023328D57006BA0BD /* AppleWakewordRecognizerTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppleWakewordRecognizerTest.swift; sourceTree = "<group>"; };
 		59EF51C22332E57B006BA0BD /* Frame.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Frame.swift; sourceTree = "<group>"; };
@@ -248,6 +253,7 @@
 		011C191E216BCA3200DB36FD /* SpokestackFrameworkExample */ = {
 			isa = PBXGroup;
 			children = (
+				59E895A823E3831200C424D3 /* nlu.json */,
 				59E895A023E0B45800C424D3 /* vocab.txt */,
 				59E8959C23E0AD0300C424D3 /* nlu.tflite */,
 				59E0E13B230DEB7C0060F012 /* Detect.lite */,
@@ -373,6 +379,7 @@
 				596567802384AA1100CFCE23 /* TextToSpeechInput.swift */,
 				01D972BB23C592A00002FF79 /* TextToSpeechResult.swift */,
 				59E8959723DA0B4A00C424D3 /* Tokenizer.swift */,
+				59E895A523E2140400C424D3 /* NLUModelMetadata.swift */,
 			);
 			name = Models;
 			sourceTree = "<group>";
@@ -607,6 +614,7 @@
 			files = (
 				59E0E13E230DEB7C0060F012 /* Detect.lite in Resources */,
 				59E0E140230DEB7C0060F012 /* Filter.lite in Resources */,
+				59E895A923E3831200C424D3 /* nlu.json in Resources */,
 				59E895A123E0B45900C424D3 /* vocab.txt in Resources */,
 				011C192A216BCA3200DB36FD /* LaunchScreen.storyboard in Resources */,
 				59E8959D23E0AD0300C424D3 /* nlu.tflite in Resources */,
@@ -738,6 +746,7 @@
 				5937579322D5281900AA7516 /* VADDelegate.swift in Sources */,
 				591BCDA323D26077009681D6 /* NaturalLanguageUnderstanding.swift in Sources */,
 				5967108E21F7AE6B00CBFC88 /* AppleSpeechRecognizer.swift in Sources */,
+				59E895A623E2140400C424D3 /* NLUModelMetadata.swift in Sources */,
 				5936594C2209EA1800C0365F /* SpeechProcessor.swift in Sources */,
 				594154B822F8AD2200E3624E /* TFLiteWakewordRecognizer.swift in Sources */,
 				59FB0C8B22AEE4F100FB9662 /* Data+Extensions.swift in Sources */,
@@ -790,6 +799,7 @@
 				59A8DBFB2384AC0500F97700 /* TextToSpeechInput.swift in Sources */,
 				59E8959B23DB7A0B00C424D3 /* TokenizerTest.swift in Sources */,
 				59C2AFE52319CED100E47AC5 /* AppleSpeechRecognizer.swift in Sources */,
+				59E895A723E2140400C424D3 /* NLUModelMetadata.swift in Sources */,
 				59C2AFDB2319CE5800E47AC5 /* SpeechConfiguration.swift in Sources */,
 				59E8959923DA0B4A00C424D3 /* Tokenizer.swift in Sources */,
 				59EF51C32332E57B006BA0BD /* Frame.swift in Sources */,

@@ -113,6 +113,9 @@ import Foundation
     /// The filesystem path to the machine learning model for Natural Language Understanding processing.
     /// - SeeAlso: `NaturalLanguageUnderstanding`
     @objc public var nluModelPath: String = "nlu.tflite"
+    /// The filesystem path to the model metadata for Natural Language Understanding processing.
+    /// - SeeAlso: `NaturalLanguageUnderstanding`
+    @objc public var nluModelMetadataPath: String = "nlu.json"
     /// Debugging trace levels, for simple filtering.
     @objc public var tracing: Trace.Level = Trace.Level.NONE
 }

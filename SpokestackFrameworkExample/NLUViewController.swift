@@ -78,6 +78,12 @@ class NLUViewController: UIViewController {
             return
         }
         self.configuration.vocabularyPath = vocabPath
+        
+        guard let metadataPath = Bundle(for: type(of: self)).path(forResource: "nlu", ofType: "json") else {
+            print("could not find nlu.json in bundle \(self.debugDescription)")
+            return
+        }
+        self.configuration.nluModelMetadataPath = metadataPath
 
         self.nlu = NaturalLanguageUnderstanding(self, configuration: configuration)
     }

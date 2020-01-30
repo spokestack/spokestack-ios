@@ -73,4 +73,5 @@ public enum NLUError: Error {
     case invalidConfiguration(String)
     case tokenizer(String)
     case model(String)
+    case metadata(String)
 }

@@ -16,6 +16,7 @@ import TensorFlowLite
     
     private var interpreter: Interpreter?
     private var tokenizer: Tokenizer?
+    private var metadata: NLUModelMeta?
     
     internal enum InputTensors: Int, CaseIterable {
         case input
@@ -31,18 +32,20 @@ import TensorFlowLite
         super.init()
         try self.initalizeInterpreter()
         self.tokenizer = Tokenizer(configuration)
+        self.metadata = try NLUModelMeta(configuration)
     }
     
     @objc public init(_ delegate: NLUDelegate, configuration: SpeechConfiguration) {
         self.delegate = delegate
         self.configuration = configuration
+        self.tokenizer = Tokenizer(configuration)
         super.init()
         do {
             try self.initalizeInterpreter()
+            self.metadata = try NLUModelMeta(configuration)
         } catch let error {
             self.delegate?.failure(error: error)
         }
-        self.tokenizer = Tokenizer(configuration)
     }
     
     private func initalizeInterpreter() throws {
@@ -76,7 +79,11 @@ import TensorFlowLite
         guard let tokenizer = self.tokenizer else {
             throw NLUError.tokenizer("Tokenizer was not initialized.")
         }
+        guard let metadata = self.metadata else {
+            throw NLUError.metadata("Metadata was not initialized.")
+        }
         let inputIds = try tokenizer.tokenizeAndEncode(input)
+        //  encode the inputs, but first concat zeros on the end of the utterance up to the expected input size
         let encodedInputs = inputIds + Array(repeating: 0, count: 64 - inputIds.count)
         _ = try encodedInputs
             .withUnsafeBytes({
@@ -85,34 +92,12 @@ import TensorFlowLite
         let encodedIntentsTensor = try model.output(at: OutputTensors.intent.rawValue)
         let encodedIntents = encodedIntentsTensor.data.toArray(type: Float32.self, count: encodedIntentsTensor.data.count)
         let intentsArgmax = encodedIntents.argmax()
-        let intent = try tokenizer.decodeAndDetokenize([intentsArgmax.0])
+        let intent = metadata.model.intents[(intentsArgmax.0)]
         let encodedTagTensor = try model.output(at: OutputTensors.tag.rawValue)
         let encodedTags = encodedTagTensor.data.toArray(type: Float32.self, count: encodedTagTensor.data.count)
         let tagsArgsmax = encodedTags.argmax()
         let tag = try tokenizer.decodeAndDetokenize([tagsArgsmax.0])
-        return Prediction(intent: intent, confidence: intentsArgmax.1, slots: [:])
-    }
-}
-
-@objc public class Prediction: NSObject {
-    @objc public var intent: String
-    @objc public var confidence: Float
-    @objc public var slots: [String:Slot]
-    public init(intent: String, confidence: Float, slots: [String:Slot]) {
-        self.intent = intent
-        self.confidence = confidence
-        self.slots = slots
-    }
-}
-
-@objc public class Slot: NSObject {
-    @objc public var type: String
-    @objc public var value: Any?
-    
-    public init(type: String, value: Any) {
-        self.type = type
-        self.value = value
-        super.init()
+        return Prediction(intent: intent.name, confidence: intentsArgmax.1, slots: [:])
     }
 }
 
@@ -127,5 +112,3 @@ import TensorFlowLite
     /// - Parameter error: The error representing the TTS response.
     func failure(error: Error) -> Void
 }
-
-typealias NLU = NaturalLanguageUnderstanding
