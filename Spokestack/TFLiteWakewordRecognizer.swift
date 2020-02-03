@@ -311,7 +311,7 @@ public class TFLiteWakewordRecognizer: NSObject {
                     }
                 }
                 
-                /// send frameWinodw to encoding model
+                /// send frameWindow to encoding model
                 try self.encode()
             } else {
                 throw WakewordModelError.filter("model was not initialized")

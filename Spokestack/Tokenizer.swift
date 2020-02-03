@@ -9,7 +9,7 @@
 import Foundation
 
 public class Tokenizer {
-    private let maxTokenLength = 128
+    public let maxTokenLength = 128
     private let minVocabLength = 2
     private var encodings: [String: Int] = [:]
     private var decodings: [Int: String] = [:]

@@ -105,7 +105,7 @@ class NLUViewController: UIViewController {
 
 extension NLUViewController: NLUDelegate {
     func prediction(prediction: Prediction) {
-        print("Prediction: \(prediction)")
+        print("Prediction: \(prediction.intent) \(prediction.confidence) \(prediction.slots)")
     }
     
     func didTrace(_ trace: String) {

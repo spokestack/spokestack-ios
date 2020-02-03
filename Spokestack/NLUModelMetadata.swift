@@ -40,7 +40,6 @@ internal struct NLUModelMeta {
         let metadataURL = URL(fileURLWithPath: configuration.nluModelMetadataPath)
         let metaData = try Data(contentsOf: metadataURL)
         guard let metadata = try? JSONDecoder().decode(NLUModelMetadata.self, from: metaData) else {
-        //try JSONSerialization.jsonObject(with: metaData, options: []) as? [String: Any] else {
             throw NLUError.metadata("Could not parse model metadata file set at nluModelMetadataPath.")
         }
         self.model = metadata
@@ -60,7 +59,7 @@ internal struct NLUModelIntent: Codable {
 internal struct NLUModelSlot: Codable {
     let name: String
     let type: String
-    let selections: [NLUModelSelset]
+    let selections: [NLUModelSelset]?
 }
 
 internal struct NLUModelSelset: Codable {
