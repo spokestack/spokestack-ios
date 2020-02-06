@@ -15,7 +15,7 @@ import TensorFlowLite
     @objc public var delegate: NLUDelegate?
     
     private var interpreter: Interpreter?
-    private var tokenizer: Tokenizer?
+    private var tokenizer: BertTokenizer?
     private var metadata: NLUModelMeta?
     
     internal enum InputTensors: Int, CaseIterable {
@@ -31,16 +31,16 @@ import TensorFlowLite
         self.configuration = configuration
         super.init()
         try self.initializeInterpreter()
-        self.tokenizer = Tokenizer(configuration)
+        self.tokenizer = try BertTokenizer(configuration)
         self.metadata = try NLUModelMeta(configuration)
     }
     
     @objc public init(_ delegate: NLUDelegate, configuration: SpeechConfiguration) {
         self.delegate = delegate
         self.configuration = configuration
-        self.tokenizer = Tokenizer(configuration)
         super.init()
         do {
+            self.tokenizer = try BertTokenizer(configuration)
             try self.initializeInterpreter()
             self.metadata = try NLUModelMeta(configuration)
         } catch let error {

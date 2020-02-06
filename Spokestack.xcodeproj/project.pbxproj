@@ -44,6 +44,8 @@
 		596567812384AA1100CFCE23 /* TextToSpeechInput.swift in Sources */ = {isa = PBXBuildFile; fileRef = 596567802384AA1100CFCE23 /* TextToSpeechInput.swift */; };
 		5967108E21F7AE6B00CBFC88 /* AppleSpeechRecognizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5967108D21F7AE6B00CBFC88 /* AppleSpeechRecognizer.swift */; };
 		596B82482384A097004BAEF4 /* TextToSpeech.swift in Sources */ = {isa = PBXBuildFile; fileRef = 596B82472384A097004BAEF4 /* TextToSpeech.swift */; };
+		59930E6423E8DE5C00A45E4D /* BertTokenizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59930E6323E8DE5C00A45E4D /* BertTokenizer.swift */; };
+		59930E6523E8DE5C00A45E4D /* BertTokenizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59930E6323E8DE5C00A45E4D /* BertTokenizer.swift */; };
 		59A0D5C02204E786003709C3 /* AppleASRViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59A0D5BD2204E786003709C3 /* AppleASRViewController.swift */; };
 		59A0D5C22204E786003709C3 /* AppleWakewordViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59A0D5BF2204E786003709C3 /* AppleWakewordViewController.swift */; };
 		59A0D5C42204E799003709C3 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 59A0D5C32204E799003709C3 /* Assets.xcassets */; };
@@ -77,8 +79,6 @@
 		59E0E13E230DEB7C0060F012 /* Detect.lite in Resources */ = {isa = PBXBuildFile; fileRef = 59E0E13B230DEB7C0060F012 /* Detect.lite */; };
 		59E0E13F230DEB7C0060F012 /* Encode.lite in Resources */ = {isa = PBXBuildFile; fileRef = 59E0E13C230DEB7C0060F012 /* Encode.lite */; };
 		59E0E140230DEB7C0060F012 /* Filter.lite in Resources */ = {isa = PBXBuildFile; fileRef = 59E0E13D230DEB7C0060F012 /* Filter.lite */; };
-		59E8959823DA0B4A00C424D3 /* Tokenizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59E8959723DA0B4A00C424D3 /* Tokenizer.swift */; };
-		59E8959923DA0B4A00C424D3 /* Tokenizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59E8959723DA0B4A00C424D3 /* Tokenizer.swift */; };
 		59E8959B23DB7A0B00C424D3 /* TokenizerTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59E8959A23DB7A0B00C424D3 /* TokenizerTest.swift */; };
 		59E8959D23E0AD0300C424D3 /* nlu.tflite in Resources */ = {isa = PBXBuildFile; fileRef = 59E8959C23E0AD0300C424D3 /* nlu.tflite */; };
 		59E8959F23E0AE5C00C424D3 /* NLUViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59E8959E23E0AE5C00C424D3 /* NLUViewController.swift */; };
@@ -181,6 +181,7 @@
 		596567802384AA1100CFCE23 /* TextToSpeechInput.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextToSpeechInput.swift; sourceTree = "<group>"; };
 		5967108D21F7AE6B00CBFC88 /* AppleSpeechRecognizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppleSpeechRecognizer.swift; sourceTree = "<group>"; };
 		596B82472384A097004BAEF4 /* TextToSpeech.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TextToSpeech.swift; sourceTree = "<group>"; };
+		59930E6323E8DE5C00A45E4D /* BertTokenizer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BertTokenizer.swift; sourceTree = "<group>"; };
 		59A0D5BD2204E786003709C3 /* AppleASRViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppleASRViewController.swift; sourceTree = "<group>"; };
 		59A0D5BF2204E786003709C3 /* AppleWakewordViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppleWakewordViewController.swift; sourceTree = "<group>"; };
 		59A0D5C32204E799003709C3 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -198,7 +199,6 @@
 		59E0E13B230DEB7C0060F012 /* Detect.lite */ = {isa = PBXFileReference; lastKnownFileType = file; path = Detect.lite; sourceTree = "<group>"; };
 		59E0E13C230DEB7C0060F012 /* Encode.lite */ = {isa = PBXFileReference; lastKnownFileType = file; path = Encode.lite; sourceTree = "<group>"; };
 		59E0E13D230DEB7C0060F012 /* Filter.lite */ = {isa = PBXFileReference; lastKnownFileType = file; path = Filter.lite; sourceTree = "<group>"; };
-		59E8959723DA0B4A00C424D3 /* Tokenizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tokenizer.swift; sourceTree = "<group>"; };
 		59E8959A23DB7A0B00C424D3 /* TokenizerTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TokenizerTest.swift; sourceTree = "<group>"; };
 		59E8959C23E0AD0300C424D3 /* nlu.tflite */ = {isa = PBXFileReference; lastKnownFileType = file; path = nlu.tflite; sourceTree = "<group>"; };
 		59E8959E23E0AE5C00C424D3 /* NLUViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NLUViewController.swift; sourceTree = "<group>"; };
@@ -369,6 +369,7 @@
 		01D31F6C216BAFCD0055FD45 /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				59930E6323E8DE5C00A45E4D /* BertTokenizer.swift */,
 				59FB0C8E22B0682900FB9662 /* FFT.swift */,
 				59FB0C8C22B0640700FB9662 /* RingBuffer.swift */,
 				01D31F6D216BAFD90055FD45 /* SpeechContext.swift */,
@@ -378,7 +379,6 @@
 				59E0E1362301F0A80060F012 /* Trace.swift */,
 				596567802384AA1100CFCE23 /* TextToSpeechInput.swift */,
 				01D972BB23C592A00002FF79 /* TextToSpeechResult.swift */,
-				59E8959723DA0B4A00C424D3 /* Tokenizer.swift */,
 				59E895A523E2140400C424D3 /* NLUModelMetadata.swift */,
 			);
 			name = Models;
@@ -729,11 +729,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				59365948220889EE00C0365F /* AppleWakewordRecognizer.swift in Sources */,
-				59E8959823DA0B4A00C424D3 /* Tokenizer.swift in Sources */,
 				5942C4352384764900EC0B13 /* TextToSpeechDelegate.swift in Sources */,
 				596B82482384A097004BAEF4 /* TextToSpeech.swift in Sources */,
 				01D31F6F216BAFD90055FD45 /* SpeechContext.swift in Sources */,
 				59E0E1372301F0A80060F012 /* Trace.swift in Sources */,
+				59930E6423E8DE5C00A45E4D /* BertTokenizer.swift in Sources */,
 				59E0E13522FE2C2B0060F012 /* SignalProcessing.swift in Sources */,
 				59A0D5C72204E8E4003709C3 /* SpeechConfiguration.swift in Sources */,
 				59FB0C8D22B0640700FB9662 /* RingBuffer.swift in Sources */,
@@ -768,6 +768,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				59C2AFE02319CEA100E47AC5 /* AppleWakewordRecognizer.swift in Sources */,
+				59930E6523E8DE5C00A45E4D /* BertTokenizer.swift in Sources */,
 				59D78F612322EAE000728A98 /* SpeechPipelineTest.swift in Sources */,
 				59C2AFEA2319CF8A00E47AC5 /* Data+Extensions.swift in Sources */,
 				59C2AFE22319CEAE00E47AC5 /* TFLiteWakewordRecognizer.swift in Sources */,
@@ -801,7 +802,6 @@
 				59C2AFE52319CED100E47AC5 /* AppleSpeechRecognizer.swift in Sources */,
 				59E895A723E2140400C424D3 /* NLUModelMetadata.swift in Sources */,
 				59C2AFDB2319CE5800E47AC5 /* SpeechConfiguration.swift in Sources */,
-				59E8959923DA0B4A00C424D3 /* Tokenizer.swift in Sources */,
 				59EF51C32332E57B006BA0BD /* Frame.swift in Sources */,
 				59EF51BF233013A9006BA0BD /* AppleSpeechRecognizerTest.swift in Sources */,
 				01D31F67216BAFB50055FD45 /* Error.swift in Sources */,
