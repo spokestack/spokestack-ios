@@ -17,6 +17,9 @@ import TensorFlowLite
     private var interpreter: Interpreter?
     private var tokenizer: BertTokenizer?
     private var metadata: NLUModelMeta?
+    private var terminatorToken: Int
+    private var paddingToken: Int
+    private var maxTokenLength: Int?
     
     internal enum InputTensors: Int, CaseIterable {
         case input
@@ -29,22 +32,40 @@ import TensorFlowLite
     
     @objc public init(configuration: SpeechConfiguration) throws {
         self.configuration = configuration
+        self.terminatorToken = configuration.nluTerminatorTokenIndex
+        self.paddingToken = configuration.nluPaddingTokenIndex
         super.init()
         try self.initializeInterpreter()
+        guard let model = self.interpreter else {
+            throw NLUError.model("NLU model was not initialized.")
+        }
+        let inputTensor = try model.input(at: InputTensors.input.rawValue)
+        let inputMaxTokenLength =         inputTensor.shape.dimensions[InputTensors.input.rawValue]
+        self.maxTokenLength = inputMaxTokenLength
         self.tokenizer = try BertTokenizer(configuration)
+        self.tokenizer?.maxTokenLength = inputMaxTokenLength
         self.metadata = try NLUModelMeta(configuration)
     }
     
-    @objc public init(_ delegate: NLUDelegate, configuration: SpeechConfiguration) {
+    @objc public init(_ delegate: NLUDelegate, configuration: SpeechConfiguration) throws {
         self.delegate = delegate
         self.configuration = configuration
-        super.init()
+        self.terminatorToken = configuration.nluTerminatorTokenIndex
+        self.paddingToken = configuration.nluPaddingTokenIndex
         do {
-            self.tokenizer = try BertTokenizer(configuration)
+            super.init()
             try self.initializeInterpreter()
+            guard let model = self.interpreter else {
+                throw NLUError.model("NLU model was not initialized.")
+            }
+            let inputTensor = try model.input(at: InputTensors.input.rawValue)
+            let inputMaxTokenLength = inputTensor.shape.dimensions[1]
+            self.maxTokenLength = inputMaxTokenLength
+            self.tokenizer = try BertTokenizer(configuration)
+            self.tokenizer?.maxTokenLength = inputMaxTokenLength
             self.metadata = try NLUModelMeta(configuration)
         } catch let error {
-            self.delegate?.failure(error: error)
+            delegate.failure(error: error)
         }
     }
     
@@ -82,10 +103,15 @@ import TensorFlowLite
         guard let metadata = self.metadata else {
             throw NLUError.metadata("Metadata was not initialized.")
         }
-        let inputIds = try tokenizer.tokenizeAndEncode(input)
-        //  encode the inputs, but first concat zeros on the end of the utterance up to the expected input size (128 32-bit ints)
-        let encodedInputs = inputIds + Array(repeating: 0, count: tokenizer.maxTokenLength/2 - inputIds.count)
-        _ = try encodedInputs
+        guard let maxInputTokenLength = self.maxTokenLength else {
+            throw NLUError.invalidConfiguration("NLU model maximum input tokens length was not set.")
+        }
+        //  encode the input, terminate the utterance with the terminator token, and  pad from the end of the utterance up to the expected input size (128 32-bit ints)
+        var encodedInput = try tokenizer.tokenizeAndEncode(input)
+        encodedInput.append(self.terminatorToken)
+        encodedInput += Array(repeating: self.paddingToken, count: maxInputTokenLength - encodedInput.count)
+        let downcastEncodedInput = encodedInput.map({ Int32(truncatingIfNeeded: $0) })
+        _ = try downcastEncodedInput
             .withUnsafeBytes({
                 try model.copy(Data($0), toInputAt: InputTensors.input.rawValue)})
         try model.invoke()
@@ -98,17 +124,28 @@ import TensorFlowLite
         let intent = metadata.model.intents[intentsArgmax.0]
         let encodedTagTensor = try model.output(at: OutputTensors.tag.rawValue)
         let encodedTags = encodedTagTensor.data.toArray(type: Float32.self, count: encodedTagTensor.data.count/4)
-        let encodedTagsByInputSize = encodedInputs.map({ _ in Array(encodedTags.prefix(through: inputIds.count)).argmax() }) // [(index, value)] of an encoded tag
-        let tagsByInput = encodedTagsByInputSize.map(
-        { metadata.model.tags[$0.0] })
-        let inputTagged = zip(inputIds, tagsByInput) // input:String, tag:String tuple
+        let encodedTagsArgmax = stride(from: 0,
+                                       to: encodedTags.count,
+                                       by: metadata.model.tags.count)
+            .map({
+                Array(encodedTags[$0..<$0+metadata.model.tags.count]).argmax()
+                
+            })
+        let tagsByInput = encodedTagsArgmax.map(
+        {
+            metadata.model.tags[$0.0]
+        })
+        let inputTagged = zip(encodedInput, tagsByInput) // input:String, tag:String tuple
         let slots = try inputTagged.reduce([:], { (dict, inputTag) in
-            let name = inputTag.1
+            var filterName = inputTag.1
+            if let prefixIndex = filterName.range(of: "_")?.upperBound {
+                filterName = String(filterName.suffix(from: prefixIndex))
+            }
             let value = try tokenizer.decodeAndDetokenize([inputTag.0])
-            guard let type = intent.slots.filter({ $0.name == name.suffix(name.range(of: "_", options: .backwards)?.lowerBound.hashValue ?? 0) }).first?.type else {
+            guard let type = intent.slots.filter({ $0.name == filterName }).first?.type else {
                 return dict
             }
-            return [name : Slot(type: type, value: value)]
+            return [filterName : Slot(type: type, value: value)]
         }) as [String:Slot]
         return Prediction(intent: intent.name, confidence: intentsArgmax.1, slots: slots)
     }

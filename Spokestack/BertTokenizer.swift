@@ -107,7 +107,7 @@ public struct WordpieceTokenizer: Tokenizer {
 }
 
 public class BertTokenizer {
-    public let maxTokenLength = 128
+    public var maxTokenLength: Int?
     private let minVocabLength = 2
     private var encodings: [String: Int] = [:]
     private var decodings: [Int: String] = [:]
@@ -117,7 +117,7 @@ public class BertTokenizer {
     
     public init(_ config: SpeechConfiguration) throws {
         self.config = config
-        let vocab = try String(contentsOfFile: config.vocabularyPath)
+        let vocab = try String(contentsOfFile: config.nluVocabularyPath)
         let tokens = vocab.split(separator: "\n").map { String($0) }
         for (id, token) in tokens.enumerated() {
             self.encodings[token] = id
@@ -132,8 +132,11 @@ public class BertTokenizer {
     
     /// let encodedText = encode(tokenize(text))
     public func encode(_ tokens: [String]) throws -> [Int] {
-        if tokens.count > self.maxTokenLength {
-            throw TokenizerError.tooLong("This model cannot encode (\(tokens.count) tokens. The maximum number it can encode is \(self.maxTokenLength).")
+        guard let maxLength = self.maxTokenLength else {
+            throw TokenizerError.invalidConfiguration("NLU model maximum input tokens length was not set.")
+        }
+        if tokens.count > maxLength {
+            throw TokenizerError.tooLong("This model cannot encode (\(tokens.count) tokens. The maximum number it can encode is \(maxLength).")
         }
         if (self.encodings.underestimatedCount < minVocabLength) {
             throw TokenizerError.invalidConfiguration("Vocaubulary encodings not loaded. Please check SpeechConfiguration.nluEncodings.")

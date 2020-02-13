@@ -77,7 +77,7 @@ class NLUViewController: UIViewController {
             print("could not find vocab.txt in bundle \(self.debugDescription)")
             return
         }
-        self.configuration.vocabularyPath = vocabPath
+        self.configuration.nluVocabularyPath = vocabPath
         
         guard let metadataPath = Bundle(for: type(of: self)).path(forResource: "nlu", ofType: "json") else {
             print("could not find nlu.json in bundle \(self.debugDescription)")
@@ -85,7 +85,7 @@ class NLUViewController: UIViewController {
         }
         self.configuration.nluModelMetadataPath = metadataPath
 
-        self.nlu = NaturalLanguageUnderstanding(self, configuration: configuration)
+        self.nlu = try! NaturalLanguageUnderstanding(self, configuration: configuration)
     }
     
     @objc func dismissViewController(_ sender: Any?) -> Void {
@@ -96,7 +96,7 @@ class NLUViewController: UIViewController {
 
     @objc func predictAction(_ sender: Any) {
         var text = self.nluInput.text ?? ""
-        if (text == "") { text = "yes I would" }
+        if (text == "") { text = "turn the lights on in the kitchen" }
         self.nlu?.predict(text)
     }
 }
