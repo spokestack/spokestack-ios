@@ -8,31 +8,7 @@
 
 import Foundation
 
-public protocol Tokenizer {
-    func tokenize(_ text: String) -> [String]
-    func detokenize(_ tokens: [String]) throws -> String
-}
-
-public struct AppleTokenizer: Tokenizer {
-    public func tokenize(_ text: String) -> [String] {
-        let normalizedText = text.folding(options: [.diacriticInsensitive, .caseInsensitive], locale: Locale(identifier: "en-US"))
-        var tokens: [String] = []
-        let tagger = NSLinguisticTagger(tagSchemes: [.tokenType], options: 0)
-        tagger.string = normalizedText
-        let range = NSRange(location: 0, length: normalizedText.utf16.count)
-        let options: NSLinguisticTagger.Options = [.omitWhitespace]
-        tagger.enumerateTags(in: range, unit: .word, scheme: .tokenType, options: options) {
-            _, range, _ in
-            let token = (normalizedText as NSString).substring(with: range)
-            tokens.append(token)
-        }
-        return tokens
-    }
-    
-    public func detokenize(_ tokens: [String]) throws -> String {
-        return tokens.joined(separator: " ")
-    }
-}
+/// MARK: BasicTokenizer
 
 public struct BasicTokenizer: Tokenizer {
     public func tokenize(_ text: String) -> [String] {
@@ -57,6 +33,8 @@ public struct BasicTokenizer: Tokenizer {
         return tokens.joined(separator: " ")
     }
 }
+
+/// MARK: WordpieceTokenizer
 
 public struct WordpieceTokenizer: Tokenizer {
     private let encodings: [String: Int]
@@ -105,6 +83,8 @@ public struct WordpieceTokenizer: Tokenizer {
         })
     }
 }
+
+/// MARK: BertTokenizer
 
 public class BertTokenizer {
     public var maxTokenLength: Int?
