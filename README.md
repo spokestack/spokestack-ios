@@ -63,6 +63,7 @@ API reference is [available on Github](https://spokestack.github.io/spokestack-i
 
 ### Preconditions
 
+  0. Ensure that `git lfs` has been installed: https://git-lfs.github.com/. This is used to manage the storage of the large model and metadata files in `SpokestackFrameworkExample`.
   1. Ensure that CocoaPods has been installed: `gem install cocoapods` ([not via `brew`](https://github.com/CocoaPods/CocoaPods/issues/8955)).
   2. Ensure that you are registered in CocoaPods: `pod trunk register YOUR_EMAIL --description='release YOUR_PODSPEC_VERSION'`
 
