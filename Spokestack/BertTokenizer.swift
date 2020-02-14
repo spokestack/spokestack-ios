@@ -10,7 +10,11 @@ import Foundation
 
 /// MARK: BasicTokenizer
 
+/// A basic tokenizer where tokens are defined as alphanumeric words and punctuations.
 public struct BasicTokenizer: Tokenizer {
+    
+    /// Tokenizes the input text into an array of alphanumeric words and punctuations, discarding all other characters.
+    /// - Parameter text: The text to tokenize.
     public func tokenize(_ text: String) -> [String] {
         return text
             // normalize the string
@@ -29,6 +33,8 @@ public struct BasicTokenizer: Tokenizer {
             .filter({ !$0.isEmpty })
     }
     
+    /// Detokenizes the tokens into a space-separated string.
+    /// - Parameter tokens: The tokens to transform into a String.
     public func detokenize(_ tokens: [String]) throws -> String {
         return tokens.joined(separator: " ")
     }
@@ -36,15 +42,20 @@ public struct BasicTokenizer: Tokenizer {
 
 /// MARK: WordpieceTokenizer
 
+/// A tokenizer + encoder that tokenizes based on a supplied wordpiece vocabulary, and then encodes the wordpieces indexed to that vocabulary. Based on the Bert Wordpiece tokenizer.
 public struct WordpieceTokenizer: Tokenizer {
     private let encodings: [String: Int]
     private let piecePrefix = "##"
     private let unknownPiece = "[UNK]"
     
+    /// Initializes an instance of the tokenizer with the provided vocabulary encodings.
+    /// - Parameter encodings: A dictionary vocabulary of words : index to use for wordpiece tokenization/detokenization.
     public init(_ encodings: [String: Int]) {
         self.encodings = encodings
     }
     
+    /// Tokenize and encode the input text.
+    /// - Parameter text: The input text to tokenize and encode.
     public func tokenize(_ text: String) -> [String] {
         func piecewiseEncode(text: String, index: Int, pieces: [String], piecePrefix: String = "") -> [String] {
             if text.isEmpty {
@@ -71,6 +82,8 @@ public struct WordpieceTokenizer: Tokenizer {
         }
     }
     
+    /// Decode and detokenize the encoded tokens into a space-separated string.
+    /// - Parameter tokens: The encoded tokens to decode and detokenize.
     public func detokenize(_ tokens: [String]) throws -> String {
         return tokens.reduce("", { (result, s) in
             if result.count == 0 {
@@ -86,8 +99,12 @@ public struct WordpieceTokenizer: Tokenizer {
 
 /// MARK: BertTokenizer
 
+/// Using the `BasicTokenizer` and `WordpieceTokenizer`, performs tokenization + encoding/detokenization + decoding specific to the BERT NLU model.
 public class BertTokenizer {
+    
+    /// The maximum input token count the BERT model supports.
     public var maxTokenLength: Int?
+    
     private let minVocabLength = 2
     private var encodings: [String: Int] = [:]
     private var decodings: [Int: String] = [:]
@@ -95,6 +112,8 @@ public class BertTokenizer {
     private var wordpieceTokenizer: WordpieceTokenizer
     private var config: SpeechConfiguration
     
+    /// Initializes a tokenizer using the provided configuration
+    /// - Parameter config: Configuration parameters for the tokenizer.
     public init(_ config: SpeechConfiguration) throws {
         self.config = config
         let vocab = try String(contentsOfFile: config.nluVocabularyPath)
@@ -106,11 +125,14 @@ public class BertTokenizer {
         self.wordpieceTokenizer = WordpieceTokenizer(self.encodings)
     }
     
+    /// Tokenize the input text.
+    /// - Parameter text: The input text to tokenize.
     public func tokenize(_ text: String) -> [String] {
         return self.basicTokenizer.tokenize(text).flatMap({ self.wordpieceTokenizer.tokenize($0) })
     }
     
-    /// let encodedText = encode(tokenize(text))
+    /// Encode the tokens.
+    /// - Parameter tokens: The tokens to encode.
     public func encode(_ tokens: [String]) throws -> [Int] {
         guard let maxLength = self.maxTokenLength else {
             throw TokenizerError.invalidConfiguration("NLU model maximum input tokens length was not set.")
@@ -121,25 +143,32 @@ public class BertTokenizer {
         if (self.encodings.underestimatedCount < minVocabLength) {
             throw TokenizerError.invalidConfiguration("Vocaubulary encodings not loaded. Please check SpeechConfiguration.nluEncodings.")
         }
-        return tokens.map { (self.encodings[$0] ?? -1) }
+        return tokens.map { (self.encodings[$0] ?? -1) } /// TODO: is -1 a good default here?
     }
     
+    /// Tokenize and encode the input text.
+    /// - Parameter text: The input text to tokenize and encode.
     public func tokenizeAndEncode(_ text: String) throws -> [Int] {
         try self.encode(self.tokenize(text))
     }
     
+    /// Decode the encoded tokens.
+    /// - Parameter encoded: The encoded tokens to decode.
     public func decode(_ encoded: [Int]) throws -> [String] {
         if (self.decodings.underestimatedCount < self.minVocabLength) {
             throw TokenizerError.invalidConfiguration("Vocaubulary encodings not loaded. Please check SpeechConfiguration.nluEncodings.")
         }
-        return encoded.map { self.decodings[$0] ?? "unknown" }
+        return encoded.map { self.decodings[$0] ?? "[UNK]" } /// TODO: is [UNK] a good default here?
     }
     
-    /// let text = detokenize(decode(encodedText))
+    /// Detokenize the tokens.
+    /// - Parameter tokens: The tokens to detokenize.
     public func detokenize(_ tokens: [String]) throws -> String {
         return try basicTokenizer.detokenize(tokens)
     }
     
+    /// Detokenize and decode the input text.
+    /// - Parameter tokens: The encoded tokens to decode and detokenize.
     public func decodeAndDetokenize(_ encoded: [Int]) throws -> String {
         try self.detokenize(self.decode(encoded))
     }

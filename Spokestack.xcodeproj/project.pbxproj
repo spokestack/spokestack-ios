@@ -570,7 +570,7 @@
 			attributes = {
 				LastSwiftUpdateCheck = 1000;
 				LastUpgradeCheck = 1100;
-				ORGANIZATIONNAME = "Pylon AI, Inc.";
+				ORGANIZATIONNAME = "Spokestack, Inc.";
 				TargetAttributes = {
 					011C191C216BCA3200DB36FD = {
 						CreatedOnToolsVersion = 10.0;

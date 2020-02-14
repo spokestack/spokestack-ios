@@ -15,6 +15,10 @@ extension Data {
         }
     }
     
+    /// Convert Data into an array of type `T` with the specified number of elements.
+    /// - Parameters:
+    ///   - type: The type of the elements in the resulting array.
+    ///   - count: The number of elements in the resulting array.
     func toArray<T>(type: T.Type, count: Int) -> [T] where T: ExpressibleByIntegerLiteral {
         return self.withUnsafeBytes({ (pointer: UnsafeRawBufferPointer) -> [T] in
             Array<T>(UnsafeBufferPointer(start: pointer.bindMemory(to: T.self).baseAddress, count: count))

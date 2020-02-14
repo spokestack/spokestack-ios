@@ -10,6 +10,8 @@ import Foundation
 import Accelerate
 
 extension Array where Element == Float {
+    
+    /// Returns the index and value of the largest number in the array.
     public func argmax() -> (Int, Float) {
         var maxValue: Float = 0.0
         var maxIndex: vDSP_Length = 0

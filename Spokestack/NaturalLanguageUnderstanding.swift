@@ -10,8 +10,13 @@ import Foundation
 import Combine
 import TensorFlowLite
 
+/// A BERT NLU implementation.
 @objc public class NaturalLanguageUnderstanding: NSObject {
+    
+    /// Configuration parameters for the NLU.
     @objc public var configuration: SpeechConfiguration
+    
+    /// An implementation of NLUDelegate to receive NLU events.
     @objc public var delegate: NLUDelegate?
     
     private var interpreter: Interpreter?
@@ -30,6 +35,10 @@ import TensorFlowLite
         case tag
     }
     
+    /// Initializes an NLU instance.
+    /// - Note: An instance initialized this way is expected to use the pub/sub Combine interface, not the delegate interface, when calling `classify`.
+    /// - Requires: `SpeechConfiguration.nluVocabularyPath`, `SpeechConfiguration.nluTerminatorTokenIndex`, `SpeechConfiguration.nluPaddingTokenIndex`, `SpeechConfiguration.nluModelPath`, `SpeechConfiguration.nluModelMetadataPath`, and `SpeechConfiguration.nluMaxTokenLength`.
+    /// - Parameter configuration: Configuration parameters for the NLU.
     @objc public init(configuration: SpeechConfiguration) throws {
         self.configuration = configuration
         self.terminatorToken = configuration.nluTerminatorTokenIndex
@@ -47,6 +56,11 @@ import TensorFlowLite
         self.metadata = try NLUModelMeta(configuration)
     }
     
+    /// Initializes an NLU instance.
+    /// - Requires: `SpeechConfiguration.nluVocabularyPath`, `SpeechConfiguration.nluTerminatorTokenIndex`, `SpeechConfiguration.nluPaddingTokenIndex`, `SpeechConfiguration.nluModelPath`, `SpeechConfiguration.nluModelMetadataPath`, and `SpeechConfiguration.nluMaxTokenLength`.
+    /// - Parameters:
+    ///   - delegate: Initializes an NLU instance.
+    ///   - configuration: Configuration parameters for the NLU.
     @objc public init(_ delegate: NLUDelegate, configuration: SpeechConfiguration) throws {
         self.delegate = delegate
         self.configuration = configuration
@@ -76,7 +90,9 @@ import TensorFlowLite
             throw NLUError.model("NLU model provided is not shaped as expected. There are \(self.interpreter!.inputTensorCount)/\(InputTensors.allCases.count) inputs and \(self.interpreter!.outputTensorCount)/\(OutputTensors.allCases.count) outputs")
         }
     }
-
+    
+    /// Classifies the provided input. The classifciation results are sent to the instance's configured NLUDelegate.
+    /// - Parameter input: The NLUInput to classify.
     @objc public func predict(_ input: String) -> Void {
         do {
             let prediction = try self.predict(input) as Prediction
@@ -86,6 +102,8 @@ import TensorFlowLite
         }
     }
     
+    /// Classifies the provided input. NLUResult is sent to all subscribers.
+    /// - Parameter inputs: The NLUInput to classify.
     @available(iOS 13.0, *)
     public func predict(inputs: [String]) ->  Publishers.Sequence<[Prediction], Never> {
         return inputs.map { try! self.predict($0) }.publisher
@@ -106,15 +124,24 @@ import TensorFlowLite
         guard let maxInputTokenLength = self.maxTokenLength else {
             throw NLUError.invalidConfiguration("NLU model maximum input tokens length was not set.")
         }
-        //  encode the input, terminate the utterance with the terminator token, and  pad from the end of the utterance up to the expected input size (128 32-bit ints)
+        
+        // preprocess the model inputs
+        //  tokenize + encode the input, terminate the utterance with the terminator token, and  pad from the end of the utterance up to the expected input size (128 32-bit ints)
         var encodedInput = try tokenizer.tokenizeAndEncode(input)
         encodedInput.append(self.terminatorToken)
         encodedInput += Array(repeating: self.paddingToken, count: maxInputTokenLength - encodedInput.count)
+        
+        // downcast the (assumed iOS) default Int64 to match the model's expected Int32 size. This is safe because the model vocabulary code indicies are 32-bit.
         let downcastEncodedInput = encodedInput.map({ Int32(truncatingIfNeeded: $0) })
         _ = try downcastEncodedInput
             .withUnsafeBytes({
                 try model.copy(Data($0), toInputAt: InputTensors.input.rawValue)})
+        
+        // run the model over the provided inputs
         try model.invoke()
+        
+        // process the model's output
+        // extract, decode + detokenize the classified intent, then hydrate the intent result object based on the provided model metadata.
         let encodedIntentsTensor = try model.output(at: OutputTensors.intent.rawValue)
         let encodedIntents = encodedIntentsTensor.data.toArray(type: Float32.self, count: encodedIntentsTensor.data.count/4)
         let intentsArgmax = encodedIntents.argmax()
@@ -122,8 +149,11 @@ import TensorFlowLite
             throw NLUError.model("NLU model returned an intent value outside the expected range.")
         }
         let intent = metadata.model.intents[intentsArgmax.0]
+        
+        // extract, decode + detokenize the classified tags, then hydrate the result slots based on the provided model metadata.
         let encodedTagTensor = try model.output(at: OutputTensors.tag.rawValue)
         let encodedTags = encodedTagTensor.data.toArray(type: Float32.self, count: encodedTagTensor.data.count/4)
+        // the posteriors for the tags are grouped by the number of model metadata tags, so stride through them calculating the argmax for each stride.
         let encodedTagsArgmax = stride(from: 0,
                                        to: encodedTags.count,
                                        by: metadata.model.tags.count)
@@ -131,13 +161,17 @@ import TensorFlowLite
                 Array(encodedTags[$0..<$0+metadata.model.tags.count]).argmax()
                 
             })
+        // decode the tags according to the model metatadata index
         let tagsByInput = encodedTagsArgmax.map(
         {
             metadata.model.tags[$0.0]
         })
+        // zip up the input + tags, since their ordering corresponds. this also effectivly truncates the tag posteriors by the input size, ignoring all posteriors outside the input length.
         let inputTagged = zip(encodedInput, tagsByInput) // input:String, tag:String tuple
+        // hyrdate Slot objects according to the zipped input + tag
         let slots = try inputTagged.reduce([:], { (dict, inputTag) in
             var filterName = inputTag.1
+            // the model metadata tags are occasionally prefixed with POS tags. But the model metadata slots do not have this prefix. Remove the prefix in order to perform the model metadata slot lookups based on tag.
             if let prefixIndex = filterName.range(of: "_")?.upperBound {
                 filterName = String(filterName.suffix(from: prefixIndex))
             }
@@ -147,6 +181,8 @@ import TensorFlowLite
             }
             return [filterName : Slot(type: type, value: value)]
         }) as [String:Slot]
+        
+        // return the classification result
         return Prediction(intent: intent.name, confidence: intentsArgmax.1, slots: slots)
     }
 }
