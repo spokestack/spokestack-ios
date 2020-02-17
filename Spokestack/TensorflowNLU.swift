@@ -1,5 +1,5 @@
 //
-//  NaturalLanguageUnderstanding.swift
+//  TensorflowNLU.swift
 //  Spokestack
 //
 //  Created by Noel Weichbrodt on 1/17/20.
@@ -11,7 +11,7 @@ import Combine
 import TensorFlowLite
 
 /// A BERT NLU implementation.
-@objc public class NaturalLanguageUnderstanding: NSObject, NLUService {
+@objc public class TensorflowNLU: NSObject, NLUService {
     
     /// Configuration parameters for the NLU.
     @objc public var configuration: SpeechConfiguration

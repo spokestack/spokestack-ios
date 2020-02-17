@@ -117,10 +117,10 @@ import Foundation
     /// - SeeAlso: `BertTokenizer`
     @objc public var nluPaddingTokenIndex: Int = 0
     /// The filesystem path to the machine learning model for Natural Language Understanding processing.
-    /// - SeeAlso: `NaturalLanguageUnderstanding`
+    /// - SeeAlso: `TensorflowNLU`
     @objc public var nluModelPath: String = "nlu.tflite"
     /// The filesystem path to the model metadata for Natural Language Understanding processing.
-    /// - SeeAlso: `NaturalLanguageUnderstanding`
+    /// - SeeAlso: `TensorflowNLU`
     @objc public var nluModelMetadataPath: String = "nlu.json"
     /// The maximum utterance length the NLU can process. Determined  by the NLU model.
     /// - SeeAlso: `BertTokenizer`
