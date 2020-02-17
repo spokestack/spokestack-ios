@@ -8,7 +8,7 @@
 
 import Foundation
 
-public protocol Tokenizer {
+internal protocol Tokenizer {
     func tokenize(_ text: String) -> [String]
     func detokenize(_ tokens: [String]) throws -> String
 }

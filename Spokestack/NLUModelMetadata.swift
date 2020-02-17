@@ -8,28 +8,6 @@
 
 import Foundation
 
-@objc public class Prediction: NSObject {
-    @objc public var intent: String
-    @objc public var confidence: Float
-    @objc public var slots: [String:Slot]
-    public init(intent: String, confidence: Float, slots: [String:Slot]) {
-        self.intent = intent
-        self.confidence = confidence
-        self.slots = slots
-    }
-}
-
-@objc public class Slot: NSObject {
-    @objc public var type: String
-    @objc public var value: Any?
-    
-    public init(type: String, value: Any) {
-        self.type = type
-        self.value = value
-        super.init()
-    }
-}
-
 internal struct NLUModelMeta {
     private let configuration: SpeechConfiguration
     internal let model: NLUModelMetadata

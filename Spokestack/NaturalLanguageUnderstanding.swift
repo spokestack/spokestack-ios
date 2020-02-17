@@ -11,7 +11,7 @@ import Combine
 import TensorFlowLite
 
 /// A BERT NLU implementation.
-@objc public class NaturalLanguageUnderstanding: NSObject {
+@objc public class NaturalLanguageUnderstanding: NSObject, NLUService {
     
     /// Configuration parameters for the NLU.
     @objc public var configuration: SpeechConfiguration
@@ -61,7 +61,7 @@ import TensorFlowLite
     /// - Parameters:
     ///   - delegate: Initializes an NLU instance.
     ///   - configuration: Configuration parameters for the NLU.
-    @objc public init(_ delegate: NLUDelegate, configuration: SpeechConfiguration) throws {
+    @objc required public init(_ delegate: NLUDelegate, configuration: SpeechConfiguration) throws {
         self.delegate = delegate
         self.configuration = configuration
         self.terminatorToken = configuration.nluTerminatorTokenIndex
@@ -93,10 +93,10 @@ import TensorFlowLite
     
     /// Classifies the provided input. The classifciation results are sent to the instance's configured NLUDelegate.
     /// - Parameter input: The NLUInput to classify.
-    @objc public func predict(_ input: String) -> Void {
+    @objc public func classify(utterance: String, context: [String : Any]) -> Void {
         do {
-            let prediction = try self.predict(input) as Prediction
-            self.delegate?.prediction(prediction: prediction)
+            let prediction = try self.classify(utterance) as NLUResult
+            self.delegate?.classification(result: prediction)
         } catch let error {
             self.delegate?.failure(error: error)
         }
@@ -105,13 +105,13 @@ import TensorFlowLite
     /// Classifies the provided input. NLUResult is sent to all subscribers.
     /// - Parameter inputs: The NLUInput to classify.
     @available(iOS 13.0, *)
-    public func predict(inputs: [String]) ->  Publishers.Sequence<[Prediction], Never> {
-        return inputs.map { try! self.predict($0) }.publisher
+    public func classify(inputs: [String]) ->  Publishers.Sequence<[NLUResult], Never> {
+        return inputs.map { try! self.classify($0) }.publisher
         //return AnyPublisher<[Prediction], Error>(try inputs.map { try self.predict($0) as Prediction })
         //return Publishers.First(upstream: Just([Prediction(intent: "", confidence: 0.0, slots: [:])]).setFailureType(to: Error.self)).eraseToAnyPublisher()
     }
     
-    private func predict(_ input: String) throws -> Prediction {
+    private func classify(_ input: String) throws -> NLUResult {
         guard let model = self.interpreter else {
             throw NLUError.model("NLU model was not initialized.")
         }
@@ -183,18 +183,6 @@ import TensorFlowLite
         }) as [String:Slot]
         
         // return the classification result
-        return Prediction(intent: intent.name, confidence: intentsArgmax.1, slots: slots)
+        return NLUResult(utterance: input, intent: intent.name, confidence: intentsArgmax.1, slots: slots)
     }
-}
-
-@objc public protocol NLUDelegate: AnyObject {
-    func prediction(prediction: Prediction) -> Void
-    
-    /// A trace event from the TTS system.
-    /// - Parameter trace: The debugging trace message.
-    func didTrace(_ trace: String) -> Void
-    
-    /// The TTS synthesis request has resulted in an error response.
-    /// - Parameter error: The error representing the TTS response.
-    func failure(error: Error) -> Void
 }

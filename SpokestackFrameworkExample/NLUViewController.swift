@@ -97,15 +97,15 @@ class NLUViewController: UIViewController {
     @objc func predictAction(_ sender: Any) {
         var text = self.nluInput.text ?? ""
         if (text == "") { text = "turn the lights on in the kitchen" }
-        self.nlu?.predict(text)
+        self.nlu?.classify(utterance: text, context: [:])
     }
 }
 
 // MARK: NLUDelegate implementation
 
 extension NLUViewController: NLUDelegate {
-    func prediction(prediction: Prediction) {
-        print("Prediction: \(prediction.intent) \(prediction.confidence) \(prediction.slots)")
+    func classification(result: NLUResult) {
+        print("Classification: \(result.intent) \(result.confidence) \(result.slots)")
     }
     
     func didTrace(_ trace: String) {
