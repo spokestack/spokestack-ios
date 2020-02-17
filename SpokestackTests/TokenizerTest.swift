@@ -33,16 +33,9 @@ class TokenizerTest: XCTestCase {
         XCTAssertEqual(try tokenizer.detokenize(["there", "unto"]), "there unto")
     }
     
-    func testAppleTokenize() {
-        let tokenizer = AppleTokenizer()
-        let text = "With her from—the one: this also has?"
-        let tokens = ["with", "her", "from", "—", "the", "one", ":", "this", "also", "has", "?"]
-        XCTAssertEqual(tokenizer.tokenize(text), tokens)
-    }
-    
     func testBertTokenize() {
         let config = SpeechConfiguration()
-        config.vocabularyPath = createVocabularyPath()
+        config.nluVocabularyPath = createVocabularyPath()
         let tokenizer = try! BertTokenizer(config)
         let text = "With her from — the one: this also has?"
         let tokens = ["with", "her", "from", "—", "the", "one", ":", "this", "also", "has", "?"]
@@ -51,7 +44,7 @@ class TokenizerTest: XCTestCase {
     
     func testBertTokenizeDetokenizeRoundtrip() {
         let config = SpeechConfiguration()
-        config.vocabularyPath = createVocabularyPath()
+        config.nluVocabularyPath = createVocabularyPath()
         let tokenizer = try! BertTokenizer(config)
         let text = "this also has"
         XCTAssertEqual(try tokenizer.detokenize(tokenizer.tokenize(text)), text)
@@ -59,7 +52,7 @@ class TokenizerTest: XCTestCase {
     
     func testBertTokenizerEncode() {
         let config = SpeechConfiguration()
-        config.vocabularyPath = createVocabularyPath()
+        config.nluVocabularyPath = createVocabularyPath()
         let tokenizer = try! BertTokenizer(config)
         let text = "With her from—the one: this also has?"
         let encoded = [18, 25, 24, 1, 7, 39, 4, 34, 47, 49, 5]
@@ -68,7 +61,7 @@ class TokenizerTest: XCTestCase {
     
     func testBertTokenizerRoundtrip() {
         let config = SpeechConfiguration()
-        config.vocabularyPath = createVocabularyPath()
+        config.nluVocabularyPath = createVocabularyPath()
         let tokenizer = try! BertTokenizer(config)
         let text = "this also has"
         XCTAssertEqual(try! tokenizer.decodeAndDetokenize(tokenizer.tokenizeAndEncode(text)), text)

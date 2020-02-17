@@ -100,7 +100,7 @@ internal struct WordpieceTokenizer: Tokenizer {
 /// MARK: BertTokenizer
 
 /// Using the `BasicTokenizer` and `WordpieceTokenizer`, performs tokenization + encoding/detokenization + decoding specific to the BERT NLU model.
-internal class BertTokenizer {
+internal struct BertTokenizer {
     
     /// The maximum input token count the BERT model supports.
     internal var maxTokenLength: Int?
@@ -116,6 +116,7 @@ internal class BertTokenizer {
     /// - Parameter config: Configuration parameters for the tokenizer.
     init(_ config: SpeechConfiguration) throws {
         self.config = config
+        self.maxTokenLength = config.nluMaxTokenLength
         let vocab = try String(contentsOfFile: config.nluVocabularyPath)
         let tokens = vocab.split(separator: "\n").map { String($0) }
         for (id, token) in tokens.enumerated() {

@@ -53,6 +53,10 @@
 		597D0CB323F7180F00018D71 /* NLUResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 597D0CB223F7180F00018D71 /* NLUResult.swift */; };
 		597D0CB623F71C2100018D71 /* NLUDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 597D0CB523F71C2100018D71 /* NLUDelegate.swift */; };
 		597D0CB723F71C2100018D71 /* NLUDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 597D0CB523F71C2100018D71 /* NLUDelegate.swift */; };
+		597D0CBA23FB2F5000018D71 /* TensorflowNLU.swift in Sources */ = {isa = PBXBuildFile; fileRef = 591BCDA223D26077009681D6 /* TensorflowNLU.swift */; };
+		597D0CBB23FB2F5400018D71 /* BertTokenizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59930E6323E8DE5C00A45E4D /* BertTokenizer.swift */; };
+		597D0CBC23FB2F5800018D71 /* NLUModelMetadata.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59E895A523E2140400C424D3 /* NLUModelMetadata.swift */; };
+		597D0CBD23FB2F5B00018D71 /* NLUResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 597D0CB223F7180F00018D71 /* NLUResult.swift */; };
 		59930E6423E8DE5C00A45E4D /* BertTokenizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59930E6323E8DE5C00A45E4D /* BertTokenizer.swift */; };
 		59A0D5C02204E786003709C3 /* AppleASRViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59A0D5BD2204E786003709C3 /* AppleASRViewController.swift */; };
 		59A0D5C22204E786003709C3 /* AppleWakewordViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59A0D5BF2204E786003709C3 /* AppleWakewordViewController.swift */; };
@@ -816,6 +820,8 @@
 				59C2AFDF2319CE8000E47AC5 /* SpeechProcessor.swift in Sources */,
 				5936077F236B688400FFA29F /* WebRTCVAD.swift in Sources */,
 				59D78F5F2322D13700728A98 /* AudioControllerTest.swift in Sources */,
+				597D0CBD23FB2F5B00018D71 /* NLUResult.swift in Sources */,
+				597D0CBA23FB2F5000018D71 /* TensorflowNLU.swift in Sources */,
 				59ECA8C823C939AA003CDB57 /* TextToSpeechResult.swift in Sources */,
 				597D0CAE23F716AF00018D71 /* NLUService.swift in Sources */,
 				5942C4362384772600EC0B13 /* TextToSpeechDelegate.swift in Sources */,
@@ -832,8 +838,10 @@
 				01D31F7A216BAFEF0055FD45 /* AudioControllerDelegate.swift in Sources */,
 				59C2AFDA2319CB7100E47AC5 /* RingBufferTest.swift in Sources */,
 				59C2AFE42319CEC300E47AC5 /* Trace.swift in Sources */,
+				597D0CBB23FB2F5400018D71 /* BertTokenizer.swift in Sources */,
 				59A8DBFB2384AC0500F97700 /* TextToSpeechInput.swift in Sources */,
 				59E8959B23DB7A0B00C424D3 /* TokenizerTest.swift in Sources */,
+				597D0CBC23FB2F5800018D71 /* NLUModelMetadata.swift in Sources */,
 				59C2AFE52319CED100E47AC5 /* AppleSpeechRecognizer.swift in Sources */,
 				59C2AFDB2319CE5800E47AC5 /* SpeechConfiguration.swift in Sources */,
 				59EF51C32332E57B006BA0BD /* Frame.swift in Sources */,
