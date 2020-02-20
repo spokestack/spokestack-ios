@@ -56,7 +56,7 @@ import Foundation
     /// - Parameters:
     ///   - type: The underlying type of the slot value.
     ///   - value: The slot's value.
-    public init(type: String, value: Any) {
+    public init(type: String, value: Any?) {
         self.type = type
         self.value = value
         super.init()

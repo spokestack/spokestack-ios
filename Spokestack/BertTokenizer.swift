@@ -71,7 +71,7 @@ internal struct WordpieceTokenizer: Tokenizer {
                 return [self.unknownPiece]
             } else {
                 // recursive case: text prefix not in dictionary, so keep piecewizing until text is found in dictionary
-                return piecewiseEncode(text: text, index: index+1, pieces: pieces)
+                return piecewiseEncode(text: text, index: index+1, pieces: pieces, piecePrefix: piecePrefix)
             }
         }
         
@@ -86,9 +86,7 @@ internal struct WordpieceTokenizer: Tokenizer {
     /// - Parameter tokens: The encoded tokens to decode and detokenize.
     func detokenize(_ tokens: [String]) throws -> String {
         return tokens.reduce("", { (result, s) in
-            if result.count == 0 {
-                return s
-            } else if s.prefix(2) == self.piecePrefix {
+            if s.prefix(2) == self.piecePrefix {
                 return result + s.suffix(s.count - 2)
             } else {
                 return result + " " + s
@@ -165,7 +163,7 @@ internal struct BertTokenizer {
     /// Detokenize the tokens.
     /// - Parameter tokens: The tokens to detokenize.
     func detokenize(_ tokens: [String]) throws -> String {
-        return try basicTokenizer.detokenize(tokens)
+        return try wordpieceTokenizer.detokenize(tokens)
     }
     
     /// Detokenize and decode the input text.

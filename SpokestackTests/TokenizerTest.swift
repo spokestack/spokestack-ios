@@ -40,6 +40,10 @@ class TokenizerTest: XCTestCase {
         let text = "With her from — the one: this also has?"
         let tokens = ["with", "her", "from", "—", "the", "one", ":", "this", "also", "has", "?"]
         XCTAssertEqual(tokenizer.tokenize(text), tokens)
+        
+        let phone = "4238341745"
+        let phoneTokens = ["42", "##38", "##34", "##17", "##45"]
+        XCTAssertEqual(tokenizer.tokenize(phone), phoneTokens)
     }
     
     func testBertTokenizeDetokenizeRoundtrip() {
@@ -141,6 +145,15 @@ into
 new
 two
 s
+38
+42
+74
+341
+##5
+##17
+##34
+##38
+##45
 """
         let file = FileManager.default.createFile(atPath: path, contents: vocab.data(using: .utf8), attributes: .none)
         return path

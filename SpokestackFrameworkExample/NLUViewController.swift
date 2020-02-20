@@ -27,7 +27,7 @@ class NLUViewController: UIViewController {
 
     lazy var nluInput: UITextField = {
         let textField = UITextField(frame: CGRect(x: 20, y: 100, width: 300, height: 40))
-        textField.placeholder = "Enter text to predict."
+        textField.placeholder = "Enter text to classify."
         textField.font = UIFont.systemFont(ofSize: 15)
         textField.borderStyle = UITextField.BorderStyle.roundedRect
         textField.autocorrectionType = UITextAutocorrectionType.no
@@ -97,6 +97,8 @@ class NLUViewController: UIViewController {
     @objc func predictAction(_ sender: Any) {
         var text = self.nluInput.text ?? ""
         if (text == "") { text = "turn the lights on in the kitchen" }
+        // I give this app a ten
+        // Call 1234567890
         self.nlu?.classify(utterance: text, context: [:])
     }
 }

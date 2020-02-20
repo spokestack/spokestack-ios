@@ -25,6 +25,8 @@ import TensorFlowLite
     private var terminatorToken: Int
     private var paddingToken: Int
     private var maxTokenLength: Int?
+    private let decoder = JSONDecoder()
+    private var slotParser: NLUSlotParser?
     
     internal enum InputTensors: Int, CaseIterable {
         case input
@@ -54,6 +56,7 @@ import TensorFlowLite
         self.tokenizer = try BertTokenizer(configuration)
         self.tokenizer?.maxTokenLength = inputMaxTokenLength
         self.metadata = try NLUModelMeta(configuration)
+        self.slotParser = try NLUSlotParser(configuration: configuration, inputMaxTokenLength: inputMaxTokenLength)
     }
     
     /// Initializes an NLU instance.
@@ -78,6 +81,7 @@ import TensorFlowLite
             self.tokenizer = try BertTokenizer(configuration)
             self.tokenizer?.maxTokenLength = inputMaxTokenLength
             self.metadata = try NLUModelMeta(configuration)
+            self.slotParser = try NLUSlotParser(configuration: configuration, inputMaxTokenLength: inputMaxTokenLength)
         } catch let error {
             delegate.failure(error: error)
         }
@@ -130,18 +134,21 @@ import TensorFlowLite
             guard let maxInputTokenLength = self.maxTokenLength else {
                 throw NLUError.invalidConfiguration("NLU model maximum input tokens length was not set.")
             }
+            guard let parser = self.slotParser else {
+                throw NLUError.invalidConfiguration("No slot parser was set for this model.")
+            }
             
             // preprocess the model inputs
             //  tokenize + encode the input, terminate the utterance with the terminator token, and  pad from the end of the utterance up to the expected input size (128 32-bit ints)
-            var encodedInput = try tokenizer.tokenizeAndEncode(input)
+            let tokenizedInput = tokenizer.tokenize(input)
+            var encodedInput = try tokenizer.encode(tokenizedInput)
             encodedInput.append(self.terminatorToken)
             encodedInput += Array(repeating: self.paddingToken, count: maxInputTokenLength - encodedInput.count)
             
             // downcast the (assumed iOS) default Int64 to match the model's expected Int32 size. This is safe because the model vocabulary code indicies are 32-bit.
-            let downcastEncodedInput = encodedInput.map({ Int32(truncatingIfNeeded: $0) })
+            let downcastEncodedInput = encodedInput.map { Int32(truncatingIfNeeded: $0) }
             _ = try downcastEncodedInput
-                .withUnsafeBytes({
-                    try model.copy(Data($0), toInputAt: InputTensors.input.rawValue)})
+                .withUnsafeBytes { try model.copy(Data($0), toInputAt: InputTensors.input.rawValue) }
             
             // run the model over the provided inputs
             try model.invoke()
@@ -163,30 +170,13 @@ import TensorFlowLite
             let encodedTagsArgmax = stride(from: 0,
                                            to: encodedTags.count,
                                            by: metadata.model.tags.count)
-                .map({
-                    Array(encodedTags[$0..<$0+metadata.model.tags.count]).argmax()
-                    
-                })
+                .map { Array(encodedTags[$0..<$0+metadata.model.tags.count]).argmax() }
             // decode the tags according to the model metatadata index
-            let tagsByInput = encodedTagsArgmax.map(
-            {
-                metadata.model.tags[$0.0]
-            })
+            let tagsByInput = encodedTagsArgmax.map { metadata.model.tags[$0.0] }
             // zip up the input + tags, since their ordering corresponds. this also effectivly truncates the tag posteriors by the input size, ignoring all posteriors outside the input length.
-            let inputTagged = zip(encodedInput, tagsByInput) // input:String, tag:String tuple
+            let taggedInput = zip(tagsByInput, tokenizedInput) // tag:String, input:String tuple
             // hyrdate Slot objects according to the zipped input + tag
-            let slots = try inputTagged.reduce([:], { (dict, inputTag) in
-                var filterName = inputTag.1
-                // the model metadata tags are occasionally prefixed with POS tags. But the model metadata slots do not have this prefix. Remove the prefix in order to perform the model metadata slot lookups based on tag.
-                if let prefixIndex = filterName.range(of: "_")?.upperBound {
-                    filterName = String(filterName.suffix(from: prefixIndex))
-                }
-                let value = try tokenizer.decodeAndDetokenize([inputTag.0])
-                guard let type = intent.slots.filter({ $0.name == filterName }).first?.type else {
-                    return dict
-                }
-                return [filterName : Slot(type: type, value: value)]
-            }) as [String:Slot]
+            let slots = try parser.parse(taggedInput: taggedInput, intent: intent)
             
             // return the classification result
             return .success(NLUResult(utterance: input, intent: intent.name, confidence: intentsArgmax.1, slots: slots))

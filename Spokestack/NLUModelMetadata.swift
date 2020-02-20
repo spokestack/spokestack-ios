@@ -26,7 +26,7 @@ internal struct NLUModelMeta {
 
 internal struct NLUModelMetadata: Codable {
     let intents: [NLUModelIntent]
-    let tags: NLUModelTags
+    let tags: Array<String>
 }
 
 internal struct NLUModelIntent: Codable {
@@ -37,12 +37,22 @@ internal struct NLUModelIntent: Codable {
 internal struct NLUModelSlot: Codable {
     let name: String
     let type: String
-    let selections: [NLUModelSelset]?
+    let facets: String
 }
 
 internal struct NLUModelSelset: Codable {
+    let selections: [NLUModelSelsetSelection]
+}
+
+internal struct NLUModelSelsetSelection: Codable {
     let name: String
     let aliases: [String]
 }
 
-typealias NLUModelTags = Array<String>
+internal struct NLUModelInteger: Codable {
+    let range: [Int]
+}
+
+internal struct NLUModelDigits: Codable {
+    let count: Int
+}
