@@ -1,5 +1,5 @@
 //
-//  TokenizerTest.swift
+//  NLUTensorflowTokenizerTest.swift
 //  SpokestackTests
 //
 //  Created by Noel Weichbrodt on 1/24/20.
@@ -9,7 +9,7 @@
 import XCTest
 import Spokestack
 
-class TokenizerTest: XCTestCase {
+class NLUTensorflowTokenizerTest: XCTestCase {
     
     func testWordpieceTokenize() {
         let tokenizer = WordpieceTokenizer(try! SharedTestMocks.createEncodingsDictionary(SharedTestMocks.createVocabularyPath()))

@@ -1,5 +1,5 @@
 //
-//  SlotParserTest.swift
+//  NLUTensorflowSlotParserTest.swift
 //  SpokestackTests
 //
 //  Created by Noel Weichbrodt on 2/25/20.
@@ -10,14 +10,14 @@ import Foundation
 import Spokestack
 import XCTest
 
-class SlotParserTest: XCTestCase {
+class NLUTensorflowSlotParserTest: XCTestCase {
     
     func testParse() {
         let config = SpeechConfiguration()
         config.nluVocabularyPath = SharedTestMocks.createVocabularyPath()
-        let parser = try! NLUSlotParser(configuration: config, inputMaxTokenLength: 100)
+        let parser = try! NLUTensorflowSlotParser(configuration: config, inputMaxTokenLength: 100)
         let metaData = createMetadata().data(using: .utf8)
-        let metadata = try! JSONDecoder().decode(NLUModelMetadata.self, from: metaData!)
+        let metadata = try! JSONDecoder().decode(NLUTensorflowMetadata.self, from: metaData!)
         
         // selset parse
         let taggedInputLocation = zip(["b_location"],["kitchen"])

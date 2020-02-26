@@ -1,5 +1,5 @@
 //
-//  NLUSlotParsers.swift
+//  NLUTensorflowSlotParsers.swift
 //  Spokestack
 //
 //  Created by Noel Weichbrodt on 2/25/20.
@@ -8,7 +8,7 @@
 
 import Foundation
 
-internal struct NLUSlotParser {
+internal struct NLUTensorflowSlotParser {
     private var tokenizer: BertTokenizer?
     private let decoder = JSONDecoder()
 
@@ -17,7 +17,7 @@ internal struct NLUSlotParser {
         self.tokenizer?.maxTokenLength = inputMaxTokenLength
     }
     
-    internal func parse(taggedInput: Zip2Sequence<[String], [String]>, intent: NLUModelIntent) throws -> [String:Slot] {
+    internal func parse(taggedInput: Zip2Sequence<[String], [String]>, intent: NLUTensorflowIntent) throws -> [String:Slot] {
         
         var slots: [String:Slot] = [:]
         
@@ -54,13 +54,13 @@ internal struct NLUSlotParser {
         return slots
     }
     
-    private func slotFacetParser(slot: NLUModelSlot, facetData: Data, values: [String]?) throws -> Any? {
+    private func slotFacetParser(slot: NLUTensorflowSlot, facetData: Data, values: [String]?) throws -> Any? {
         guard let text = values else {
             return nil
         }
         switch slot.type {
         case "selset":
-            let parsedSlot = try decoder.decode(NLUModelSelset.self, from: facetData)
+            let parsedSlot = try decoder.decode(NLUTensorflowSelset.self, from: facetData)
             // filter the slot selection aliases to see if they match any tokens
             let contains = parsedSlot.selections.filter { selection in
                 text.contains(where: { name in
@@ -72,7 +72,7 @@ internal struct NLUSlotParser {
             // just pick the first, if any, that matched
             return contains.first?.name
         case "integer":
-            let parsedSlot = try decoder.decode(NLUModelInteger.self, from: facetData)
+            let parsedSlot = try decoder.decode(NLUTensorflowInteger.self, from: facetData)
             guard let lowerBound = parsedSlot.range.first,
                 let upperBound = parsedSlot.range.last,
                 let parsedValue = parseNumber(text)
@@ -82,7 +82,7 @@ internal struct NLUSlotParser {
             let range = ClosedRange<Int>(uncheckedBounds: (lower: lowerBound, upper: upperBound))
             return range.contains(parsedValue) ? parsedValue : nil
         case "digits":
-            let parsedSlot = try decoder.decode(NLUModelDigits.self, from: facetData)
+            let parsedSlot = try decoder.decode(NLUTensorflowDigits.self, from: facetData)
             let number = text.map({ $0.trimmingCharacters(in: .whitespacesAndNewlines) }).joined()
             return parsedSlot.count == number.count ? number : nil
         default:

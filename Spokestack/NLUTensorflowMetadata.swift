@@ -1,5 +1,5 @@
 //
-//  NLUModelMetadata.swift
+//  NLUTensorflowMetadata.swift
 //  Spokestack
 //
 //  Created by Noel Weichbrodt on 1/29/20.
@@ -8,51 +8,51 @@
 
 import Foundation
 
-internal struct NLUModelMeta {
+internal struct NLUTensorflowMeta {
     private let configuration: SpeechConfiguration
-    internal let model: NLUModelMetadata
+    internal let model: NLUTensorflowMetadata
     
     init(_ configuration: SpeechConfiguration) throws {
         self.configuration = configuration
 
         let metadataURL = URL(fileURLWithPath: configuration.nluModelMetadataPath)
         let metaData = try Data(contentsOf: metadataURL)
-        guard let metadata = try? JSONDecoder().decode(NLUModelMetadata.self, from: metaData) else {
+        guard let metadata = try? JSONDecoder().decode(NLUTensorflowMetadata.self, from: metaData) else {
             throw NLUError.metadata("Could not parse model metadata file set at nluModelMetadataPath.")
         }
         self.model = metadata
     }
 }
 
-internal struct NLUModelMetadata: Codable {
-    let intents: [NLUModelIntent]
+internal struct NLUTensorflowMetadata: Codable {
+    let intents: [NLUTensorflowIntent]
     let tags: Array<String>
 }
 
-internal struct NLUModelIntent: Codable {
+internal struct NLUTensorflowIntent: Codable {
     let name: String
-    let slots: [NLUModelSlot]
+    let slots: [NLUTensorflowSlot]
 }
 
-internal struct NLUModelSlot: Codable {
+internal struct NLUTensorflowSlot: Codable {
     let name: String
     let type: String
     let facets: String
 }
 
-internal struct NLUModelSelset: Codable {
-    let selections: [NLUModelSelsetSelection]
+internal struct NLUTensorflowSelset: Codable {
+    let selections: [NLUTensorflowSelsetSelection]
 }
 
-internal struct NLUModelSelsetSelection: Codable {
+internal struct NLUTensorflowSelsetSelection: Codable {
     let name: String
     let aliases: [String]
 }
 
-internal struct NLUModelInteger: Codable {
+internal struct NLUTensorflowInteger: Codable {
     let range: [Int]
 }
 
-internal struct NLUModelDigits: Codable {
+internal struct NLUTensorflowDigits: Codable {
     let count: Int
 }

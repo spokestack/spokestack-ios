@@ -40,7 +40,7 @@ class NLUViewController: UIViewController {
     
     // MARK: Private variables
     
-    private var nlu: TensorflowNLU?
+    private var nlu: NLUTensorflow?
     let configuration = SpeechConfiguration()
     
     // MARK: UIViewController implementation
@@ -85,7 +85,7 @@ class NLUViewController: UIViewController {
         }
         self.configuration.nluModelMetadataPath = metadataPath
 
-        self.nlu = try! TensorflowNLU(self, configuration: configuration)
+        self.nlu = try! NLUTensorflow(self, configuration: configuration)
     }
     
     @objc func dismissViewController(_ sender: Any?) -> Void {

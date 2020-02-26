@@ -1,5 +1,5 @@
 //
-//  TensorflowNLU.swift
+//  NLUTensorflow.swift
 //  Spokestack
 //
 //  Created by Noel Weichbrodt on 1/17/20.
@@ -11,7 +11,7 @@ import Combine
 import TensorFlowLite
 
 /// A BERT NLU implementation.
-@objc public class TensorflowNLU: NSObject, NLUService {
+@objc public class NLUTensorflow: NSObject, NLUService {
     
     /// Configuration parameters for the NLU.
     @objc public var configuration: SpeechConfiguration
@@ -21,12 +21,12 @@ import TensorFlowLite
     
     private var interpreter: Interpreter?
     private var tokenizer: BertTokenizer?
-    private var metadata: NLUModelMeta?
+    private var metadata: NLUTensorflowMeta?
     private var terminatorToken: Int
     private var paddingToken: Int
     private var maxTokenLength: Int?
     private let decoder = JSONDecoder()
-    private var slotParser: NLUSlotParser?
+    private var slotParser: NLUTensorflowSlotParser?
     
     internal enum InputTensors: Int, CaseIterable {
         case input
@@ -55,8 +55,8 @@ import TensorFlowLite
         self.maxTokenLength = inputMaxTokenLength
         self.tokenizer = try BertTokenizer(configuration)
         self.tokenizer?.maxTokenLength = inputMaxTokenLength
-        self.metadata = try NLUModelMeta(configuration)
-        self.slotParser = try NLUSlotParser(configuration: configuration, inputMaxTokenLength: inputMaxTokenLength)
+        self.metadata = try NLUTensorflowMeta(configuration)
+        self.slotParser = try NLUTensorflowSlotParser(configuration: configuration, inputMaxTokenLength: inputMaxTokenLength)
     }
     
     /// Initializes an NLU instance.
@@ -80,8 +80,8 @@ import TensorFlowLite
             self.maxTokenLength = inputMaxTokenLength
             self.tokenizer = try BertTokenizer(configuration)
             self.tokenizer?.maxTokenLength = inputMaxTokenLength
-            self.metadata = try NLUModelMeta(configuration)
-            self.slotParser = try NLUSlotParser(configuration: configuration, inputMaxTokenLength: inputMaxTokenLength)
+            self.metadata = try NLUTensorflowMeta(configuration)
+            self.slotParser = try NLUTensorflowSlotParser(configuration: configuration, inputMaxTokenLength: inputMaxTokenLength)
         } catch let error {
             delegate.failure(error: error)
         }

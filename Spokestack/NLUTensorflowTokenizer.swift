@@ -1,5 +1,5 @@
 //
-//  BertTokenizer.swift
+//  NLUTensorflowTokenizer.swift
 //  Spokestack
 //
 //  Created by Noel Weichbrodt on 1/23/20.
