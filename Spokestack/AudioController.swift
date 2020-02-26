@@ -3,14 +3,14 @@
 //  Spokestack
 //
 //  Created by Cory D. Wiles on 9/28/18.
-//  Copyright © 2018 Pylon AI, Inc. All rights reserved.
+//  Copyright © 2020 Spokestack, Inc. All rights reserved.
 //
 
 import Foundation
 import AVFoundation
 
 /// DispatchQueue for handling Spokestack audio processing
-let audioProcessingQueue: DispatchQueue = DispatchQueue(label: "com.pylon.audio.callback")
+let audioProcessingQueue: DispatchQueue = DispatchQueue(label: "io.spokestack.audio.callback")
 
 /// Required callback function for AudioUnitSetProperty's AURenderCallbackStruct.
 ///

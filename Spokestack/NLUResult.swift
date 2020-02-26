@@ -3,7 +3,7 @@
 //  Spokestack
 //
 //  Created by Noel Weichbrodt on 2/14/20.
-//  Copyright © 2020 Pylon AI, Inc. All rights reserved.
+//  Copyright © 2020 Spokestack, Inc. All rights reserved.
 //
 
 import Foundation
@@ -56,7 +56,7 @@ import Foundation
     /// - Parameters:
     ///   - type: The underlying type of the slot value.
     ///   - value: The slot's value.
-    public init(type: String, value: Any) {
+    public init(type: String, value: Any?) {
         self.type = type
         self.value = value
         super.init()
