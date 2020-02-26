@@ -88,8 +88,10 @@ internal struct WordpieceTokenizer: Tokenizer {
         return tokens.reduce("", { (result, s) in
             if s.prefix(2) == self.piecePrefix {
                 return result + s.suffix(s.count - 2)
-            } else {
+            } else if result.count > 0 {
                 return result + " " + s
+            } else {
+                return s
             }
         })
     }
