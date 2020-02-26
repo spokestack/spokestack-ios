@@ -8,15 +8,25 @@
 
 import Foundation
 
+/// Proviedes a parser for reconstructing tensorflow nlu intent slots from the input and posterior tags.
 internal struct NLUTensorflowSlotParser {
     private var tokenizer: BertTokenizer?
     private let decoder = JSONDecoder()
-
+    
+    /// Initializes a slot parser for the specific nlu tensorflow model.
+    /// - Parameters:
+    ///   - configuration: The global SpeechConfiguration object.
+    ///   - inputMaxTokenLength: The maximum number of input tokens to the nlu tensorflow model.
     init(configuration: SpeechConfiguration, inputMaxTokenLength: Int) throws {
         self.tokenizer = try BertTokenizer(configuration)
         self.tokenizer?.maxTokenLength = inputMaxTokenLength
     }
     
+    /// Parse the classification input and classification tag posteirors into a structured [intent : Slot] dictionary.
+    /// - Note: This operation effectively truncates the tag posteriors by the input size, ignoring all posteriors outside the input token count.
+    /// - Parameters:
+    ///   - taggedInput: A zip of tokenized inputs and classification tag posteriors.
+    ///   - intent: The classification intent posterior.
     internal func parse(taggedInput: Zip2Sequence<[String], [String]>, intent: NLUTensorflowIntent) throws -> [String:Slot] {
         
         var slots: [String:Slot] = [:]

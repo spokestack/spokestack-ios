@@ -8,10 +8,13 @@
 
 import Foundation
 
+/// Provides model-specific structured access to the NLU model metadata.
 internal struct NLUTensorflowMeta {
     private let configuration: SpeechConfiguration
     internal let model: NLUTensorflowMetadata
     
+    /// Using the provided configuration that includes the `nluModelMetadataPath`, hydrate the corresponding the metadata structure.
+    /// - Parameter configuration: The global SpeechConfiguration.
     init(_ configuration: SpeechConfiguration) throws {
         self.configuration = configuration
 
@@ -24,6 +27,7 @@ internal struct NLUTensorflowMeta {
     }
 }
 
+/// The internal nlu model metadata structure.
 internal struct NLUTensorflowMetadata: Codable {
     let intents: [NLUTensorflowIntent]
     let tags: Array<String>

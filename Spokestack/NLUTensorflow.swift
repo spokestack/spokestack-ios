@@ -116,10 +116,9 @@ import TensorFlowLite
         return inputs.map
             { self.classify($0) }
         .publisher
-        //return AnyPublisher<[Prediction], Error>(try inputs.map { try self.predict($0) as Prediction })
-        //return Publishers.First(upstream: Just([Prediction(intent: "", confidence: 0.0, slots: [:])]).setFailureType(to: Error.self)).eraseToAnyPublisher()
     }
     
+    /// Given an input, provide the model classification result.
     private func classify(_ input: String) -> Result<NLUResult, Error> {
         do {
             guard let model = self.interpreter else {
@@ -139,7 +138,7 @@ import TensorFlowLite
             }
             
             // preprocess the model inputs
-            //  tokenize + encode the input, terminate the utterance with the terminator token, and  pad from the end of the utterance up to the expected input size (128 32-bit ints)
+            // tokenize + encode the input, terminate the utterance with the terminator token, and  pad from the end of the utterance up to the expected input size (128 32-bit ints)
             let tokenizedInput = tokenizer.tokenize(input)
             var encodedInput = try tokenizer.encode(tokenizedInput)
             encodedInput.append(self.terminatorToken)
@@ -173,7 +172,7 @@ import TensorFlowLite
                 .map { Array(encodedTags[$0..<$0+metadata.model.tags.count]).argmax() }
             // decode the tags according to the model metatadata index
             let tagsByInput = encodedTagsArgmax.map { metadata.model.tags[$0.0] }
-            // zip up the input + tags, since their ordering corresponds. this also effectivly truncates the tag posteriors by the input size, ignoring all posteriors outside the input length.
+            // zip up the input + tags, since their ordering corresponds
             let taggedInput = zip(tagsByInput, tokenizedInput) // tag:String, input:String tuple
             // hyrdate Slot objects according to the zipped input + tag
             let slots = try parser.parse(taggedInput: taggedInput, intent: intent)
