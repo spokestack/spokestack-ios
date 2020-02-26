@@ -3,7 +3,7 @@
 //  Spokestack
 //
 //  Created by Cory D. Wiles on 10/8/18.
-//  Copyright © 2018 Pylon AI, Inc. All rights reserved.
+//  Copyright © 2020 Spokestack, Inc. All rights reserved.
 //
 
 #import <UIKit/UIKit.h>
