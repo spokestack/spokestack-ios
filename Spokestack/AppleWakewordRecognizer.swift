@@ -3,7 +3,7 @@
 //  Spokestack
 //
 //  Created by Noel Weichbrodt on 2/4/19.
-//  Copyright © 2019 Pylon AI, Inc. All rights reserved.
+//  Copyright © 2020 Spokestack, Inc. All rights reserved.
 //
 
 import Foundation
