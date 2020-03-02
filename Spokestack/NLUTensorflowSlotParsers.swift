@@ -8,7 +8,7 @@
 
 import Foundation
 
-/// Proviedes a parser for reconstructing tensorflow nlu intent slots from the input and posterior tags.
+/// Provides a parser for reconstructing tensorflow nlu slot values from the input and IOB tag labels.
 internal struct NLUTensorflowSlotParser {
     private var tokenizer: BertTokenizer?
     private let decoder = JSONDecoder()
@@ -22,11 +22,11 @@ internal struct NLUTensorflowSlotParser {
         self.tokenizer?.maxTokenLength = inputMaxTokenLength
     }
     
-    /// Parse the classification input and classification tag posteirors into a structured [intent : Slot] dictionary.
-    /// - Note: This operation effectively truncates the tag posteriors by the input size, ignoring all posteriors outside the input token count.
+    /// Parse the classification input and predicted tag labels into a structured [intent : Slot] dictionary.
+    /// - Note: This operation effectively truncates the tag labels by the input size, ignoring all labels outside the input token count.
     /// - Parameters:
-    ///   - taggedInput: A zip of tokenized inputs and classification tag posteriors.
-    ///   - intent: The classification intent posterior.
+    ///   - taggedInput: A zip of tokenized inputs and classification tag labels.
+    ///   - intent: The predicted intent.
     internal func parse(taggedInput: Zip2Sequence<[String], [String]>, intent: NLUTensorflowIntent) throws -> [String:Slot] {
         
         var slots: [String:Slot] = [:]
@@ -34,7 +34,7 @@ internal struct NLUTensorflowSlotParser {
         // create a dictionary of [tags: [tokens]]
         var slotTokens: [String:[String]] = [:]
         for (tag, token) in taggedInput {
-            // the model metadata tags are occasionally prefixed with POS tags. But the model metadata slots do not have this prefix. Remove the prefix in order to perform the model metadata slot lookups based on tag.
+            // the model slot recognizer uses IOB tags, so `b_` and `i_` prefixes must be removed to resolve tag labels to slot names.
             var slotType = tag
             if let prefixIndex = tag.range(of: "_")?.upperBound {
                 slotType = String(tag.suffix(from: prefixIndex))

@@ -10,10 +10,10 @@ import Foundation
 
 /// MARK: BasicTokenizer
 
-/// A basic tokenizer where tokens are defined as alphanumeric words and punctuations.
+/// A basic tokenizer where tokens are defined as alphanumeric strings and punctuation.
 internal struct BasicTokenizer: Tokenizer {
     
-    /// Tokenizes the input text into an array of alphanumeric words and punctuations, discarding all other characters.
+    /// Tokenizes the input text into an array of alphanumeric strings and punctuation, discarding all other characters.
     /// - Parameter text: The text to tokenize.
     func tokenize(_ text: String) -> [String] {
         return text
