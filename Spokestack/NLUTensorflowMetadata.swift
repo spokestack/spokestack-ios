@@ -20,9 +20,7 @@ internal struct NLUTensorflowMeta {
 
         let metadataURL = URL(fileURLWithPath: configuration.nluModelMetadataPath)
         let metaData = try Data(contentsOf: metadataURL)
-        guard let metadata = try? JSONDecoder().decode(NLUTensorflowMetadata.self, from: metaData) else {
-            throw NLUError.metadata("Could not parse model metadata file set at nluModelMetadataPath.")
-        }
+        let metadata = try JSONDecoder().decode(NLUTensorflowMetadata.self, from: metaData)
         self.model = metadata
     }
 }

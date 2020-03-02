@@ -25,8 +25,8 @@ internal struct BasicTokenizer: Tokenizer {
             })
             // convert the array of characters back to a string
             .joined()
-            //  split the string into alphanumeric word/punctuation components. Also normalize the string again, removing all but alphanumerics and punctuation.
-            .components(separatedBy: NSCharacterSet.alphanumerics.union(NSCharacterSet.punctuationCharacters).inverted)
+            //  split the string into alphanumeric (L* U N*) word/punctuation components. Also normalize the string again, removing all but alphanumerics and punctuation.
+            .components(separatedBy: NSCharacterSet.alphanumerics.subtracting(NSCharacterSet.nonBaseCharacters).union(NSCharacterSet.punctuationCharacters).inverted)
             // remove spaces & newlines
             .map({ $0.trimmingCharacters(in: .whitespacesAndNewlines) })
             // remove empty string
@@ -87,7 +87,7 @@ internal struct WordpieceTokenizer: Tokenizer {
     func detokenize(_ tokens: [String]) throws -> String {
         return tokens.reduce("", { (result, s) in
             if s.prefix(2) == self.piecePrefix {
-                return result + s.suffix(s.count - 2)
+                return result + s.dropFirst(2)
             } else if result.count > 0 {
                 return result + " " + s
             } else {
@@ -105,7 +105,6 @@ internal struct BertTokenizer {
     /// The maximum input token count the BERT model supports.
     internal var maxTokenLength: Int?
     
-    private let minVocabLength = 2
     private var encodings: [String: Int] = [:]
     private var decodings: [Int: String] = [:]
     private let basicTokenizer = BasicTokenizer()
@@ -124,6 +123,9 @@ internal struct BertTokenizer {
             self.decodings[id] = token
         }
         self.wordpieceTokenizer = WordpieceTokenizer(self.encodings)
+        if (self.encodings.underestimatedCount < 2) {
+            throw TokenizerError.invalidConfiguration("NLU vocaubulary encodings not loaded. Please check SpeechConfiguration.nluEncodings.")
+        }
     }
     
     /// Tokenize the input text.
@@ -141,9 +143,6 @@ internal struct BertTokenizer {
         if tokens.count > maxLength {
             throw TokenizerError.tooLong("This model cannot encode (\(tokens.count) tokens. The maximum number it can encode is \(maxLength).")
         }
-        if (self.encodings.underestimatedCount < minVocabLength) {
-            throw TokenizerError.invalidConfiguration("Vocaubulary encodings not loaded. Please check SpeechConfiguration.nluEncodings.")
-        }
         return tokens.map { (self.encodings[$0] ?? -1) } /// TODO: is -1 a good default here?
     }
     
@@ -153,24 +152,9 @@ internal struct BertTokenizer {
         try self.encode(self.tokenize(text))
     }
     
-    /// Decode the encoded tokens.
-    /// - Parameter encoded: The encoded tokens to decode.
-    func decode(_ encoded: [Int]) throws -> [String] {
-        if (self.decodings.underestimatedCount < self.minVocabLength) {
-            throw TokenizerError.invalidConfiguration("Vocaubulary encodings not loaded. Please check SpeechConfiguration.nluEncodings.")
-        }
-        return encoded.map { self.decodings[$0] ?? "[UNK]" } /// TODO: is [UNK] a good default here?
-    }
-    
     /// Detokenize the tokens.
     /// - Parameter tokens: The tokens to detokenize.
     func detokenize(_ tokens: [String]) throws -> String {
         return try wordpieceTokenizer.detokenize(tokens)
-    }
-    
-    /// Detokenize and decode the input text.
-    /// - Parameter tokens: The encoded tokens to decode and detokenize.
-    func decodeAndDetokenize(_ encoded: [Int]) throws -> String {
-        try self.detokenize(self.decode(encoded))
     }
 }

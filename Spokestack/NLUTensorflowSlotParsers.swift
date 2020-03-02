@@ -54,7 +54,7 @@ internal struct NLUTensorflowSlotParser {
                 throw NLUError.metadata("Could not find a slot called \(slotName) in nlu metadata.")
             }
             guard let facetData = slot.facets.data(using: .utf16) else {
-                throw NLUError.metadata("Error when converting \(slotName) facet data.")
+                throw NLUError.metadata("The nlu metadata for \(slotName) could not be parsed and may be malformed.")
             }
             let slotValue = try self.slotFacetParser(slot: slot, facetData: facetData, values: slotTokens[slotName])
 
@@ -102,10 +102,10 @@ internal struct NLUTensorflowSlotParser {
     
     private func parseNumber(_ text: [String]) -> Int? {
         let number = text.map({ $0.trimmingCharacters(in: .whitespacesAndNewlines) }).joined()
-        if let int = Int(number) {
-            return int
-        } else if text.count == 0 {
+        if text.count == 0 {
             return nil
+        } else if let int = Int(number) {
+            return int
         } else if let cardinal = parseCardinal(text) {
             return cardinal
         } else {

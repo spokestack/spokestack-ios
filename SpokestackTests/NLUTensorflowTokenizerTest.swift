@@ -62,12 +62,4 @@ class NLUTensorflowTokenizerTest: XCTestCase {
         let encoded = [18, 25, 24, 1, 7, 39, 4, 34, 47, 49, 5]
         XCTAssertEqual(try! tokenizer.encode(tokenizer.tokenize(text)), encoded)
     }
-    
-    func testBertTokenizerRoundtrip() {
-        let config = SpeechConfiguration()
-        config.nluVocabularyPath = SharedTestMocks.createVocabularyPath()
-        let tokenizer = try! BertTokenizer(config)
-        let text = "this also has"
-        XCTAssertEqual(try! tokenizer.decodeAndDetokenize(tokenizer.tokenizeAndEncode(text)), text)
-    }
 }

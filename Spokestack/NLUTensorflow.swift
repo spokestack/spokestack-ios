@@ -91,12 +91,16 @@ import TensorFlowLite
         self.interpreter = try Interpreter(modelPath: self.configuration.nluModelPath)
         try self.interpreter!.allocateTensors()
         if(self.interpreter!.inputTensorCount != InputTensors.allCases.count) || (self.interpreter!.outputTensorCount != OutputTensors.allCases.count) {
-            throw NLUError.model("NLU model provided is not shaped as expected. There are \(self.interpreter!.inputTensorCount)/\(InputTensors.allCases.count) inputs and \(self.interpreter!.outputTensorCount)/\(OutputTensors.allCases.count) outputs")
+            let inputCount = self.interpreter!.inputTensorCount
+            let inputCases = InputTensors.allCases.count
+            let outputCount = self.interpreter!.outputTensorCount
+            let outputCases = OutputTensors.allCases.count
+            throw NLUError.model("NLU model provided is not shaped as expected. There are \(inputCount)/\(inputCases) inputs and \(outputCount)/\(outputCases) outputs")
         }
     }
     
-    /// Classifies the provided input. The classification results are sent to the instance's configured NLUDelegate.
-    /// - Parameter utterance: The user utterance to classify.
+    /// Classifies the provided input. The classifciation results are sent to the instance's configured NLUDelegate.
+    /// - Parameter utterance: The provided utterance to classify.
     @objc public func classify(utterance: String, context: [String : Any]) -> Void {
         DispatchQueue.main.async {
             let prediction = self.classify(utterance)
@@ -109,11 +113,11 @@ import TensorFlowLite
     }
     
     /// Classifies the provided input. NLUResult is sent to all subscribers.
-    /// - Parameter inputs: The NLUInput to classify.
+    /// - Parameter inputs: The provided utterances to classify.
     /// - Warning: `classify` is resource-intensive and should be used with `subscribe(on:)` to ensure it is not blocking the UI thread.
     @available(iOS 13.0, *)
-    public func classify(inputs: [String]) -> Publishers.Sequence<[Result<NLUResult, Error>], Never> {
-        return inputs.map
+    public func classify(utterances: [String]) -> Publishers.Sequence<[Result<NLUResult, Error>], Never> {
+        return utterances.map
             { self.classify($0) }
         .publisher
     }
@@ -125,20 +129,20 @@ import TensorFlowLite
                 throw NLUError.model("NLU model was not initialized.")
             }
             guard let tokenizer = self.tokenizer else {
-                throw NLUError.tokenizer("Tokenizer was not initialized.")
+                throw NLUError.tokenizer("NLU model tokenizer was not initialized.")
             }
             guard let metadata = self.metadata else {
-                throw NLUError.metadata("Metadata was not initialized.")
+                throw NLUError.metadata("NLU model metadata was not initialized.")
             }
             guard let maxInputTokenLength = self.maxTokenLength else {
                 throw NLUError.invalidConfiguration("NLU model maximum input tokens length was not set.")
             }
             guard let parser = self.slotParser else {
-                throw NLUError.invalidConfiguration("No slot parser was set for this model.")
+                throw NLUError.invalidConfiguration("NLU model parser was not configured.")
             }
             
             // preprocess the model inputs
-            // tokenize + encode the input, terminate the utterance with the terminator token, and  pad from the end of the utterance up to the expected input size (128 32-bit ints)
+            // tokenize + encode the input, terminate the utterance with the terminator token, and  pad from the end of the utterance up to the maximum input size (maxInputTokenLength).
             let tokenizedInput = tokenizer.tokenize(input)
             var encodedInput = try tokenizer.encode(tokenizedInput)
             encodedInput.append(self.terminatorToken)
@@ -158,7 +162,7 @@ import TensorFlowLite
             let encodedIntents = encodedIntentsTensor.data.toArray(type: Float32.self, count: encodedIntentsTensor.data.count/4)
             let intentsArgmax = encodedIntents.argmax()
             if intentsArgmax.0 > metadata.model.intents.count {
-                throw NLUError.model("NLU model returned an intent value outside the expected range.")
+                throw NLUError.model("NLU model intent classification failed because the model classification output did not match the model metadata.")
             }
             let intent = metadata.model.intents[intentsArgmax.0]
             
