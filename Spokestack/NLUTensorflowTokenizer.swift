@@ -82,18 +82,24 @@ internal struct WordpieceTokenizer: Tokenizer {
         }
     }
     
-    /// Decode and detokenize the encoded tokens into a space-separated string.
-    /// - Parameter tokens: The encoded tokens to decode and detokenize.
-    func detokenize(_ tokens: [String]) throws -> String {
-        return tokens.reduce("", { (result, s) in
+    func decode(_ tokens: [String]) ->  [String] {
+        return tokens
+            .compactMap({ $0.trimmingCharacters(in: .whitespacesAndNewlines) })
+            .reduce([], { (result, s) in
             if s.prefix(2) == self.piecePrefix {
-                return result + s.dropFirst(2)
+                return result.dropLast() + [(result.last ?? "") + String(s.dropFirst(2))]
             } else if result.count > 0 {
-                return result + " " + s
+                return result + [s]
             } else {
-                return s
+                return [s]
             }
         })
+    }
+    
+    /// Decode and detokenize the encoded tokens into a space-separated string.
+    /// - Parameter tokens: The encoded tokens to decode and detokenize.
+    func detokenize(_ tokens: [String]) -> String {
+        return self.decode(tokens).joined(separator: " ")
     }
 }
 
@@ -102,11 +108,7 @@ internal struct WordpieceTokenizer: Tokenizer {
 /// Using the `BasicTokenizer` and `WordpieceTokenizer`, performs tokenization + encoding/detokenization + decoding specific to the BERT NLU model.
 internal struct BertTokenizer {
     
-    /// The maximum input token count the BERT model supports.
-    internal var maxTokenLength: Int?
-    
     private var encodings: [String: Int] = [:]
-    private var decodings: [Int: String] = [:]
     private let basicTokenizer = BasicTokenizer()
     private var wordpieceTokenizer: WordpieceTokenizer
     private var config: SpeechConfiguration
@@ -115,12 +117,10 @@ internal struct BertTokenizer {
     /// - Parameter config: Configuration parameters for the tokenizer.
     init(_ config: SpeechConfiguration) throws {
         self.config = config
-        self.maxTokenLength = config.nluMaxTokenLength
         let vocab = try String(contentsOfFile: config.nluVocabularyPath)
         let tokens = vocab.split(separator: "\n").map { String($0) }
         for (id, token) in tokens.enumerated() {
             self.encodings[token] = id
-            self.decodings[id] = token
         }
         self.wordpieceTokenizer = WordpieceTokenizer(self.encodings)
         if (self.encodings.underestimatedCount < 2) {
@@ -137,24 +137,25 @@ internal struct BertTokenizer {
     /// Encode the tokens.
     /// - Parameter tokens: The tokens to encode.
     func encode(_ tokens: [String]) throws -> [Int] {
-        guard let maxLength = self.maxTokenLength else {
-            throw TokenizerError.invalidConfiguration("NLU model maximum input tokens length was not set.")
-        }
-        if tokens.count > maxLength {
-            throw TokenizerError.tooLong("This model cannot encode (\(tokens.count) tokens. The maximum number it can encode is \(maxLength).")
+        if tokens.count > self.config.nluMaxTokenLength {
+            throw TokenizerError.tooLong("This model cannot encode (\(tokens.count) tokens. The maximum number it can encode is \(self.config.nluMaxTokenLength).")
         }
         return tokens.map { (self.encodings[$0] ?? -1) } /// TODO: is -1 a good default here?
     }
-    
+        
     /// Tokenize and encode the input text.
     /// - Parameter text: The input text to tokenize and encode.
     func tokenizeAndEncode(_ text: String) throws -> [Int] {
         try self.encode(self.tokenize(text))
     }
     
+    func decode(_ tokens: [String]) ->  [String] {
+        return wordpieceTokenizer.decode(tokens)
+    }
+    
     /// Detokenize the tokens.
     /// - Parameter tokens: The tokens to detokenize.
-    func detokenize(_ tokens: [String]) throws -> String {
-        return try wordpieceTokenizer.detokenize(tokens)
+    func detokenize(_ tokens: [String]) -> String {
+        return wordpieceTokenizer.detokenize(tokens)
     }
 }

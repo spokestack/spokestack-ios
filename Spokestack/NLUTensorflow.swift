@@ -24,7 +24,6 @@ import TensorFlowLite
     private var metadata: NLUTensorflowMeta?
     private var terminatorToken: Int
     private var paddingToken: Int
-    private var maxTokenLength: Int?
     private let decoder = JSONDecoder()
     private var slotParser: NLUTensorflowSlotParser?
     
@@ -51,12 +50,10 @@ import TensorFlowLite
             throw NLUError.model("NLU model was not initialized.")
         }
         let inputTensor = try model.input(at: InputTensors.input.rawValue)
-        let inputMaxTokenLength =         inputTensor.shape.dimensions[InputTensors.input.rawValue]
-        self.maxTokenLength = inputMaxTokenLength
+        configuration.nluMaxTokenLength = inputTensor.shape.dimensions[InputTensors.input.rawValue]
         self.tokenizer = try BertTokenizer(configuration)
-        self.tokenizer?.maxTokenLength = inputMaxTokenLength
         self.metadata = try NLUTensorflowMeta(configuration)
-        self.slotParser = try NLUTensorflowSlotParser(configuration: configuration, inputMaxTokenLength: inputMaxTokenLength)
+        self.slotParser = NLUTensorflowSlotParser()
     }
     
     /// Initializes an NLU instance.
@@ -76,12 +73,10 @@ import TensorFlowLite
                 throw NLUError.model("NLU model was not initialized.")
             }
             let inputTensor = try model.input(at: InputTensors.input.rawValue)
-            let inputMaxTokenLength = inputTensor.shape.dimensions[1]
-            self.maxTokenLength = inputMaxTokenLength
+            self.configuration.nluMaxTokenLength = inputTensor.shape.dimensions[1]
             self.tokenizer = try BertTokenizer(configuration)
-            self.tokenizer?.maxTokenLength = inputMaxTokenLength
             self.metadata = try NLUTensorflowMeta(configuration)
-            self.slotParser = try NLUTensorflowSlotParser(configuration: configuration, inputMaxTokenLength: inputMaxTokenLength)
+            self.slotParser = NLUTensorflowSlotParser()
         } catch let error {
             delegate.failure(error: error)
         }
@@ -134,9 +129,6 @@ import TensorFlowLite
             guard let metadata = self.metadata else {
                 throw NLUError.metadata("NLU model metadata was not initialized.")
             }
-            guard let maxInputTokenLength = self.maxTokenLength else {
-                throw NLUError.invalidConfiguration("NLU model maximum input tokens length was not set.")
-            }
             guard let parser = self.slotParser else {
                 throw NLUError.invalidConfiguration("NLU model parser was not configured.")
             }
@@ -146,7 +138,7 @@ import TensorFlowLite
             let tokenizedInput = tokenizer.tokenize(input)
             var encodedInput = try tokenizer.encode(tokenizedInput)
             encodedInput.append(self.terminatorToken)
-            encodedInput += Array(repeating: self.paddingToken, count: maxInputTokenLength - encodedInput.count)
+            encodedInput += Array(repeating: self.paddingToken, count: self.configuration.nluMaxTokenLength - encodedInput.count)
             
             // downcast the (assumed iOS) default Int64 to match the model's expected Int32 size. This is safe because the model vocabulary code indicies are 32-bit.
             let downcastEncodedInput = encodedInput.map { Int32(truncatingIfNeeded: $0) }
@@ -179,7 +171,7 @@ import TensorFlowLite
             // zip up the input + tags, since their ordering corresponds
             let taggedInput = zip(tagsByInput, tokenizedInput) // tag:String, input:String tuple
             // hyrdate Slot objects according to the zipped input + tag
-            let slots = try parser.parse(taggedInput: taggedInput, intent: intent)
+            let slots = try parser.parse(taggedInput: taggedInput, intent: intent, encoder: tokenizer)
             
             // return the classification result
             return .success(NLUResult(utterance: input, intent: intent.name, confidence: intentsArgmax.1, slots: slots))
