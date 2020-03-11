@@ -48,7 +48,6 @@ class NLUTensorflowSlotParserTest: XCTestCase {
         let intent = metadata!.intents.filter({ $0.name == "i.i" }).first!
         let parsedIntegerMillion = try! parser.parse(taggedInput: taggedInputRatingMillion, intent: intent, encoder: encoder!)
         XCTAssertEqual(parsedIntegerMillion["iMi"]!.value as! Int, 1000000)
-        
     }
     
     func testParseDigits() {
@@ -65,6 +64,10 @@ class NLUTensorflowSlotParserTest: XCTestCase {
         let taggedInputEntity = zip(["b_epynonymous", "i_epynonymous"],["dead", "beef"])
         let parsedEntity = try! parser.parse(taggedInput: taggedInputEntity, intent: metadata!.intents.filter({ $0.name == "identify" }).first!, encoder: encoder!)
         XCTAssertEqual(parsedEntity["epynonymous"]!.value as! String, "dead beef")
+        
+        let taggedInputEntityO = zip(["o", "b_epynonymous", "i_epynonymous", "o", "o", "b_epynonymous"],["when", "dead", "beef", "appears", "in", "debug"])
+        let parsedEntityO = try! parser.parse(taggedInput: taggedInputEntityO, intent: metadata!.intents.filter({ $0.name == "identify" }).first!, encoder: encoder!)
+        XCTAssertEqual(parsedEntityO["epynonymous"]!.value as! String, "dead beef debug")
     }
     
     func createMetadata() -> String {

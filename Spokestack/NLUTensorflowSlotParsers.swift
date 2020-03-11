@@ -29,11 +29,7 @@ internal struct NLUTensorflowSlotParser {
                 slotType = String(tag.suffix(from: prefixIndex))
             }
             // collect all the tokens with the same slot type into a single array
-            if let tokens = slotTokens[slotType] {
-                slotTokens[slotType] = tokens + [token]
-            } else {
-                slotTokens[slotType] = [token]
-            }
+            slotTokens[slotType, default: []] += [token]
         }
         // for each tag that isn't unclassified, send the tokens to the slot facet parser
         for (name, values) in slotTokens where name != "o" {
@@ -57,9 +53,7 @@ internal struct NLUTensorflowSlotParser {
             }
             let decoded = encoder.detokenize(values)
             let contains = parsed.selections.filter { selection in
-                selection.aliases.contains(where: { alias in
-                    decoded == alias || decoded == selection.name
-                })
+                selection.name == decoded || selection.aliases.contains(decoded)
             }
             // just pick the first, if any, that matched
             return contains.first?.name
@@ -71,7 +65,6 @@ internal struct NLUTensorflowSlotParser {
                 .decode(values)
                 .reduce([], { self.parseReduceNumber($0, next: $1) })
                 .reduce(0, { $0 + $1 })
-                //.compactMap({ parseNumber($0) })
             guard let lowerBound = parsed.range.first,
                 let upperBound = parsed.range.last
                 else {
@@ -125,7 +118,7 @@ internal struct NLUTensorflowSlotParser {
                 return nil
             }
         }
-        sum = sum > 0 ? sum : 1
+        sum = max(sum, 1)
         return result + [sum * multiplier]
     }
     
@@ -200,7 +193,9 @@ internal struct NLUTensorflowSlotParser {
         "fifty" : "50",
         "fiftie" : "50",
         "sixty" : "60",
+        "sixtie" : "60",
         "seventy" : "70",
+        "seventie" : "70",
         "eighty" : "80",
         "eightie": "80",
         "ninety" : "90",

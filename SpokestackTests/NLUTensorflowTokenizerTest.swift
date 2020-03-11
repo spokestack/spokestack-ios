@@ -26,11 +26,11 @@ class NLUTensorflowTokenizerTest: XCTestCase {
     func testWordpieceDetokenize() {
         let tokenizer = WordpieceTokenizer(try! SharedTestMocks.createEncodingsDictionary(SharedTestMocks.createVocabularyPath()))
         
-        XCTAssertEqual(try tokenizer.detokenize(["their"]), "their")
+        XCTAssertEqual(tokenizer.detokenize(["their"]), "their")
         
-        XCTAssertEqual(try tokenizer.detokenize(["there", "##s"]), "theres")
+        XCTAssertEqual(tokenizer.detokenize(["there", "##s"]), "theres")
         
-        XCTAssertEqual(try tokenizer.detokenize(["there", "unto"]), "there unto")
+        XCTAssertEqual(tokenizer.detokenize(["there", "unto"]), "there unto")
     }
     
     func testBertTokenize() {
@@ -46,12 +46,20 @@ class NLUTensorflowTokenizerTest: XCTestCase {
         XCTAssertEqual(tokenizer.tokenize(phone), phoneTokens)
     }
     
+    func testBertDetokenize() {
+        let config = SpeechConfiguration()
+        config.nluVocabularyPath = SharedTestMocks.createVocabularyPath()
+        let tokenizer = try! BertTokenizer(config)
+        XCTAssertEqual(tokenizer.detokenize(["God", "##speed", "You", "!", "Black", "Emperor"]), "Godspeed You! Black Emperor")
+
+    }
+    
     func testBertTokenizeDetokenizeRoundtrip() {
         let config = SpeechConfiguration()
         config.nluVocabularyPath = SharedTestMocks.createVocabularyPath()
         let tokenizer = try! BertTokenizer(config)
         let text = "this also has"
-        XCTAssertEqual(try tokenizer.detokenize(tokenizer.tokenize(text)), text)
+        XCTAssertEqual(tokenizer.detokenize(tokenizer.tokenize(text)), text)
     }
     
     func testBertTokenizerEncode() {

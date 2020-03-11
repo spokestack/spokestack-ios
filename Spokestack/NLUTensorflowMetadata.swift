@@ -56,7 +56,7 @@ internal struct NLUTensorflowSlot: Codable {
             case "digits":
                 return try JSONDecoder().decode(NLUTensorflowDigits.self, from: facetData)
         default:
-            throw NLUError.metadata("The NLU metadata for \(self.name)'s type is not defined.")
+            throw NLUError.metadata("The NLU metadata for \(self.name)'s type \(self.type) is not defined.")
         }
     }
 }

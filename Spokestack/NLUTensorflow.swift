@@ -45,15 +45,7 @@ import TensorFlowLite
         self.terminatorToken = configuration.nluTerminatorTokenIndex
         self.paddingToken = configuration.nluPaddingTokenIndex
         super.init()
-        try self.initializeInterpreter()
-        guard let model = self.interpreter else {
-            throw NLUError.model("NLU model was not initialized.")
-        }
-        let inputTensor = try model.input(at: InputTensors.input.rawValue)
-        configuration.nluMaxTokenLength = inputTensor.shape.dimensions[InputTensors.input.rawValue]
-        self.tokenizer = try BertTokenizer(configuration)
-        self.metadata = try NLUTensorflowMeta(configuration)
-        self.slotParser = NLUTensorflowSlotParser()
+        try self.configure()
     }
     
     /// Initializes an NLU instance.
@@ -68,28 +60,32 @@ import TensorFlowLite
         self.paddingToken = configuration.nluPaddingTokenIndex
         do {
             super.init()
-            try self.initializeInterpreter()
-            guard let model = self.interpreter else {
-                throw NLUError.model("NLU model was not initialized.")
-            }
-            let inputTensor = try model.input(at: InputTensors.input.rawValue)
-            self.configuration.nluMaxTokenLength = inputTensor.shape.dimensions[1]
-            self.tokenizer = try BertTokenizer(configuration)
-            self.metadata = try NLUTensorflowMeta(configuration)
-            self.slotParser = NLUTensorflowSlotParser()
+            try self.configure()
         } catch let error {
             delegate.failure(error: error)
         }
     }
     
+    private func configure() throws {
+        try self.initializeInterpreter()
+        guard let model = self.interpreter else {
+            throw NLUError.model("NLU model was not initialized.")
+        }
+        let inputTensor = try model.input(at: InputTensors.input.rawValue)
+        self.configuration.nluMaxTokenLength = inputTensor.shape.dimensions[1]
+        self.tokenizer = try BertTokenizer(configuration)
+        self.metadata = try NLUTensorflowMeta(configuration)
+        self.slotParser = NLUTensorflowSlotParser()
+    }
+    
     private func initializeInterpreter() throws {
         self.interpreter = try Interpreter(modelPath: self.configuration.nluModelPath)
         try self.interpreter!.allocateTensors()
-        if(self.interpreter!.inputTensorCount != InputTensors.allCases.count) || (self.interpreter!.outputTensorCount != OutputTensors.allCases.count) {
-            let inputCount = self.interpreter!.inputTensorCount
-            let inputCases = InputTensors.allCases.count
-            let outputCount = self.interpreter!.outputTensorCount
-            let outputCases = OutputTensors.allCases.count
+        let inputCount = self.interpreter!.inputTensorCount
+        let inputCases = InputTensors.allCases.count
+        let outputCount = self.interpreter!.outputTensorCount
+        let outputCases = OutputTensors.allCases.count
+        if(inputCount != inputCases) || (outputCount != outputCases) {
             throw NLUError.model("NLU model provided is not shaped as expected. There are \(inputCount)/\(inputCases) inputs and \(outputCount)/\(outputCases) outputs")
         }
     }
