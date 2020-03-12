@@ -51,7 +51,7 @@ internal struct NLUTensorflowSlotParser {
             guard let parsed = try slot.parsed() as? NLUTensorflowSelset else {
                 throw NLUError.metadata("The NLU metadata for the \(slot.name) facet was not found.")
             }
-            let decoded = encoder.detokenize(values)
+            let decoded = encoder.decode(values).joined(separator: " ")
             let contains = parsed.selections.filter { selection in
                 selection.name == decoded || selection.aliases.contains(decoded)
             }
@@ -88,7 +88,7 @@ internal struct NLUTensorflowSlotParser {
                 .joined()
             return parsed.count == digits.count ? digits : nil
         case "entity":
-            return encoder.detokenize(values)
+            return encoder.decode(values).joined(separator: " ")
         default:
             return nil
         }

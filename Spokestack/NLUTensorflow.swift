@@ -131,8 +131,8 @@ import TensorFlowLite
             
             // preprocess the model inputs
             // tokenize + encode the input, terminate the utterance with the terminator token, and  pad from the end of the utterance up to the maximum input size (maxInputTokenLength).
-            let tokenizedInput = tokenizer.tokenize(input)
-            var encodedInput = try tokenizer.encode(tokenizedInput)
+            let tokenizedInput = tokenizer.tokenize(text: input)
+            var encodedInput = try tokenizer.encode(tokens: tokenizedInput)
             encodedInput.append(self.terminatorToken)
             encodedInput += Array(repeating: self.paddingToken, count: self.configuration.nluMaxTokenLength - encodedInput.count)
             
