@@ -26,6 +26,10 @@ import Foundation
     /// The slot values present in the utterance.
     @objc public var slots: [String:Slot]
     
+    public override var description: String {
+        return "\(intent) \(confidence) \(slots)"
+    }
+    
     /// The initializer for the NLU result.
     /// - Parameters:
     ///   - utterance: The original utterance that was classified.
@@ -51,6 +55,10 @@ import Foundation
     
     /// The slot's value.
     @objc public var value: Any?
+
+    public override var description: String {
+        return "(\(type): \(value ?? ""))"
+    }
     
     /// The initializer for the NLU result slot.
     /// - Parameters:

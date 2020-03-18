@@ -14,44 +14,53 @@ internal struct NLUTensorflowSlotParser {
     /// Parse the classification input and predicted tag labels into a structured [intent : Slot] dictionary.
     /// - Note: This operation effectively truncates the tag labels by the input size, ignoring all labels outside the input token count.
     /// - Parameters:
-    ///   - taggedInput: A zip of tokenized inputs and classification tag labels.
+    ///   - tags: An array of classification tag labels.
     ///   - intent: The predicted intent.
-    internal func parse(taggedInput: Zip2Sequence<[String], [String]>, intent: NLUTensorflowIntent, encoder: BertTokenizer) throws -> [String:Slot] {
+    internal func parse(tags: [String], intent: NLUTensorflowIntent, encoder: BertTokenizer, encodedTokens: EncodedTokens) throws -> [String:Slot] {
         
+        guard let encodedTokensByWhitespaceIndex = encodedTokens.encodedTokensByWhitespaceIndex else {
+            throw NLUError.tokenizer("NLU model tokenizer failed to correctly encode utterance because encodedTokensByWhitespaceIndex is nil.")
+        }
+
         var slots: [String:Slot] = [:]
         
         // create a dictionary of [tags: [tokens]]
-        var slotTokens: [String:[String]] = [:]
-        for (tag, token) in taggedInput {
+        var slotDictionary: [String: [Int]] = [:]
+        for (index, tag) in tags.enumerated()  where index < encodedTokensByWhitespaceIndex.count{
             // the model slot recognizer uses IOB tags, so `b_` and `i_` prefixes must be removed to resolve tag labels to slot names.
             var slotType = tag
+            let whitespaceIndex = encodedTokensByWhitespaceIndex[index]
             if let prefixIndex = tag.range(of: "_")?.upperBound {
                 slotType = String(tag.suffix(from: prefixIndex))
             }
             // collect all the tokens with the same slot type into a single array
-            slotTokens[slotType, default: []] += [token]
+            if slotDictionary.keys.contains(where: { $0 == slotType }) {
+                slotDictionary[slotType]?.append(whitespaceIndex)
+            } else {
+                slotDictionary[slotType] = [whitespaceIndex]
+            }
         }
         // for each tag that isn't unclassified, send the tokens to the slot facet parser
-        for (name, values) in slotTokens where name != "o" {
-            guard let slot = intent.slots.filter({ $0.name == name }).first else {
-                throw NLUError.metadata("Could not find a slot called \(name) in nlu metadata.")
+        for (tag, whitespaceIndicies) in slotDictionary where tag != "o" {
+            guard let slot = intent.slots.filter({ $0.name == tag }).first else {
+                throw NLUError.metadata("Could not find a slot called \(tag) in nlu metadata.")
             }
-            let slotValue = try self.slotFacetParser(slot: slot, values: values, encoder: encoder)
+            let slotValue = try self.slotFacetParser(slot: slot, whitespaceIndicies: whitespaceIndicies, encoder: encoder, encodedTokens: encodedTokens)
 
-            slots[name] = Slot(type: slot.type, value: slotValue)
+            slots[tag] = Slot(type: slot.type, value: slotValue)
         }
         
         return slots
     }
     
-    private func slotFacetParser(slot: NLUTensorflowSlot, values: [String], encoder: BertTokenizer) throws -> Any? {
+    private func slotFacetParser(slot: NLUTensorflowSlot, whitespaceIndicies: [Int], encoder: BertTokenizer, encodedTokens: EncodedTokens) throws -> Any? {
         switch slot.type {
         case "selset":
             // filter the slot selection aliases (and the slot selection name itself) to see if they match any tokens
             guard let parsed = try slot.parsed() as? NLUTensorflowSelset else {
                 throw NLUError.metadata("The NLU metadata for the \(slot.name) facet was not found.")
             }
-            let decoded = encoder.decode(values).joined(separator: " ")
+            let decoded = try encoder.decodeWithWhitespace(encodedTokens: encodedTokens, whitespaceIndicies: whitespaceIndicies)
             let contains = parsed.selections.filter { selection in
                 selection.name == decoded || selection.aliases.contains(decoded)
             }
@@ -61,8 +70,8 @@ internal struct NLUTensorflowSlotParser {
             guard let parsed = try slot.parsed() as? NLUTensorflowInteger else {
                 throw NLUError.metadata("The NLU metadata for the \(slot.name) facet was not found.")
             }
-            let integer = encoder
-                .decode(values)
+            let integer = try encoder
+                .decode(encodedTokens: encodedTokens, whitespaceIndicies: whitespaceIndicies)
                 .reduce([], { self.parseReduceNumber($0, next: $1) })
                 .reduce(0, { $0 + $1 })
             guard let lowerBound = parsed.range.first,
@@ -70,14 +79,14 @@ internal struct NLUTensorflowSlotParser {
                 else {
                 return nil
             }
-            let range = ClosedRange<Int>(uncheckedBounds: (lower: lowerBound, upper: upperBound))
+            let range = lowerBound...upperBound
             return range.contains(integer) ? integer : nil
         case "digits":
             guard let parsed = try slot.parsed() as? NLUTensorflowDigits else {
                 throw NLUError.metadata("The NLU metadata for the \(slot.name) facet was not found.")
             }
-            let digits = encoder
-                .decode(values)
+            let digits = try encoder
+                .decode(encodedTokens: encodedTokens, whitespaceIndicies: whitespaceIndicies)
                 .map({ value in
                     if let cardinal = self.wordToNumber(value) {
                         return cardinal as String
@@ -88,7 +97,7 @@ internal struct NLUTensorflowSlotParser {
                 .joined()
             return parsed.count == digits.count ? digits : nil
         case "entity":
-            return encoder.decode(values).joined(separator: " ")
+            return try encoder.decodeWithWhitespace(encodedTokens: encodedTokens, whitespaceIndicies: whitespaceIndicies)
         default:
             return nil
         }

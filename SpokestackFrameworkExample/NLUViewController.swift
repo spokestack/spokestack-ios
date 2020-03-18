@@ -101,13 +101,13 @@ class NLUViewController: UIViewController {
         // Call 1234567890
         self.nlu?.classify(utterance: text, context: [:])
     }
-}
+}   
 
 // MARK: NLUDelegate implementation
 
 extension NLUViewController: NLUDelegate {
     func classification(result: NLUResult) {
-        print("Classification: \(result.intent) \(result.confidence) \(result.slots)")
+        print("Classification: \(result)")
     }
     
     func didTrace(_ trace: String) {

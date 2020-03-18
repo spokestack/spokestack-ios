@@ -30,37 +30,57 @@ internal struct BertTokenizer {
         }
     }
     
-    /// Tokenize the input text.
+    /// Tokenize and encode the utterance into an `EncodedTokens` data structure
     /// - Parameter text: The input text to tokenize.
-    func tokenize(text: String) -> [String] {
-        return self
-            .componentize(text)
-            .flatMap({ self.wordpiece(text: $0) })
-    }
-    
-    /// Encode the tokens with the wordpiece encoder.
-    /// - Parameter tokens: The tokens to encode.
-    func encode(tokens: [String]) throws -> [Int] {
-        if tokens.count > self.config.nluMaxTokenLength {
-            throw TokenizerError.tooLong("This model cannot encode (\(tokens.count) tokens. The maximum number it can encode is \(self.config.nluMaxTokenLength).")
-        }
-        return tokens.map { (self.encodings[$0] ?? -1) } /// TODO: is -1 a good default here?
-    }
-    
-    /// Decodes the encoded tokens.
-    /// - Parameter tokens: The encoded tokens to decode.
-    func decode(_ tokens: [String]) ->  [String] {
-        return tokens
-            .compactMap({ $0.trimmingCharacters(in: .whitespacesAndNewlines) })
-            .reduce([], { (result, s) in
-            if s.prefix(2) == self.piecePrefix {
-                return result.dropLast() + [(result.last ?? "") + String(s.dropFirst(2))]
-            } else {
-                return result + [s]
+    func encode(text: String) throws -> EncodedTokens {
+        // first create tokens out of whitespace
+        let whitespacedTokens = text.components(separatedBy: .whitespacesAndNewlines)
+        var normalizedTokens: [String] = []
+        var indicies: [Int] = []
+        var encoded: [Int] = []
+        // then componentize and wordpiece the whitespaced tokens, creating an even bigger set of normalized tokens
+        for (id, wt) in whitespacedTokens.enumerated() {
+            let tokens
+                = self
+                .componentize(wt)
+                .flatMap({ self.wordpiece(text: $0) })
+            normalizedTokens += tokens
+            // finally encode the normalized tokens
+            for t in tokens {
+                encoded.append(self.encodings[t] ?? -1)
+                indicies.append(id)
             }
-        })
+        }
+        if encoded.count > self.config.nluMaxTokenLength {
+            throw TokenizerError.tooLong("This input is represented by (\(encoded.count) tokens. The maximum number of tokens the model can classify is \(self.config.nluMaxTokenLength).")
+        }
+        return EncodedTokens(tokensByWhitespace: whitespacedTokens, encodedTokensByWhitespaceIndex: indicies, encodedTokens: encoded)
     }
-
+    
+    /// Decodes and reconstructs encoded tokens, inserting whitespace between each whitespace index.
+    /// - Parameters:
+    ///   - encodedTokens: The tokens to decode and join.
+    ///   - whitespaceIndicies: The desired indicies from `encodedTokensByWhitespaceIndex`.
+    func decodeWithWhitespace(encodedTokens: EncodedTokens, whitespaceIndicies: [Int]) throws -> String {
+        return try self.decode(encodedTokens: encodedTokens, whitespaceIndicies: whitespaceIndicies).joined(separator: " ")
+    }
+    
+    /// Decodes and reconstructs encoded tokens.
+    /// - Parameters:
+    ///   - encodedTokens: The tokens to decode.
+    ///   - whitespaceIndicies: The desired indicies from `encodedTokensByWhitespaceIndex`.
+    func decode(encodedTokens: EncodedTokens, whitespaceIndicies: [Int]) throws -> [String] {
+        guard let tokensByWhitespace = encodedTokens.tokensByWhitespace else {
+            throw NLUError.tokenizer("NLU model tokenizer did not encoded tokens for this range.")
+        }
+        // only unique numbers in the index will be reconstructed. This prevents duplications arising from wordpiece labeling.
+        var uniques: Set<Int> = []
+        return whitespaceIndicies
+            // Filtering a set is O(1) vs O(n*2) reduce.
+            .filter { uniques.insert($0).inserted }
+            .map({ tokensByWhitespace[$0] })
+    }
+    
     /// Tokenizes the input text into an array of alphanumeric strings and punctuation, discarding all other characters.
     /// - Parameter text: The text to tokenize.
     private func componentize(_ text: String) -> [String] {
@@ -108,4 +128,14 @@ internal struct BertTokenizer {
             return piecewiseTokenize(text: text, index: 1, pieces: [])
         }
     }
+}
+
+/// A simple data structure for tokenization and ecnoding an utterance, and reconstructing it.
+internal struct EncodedTokens {
+    /// An uterrance, tokenized by whitespace.
+    public var tokensByWhitespace: [String]?
+    /// Each encoded token entry is represented by an index back to the whitespaced token.
+    public var encodedTokensByWhitespaceIndex: [Int]?
+    /// Whitespaced tokens, tokenized, wordpieced, and encoded for input into BERT.
+    public var encodedTokens: [Int]?
 }

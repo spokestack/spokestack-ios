@@ -35,6 +35,7 @@ internal struct NLUTensorflowMetadata: Codable {
 internal struct NLUTensorflowIntent: Codable {
     let name: String
     let slots: [NLUTensorflowSlot]
+    var confidence: Float?
 }
 
 internal struct NLUTensorflowSlot: Codable {

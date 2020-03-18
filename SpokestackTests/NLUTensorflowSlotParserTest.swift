@@ -26,47 +26,51 @@ class NLUTensorflowSlotParserTest: XCTestCase {
     }
     
     func testParseSelset() {
-        let taggedInputLocation = zip(["b_location"],["kitchen"])
-        let parsedSelset = try! parser.parse(taggedInput: taggedInputLocation, intent: metadata!.intents.filter({ $0.name == "request.lights.deactivate" }).first!, encoder: encoder!)
+        let et = EncodedTokens(tokensByWhitespace: ["kitchen"], encodedTokensByWhitespaceIndex: [0], encodedTokens: [0])
+        let parsedSelset = try! parser.parse(tags: ["b_location"], intent: metadata!.intents.filter({ $0.name == "request.lights.deactivate" }).first!, encoder: encoder!, encodedTokens: et)
         XCTAssertEqual(parsedSelset["location"]!.value as! String, "room")
     }
     
     func testParseInteger() {
-        let taggedInputRating10 = zip(["b_rating"],["ten"])
-        let parsedInteger10 = try! parser.parse(taggedInput: taggedInputRating10, intent: metadata!.intents.filter({ $0.name == "rate.app" }).first!, encoder: encoder!)
+        let et1 = EncodedTokens(tokensByWhitespace: ["ten"], encodedTokensByWhitespaceIndex: [0], encodedTokens: [0])
+        let parsedInteger10 = try! parser.parse(tags: ["b_rating"], intent: metadata!.intents.filter({ $0.name == "rate.app" }).first!, encoder: encoder!, encodedTokens: et1)
         XCTAssertEqual(parsedInteger10["rating"]!.value as! Int, 10)
         
-        let taggedInputRating51 = zip(["b_rating", "i_rating", "i_rating", "i_rating"],["fi","##ft", "##ie", "one"])
-        let parsedInteger51 = try! parser.parse(taggedInput: taggedInputRating51, intent: metadata!.intents.filter({ $0.name == "rate.app" }).first!, encoder: encoder!)
+        let et2 = EncodedTokens(tokensByWhitespace: ["fiftie", "one"],  encodedTokensByWhitespaceIndex: [0, 0, 0, 1], encodedTokens: [0])
+        let parsedInteger51 = try! parser.parse(tags: ["b_rating", "i_rating", "i_rating", "i_rating"], intent: metadata!.intents.filter({ $0.name == "rate.app" }).first!, encoder: encoder!, encodedTokens: et2)
         XCTAssertEqual(parsedInteger51["rating"]!.value as! Int, 51)
 
-        let taggedInputRatingNil = zip(["b_rating", "i_rating", "i_rating", "i_rating"],["fi","##ft", "##ie", "six"])
-        let parsedIntegerNil = try! parser.parse(taggedInput: taggedInputRatingNil, intent: metadata!.intents.filter({ $0.name == "rate.app" }).first!, encoder: encoder!)
+        let et3 = EncodedTokens(tokensByWhitespace: ["fiftie", "six"],  encodedTokensByWhitespaceIndex: [0, 0, 0, 1], encodedTokens: [0])
+        let parsedIntegerNil = try! parser.parse(tags: ["b_rating", "i_rating", "i_rating", "i_rating"], intent: metadata!.intents.filter({ $0.name == "rate.app" }).first!, encoder: encoder!, encodedTokens: et3)
         XCTAssertNil(parsedIntegerNil["rating"]!.value)
         
-        let taggedInputRatingMillion = zip(["b_iMi", "i_iMi"],["one", "million"])
+        let et4 = EncodedTokens(tokensByWhitespace: ["one", "million"], encodedTokensByWhitespaceIndex: [0, 1], encodedTokens: [0])
         let intent = metadata!.intents.filter({ $0.name == "i.i" }).first!
-        let parsedIntegerMillion = try! parser.parse(taggedInput: taggedInputRatingMillion, intent: intent, encoder: encoder!)
+        let parsedIntegerMillion = try! parser.parse(tags: ["b_iMi", "i_iMi"], intent: intent, encoder: encoder!, encodedTokens: et4)
         XCTAssertEqual(parsedIntegerMillion["iMi"]!.value as! Int, 1000000)
     }
     
     func testParseDigits() {
-        let taggedInputPhoneNumeric = zip(["b_phone_number", "i_phone_number", "i_phone_number", "i_phone_number", "i_phone_number"],["42", "##38", "##34", "##17", "##45"])
-        let parsedDigitsNumeric = try! parser.parse(taggedInput: taggedInputPhoneNumeric, intent: metadata!.intents.filter({ $0.name == "inform.phone_number" }).first!, encoder: encoder!)
+        let taggedInputPhoneNumeric = ["b_phone_number", "i_phone_number", "i_phone_number", "i_phone_number", "i_phone_number"]
+        let et5 = EncodedTokens(tokensByWhitespace: ["4238341745"], encodedTokensByWhitespaceIndex: [0, 0, 0, 0, 0], encodedTokens: [0])
+        let parsedDigitsNumeric = try! parser.parse(tags: taggedInputPhoneNumeric, intent: metadata!.intents.filter({ $0.name == "inform.phone_number" }).first!, encoder: encoder!, encodedTokens: et5)
         XCTAssertEqual(parsedDigitsNumeric["phone_number"]!.value as! String, "4238341745")
 
-        let taggedInputPhoneCardinal = zip(["b_phone_number", "i_phone_number", "i_phone_number", "i_phone_number", "i_phone_number", "i_phone_number", "i_phone_number", "i_phone_number", "i_phone_number", "i_phone_number"],["4", "second", "three", "eighth", "three", "four", "one", "seven", "four", "five"])
-        let parsedDigitsCardinal = try! parser.parse(taggedInput: taggedInputPhoneCardinal, intent: metadata!.intents.filter({ $0.name == "inform.phone_number" }).first!, encoder: encoder!)
+        let taggedInputPhoneCardinal = ["b_phone_number", "i_phone_number", "i_phone_number", "i_phone_number", "i_phone_number", "i_phone_number", "i_phone_number", "i_phone_number", "i_phone_number", "i_phone_number"]
+        let et6 = EncodedTokens(tokensByWhitespace: ["4", "second", "three", "eighth", "three", "four", "one", "seven", "four", "five"], encodedTokensByWhitespaceIndex: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9], encodedTokens: [0])
+        let parsedDigitsCardinal = try! parser.parse(tags: taggedInputPhoneCardinal, intent: metadata!.intents.filter({ $0.name == "inform.phone_number" }).first!, encoder: encoder!, encodedTokens: et6)
         XCTAssertEqual(parsedDigitsCardinal["phone_number"]!.value as! String, "4238341745")
     }
     
     func testParseEntity() {
-        let taggedInputEntity = zip(["b_epynonymous", "i_epynonymous"],["dead", "beef"])
-        let parsedEntity = try! parser.parse(taggedInput: taggedInputEntity, intent: metadata!.intents.filter({ $0.name == "identify" }).first!, encoder: encoder!)
+        let taggedInputEntity = ["b_epynonymous", "i_epynonymous"]
+        let et1 = EncodedTokens(tokensByWhitespace: ["dead", "beef"], encodedTokensByWhitespaceIndex: [0, 1], encodedTokens: [0])
+        let parsedEntity = try! parser.parse(tags: taggedInputEntity, intent: metadata!.intents.filter({ $0.name == "identify" }).first!, encoder: encoder!, encodedTokens: et1)
         XCTAssertEqual(parsedEntity["epynonymous"]!.value as! String, "dead beef")
         
-        let taggedInputEntityO = zip(["o", "b_epynonymous", "i_epynonymous", "o", "o", "b_epynonymous"],["when", "dead", "beef", "appears", "in", "debug"])
-        let parsedEntityO = try! parser.parse(taggedInput: taggedInputEntityO, intent: metadata!.intents.filter({ $0.name == "identify" }).first!, encoder: encoder!)
+        let taggedInputEntityO = ["o", "b_epynonymous", "i_epynonymous", "o", "o", "b_epynonymous", "o"]
+        let etO = EncodedTokens(tokensByWhitespace: ["when", "dead", "beef", "appears", "in", "debug"], encodedTokensByWhitespaceIndex: [0, 1, 2, 3, 4, 5], encodedTokens: [0])
+        let parsedEntityO = try! parser.parse(tags: taggedInputEntityO, intent: metadata!.intents.filter({ $0.name == "identify" }).first!, encoder: encoder!, encodedTokens: etO)
         XCTAssertEqual(parsedEntityO["epynonymous"]!.value as! String, "dead beef debug")
     }
     
