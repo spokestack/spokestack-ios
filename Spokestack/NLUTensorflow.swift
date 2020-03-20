@@ -130,7 +130,7 @@ import TensorFlowLite
             // tokenize + encode the input, terminate the utterance with the terminator token, and  pad from the end of the utterance up to the maximum input size (maxInputTokenLength).
             let encodedInput = try tokenizer.encode(text: input)
             guard var encodedTokens = encodedInput.encodedTokens else {
-                throw NLUError.tokenizer("NLU model tokenizer did not provided encoded tokens for this input.")
+                throw NLUError.tokenizer("Tokenizer did not provide encoded tokens for this input.")
             }
             encodedTokens
                 += [self.terminatorToken]
@@ -186,10 +186,10 @@ import TensorFlowLite
                                        by: metadata.model.tags.count)
             .map { Array(encodedTags[$0..<$0+metadata.model.tags.count]).argmax() }
         Trace.trace(Trace.Level.DEBUG, configLevel: self.configuration.tracing, message: "classified argmaxes: \(encodedTagsArgmax)", delegate: self.delegate, caller: self)
-        // decode the tags according to the model metatadata index
+        // decode the tags according to the model metadata index
         let tagsByInput = encodedTagsArgmax.map { metadata.model.tags[$0.0] }
         Trace.trace(Trace.Level.DEBUG, configLevel: self.configuration.tracing, message: "classified tags: \(tagsByInput)", delegate: self.delegate, caller: self)
-        // hyrdate Slot objects according to the tag
+        // hydrate Slot objects according to the tag
         return try parser.parse(tags: tagsByInput, intent: intent, encoder: tokenizer, encodedTokens: encodedInput)
     }
 }

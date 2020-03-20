@@ -11,7 +11,7 @@ import Foundation
 /// Provides a parser for reconstructing tensorflow nlu slot values from the input and IOB tag labels.
 internal struct NLUTensorflowSlotParser {
     
-    /// Parse the classification input and predicted tag labels into a structured [intent : Slot] dictionary.
+    /// Parse the classification output and predicted tag labels into a structured [intent : Slot] dictionary.
     /// - Note: This operation effectively truncates the tag labels by the input size, ignoring all labels outside the input token count.
     /// - Parameters:
     ///   - tags: An array of classification tag labels.
@@ -34,18 +34,18 @@ internal struct NLUTensorflowSlotParser {
                 slotType = String(tag.suffix(from: prefixIndex))
             }
             // collect all the tokens with the same slot type into a single array
-            if slotDictionary.keys.contains(where: { $0 == slotType }) {
+            if slotDictionary.keys.contains(slotType) {
                 slotDictionary[slotType]?.append(whitespaceIndex)
             } else {
                 slotDictionary[slotType] = [whitespaceIndex]
             }
         }
         // for each tag that isn't unclassified, send the tokens to the slot facet parser
-        for (tag, whitespaceIndicies) in slotDictionary where tag != "o" {
+        for (tag, whitespaceIndices) in slotDictionary where tag != "o" {
             guard let slot = intent.slots.filter({ $0.name == tag }).first else {
                 throw NLUError.metadata("Could not find a slot called \(tag) in nlu metadata.")
             }
-            let slotValue = try self.slotFacetParser(slot: slot, whitespaceIndicies: whitespaceIndicies, encoder: encoder, encodedTokens: encodedTokens)
+            let slotValue = try self.slotFacetParser(slot: slot, whitespaceIndices: whitespaceIndices, encoder: encoder, encodedTokens: encodedTokens)
 
             slots[tag] = Slot(type: slot.type, value: slotValue)
         }
@@ -53,14 +53,14 @@ internal struct NLUTensorflowSlotParser {
         return slots
     }
     
-    private func slotFacetParser(slot: NLUTensorflowSlot, whitespaceIndicies: [Int], encoder: BertTokenizer, encodedTokens: EncodedTokens) throws -> Any? {
+    private func slotFacetParser(slot: NLUTensorflowSlot, whitespaceIndices: [Int], encoder: BertTokenizer, encodedTokens: EncodedTokens) throws -> Any? {
         switch slot.type {
         case "selset":
             // filter the slot selection aliases (and the slot selection name itself) to see if they match any tokens
             guard let parsed = try slot.parsed() as? NLUTensorflowSelset else {
-                throw NLUError.metadata("The NLU metadata for the \(slot.name) facet was not found.")
+                throw NLUError.metadata("The NLU metadata for the \(slot.name) slot was not found.")
             }
-            let decoded = try encoder.decodeWithWhitespace(encodedTokens: encodedTokens, whitespaceIndicies: whitespaceIndicies)
+            let decoded = try encoder.decodeWithWhitespace(encodedTokens: encodedTokens, whitespaceIndices: whitespaceIndices)
             let contains = parsed.selections.filter { selection in
                 selection.name == decoded || selection.aliases.contains(decoded)
             }
@@ -68,10 +68,10 @@ internal struct NLUTensorflowSlotParser {
             return contains.first?.name
         case "integer":
             guard let parsed = try slot.parsed() as? NLUTensorflowInteger else {
-                throw NLUError.metadata("The NLU metadata for the \(slot.name) facet was not found.")
+                throw NLUError.metadata("The NLU metadata for the \(slot.name) slot was not found.")
             }
             let integer = try encoder
-                .decode(encodedTokens: encodedTokens, whitespaceIndicies: whitespaceIndicies)
+                .decode(encodedTokens: encodedTokens, whitespaceIndices: whitespaceIndices)
                 .reduce([], { self.parseReduceNumber($0, next: $1) })
                 .reduce(0, { $0 + $1 })
             guard let lowerBound = parsed.range.first,
@@ -83,10 +83,10 @@ internal struct NLUTensorflowSlotParser {
             return range.contains(integer) ? integer : nil
         case "digits":
             guard let parsed = try slot.parsed() as? NLUTensorflowDigits else {
-                throw NLUError.metadata("The NLU metadata for the \(slot.name) facet was not found.")
+                throw NLUError.metadata("The NLU metadata for the \(slot.name) slot was not found.")
             }
             let digits = try encoder
-                .decode(encodedTokens: encodedTokens, whitespaceIndicies: whitespaceIndicies)
+                .decode(encodedTokens: encodedTokens, whitespaceIndices: whitespaceIndices)
                 .map({ value in
                     if let cardinal = self.wordToNumber(value) {
                         return cardinal as String
@@ -97,7 +97,7 @@ internal struct NLUTensorflowSlotParser {
                 .joined()
             return parsed.count == digits.count ? digits : nil
         case "entity":
-            return try encoder.decodeWithWhitespace(encodedTokens: encodedTokens, whitespaceIndicies: whitespaceIndicies)
+            return try encoder.decodeWithWhitespace(encodedTokens: encodedTokens, whitespaceIndices: whitespaceIndices)
         default:
             return nil
         }
