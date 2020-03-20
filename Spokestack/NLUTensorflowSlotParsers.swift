@@ -16,41 +16,30 @@ internal struct NLUTensorflowSlotParser {
     /// - Parameters:
     ///   - tags: An array of classification tag labels.
     ///   - intent: The predicted intent.
+    ///   - encoder: The tokenizer instance to decode the `encodedTokens`.
+    ///   - encodedTokens: The tokens and associated metadata to decode for slot values.
     internal func parse(tags: [String], intent: NLUTensorflowIntent, encoder: BertTokenizer, encodedTokens: EncodedTokens) throws -> [String:Slot] {
-        
-        guard let encodedTokensByWhitespaceIndex = encodedTokens.encodedTokensByWhitespaceIndex else {
-            throw NLUError.tokenizer("NLU model tokenizer failed to correctly encode utterance because encodedTokensByWhitespaceIndex is nil.")
-        }
-
-        var slots: [String:Slot] = [:]
-        
-        // create a dictionary of [tags: [tokens]]
-        var slotDictionary: [String: [Int]] = [:]
-        for (index, tag) in tags.enumerated()  where index < encodedTokensByWhitespaceIndex.count{
-            // the model slot recognizer uses IOB tags, so `b_` and `i_` prefixes must be removed to resolve tag labels to slot names.
-            var slotType = tag
-            let whitespaceIndex = encodedTokensByWhitespaceIndex[index]
-            if let prefixIndex = tag.range(of: "_")?.upperBound {
-                slotType = String(tag.suffix(from: prefixIndex))
-            }
-            // collect all the tokens with the same slot type into a single array
-            if slotDictionary.keys.contains(slotType) {
-                slotDictionary[slotType]?.append(whitespaceIndex)
-            } else {
-                slotDictionary[slotType] = [whitespaceIndex]
-            }
-        }
-        // for each tag that isn't unclassified, send the tokens to the slot facet parser
-        for (tag, whitespaceIndices) in slotDictionary where tag != "o" {
-            guard let slot = intent.slots.filter({ $0.name == tag }).first else {
-                throw NLUError.metadata("Could not find a slot called \(tag) in nlu metadata.")
-            }
-            let slotValue = try self.slotFacetParser(slot: slot, whitespaceIndices: whitespaceIndices, encoder: encoder, encodedTokens: encodedTokens)
-
-            slots[tag] = Slot(type: slot.type, value: slotValue)
-        }
-        
-        return slots
+        // zip together an index of the whitespaced encoded tokens and the tags (ignoring the "o" tag), and then process that zip into the return type
+        let indexTagged = zip(Array(0...encodedTokens.encodedTokensByWhitespaceIndex.count), tags.prefix(upTo: encodedTokens.encodedTokensByWhitespaceIndex.count))
+        return try indexTagged
+            // create a dictionary of [tags: [tokenIndices]]
+            .reduce(into: [:] as [String: [Int]], { result, indexTag in
+                // the model slot classifier uses IOB tags, so ignore the "o" tag and strip off `b_` and `i_` prefixes to resolve tag labels to slot names.
+                if  indexTag.1 != "o" {
+                    let slotToken = [String(indexTag.1.dropFirst(2)): [encodedTokens.encodedTokensByWhitespaceIndex[indexTag.0]]]
+                    // collect all the tokens with the same slot type into a single array
+                    result.merge(slotToken, uniquingKeysWith: { $0 + $1 })
+                }
+            })
+            // send each tag's tokens through the slot parser and return the result
+            .reduce(into: [:] as [String:Slot], { result, dictionaryEntry in
+                let (tag, whitespaceIndices) = dictionaryEntry
+                guard let slot = intent.slots.filter({ $0.name == tag }).first else {
+                    throw NLUError.metadata("Could not find a slot called \(tag) in nlu model metadata.")
+                }
+                let slotValue = try self.slotFacetParser(slot: slot, whitespaceIndices: whitespaceIndices, encoder: encoder, encodedTokens: encodedTokens)
+                result.updateValue(Slot(type: slot.type, value: slotValue), forKey: tag)
+            })
     }
     
     private func slotFacetParser(slot: NLUTensorflowSlot, whitespaceIndices: [Int], encoder: BertTokenizer, encodedTokens: EncodedTokens) throws -> Any? {

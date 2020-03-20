@@ -38,23 +38,25 @@ internal struct BertTokenizer {
         var normalizedTokens: [String] = []
         var indices: [Int] = []
         var encoded: [Int] = []
-        // then componentize and wordpiece the whitespaced tokens, creating an even bigger set of normalized tokens
+        // then componentize and wordpiece the whitespaced tokens, creating an even bigger list of normalized tokens
         for (id, wt) in whitespacedTokens.enumerated() {
-            let tokens
-                = self
+            let tokens = self
                 .componentize(wt)
                 .flatMap({ self.wordpiece(text: $0) })
             normalizedTokens += tokens
             // finally encode the normalized tokens
             for t in tokens {
-                encoded.append(self.encodings[t] ?? -1)
+                if let code = self.encodings[t] {
+                    encoded.append(code)
+                } else if let unk = self.encodings[unknownPiece] {
+                    encoded.append(unk)
+                } else {
+                    throw NLUError.tokenizer("NLU tokenizer could not encode the tokenized text.")
+                }
                 indices.append(id)
             }
         }
-        if encoded.count > self.config.nluMaxTokenLength {
-            throw TokenizerError.tooLong("This input is represented by (\(encoded.count) tokens. The maximum number of tokens the model can classify is \(self.config.nluMaxTokenLength).")
-        }
-        return EncodedTokens(tokensByWhitespace: whitespacedTokens, encodedTokensByWhitespaceIndex: indicies, encodedTokens: encoded)
+        return EncodedTokens(tokensByWhitespace: whitespacedTokens, encodedTokensByWhitespaceIndex: indices, encoded: encoded)
     }
     
     /// Decodes and reconstructs encoded tokens, inserting whitespace between each whitespace index.
@@ -70,15 +72,11 @@ internal struct BertTokenizer {
     ///   - encodedTokens: The tokens to decode.
     ///   - whitespaceIndices: The desired indices from `encodedTokensByWhitespaceIndex`.
     func decode(encodedTokens: EncodedTokens, whitespaceIndices: [Int]) throws -> [String] {
-        guard let tokensByWhitespace = encodedTokens.tokensByWhitespace else {
-            throw NLUError.tokenizer("NLU model tokenizer did not encoded tokens for this range.")
-        }
         // only unique numbers in the index will be reconstructed. This prevents duplications arising from wordpiece labeling.
         var uniques: Set<Int> = []
-        return whitespaceIndicies
-            // Filtering a set is O(1) vs O(n*2) reduce.
+        return whitespaceIndices
             .filter { uniques.insert($0).inserted }
-            .map({ tokensByWhitespace[$0] })
+            .map({ encodedTokens.tokensByWhitespace[$0] })
     }
     
     /// Tokenizes the input text into an array of alphanumeric strings and punctuation, discarding all other characters.
@@ -133,9 +131,9 @@ internal struct BertTokenizer {
 /// A simple data structure for tokenization and encoding of an utterance, then reconstructing it.
 internal struct EncodedTokens {
     /// An utterance, tokenized by whitespace.
-    public var tokensByWhitespace: [String]?
+    public var tokensByWhitespace: [String]
     /// Each encoded token entry is represented by an index back to the whitespaced token.
-    public var encodedTokensByWhitespaceIndex: [Int]?
-    /// Whitespace-separated tokens, tokenized, wordpieced, and encoded for input into BERT.
-    public var encodedTokens: [Int]?
+    public var encodedTokensByWhitespaceIndex: [Int]
+    /// Whitespace-separated tokens, tokenized, wordpieced, and encoded. Only used for input into BERT.
+    public var encoded: [Int]
 }
