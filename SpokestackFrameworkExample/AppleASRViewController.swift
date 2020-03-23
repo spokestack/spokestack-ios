@@ -117,14 +117,18 @@ extension AppleASRViewController: SpeechEventListener, PipelineDelegate {
     
     func activate() {
         print("activate")
-        self.stopRecordingButton.isEnabled.toggle()
-        self.startRecordingButton.isEnabled.toggle()
+        DispatchQueue.main.async {
+            self.stopRecordingButton.isEnabled.toggle()
+            self.startRecordingButton.isEnabled.toggle()
+        }
     }
     
     func deactivate() {
         print("deactivate")
-        self.stopRecordingButton.isEnabled.toggle()
-        self.startRecordingButton.isEnabled.toggle()
+        DispatchQueue.main.async {
+            self.stopRecordingButton.isEnabled.toggle()
+            self.startRecordingButton.isEnabled.toggle()
+        }
     }
     
     func didError(_ error: Error) {
@@ -137,8 +141,10 @@ extension AppleASRViewController: SpeechEventListener, PipelineDelegate {
     
     func didStart() {
         print("didStart")
-        self.stopRecordingButton.isEnabled.toggle()
-        self.startRecordingButton.isEnabled.toggle()
+        DispatchQueue.main.async {
+            self.stopRecordingButton.isEnabled.toggle()
+            self.startRecordingButton.isEnabled.toggle()
+        }
     }
     
     func didTrace(_ trace: String) {

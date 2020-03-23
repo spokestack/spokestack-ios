@@ -103,7 +103,7 @@ This pipeline component uses the Apple `SFSpeech` API to stream audio samples fo
                 self?.stopRecognition()
                 self?.startRecognition()
             }
-            DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(self.configuration!.wakewordRequestTimeout), execute: self.dispatchWorker!)
+            DispatchQueue.global(qos: .userInitiated).asyncAfter(deadline: .now() + .milliseconds(self.configuration!.wakewordRequestTimeout), execute: self.dispatchWorker!)
         } catch let error {
             self.delegate?.didError(error)
         }

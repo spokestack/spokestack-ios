@@ -94,7 +94,7 @@ private let apiQueue = DispatchQueue(label: TTSSpeechQueueName, qos: .userInitia
     /// - Warning: `AVAudioSession.Category` and `AVAudioSession.CategoryOptions` must be set by the client to compatible settings that allow for playback through the desired audio sytem ouputs.
     @objc public func speak(_ input: TextToSpeechInput) -> Void {
         func play(result: TextToSpeechResult) {
-            DispatchQueue.main.async {
+            DispatchQueue.global(qos: .userInitiated).async {
                 guard let url = result.url else {
                     self.delegate?.failure(error: TextToSpeechErrors.speak("Synthesis response is invalid."))
                     return
@@ -184,7 +184,7 @@ private let apiQueue = DispatchQueue(label: TTSSpeechQueueName, qos: .userInitia
         let task: URLSessionDataTask = session.dataTask(with: request) { (data, response, error) -> Void in
             Trace.trace(Trace.Level.DEBUG, configLevel: self.configuration.tracing, message: "task callback \(String(describing: response)) \(String(describing: String(data: data ?? Data(), encoding: String.Encoding.utf8)))) \(String(describing: error))", delegate: self.delegate, caller: self)
             
-            DispatchQueue.main.async {
+            DispatchQueue.global(qos: .userInitiated).async {
                 if let error = error {
                     self.delegate?.failure(error: error)
                 } else {
@@ -286,7 +286,7 @@ private let apiQueue = DispatchQueue(label: TTSSpeechQueueName, qos: .userInitia
     /// - Warning: Client should never call this function.
     @available(*, deprecated, message: "Internal function that must be public for Objective-C compatibility reasons. Client should never call this function.")
     override public func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
-        DispatchQueue.main.async {
+        DispatchQueue.global(qos: .userInitiated).async {
             switch keyPath {
             case #keyPath(AVPlayerItem.isPlaybackBufferEmpty):
                 self.player.play()

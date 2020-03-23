@@ -8,9 +8,10 @@
 
 import Foundation
 import AVFoundation
+import Dispatch
 
 /// DispatchQueue for handling Spokestack audio processing
-let audioProcessingQueue: DispatchQueue = DispatchQueue(label: "io.spokestack.audio.callback")
+let audioProcessingQueue: DispatchQueue = DispatchQueue.global(qos: .userInteractive)
 
 /// Required callback function for AudioUnitSetProperty's AURenderCallbackStruct.
 ///
@@ -50,6 +51,9 @@ func recordingCallback(
         
     if buffers[0].mData != nil {
         let data: Data = Data(bytes: buffers[0].mData!, count: Int(buffers[0].mDataByteSize))
+        // NB: errors like
+        // AUBuffer.h:61:GetBufferList: EXCEPTION (-1) [mPtrState == kPtrsInvalid is false]: ""
+        // are irrelevant
         audioProcessingQueue.sync {
             AudioController.sharedInstance.delegate?.process(data)
         }

@@ -64,7 +64,7 @@ import Speech
                 self?.delegate?.didTimeout()
                 self?.delegate?.deactivate()
             }
-            DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(self.configuration!.wakeActiveMax), execute: self.wakeActiveMaxWorker!)
+            DispatchQueue.global(qos: .userInitiated).asyncAfter(deadline: .now() + .milliseconds(self.configuration!.wakeActiveMax), execute: self.wakeActiveMaxWorker!)
         } catch let error {
             self.delegate?.didError(error)
         }
@@ -104,9 +104,13 @@ import Speech
     private func createRecognitionTask(context: SpeechContext) throws -> Void {
         self.recognitionTask = self.speechRecognizer.recognitionTask(
             with: recognitionRequest!,
-            resultHandler: {[weak self] result, error in
+            resultHandler: { [weak self] result, error in
                 guard let strongSelf = self else {
                     assertionFailure("AppleSpeechRecognizer recognitionTask resultHandler strongSelf is nil")
+                    return
+                }
+                guard let _ = strongSelf.recognitionTask else {
+                    // this task has been cancelled and set to nil by `stopStreaming`, so just end things here.
                     return
                 }
                 guard let delegate = strongSelf.delegate else {
@@ -155,8 +159,9 @@ import Speech
                         self?.delegate?.didRecognize(context)
                         self?.delegate?.deactivate()
                     }
-                    DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + .milliseconds(strongSelf.configuration!.vadFallDelay), execute: strongSelf.vadFallWorker!)
+                    DispatchQueue.global(qos: .userInitiated).asyncAfter(deadline: DispatchTime.now() + .milliseconds(strongSelf.configuration!.vadFallDelay), execute: strongSelf.vadFallWorker!)
                 }
-        })
+            }
+        )
     }
 }

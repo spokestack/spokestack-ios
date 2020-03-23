@@ -155,12 +155,16 @@ extension TFLiteViewController: SpeechEventListener, PipelineDelegate {
     
     func didStart() {
         print("didStart")
-        self.toggleStartStop()
+        DispatchQueue.main.async {
+            self.toggleStartStop()
+        }
     }
     
     func didStop() {
         print("didStart")
-        self.toggleStartStop()
+        DispatchQueue.main.async {
+            self.toggleStartStop()
+        }
     }
     
     func didTrace(_ trace: String) {

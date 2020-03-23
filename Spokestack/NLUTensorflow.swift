@@ -93,7 +93,7 @@ import TensorFlowLite
     /// Classifies the provided input. The classifciation results are sent to the instance's configured NLUDelegate.
     /// - Parameter utterance: The provided utterance to classify.
     @objc public func classify(utterance: String, context: [String : Any]) -> Void {
-        DispatchQueue.main.async {
+        DispatchQueue.global(qos: .userInitiated).async {
             let prediction = self.classify(utterance)
             switch prediction {
             case .success(let classification): self.delegate?.classification(result: classification)
