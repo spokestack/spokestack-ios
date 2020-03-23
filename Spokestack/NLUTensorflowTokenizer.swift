@@ -15,6 +15,7 @@ internal struct BertTokenizer {
     private var config: SpeechConfiguration
     private let piecePrefix = "##"
     private let unknownPiece = "[UNK]"
+    private var unknownPieceEncoding: Int
     
     /// Initializes a tokenizer using the provided configuration
     /// - Parameter config: Configuration parameters for the tokenizer.
@@ -24,6 +25,11 @@ internal struct BertTokenizer {
         let tokens = vocab.split(separator: "\n").map { String($0) }
         for (id, token) in tokens.enumerated() {
             self.encodings[token] = id
+        }
+        if let upe = self.encodings[self.unknownPiece] {
+            self.unknownPieceEncoding = upe
+        } else {
+            throw NLUError.tokenizer("NLU tokenizer could not encode the tokenized text.")
         }
         if (self.encodings.underestimatedCount < 2) {
             throw TokenizerError.invalidConfiguration("NLU vocaubulary encodings not loaded. Please check SpeechConfiguration.nluEncodings.")
@@ -48,10 +54,8 @@ internal struct BertTokenizer {
             for t in tokens {
                 if let code = self.encodings[t] {
                     encoded.append(code)
-                } else if let unk = self.encodings[unknownPiece] {
-                    encoded.append(unk)
                 } else {
-                    throw NLUError.tokenizer("NLU tokenizer could not encode the tokenized text.")
+                    encoded.append(self.unknownPieceEncoding)
                 }
                 indices.append(id)
             }

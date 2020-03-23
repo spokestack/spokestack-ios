@@ -95,7 +95,7 @@ internal struct SharedTestMocks {
     ##45
     million
     [UNK]
-    Ålesund
+    alesund
     """
         let file = FileManager.default.createFile(atPath: path, contents: vocab.data(using: .utf8), attributes: .none)
         return path
