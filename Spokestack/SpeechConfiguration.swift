@@ -107,6 +107,24 @@ import Foundation
     /// Text To Speech API client secret key.
     /// - SeeAlso: `TextToSpeech`
     @objc public var apiSecret: String = "5BD5483F573D691A15CFA493C1782F451D4BD666E39A9E7B2EBE287E6A72C6B6"
+    /// The filesystem path to the vocabulary used for tokenizer encoding.
+    /// - SeeAlso: `Tokenizer`
+    @objc public var nluVocabularyPath: String = "vocab.txt"
+    /// The index in the vocabulary of the terminator token. Determined  by the NLU vocabulary.
+    /// - SeeAlso: `BertTokenizer`
+    @objc public var nluTerminatorTokenIndex: Int = 102
+    /// The index in the vocabulary of the terminator token. Determined  by the NLU vocabulary.
+    /// - SeeAlso: `BertTokenizer`
+    @objc public var nluPaddingTokenIndex: Int = 0
+    /// The filesystem path to the machine learning model for Natural Language Understanding processing.
+    /// - SeeAlso: `TensorflowNLU`
+    @objc public var nluModelPath: String = "nlu.tflite"
+    /// The filesystem path to the model metadata for Natural Language Understanding processing.
+    /// - SeeAlso: `TensorflowNLU`
+    @objc public var nluModelMetadataPath: String = "nlu.json"
+    /// The maximum utterance length the NLU can process. Determined  by the NLU model.
+    /// - SeeAlso: `BertTokenizer`
+    @objc public var nluMaxTokenLength: Int = 128
     /// Debugging trace levels, for simple filtering.
     @objc public var tracing: Trace.Level = Trace.Level.NONE
 }

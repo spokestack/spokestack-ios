@@ -63,3 +63,23 @@ enum TextToSpeechErrors: Error {
     /// The speak command could not be executed.
     case speak(String)
 }
+
+/// Errors thrown by a Tokenizer instance.
+enum TokenizerError: Error {
+    /// The text to tokenize is too long.
+    case tooLong(String)
+    /// The tokenizer instance was configured with incompatible settings.
+    case invalidConfiguration(String)
+}
+
+/// Errors thrown by an NLUService instance.
+public enum NLUError: Error {
+    /// The NLUService instance was configured with incompatible settings.
+    case invalidConfiguration(String)
+    /// The NLUService tokenizer encountered an error.
+    case tokenizer(String)
+    /// The model provided to the NLUService instance encountered an error.
+    case model(String)
+    /// There was a problem with the metadata provided to the NLUService instance.
+    case metadata(String)
+}
