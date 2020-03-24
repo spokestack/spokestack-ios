@@ -79,7 +79,7 @@ class TextToSpeechTest: XCTestCase {
                     XCTAssertNotNil(result.first?.url)
             })
         XCTAssertNotNil(publisher)
-        wait(for: [didCompleteExpectation], timeout: 10)
+        wait(for: [didCompleteExpectation], timeout: 5)
     }
     
     /// MARK:  Speak
