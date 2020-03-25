@@ -24,8 +24,6 @@ import Foundation
                                pipelineDelegate: self)
  pipeline.start()
  ```
- 
- - Warning: All calls to delegate event handlers are made in the context of the pipeline's thread, so event handlers should not perform blocking operations, and they should use message passing when communicating with UI components, etc.
 */
 @objc public final class SpeechPipeline: NSObject {
     
@@ -75,7 +73,10 @@ import Foundation
         
         self.pipelineDelegate = pipelineDelegate
         AudioController.sharedInstance.pipelineDelegate = self.pipelineDelegate
-        self.pipelineDelegate?.didInit()
+        super.init()
+        c.delegateDispatchQueue.async {
+            self.pipelineDelegate?.didInit()
+        }
     }
     
     /// Initializes a new speech pipeline instance.
@@ -105,7 +106,10 @@ import Foundation
         
         self.pipelineDelegate = pipelineDelegate
         AudioController.sharedInstance.pipelineDelegate = self.pipelineDelegate
-        self.pipelineDelegate?.didInit()
+        super.init()
+        self.speechConfiguration?.delegateDispatchQueue.async {
+            self.pipelineDelegate?.didInit()
+        }
     }
     
     /// MARK: Pipeline status
@@ -167,7 +171,9 @@ import Foundation
         }
         AudioController.sharedInstance.startStreaming(context: self.context)
         self.wakewordRecognizerService.startStreaming(context: self.context)
-        self.pipelineDelegate?.didStart()
+        self.speechConfiguration?.delegateDispatchQueue.async {
+            self.pipelineDelegate?.didStart()
+        }
     }
     
     /// Stops the speech pipeline.
@@ -177,6 +183,8 @@ import Foundation
         self.speechRecognizerService.stopStreaming(context: self.context)
         self.wakewordRecognizerService.stopStreaming(context: self.context)
         AudioController.sharedInstance.stopStreaming(context: self.context)
-        self.pipelineDelegate?.didStop()
+        self.speechConfiguration?.delegateDispatchQueue.async {
+            self.pipelineDelegate?.didStop()
+        }
     }
 }

@@ -45,10 +45,12 @@ class AppleASRViewController: UIViewController {
     
     lazy private var pipeline: SpeechPipeline = {
         
-        let appleConfiguration: SpeechConfiguration = SpeechConfiguration()
+        let config: SpeechConfiguration = SpeechConfiguration()
+        config.tracing = .DEBUG
+        config.delegateDispatchQueue = DispatchQueue.main
         
         return SpeechPipeline(SpeechProcessors.appleSpeech.processor,
-                              speechConfiguration: appleConfiguration,
+                              speechConfiguration: config,
                               speechDelegate: self,
                               wakewordService: SpeechProcessors.appleWakeword.processor,
                               pipelineDelegate: self)
@@ -117,18 +119,14 @@ extension AppleASRViewController: SpeechEventListener, PipelineDelegate {
     
     func activate() {
         print("activate")
-        DispatchQueue.main.async {
-            self.stopRecordingButton.isEnabled.toggle()
-            self.startRecordingButton.isEnabled.toggle()
-        }
+        self.stopRecordingButton.isEnabled.toggle()
+        self.startRecordingButton.isEnabled.toggle()
     }
     
     func deactivate() {
         print("deactivate")
-        DispatchQueue.main.async {
-            self.stopRecordingButton.isEnabled.toggle()
-            self.startRecordingButton.isEnabled.toggle()
-        }
+        self.stopRecordingButton.isEnabled.toggle()
+        self.startRecordingButton.isEnabled.toggle()
     }
     
     func didError(_ error: Error) {
@@ -141,10 +139,8 @@ extension AppleASRViewController: SpeechEventListener, PipelineDelegate {
     
     func didStart() {
         print("didStart")
-        DispatchQueue.main.async {
-            self.stopRecordingButton.isEnabled.toggle()
-            self.startRecordingButton.isEnabled.toggle()
-        }
+        self.stopRecordingButton.isEnabled.toggle()
+        self.startRecordingButton.isEnabled.toggle()
     }
     
     func didTrace(_ trace: String) {

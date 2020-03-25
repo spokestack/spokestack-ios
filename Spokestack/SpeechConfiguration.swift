@@ -127,4 +127,6 @@ import Foundation
     @objc public var nluMaxTokenLength: Int = 128
     /// Debugging trace levels, for simple filtering.
     @objc public var tracing: Trace.Level = Trace.Level.NONE
+    /// Delegate events will be sent using the specified dispatch queue.
+    @objc public var delegateDispatchQueue: DispatchQueue = DispatchQueue.global(qos: .userInitiated)
 }

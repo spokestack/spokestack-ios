@@ -11,7 +11,7 @@ import AVFoundation
 import Dispatch
 
 /// DispatchQueue for handling Spokestack audio processing
-let audioProcessingQueue: DispatchQueue = DispatchQueue.global(qos: .userInteractive)
+let audioProcessingQueue: DispatchQueue = DispatchQueue(label: "io.spokestack.audiocontroller", qos: .userInteractive)
 
 /// Required callback function for AudioUnitSetProperty's AURenderCallbackStruct.
 ///
@@ -119,9 +119,13 @@ class AudioController {
         do {
             try self.start()
         } catch AudioError.audioSessionSetup(let message) {
-            self.pipelineDelegate?.setupFailed(message)
+            self.configuration.delegateDispatchQueue.async {
+                self.pipelineDelegate?.setupFailed(message)
+            }
         } catch {
-            self.pipelineDelegate?.setupFailed("An unknown error occured starting the stream")
+            self.configuration.delegateDispatchQueue.async {
+                self.pipelineDelegate?.setupFailed("An unknown error occured starting the stream")
+            }
         }
     }
     
@@ -132,9 +136,13 @@ class AudioController {
         do {
             try self.stop()
         } catch AudioError.audioSessionSetup(let message) {
-            self.pipelineDelegate?.setupFailed(message)
+            self.configuration.delegateDispatchQueue.async {
+                self.pipelineDelegate?.setupFailed(message)
+            }
         } catch {
-            self.pipelineDelegate?.setupFailed("An unknown error occured ending the stream")
+            self.configuration.delegateDispatchQueue.async {
+                self.pipelineDelegate?.setupFailed("An unknown error occured ending the stream")
+            }
         }
     }
     
@@ -175,7 +183,9 @@ class AudioController {
         case AVAudioSession.Category.playAndRecord:
             break
         default:
-            self.pipelineDelegate?.setupFailed("Incompatible AudioSession category is set.")
+            self.configuration.delegateDispatchQueue.async {
+                self.pipelineDelegate?.setupFailed("Incompatible AudioSession category is set.")
+            }
         }
     }
     
@@ -246,13 +256,13 @@ class AudioController {
         let sss: String = session.category.rawValue
         let sco: String = session.categoryOptions.rawValue.description
         let sioap: String = session.isOtherAudioPlaying.description
-        Trace.trace(Trace.Level.DEBUG, configLevel: configuration.tracing, message: "current category: \(sss) +  options: \(sco) isOtherAudioPlaying: \(sioap) bufferduration  \(session.ioBufferDuration.description)", delegate: self.pipelineDelegate, caller: self)
+        Trace.trace(Trace.Level.DEBUG, config: self.configuration, message: "current category: \(sss) +  options: \(sco) isOtherAudioPlaying: \(sioap) bufferduration  \(session.ioBufferDuration.description)", delegate: self.pipelineDelegate, caller: self)
         let route_inputs: String = session.currentRoute.inputs.debugDescription
         let route_outputs: String = session.currentRoute.outputs.debugDescription
         let preferredInput: String = session.preferredInput.debugDescription
         let usb_outputs: String = session.outputDataSources?.debugDescription ?? "none"
         let inputs: String = session.availableInputs?.debugDescription ?? "none"
-        Trace.trace(Trace.Level.DEBUG, configLevel: configuration.tracing, message: "inputs: \(inputs) preferredinput: \(preferredInput) input: \(route_inputs) output: \(route_outputs) usb_outputs: \(usb_outputs)", delegate: self.pipelineDelegate, caller: self)
+        Trace.trace(Trace.Level.DEBUG, config: self.configuration, message: "inputs: \(inputs) preferredinput: \(preferredInput) input: \(route_inputs) output: \(route_outputs) usb_outputs: \(usb_outputs)", delegate: self.pipelineDelegate, caller: self)
     }
     
     @objc private func audioRouteChanged(_ notification: Notification) {
@@ -261,19 +271,19 @@ class AudioController {
             let reason = AVAudioSession.RouteChangeReason(rawValue:reasonValue) else {
                 return
         }
-        Trace.trace(Trace.Level.DEBUG, configLevel: configuration.tracing, message: "audioRouteChanged reason: \(reasonValue.description) notification: \(userInfo.debugDescription)", delegate: self.pipelineDelegate, caller: self)
+        Trace.trace(Trace.Level.DEBUG, config: self.configuration, message: "audioRouteChanged reason: \(reasonValue.description) notification: \(userInfo.debugDescription)", delegate: self.pipelineDelegate, caller: self)
         debug()
         let session = AVAudioSession.sharedInstance()
         switch reason {
         case .newDeviceAvailable:
-            Trace.trace(Trace.Level.DEBUG, configLevel: configuration.tracing, message: "AudioController audioRouteChanged new output:  \(session.currentRoute.outputs.description)", delegate: self.pipelineDelegate, caller: self)
+            Trace.trace(Trace.Level.DEBUG, config: self.configuration, message: "AudioController audioRouteChanged new output:  \(session.currentRoute.outputs.description)", delegate: self.pipelineDelegate, caller: self)
         case .oldDeviceUnavailable:
             if let previousRoute =
                 userInfo[AVAudioSessionRouteChangePreviousRouteKey] as? AVAudioSessionRouteDescription {
-                Trace.trace(Trace.Level.DEBUG, configLevel: configuration.tracing, message: "AudioController audioRouteChanged old output: \(previousRoute.outputs.description)", delegate: self.pipelineDelegate, caller: self)
+                Trace.trace(Trace.Level.DEBUG, config: self.configuration, message: "AudioController audioRouteChanged old output: \(previousRoute.outputs.description)", delegate: self.pipelineDelegate, caller: self)
             }
         case .categoryChange:
-            Trace.trace(Trace.Level.DEBUG, configLevel: configuration.tracing, message: "AudioController audioRouteChanged new category: \(session.category.rawValue)", delegate: self.pipelineDelegate, caller: self)
+            Trace.trace(Trace.Level.DEBUG, config: self.configuration, message: "AudioController audioRouteChanged new category: \(session.category.rawValue)", delegate: self.pipelineDelegate, caller: self)
         default: ()
         }
     }

@@ -61,12 +61,16 @@ import Speech
             try self.audioEngine.start()
             self.wakeActiveMaxWorker = DispatchWorkItem {[weak self] in
                 context.isActive = false
-                self?.delegate?.didTimeout()
-                self?.delegate?.deactivate()
+                self?.configuration?.delegateDispatchQueue.async {
+                    self?.delegate?.didTimeout()
+                    self?.delegate?.deactivate()
+                }
             }
             DispatchQueue.global(qos: .userInitiated).asyncAfter(deadline: .now() + .milliseconds(self.configuration!.wakeActiveMax), execute: self.wakeActiveMaxWorker!)
         } catch let error {
-            self.delegate?.didError(error)
+            self.configuration?.delegateDispatchQueue.async {
+                self.delegate?.didError(error)
+            }
         }
     }
     
@@ -125,15 +129,17 @@ import Speech
                             case 0..<200: // Apple retry error: https://developer.nuance.com/public/Help/DragonMobileSDKReference_iOS/Error-codes.html
                                 break
                             case 203: // request timed out, retry
-                                Trace.trace(Trace.Level.INFO, configLevel: strongSelf.configuration?.tracing ?? Trace.Level.NONE, message: "resultHandler error 203", delegate: strongSelf.delegate, caller: strongSelf)
+                                Trace.trace(Trace.Level.INFO, config: strongSelf.configuration, message: "resultHandler error 203", delegate: strongSelf.delegate, caller: strongSelf)
                                 context.isActive = false
-                                delegate.deactivate()
+                                strongSelf.configuration?.delegateDispatchQueue.async {
+                                    delegate.deactivate()
+                                }
                                 break
                             case 209: // ¯\_(ツ)_/¯
-                                Trace.trace(Trace.Level.INFO, configLevel: strongSelf.configuration?.tracing ?? Trace.Level.NONE, message: "resultHandler error 209", delegate: strongSelf.delegate, caller: strongSelf)
+                                Trace.trace(Trace.Level.INFO, config: strongSelf.configuration, message: "resultHandler error 209", delegate: strongSelf.delegate, caller: strongSelf)
                                 break
                             case 216: // Apple internal error: https://stackoverflow.com/questions/53037789/sfspeechrecognizer-216-error-with-multiple-requests?noredirect=1&lq=1)
-                                Trace.trace(Trace.Level.INFO, configLevel: strongSelf.configuration?.tracing ?? Trace.Level.NONE, message: "resultHandler error 216", delegate: strongSelf.delegate, caller: strongSelf)
+                                Trace.trace(Trace.Level.INFO, config: strongSelf.configuration, message: "resultHandler error 216", delegate: strongSelf.delegate, caller: strongSelf)
 
                                 break
                             case 300..<603: // Apple retry error: https://developer.nuance.com/public/Help/DragonMobileSDKReference_iOS/Error-codes.html
@@ -147,7 +153,7 @@ import Speech
                     }
                 }
                 if let r = result {
-                    Trace.trace(Trace.Level.DEBUG, configLevel: strongSelf.configuration?.tracing ?? Trace.Level.NONE, message: "recognized \(r.bestTranscription.formattedString)", delegate: strongSelf.delegate, caller: strongSelf)
+                    Trace.trace(Trace.Level.DEBUG, config: strongSelf.configuration, message: "recognized \(r.bestTranscription.formattedString)", delegate: strongSelf.delegate, caller: strongSelf)
                     strongSelf.wakeActiveMaxWorker?.cancel()
                     let confidence = r.transcriptions.first?.segments.sorted(
                         by: { (a, b) -> Bool in
@@ -156,8 +162,10 @@ import Speech
                     context.confidence = confidence
                     strongSelf.vadFallWorker = DispatchWorkItem {[weak self] in
                         context.isActive = false
-                        self?.delegate?.didRecognize(context)
-                        self?.delegate?.deactivate()
+                        strongSelf.configuration?.delegateDispatchQueue.async {
+                            self?.delegate?.didRecognize(context)
+                            self?.delegate?.deactivate()
+                        }
                     }
                     DispatchQueue.global(qos: .userInitiated).asyncAfter(deadline: DispatchTime.now() + .milliseconds(strongSelf.configuration!.vadFallDelay), execute: strongSelf.vadFallWorker!)
                 }
