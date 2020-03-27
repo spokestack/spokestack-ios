@@ -103,9 +103,11 @@ This pipeline component uses the Apple `SFSpeech` API to stream audio samples fo
                 self?.stopRecognition()
                 self?.startRecognition()
             }
-            DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(self.configuration!.wakewordRequestTimeout), execute: self.dispatchWorker!)
+            DispatchQueue.global(qos: .userInitiated).asyncAfter(deadline: .now() + .milliseconds(self.configuration!.wakewordRequestTimeout), execute: self.dispatchWorker!)
         } catch let error {
-            self.delegate?.didError(error)
+            self.configuration?.delegateDispatchQueue.async {
+                self.delegate?.didError(error)
+            }
         }
     }
     
@@ -135,7 +137,7 @@ This pipeline component uses the Apple `SFSpeech` API to stream audio samples fo
                         if nse.domain == "kAFAssistantErrorDomain" {
                             switch nse.code {
                             case 0..<200: // Apple retry error: https://developer.nuance.com/public/Help/DragonMobileSDKReference_iOS/Error-codes.html
-                                Trace.trace(Trace.Level.INFO, configLevel: strongSelf.traceLevel, message: "resultHandler error \(nse.code.description)", delegate: strongSelf.delegate, caller: strongSelf)
+                                Trace.trace(Trace.Level.INFO, config: strongSelf.configuration, message: "resultHandler error \(nse.code.description)", delegate: strongSelf.delegate, caller: strongSelf)
                                 break
                             case 203: // request timed out, retry
                                 strongSelf.stopRecognition()
@@ -146,10 +148,12 @@ This pipeline component uses the Apple `SFSpeech` API to stream audio samples fo
                             case 216: // Apple internal error: https://stackoverflow.com/questions/53037789/sfspeechrecognizer-216-error-with-multiple-requests?noredirect=1&lq=1)
                                 break
                             case 300..<603: // Apple retry error: https://developer.nuance.com/public/Help/DragonMobileSDKReference_iOS/Error-codes.html
-                                Trace.trace(Trace.Level.INFO, configLevel: strongSelf.traceLevel, message: "resultHandler error \(nse.code.description)", delegate: strongSelf.delegate, caller: strongSelf)
+                                Trace.trace(Trace.Level.INFO, config: strongSelf.configuration, message: "resultHandler error \(nse.code.description)", delegate: strongSelf.delegate, caller: strongSelf)
                                 break
                             default:
-                                delegate.didError(e)
+                                strongSelf.configuration?.delegateDispatchQueue.async {
+                                    delegate.didError(e)
+                                }
                             }
                         }
                     } else {
@@ -157,7 +161,7 @@ This pipeline component uses the Apple `SFSpeech` API to stream audio samples fo
                     }
                 }
                 if let r = result {
-                    Trace.trace(Trace.Level.DEBUG, configLevel: strongSelf.traceLevel, message: "hears \(r.bestTranscription.formattedString)", delegate: strongSelf.delegate, caller: strongSelf)
+                    Trace.trace(Trace.Level.DEBUG, config: strongSelf.configuration, message: "hears \(r.bestTranscription.formattedString)", delegate: strongSelf.delegate, caller: strongSelf)
                     let wakewordDetected: Bool =
                         !strongSelf.phrases
                             .filter({
@@ -169,7 +173,9 @@ This pipeline component uses the Apple `SFSpeech` API to stream audio samples fo
                             .isEmpty
                     if wakewordDetected {
                         strongSelf.context.isActive = true
-                        delegate.activate()
+                        strongSelf.configuration?.delegateDispatchQueue.async {
+                            delegate.activate()
+                        }
                     }
                 }
         })
@@ -218,7 +224,9 @@ extension AppleWakewordRecognizer: AudioControllerDelegate {
             guard let strongSelf = self else { return }
             do { try strongSelf.vad.process(frame: frame, isSpeech: false) } // TODO: this will only trigger VAD activation the first time, and run the ASR continuously subsequently.
             catch let error {
-                strongSelf.delegate?.didError(error)
+                strongSelf.configuration?.delegateDispatchQueue.async {
+                    strongSelf.delegate?.didError(error)
+                }
             }
         }
     }
@@ -239,7 +247,9 @@ extension AppleWakewordRecognizer: VADDelegate {
                 try self.audioEngine.start()
                 self.startRecognition()
             } catch let error {
-                self.delegate?.didError(error)
+                self.configuration?.delegateDispatchQueue.async {
+                    self.delegate?.didError(error)
+                }
             }
         }
     }

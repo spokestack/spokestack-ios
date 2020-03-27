@@ -45,10 +45,12 @@ class AppleASRViewController: UIViewController {
     
     lazy private var pipeline: SpeechPipeline = {
         
-        let appleConfiguration: SpeechConfiguration = SpeechConfiguration()
+        let config: SpeechConfiguration = SpeechConfiguration()
+        config.tracing = .DEBUG
+        config.delegateDispatchQueue = DispatchQueue.main
         
         return SpeechPipeline(SpeechProcessors.appleSpeech.processor,
-                              speechConfiguration: appleConfiguration,
+                              speechConfiguration: config,
                               speechDelegate: self,
                               wakewordService: SpeechProcessors.appleWakeword.processor,
                               pipelineDelegate: self)

@@ -13,43 +13,35 @@ import AVFoundation
 class TFLiteViewController: UIViewController {
     
     lazy var startRecordingButton: UIButton = {
-        
         let button: UIButton = UIButton(frame: .zero)
-        
         button.translatesAutoresizingMaskIntoConstraints = false
         button.setTitle("Start", for: .normal)
         button.addTarget(self,
                          action: #selector(TFLiteViewController.startRecordingAction(_:)),
                          for: .touchUpInside)
         button.setTitleColor(.purple, for: .normal)
-        
+        button.isEnabled = true
         return button
     }()
     
     var stopRecordingButton: UIButton = {
-        
         let button: UIButton = UIButton(frame: .zero)
-        
         button.translatesAutoresizingMaskIntoConstraints = false
         button.setTitle("Stop", for: .normal)
         button.addTarget(self,
                          action: #selector(TFLiteViewController.stopRecordingAction(_:)),
                          for: .touchUpInside)
-        
         button.setTitleColor(.purple, for: .normal)
-        
-        
+        button.isEnabled = false
         return button
     }()
     
     private var pipeline: SpeechPipeline?
     
     override func loadView() {
-        
         super.loadView()
         self.view.backgroundColor = .white
         self.title = "TensorFlow Wakeword"
-        
         let doneBarButtonItem: UIBarButtonItem = UIBarButtonItem(barButtonSystemItem: .done,
                                                                  target: self,
                                                                  action: #selector(TFLiteViewController.dismissViewController(_:)))
@@ -58,18 +50,14 @@ class TFLiteViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         self.view.addSubview(self.startRecordingButton)
         self.view.addSubview(self.stopRecordingButton)
-        
         self.startRecordingButton.centerYAnchor.constraint(equalTo: self.view.centerYAnchor).isActive = true
         self.startRecordingButton.leftAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.leftAnchor).isActive = true
         self.startRecordingButton.rightAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.rightAnchor).isActive = true
-        
         self.stopRecordingButton.topAnchor.constraint(equalTo: self.startRecordingButton.bottomAnchor, constant: 50.0).isActive = true
         self.stopRecordingButton.leftAnchor.constraint(equalTo: self.startRecordingButton.leftAnchor).isActive = true
         self.stopRecordingButton.rightAnchor.constraint(equalTo: self.startRecordingButton.rightAnchor).isActive = true
-        
         do {
             self.pipeline = try self.initPipeline()
         } catch let error {
@@ -92,6 +80,7 @@ class TFLiteViewController: UIViewController {
         }
         c.detectModelPath = detectPath
         c.tracing = Trace.Level.PERF
+        c.delegateDispatchQueue = DispatchQueue.main
         return SpeechPipeline(SpeechProcessors.appleSpeech.processor,
                               speechConfiguration: c,
                               speechDelegate: self,
@@ -114,10 +103,8 @@ class TFLiteViewController: UIViewController {
     }
     
     func toggleStartStop() {
-        DispatchQueue.main.async {
-            self.stopRecordingButton.isEnabled.toggle()
-            self.startRecordingButton.isEnabled.toggle()
-        }
+        self.stopRecordingButton.isEnabled.toggle()
+        self.startRecordingButton.isEnabled.toggle()
     }
 }
 

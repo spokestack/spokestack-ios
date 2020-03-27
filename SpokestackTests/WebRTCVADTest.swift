@@ -78,6 +78,11 @@ class WebRTCVADTestDelegate: VADDelegate, PipelineDelegate {
     var didActivate: Bool = false
     var didDeactivate: Bool = false
     var asyncExpectation: XCTestExpectation?
+    var config = SpeechConfiguration()
+    
+    init() {
+        config.tracing = .DEBUG
+    }
     
     func reset() {
         didActivate = false
@@ -86,19 +91,19 @@ class WebRTCVADTestDelegate: VADDelegate, PipelineDelegate {
     }
     
     func didInit() {
-        Trace.trace(Trace.Level.DEBUG, configLevel: Trace.Level.DEBUG, message: "didInit", delegate: self, caller: self)
+        Trace.trace(Trace.Level.DEBUG, config: self.config, message: "didInit", delegate: self, caller: self)
     }
     
     func didStart() {
-        Trace.trace(Trace.Level.DEBUG, configLevel: Trace.Level.DEBUG, message: "didStart", delegate: self, caller: self)
+        Trace.trace(Trace.Level.DEBUG, config: self.config, message: "didStart", delegate: self, caller: self)
     }
     
     func didStop() {
-        Trace.trace(Trace.Level.DEBUG, configLevel: Trace.Level.DEBUG, message: "didStop", delegate: self, caller: self)
+        Trace.trace(Trace.Level.DEBUG, config: self.config, message: "didStop", delegate: self, caller: self)
     }
     
     func setupFailed(_ error: String) {
-        Trace.trace(Trace.Level.DEBUG, configLevel: Trace.Level.DEBUG, message: "setupFailed", delegate: self, caller: self)
+        Trace.trace(Trace.Level.DEBUG, config: self.config, message: "setupFailed", delegate: self, caller: self)
     }
     
     func didTrace(_ trace: String) {
@@ -111,7 +116,7 @@ class WebRTCVADTestDelegate: VADDelegate, PipelineDelegate {
             return
         }
         self.didActivate = true
-        Trace.trace(Trace.Level.DEBUG, configLevel: Trace.Level.DEBUG, message: "activate", delegate: self, caller: self)
+        Trace.trace(Trace.Level.DEBUG, config: self.config, message: "activate", delegate: self, caller: self)
         asyncExpectation?.fulfill()
     }
     
@@ -121,7 +126,7 @@ class WebRTCVADTestDelegate: VADDelegate, PipelineDelegate {
             return
         }
         self.didDeactivate = true
-        Trace.trace(Trace.Level.DEBUG, configLevel: Trace.Level.DEBUG, message: "deactivate", delegate: self, caller: self)
+        Trace.trace(Trace.Level.DEBUG, config: self.config, message: "deactivate", delegate: self, caller: self)
         asyncExpectation?.fulfill()
     }
 }

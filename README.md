@@ -9,7 +9,7 @@ Activity Detection (VAD), wakeword activation, and Automatic Speech Recognition 
 * [Features](#features)
 * [Installation](#installation)
 * [Usage](#usage)
-* [API Reference](#api-reference)
+* [Documentation](#Documentation)
 * [Deployment](#Deployment)
 * [License](#license)
 <!--te-->
@@ -47,6 +47,22 @@ This example creates a speech recognition pipeline using a wakeword detector tha
 
 See `SpeechPipeline` and `SpeechConfiguration` for further configuration documentation.
 
+### Text to Speech
+
+```
+// assume that self implements the TextToSpeechDelegate protocol
+let tts = TextToSpeech(self, configuration: SpeechConfiguration())
+tts.speak(TextToSpeechInput("My god, it's full of stars!"))
+```
+
+### Natural Language Understanding
+
+```
+// assume that self implements the NLUDelegate protocol
+let nlu = try! NLUTensorflow(self, configuration: configuration)
+nlu.classify(utterance: "I can't turn that light in the room on for you, Dave", context: [:])
+```
+
 ### Reference implementation
 
 The `SpokestackFrameworkExample` project contains reference implementations for how to use the Spokestack library, along with runnable examples of the wakeword and ASR components. Each component has a corresponding screen from the main screen, and can be started, stopped, or synthesized, as appropriate. The component screens have full debug tracing enabled, so the system control logic and debug events will appear in the XCode Console.
@@ -55,7 +71,13 @@ The `SpokestackFrameworkExample` project contains reference implementations for 
 
 A build error similar to `Code Sign error: No unexpired provisioning profiles found that contain any of the keychain's signing certificates` will occur if the bundle identifier is not changed from `io.Spokestack.SpokestackFrameworkExample`, which is tied to the Spokestack organization. 
 
-## API Reference
+## Documentation
+
+### Getting Started, Cookbooks, and Conceptual Guides
+
+[Step-by-step introduction](https://spokestack.io/docs/iOS/getting-started), [common usage patterns](https://spokestack.io/docs/iOS/cookbook), and [discussion of concepts](https://spokestack.io/docs/Concepts/pipeline-configuration) used by the library, [design guides for voice interfaces](https://spokestack.io/docs/Design/getting-started), and [the Android library](https://spokestack.io/docs/Android/getting-started) may all be found [on our website](https://spokestack.io/docs).
+
+### API Reference
 
 API reference is [available on Github](https://spokestack.github.io/spokestack-ios/index.html).
 
@@ -76,7 +98,7 @@ API reference is [available on Github](https://spokestack.github.io/spokestack-i
 ## License
 [![License](https://img.shields.io/badge/License-Apache%202.0-green.svg)](https://opensource.org/licenses/Apache-2.0)
 
-Copyright 2018 Pylon, Inc.
+Copyright 2020 Spokestack, Inc.
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.

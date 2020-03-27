@@ -37,7 +37,6 @@ public class WebRTCVAD: NSObject {
     
     deinit {
         WebRtcVad_Free(vad.pointee)
-        vad.deallocate()
     }
     
     ///  Creates and configures a new WebRTC VAD component.

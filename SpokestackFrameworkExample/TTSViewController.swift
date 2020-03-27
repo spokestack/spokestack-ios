@@ -59,7 +59,7 @@ class TTSViewController: UIViewController {
         
         return button
     }()
-
+    
     lazy var testButton: UIButton = {
         
         let button: UIButton = UIButton(frame: .zero)
@@ -128,7 +128,7 @@ class TTSViewController: UIViewController {
         self.playButton.topAnchor.constraint(equalTo: self.synthesizeButton.bottomAnchor, constant: 50.0).isActive = true
         self.playButton.leftAnchor.constraint(equalTo: self.synthesizeButton.leftAnchor).isActive = true
         self.playButton.rightAnchor.constraint(equalTo: self.synthesizeButton.rightAnchor).isActive = true
-
+        
         self.speakButton.topAnchor.constraint(equalTo: self.playButton.bottomAnchor, constant: 50.0).isActive = true
         self.speakButton.leftAnchor.constraint(equalTo: self.playButton.leftAnchor).isActive = true
         self.speakButton.rightAnchor.constraint(equalTo: self.playButton.rightAnchor).isActive = true
@@ -151,7 +151,7 @@ class TTSViewController: UIViewController {
     }
     
     // MARK: Button Actions
-
+    
     @objc func synthesizeAction(_ sender: Any) {
         print("synthesize")
         var text = self.ttsInput.text ?? ""
@@ -180,10 +180,10 @@ class TTSViewController: UIViewController {
     }
     
     @objc func testAction(_ sender: Any) {
-        Trace.trace(Trace.Level.PERF, configLevel: self.configuration.tracing, message: "test: current media time \(CACurrentMediaTime())", delegate: self, caller: self)
+        Trace.trace(Trace.Level.PERF, config: self.configuration, message: "test: current media time \(CACurrentMediaTime())", delegate: self, caller: self)
         let text = NumberFormatter.localizedString(from: NSNumber(value: CACurrentMediaTime()), number:  NumberFormatter.Style.spellOut) + ". "
         let repeatingText = String(repeating: text, count: 5)
-//        Trace.trace(Trace.Level.DEBUG, configLevel: self.configuration.tracing, message: "test input text \(repeatingText)", delegate: self, caller: self)
+        //        Trace.trace(Trace.Level.DEBUG, configLevel: self.configuration.tracing, message: "test input text \(repeatingText)", delegate: self, caller: self)
         self.ttsInput.text = repeatingText
         self.amTesting = true
         synthesizeAction(self)
@@ -219,41 +219,37 @@ extension TTSViewController {
      - `#keyPath(AVPlayer.reasonForWaitingToPlay) // only applicable once playback has started, not to making the playback start`
      - `#keyPath(AVPlayerItem.loadedTimeRanges) // useful for monitoring the speed/timing of the buffer getting filled, but not actionable`
      - `#keyPath(AVPlayer.status) // does not fire during normal test case`
-    */
+     */
     func playTest() {
         TICK() // play timer
-        DispatchQueue.main.async {
-            self.playerItem = AVPlayerItem(url: self.streamingFile!) //URL(string: "http://devimages.apple.com/iphone/samples/bipbop/bipbopall.m3u8")!)
-            self.playerItem!.addObserver(self, forKeyPath: #keyPath(AVPlayerItem.duration), options: [.old, .new], context: nil)
-            self.playerItem!.addObserver(self, forKeyPath: #keyPath(AVPlayerItem.status), options: [.old, .new], context: nil)
-            self.playerItem!.addObserver(self, forKeyPath: #keyPath(AVPlayerItem.isPlaybackBufferEmpty), options: [.old, .new], context: nil)
-            self.player.replaceCurrentItem(with: self.playerItem!)
-            NotificationCenter.default.addObserver(self, selector: #selector(self.playerDidFinishPlaying(sender:)), name: .AVPlayerItemDidPlayToEndTime, object: self.playerItem!)
-        }
+        self.playerItem = AVPlayerItem(url: self.streamingFile!) //URL(string: "http://devimages.apple.com/iphone/samples/bipbop/bipbopall.m3u8")!)
+        self.playerItem!.addObserver(self, forKeyPath: #keyPath(AVPlayerItem.duration), options: [.old, .new], context: nil)
+        self.playerItem!.addObserver(self, forKeyPath: #keyPath(AVPlayerItem.status), options: [.old, .new], context: nil)
+        self.playerItem!.addObserver(self, forKeyPath: #keyPath(AVPlayerItem.isPlaybackBufferEmpty), options: [.old, .new], context: nil)
+        self.player.replaceCurrentItem(with: self.playerItem!)
+        NotificationCenter.default.addObserver(self, selector: #selector(self.playerDidFinishPlaying(sender:)), name: .AVPlayerItemDidPlayToEndTime, object: self.playerItem!)
     }
     
     override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
-        DispatchQueue.main.async {
-            guard let current = self.player.currentItem else {
-                return
-            }
-            switch keyPath {
-            case #keyPath(AVPlayerItem.duration):
-                self.playerItemBeginLoading()
-                Trace.trace(Trace.Level.DEBUG, configLevel: self.configuration.tracing, message: "test item duration time change \(change!)", delegate: self, caller: self) //\(current.status.rawValue)")
-                break
-            case #keyPath(AVPlayerItem.status):
-                self.playerItemStatusChange()
-                Trace.trace(Trace.Level.DEBUG, configLevel: self.configuration.tracing, message: "test item status time change \(change!)", delegate: self, caller: self) //\(current.status.rawValue)")
-                break
-            case #keyPath(AVPlayerItem.isPlaybackBufferEmpty):
-                self.playerItemBeginPlaying()
-                self.player.play()
-                Trace.trace(Trace.Level.DEBUG, configLevel: self.configuration.tracing, message: "test item buffer empty time change \(current.isPlaybackBufferEmpty)", delegate: self, caller: self)
-                break
-            default:
-                break
-            }
+        guard let current = self.player.currentItem else {
+            return
+        }
+        switch keyPath {
+        case #keyPath(AVPlayerItem.duration):
+            self.playerItemBeginLoading()
+            Trace.trace(Trace.Level.DEBUG, config: self.configuration, message: "test item duration time change \(change!)", delegate: self, caller: self) //\(current.status.rawValue)")
+            break
+        case #keyPath(AVPlayerItem.status):
+            self.playerItemStatusChange()
+            Trace.trace(Trace.Level.DEBUG, config: self.configuration, message: "test item status time change \(change!)", delegate: self, caller: self) //\(current.status.rawValue)")
+            break
+        case #keyPath(AVPlayerItem.isPlaybackBufferEmpty):
+            self.playerItemBeginPlaying()
+            self.player.play()
+            Trace.trace(Trace.Level.DEBUG, config: self.configuration, message: "test item buffer empty time change \(current.isPlaybackBufferEmpty)", delegate: self, caller: self)
+            break
+        default:
+            break
         }
     }
     
@@ -305,7 +301,7 @@ extension TTSViewController: TextToSpeechDelegate {
         let urlData = NSData(contentsOf: url)
         urlData!.write(to: destinationUrl, atomically: false)
         TOCK() // download timer
-        Trace.trace(Trace.Level.DEBUG, configLevel: self.configuration.tracing, message: "test downloaded to \(destinationUrl)", delegate: self, caller: self)
+        Trace.trace(Trace.Level.DEBUG, config: self.configuration, message: "test downloaded to \(destinationUrl)", delegate: self, caller: self)
     }
     
     func failure(error: Error) {

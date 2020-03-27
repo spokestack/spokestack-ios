@@ -97,7 +97,7 @@ internal struct SharedTestMocks {
     [UNK]
     alesund
     """
-        let file = FileManager.default.createFile(atPath: path, contents: vocab.data(using: .utf8), attributes: .none)
+        let _ = FileManager.default.createFile(atPath: path, contents: vocab.data(using: .utf8), attributes: .none)
         return path
         
     }

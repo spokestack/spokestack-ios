@@ -14,8 +14,7 @@ import AVFoundation
 class AppleSpeechRecognizerTest: XCTestCase {
 
     /// startStreaming
-    func testStartStreaming() {
-        
+    func testStartStopStreaming() {
         let delegate = AppleSpeechRecognizerTestDelegate()
         let asr = AppleSpeechRecognizer.sharedInstance
         let context = SpeechContext()
@@ -23,15 +22,9 @@ class AppleSpeechRecognizerTest: XCTestCase {
         asr.delegate = delegate
         asr.startStreaming(context: context)
         XCTAssert(context.isActive)
-        
-//        XCTAssertNoThrow(try AVAudioSession.sharedInstance().setCategory(.ambient))
-//        asr.startStreaming(context: context)
-//        while(!delegate.didRecognize) { // asr is running in background, which is not allowed.
-//            print("waiting for speech input")
-//        }
+        asr.stopStreaming(context: context)
+        XCTAssert(!context.isActive)
     }
-    
-    /// stopStreaming
 }
 
 class AppleSpeechRecognizerTestDelegate: PipelineDelegate, SpeechEventListener {

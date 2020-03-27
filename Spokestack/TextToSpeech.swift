@@ -48,7 +48,7 @@ private let apiQueue = DispatchQueue(label: TTSSpeechQueueName, qos: .userInitia
     // MARK: Initializers
 
     /// Initializes a new text to speech instance without a delegate.
-    /// - Note: An instance initialized this way is expected to use the pub/sub Combine interface, not the delegate interface, when calling `synthesize`.
+    /// - Warning: An instance initialized this way is expected to use the pub/sub `Combine` interface, not the delegate interface, when calling `synthesize`.
     /// - Requires: `SpeechConfiguration.apiId` and `SpeechConfiguration.apiSecret`.
     /// - Parameter configuration: Speech configuration parameters.
     @objc public init(configuration: SpeechConfiguration) throws {
@@ -73,7 +73,9 @@ private let apiQueue = DispatchQueue(label: TTSSpeechQueueName, qos: .userInitia
         if let apiSecretEncoded = self.configuration.apiSecret.data(using: .utf8) {
             self.apiKey = SymmetricKey(data: apiSecretEncoded)
         } else {
-            self.delegate?.failure(error: TextToSpeechErrors.apiKey("Unable to encode apiSecret."))
+            self.configuration.delegateDispatchQueue.async {
+                delegate.failure(error: TextToSpeechErrors.apiKey("Unable to encode apiSecret."))
+            }
         }
         super.init()
     }
@@ -94,9 +96,11 @@ private let apiQueue = DispatchQueue(label: TTSSpeechQueueName, qos: .userInitia
     /// - Warning: `AVAudioSession.Category` and `AVAudioSession.CategoryOptions` must be set by the client to compatible settings that allow for playback through the desired audio sytem ouputs.
     @objc public func speak(_ input: TextToSpeechInput) -> Void {
         func play(result: TextToSpeechResult) {
-            DispatchQueue.main.async {
+            DispatchQueue.global(qos: .userInitiated).async {
                 guard let url = result.url else {
-                    self.delegate?.failure(error: TextToSpeechErrors.speak("Synthesis response is invalid."))
+                    self.configuration.delegateDispatchQueue.async {
+                        self.delegate?.failure(error: TextToSpeechErrors.speak("Synthesis response is invalid."))
+                    }
                     return
                 }
                 let playerItem = AVPlayerItem(url: url)
@@ -172,36 +176,48 @@ private let apiQueue = DispatchQueue(label: TTSSpeechQueueName, qos: .userInitia
         do {
             request = try createSynthesizeRequest(input)
         } catch TextToSpeechErrors.apiKey(let message) {
-            self.delegate?.failure(error: TextToSpeechErrors.apiKey(message))
+            self.configuration.delegateDispatchQueue.async {
+                self.delegate?.failure(error: TextToSpeechErrors.apiKey(message))
+            }
             return
         } catch let error {
-            self.delegate?.failure(error: error)
+            self.configuration.delegateDispatchQueue.async {
+                self.delegate?.failure(error: error)
+            }
             return
         }
         
-        Trace.trace(Trace.Level.DEBUG, configLevel: self.configuration.tracing, message: "request \(request.debugDescription) \(String(describing: request.allHTTPHeaderFields)) \(String(data: request.httpBody!, encoding: String.Encoding.utf8) ?? "no body")", delegate: self.delegate, caller: self)
+        Trace.trace(Trace.Level.DEBUG, config: self.configuration, message: "request \(request.debugDescription) \(String(describing: request.allHTTPHeaderFields)) \(String(data: request.httpBody!, encoding: String.Encoding.utf8) ?? "no body")", delegate: self.delegate, caller: self)
         
         let task: URLSessionDataTask = session.dataTask(with: request) { (data, response, error) -> Void in
-            Trace.trace(Trace.Level.DEBUG, configLevel: self.configuration.tracing, message: "task callback \(String(describing: response)) \(String(describing: String(data: data ?? Data(), encoding: String.Encoding.utf8)))) \(String(describing: error))", delegate: self.delegate, caller: self)
+            Trace.trace(Trace.Level.DEBUG, config: self.configuration, message: "task callback \(String(describing: response)) \(String(describing: String(data: data ?? Data(), encoding: String.Encoding.utf8)))) \(String(describing: error))", delegate: self.delegate, caller: self)
             
-            DispatchQueue.main.async {
+            DispatchQueue.global(qos: .userInitiated).async {
                 if let error = error {
-                    self.delegate?.failure(error: error)
+                    self.configuration.delegateDispatchQueue.async {
+                        self.delegate?.failure(error: error)
+                    }
                 } else {
                     // unwrap the matryoshka doll that is the response body, responding with a failure if any layer is awry
                     do {
                         guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
-                            self.delegate?.failure(error: TextToSpeechErrors.deserialization("response cannot be deserialized"))
+                            self.configuration.delegateDispatchQueue.async {
+                                self.delegate?.failure(error: TextToSpeechErrors.deserialization("response cannot be deserialized"))
+                            }
                             return
                         }
                         guard let d = data else {
-                            self.delegate?.failure(error: TextToSpeechErrors.deserialization("response body has no data"))
+                            self.configuration.delegateDispatchQueue.async {
+                                self.delegate?.failure(error: TextToSpeechErrors.deserialization("response body has no data"))
+                            }
                             return
                         }
                         let result = try self.createSynthesizeResponse(data: d, response: httpResponse, inputFormat: input.inputFormat)
                         success?(result)
                     } catch let error {
-                        self.delegate?.failure(error: error)
+                        self.configuration.delegateDispatchQueue.async {
+                            self.delegate?.failure(error: error)
+                        }
                     }
                 }
             }
@@ -210,7 +226,9 @@ private let apiQueue = DispatchQueue(label: TTSSpeechQueueName, qos: .userInitia
     }
     
     private func successHandler(result: TextToSpeechResult) {
-        self.delegate?.success(result: result)
+        self.configuration.delegateDispatchQueue.async {
+            self.delegate?.success(result: result)
+        }
     }
     
     // MARK: Internal functions
@@ -278,7 +296,9 @@ private let apiQueue = DispatchQueue(label: TTSSpeechQueueName, qos: .userInitia
     @available(*, deprecated, message: "Internal function that must be public for Objective-C compatibility reasons. Client should never call this function.")
     @objc
     func playerDidFinishPlaying(sender: Notification) {
-        self.delegate?.didFinishSpeaking()
+        self.configuration.delegateDispatchQueue.async {
+            self.delegate?.didFinishSpeaking()
+        }
         NotificationCenter.default.removeObserver(self, name: .AVPlayerItemDidPlayToEndTime, object: self.player.currentItem)
     }
     
@@ -286,11 +306,13 @@ private let apiQueue = DispatchQueue(label: TTSSpeechQueueName, qos: .userInitia
     /// - Warning: Client should never call this function.
     @available(*, deprecated, message: "Internal function that must be public for Objective-C compatibility reasons. Client should never call this function.")
     override public func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
-        DispatchQueue.main.async {
+        DispatchQueue.global(qos: .userInitiated).async {
             switch keyPath {
             case #keyPath(AVPlayerItem.isPlaybackBufferEmpty):
                 self.player.play()
-                self.delegate?.didBeginSpeaking()
+                self.configuration.delegateDispatchQueue.async {
+                    self.delegate?.didBeginSpeaking()
+                }
                 break
             default:
                 break
