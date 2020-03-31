@@ -18,9 +18,9 @@ internal struct NLUTensorflowSlotParser {
     ///   - intent: The predicted intent.
     ///   - encoder: The tokenizer instance to decode the `encodedTokens`.
     ///   - encodedTokens: The tokens and associated metadata to decode for slot values.
-    internal func parse(tags: [String], intent: NLUTensorflowIntent, encoder: BertTokenizer, encodedTokens: EncodedTokens) throws -> [String:Slot] {
+    internal func parse(tags: [String], intent: NLUTensorflowIntent, encoder: BertTokenizer, encodedTokens: EncodedTokens) throws -> [String:Slot]? {
         // zip together the tags (ignoring the "o" tag) and the index of the whitespaced encoded tokens, then process into the return type
-        return try zip(tags, 0...encodedTokens.encodedTokensByWhitespaceIndex.count)
+        let slots = try zip(tags, 0...encodedTokens.encodedTokensByWhitespaceIndex.count)
             // create a dictionary of [tags: [tokenIndices]]
             .reduce(into: [:] as [String: [Int]], { result, tagIndex in
                 // the model slot classifier uses IOB tags. Ignore the "o" tag.
@@ -38,9 +38,11 @@ internal struct NLUTensorflowSlotParser {
                 guard let slot = intent.slots.filter({ $0.name == tag }).first else {
                     throw NLUError.metadata("Could not find a slot called \(tag) in NLU model metadata.")
                 }
-                let slotValue = try self.slotFacetParser(slot: slot, whitespaceIndices: whitespaceIndices, encoder: encoder, encodedTokens: encodedTokens)
-                result[tag] = Slot(type: slot.type, value: slotValue)
+                if let slotValue = try self.slotFacetParser(slot: slot, whitespaceIndices: whitespaceIndices, encoder: encoder, encodedTokens: encodedTokens) {
+                    result[tag] = Slot(type: slot.type, value: slotValue)
+                }
             })
+        return slots.isEmpty ? nil : slots
     }
     
     private func slotFacetParser(slot: NLUTensorflowSlot, whitespaceIndices: [Int], encoder: BertTokenizer, encodedTokens: EncodedTokens) throws -> Any? {
@@ -67,7 +69,7 @@ internal struct NLUTensorflowSlotParser {
             guard let lowerBound = parsed.range.first,
                 let upperBound = parsed.range.last
                 else {
-                return nil
+                    return nil
             }
             let range = lowerBound...upperBound
             return range.contains(integer) ? integer : nil

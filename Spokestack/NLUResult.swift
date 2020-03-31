@@ -24,10 +24,10 @@ import Foundation
     @objc public var confidence: Float
     
     /// The slot values present in the utterance.
-    @objc public var slots: [String:Slot]
+    @objc public var slots: [String:Slot]?
     
     public override var description: String {
-        return "\(intent) \(confidence) \(slots)"
+        return "\(intent) \(confidence) \(String(describing: slots))"
     }
     
     /// The initializer for the NLU result.
@@ -37,12 +37,26 @@ import Foundation
     ///   - context: Additional context included with the classification results.
     ///   - confidence: The confidence level of the classification result.
     ///   - slots: The slot values present in the utterance.
-    public init(utterance: String, intent: String, context: [String : Any] = [:], confidence: Float, slots: [String:Slot]) {
+    public init(utterance: String, intent: String, context: [String : Any] = [:], confidence: Float, slots: [String:Slot]?) {
         self.utterance = utterance
         self.intent = intent
         self.context = context
         self.confidence = confidence
         self.slots = slots
+    }
+    
+    /// The initializer for the NLU result.
+    /// - Parameters:
+    ///   - utterance: The original utterance that was classified.
+    ///   - intent: The intent that the utterance was classified as.
+    ///   - context: Additional context included with the classification results.
+    ///   - confidence: The confidence level of the classification result.
+    ///   - slots: The slot values present in the utterance.
+    public init(utterance: String, intent: String, context: [String : Any] = [:], confidence: Float) {
+        self.utterance = utterance
+        self.intent = intent
+        self.context = context
+        self.confidence = confidence
     }
 }
 

@@ -174,7 +174,6 @@ import TensorFlowLite
             // get the slots
             let encodedTagTensor = try model.output(at: OutputTensors.tag.rawValue)
             let slots = try self.extractSlots(slotsTensor: encodedTagTensor, metadata: metadata, encodedInput: encodedInput, intent: intent, tokenizer: tokenizer)
-            
             // return the classification result
             return .success(NLUResult(utterance: input, intent: intent.name, confidence: intent.confidence ?? 0.0, slots: slots))
         } catch let error {
@@ -196,7 +195,7 @@ import TensorFlowLite
     }
     
     // extract, decode + detokenize the classified tags, then hydrate the result slots based on the provided model metadata.
-    private func extractSlots(slotsTensor: Tensor, metadata: NLUTensorflowMeta, encodedInput: EncodedTokens, intent: NLUTensorflowIntent, tokenizer: BertTokenizer) throws -> [String : Slot] {
+    private func extractSlots(slotsTensor: Tensor, metadata: NLUTensorflowMeta, encodedInput: EncodedTokens, intent: NLUTensorflowIntent, tokenizer: BertTokenizer) throws -> [String : Slot]? {
         guard let parser = self.slotParser else {
             throw NLUError.invalidConfiguration("NLU slot parser was not configured.")
         }

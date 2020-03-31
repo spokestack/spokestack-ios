@@ -26,7 +26,7 @@ class NLUTensorflowTokenizerTest: XCTestCase {
         let tokens = ["With", "her", "from", "—", "the", "one:", "this", "also", "has?"]
         XCTAssertEqual(try! tokenizer.encode(text: t4).tokensByWhitespace, tokens)
         
-        let phone = "4238341745"
+        let phone = "4238341746"
         let phoneTokens = [63, 69, 68, 67, 70]
         XCTAssertEqual(try! tokenizer.encode(text: phone).encoded, phoneTokens)
     
