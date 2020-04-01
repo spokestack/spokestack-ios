@@ -176,6 +176,7 @@ class TTSViewController: UIViewController {
         var text = self.ttsInput.text ?? ""
         if (text == "") { text = "You didn't enter any text to synthesize." }
         let input = TextToSpeechInput(text)
+        input.inputFormat = .markdown
         self.tts?.speak(input)
     }
     
