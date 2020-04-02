@@ -66,7 +66,7 @@ class TextToSpeechTest: XCTestCase {
         delegate.reset()
         let didSucceedExpectation3 = expectation(description: "successful request calls TestTextToSpeechDelegate.success")
         delegate.asyncExpectation = didSucceedExpectation3
-        let markdownInput = TextToSpeechInput("Yet right now the average age of this (52nd)[number] Parliament is (49)[number] years old, [1s] OK Boomer.</speak>", voice: .demoMale, inputFormat: .markdown)
+        let markdownInput = TextToSpeechInput("Yet right now the average age of this (50)[number] second Parliament is (49)[number] years old, [1s] OK Boomer.", voice: .demoMale, inputFormat: .markdown)
         tts.synthesize(markdownInput)
         wait(for: [didSucceedExpectation3], timeout: 5)
         XCTAssert(delegate.didSucceed)

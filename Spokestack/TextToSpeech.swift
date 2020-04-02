@@ -336,13 +336,13 @@ private let apiQueue = DispatchQueue(label: TTSSpeechQueueName, qos: .userInitia
 
 // MARK: Internal data structures
 
-// SSML
-fileprivate struct TTSSSMLResponseURL: Codable {
+fileprivate struct TTSResponseURL: Codable {
     let url: URL
 }
 
+// SSML
 fileprivate struct TTSSSMLResponseSynthesize: Codable {
-    let synthesizeSsml: TTSSSMLResponseURL
+    let synthesizeSsml: TTSResponseURL
 }
 
 fileprivate struct TTSSSMLResponseData: Codable {
@@ -350,12 +350,8 @@ fileprivate struct TTSSSMLResponseData: Codable {
 }
 
 // Markdown
-fileprivate struct TTSMarkdownResponseURL: Codable {
-    let url: URL
-}
-
 fileprivate struct TTSMarkdownResponseSynthesize: Codable {
-    let synthesizeMarkdown: TTSMarkdownResponseURL
+    let synthesizeMarkdown: TTSResponseURL
 }
 
 fileprivate struct TTSMarkdownResponseData: Codable {
@@ -363,12 +359,8 @@ fileprivate struct TTSMarkdownResponseData: Codable {
 }
 
 // Text
-fileprivate struct TTSTextResponseURL: Codable {
-    let url: URL
-}
-
 fileprivate struct TTSTextResponseSynthesize: Codable {
-    let synthesizeText: TTSTextResponseURL
+    let synthesizeText: TTSResponseURL
 }
 
 fileprivate struct TTSTextResponseData: Codable {
