@@ -249,6 +249,15 @@ private let apiQueue = DispatchQueue(label: TTSSpeechQueueName, qos: .userInitia
                 ]
             ]
             break
+        case .markdown:
+            body = [
+                "query":"query iOSSynthesisMarkdown($voice: String!, $markdown: String!) {synthesizeMarkdown(voice: $voice, markdown: $markdown) {url}}",
+                "variables":[
+                    "voice":self.ttsInputVoices[input.voice.rawValue],
+                    "markdown":input.input
+                ]
+            ]
+            break
         case .text:
             body = [
                 "query":"query iOSSynthesisText($voice: String!, $text: String!) {synthesizeText(voice: $voice, text: $text) {url}}",
@@ -283,6 +292,10 @@ private let apiQueue = DispatchQueue(label: TTSSpeechQueueName, qos: .userInitia
         case .ssml:
             let body = try self.decoder.decode(TTSSSMLResponseData.self, from: data)
             let result = TextToSpeechResult(id: id, url: body.data.synthesizeSsml.url)
+            return result
+        case .markdown:
+            let body = try self.decoder.decode(TTSMarkdownResponseData.self, from: data)
+            let result = TextToSpeechResult(id: id, url: body.data.synthesizeMarkdown.url)
             return result
         case .text:
             let body = try self.decoder.decode(TTSTextResponseData.self, from: data)
@@ -323,24 +336,31 @@ private let apiQueue = DispatchQueue(label: TTSSpeechQueueName, qos: .userInitia
 
 // MARK: Internal data structures
 
-fileprivate struct TTSSSMLResponseURL: Codable {
+fileprivate struct TTSResponseURL: Codable {
     let url: URL
 }
 
+// SSML
 fileprivate struct TTSSSMLResponseSynthesize: Codable {
-    let synthesizeSsml: TTSSSMLResponseURL
+    let synthesizeSsml: TTSResponseURL
 }
 
 fileprivate struct TTSSSMLResponseData: Codable {
     let data: TTSSSMLResponseSynthesize
 }
 
-fileprivate struct TTSTextResponseURL: Codable {
-    let url: URL
+// Markdown
+fileprivate struct TTSMarkdownResponseSynthesize: Codable {
+    let synthesizeMarkdown: TTSResponseURL
 }
 
+fileprivate struct TTSMarkdownResponseData: Codable {
+    let data: TTSMarkdownResponseSynthesize
+}
+
+// Text
 fileprivate struct TTSTextResponseSynthesize: Codable {
-    let synthesizeText: TTSTextResponseURL
+    let synthesizeText: TTSResponseURL
 }
 
 fileprivate struct TTSTextResponseData: Codable {

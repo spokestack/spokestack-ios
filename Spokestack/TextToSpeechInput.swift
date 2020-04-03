@@ -12,9 +12,10 @@ import Foundation
 @objc public enum TTSInputFormat: Int {
     /// Plain text
     case text
-    /// Speech Synthesis Markup Language
-    /// see https://spokestack.io/docs/Concepts/tts for the supported SSML subset.
+    /// [Speech Synthesis Markup Language](https://spokestack.io/docs/Concepts/tts)
     case ssml
+    /// [SpeechMarkdown](https://www.speechmarkdown.org/)
+    case markdown
 }
 
 @objc public enum TTSInputVoice: Int {

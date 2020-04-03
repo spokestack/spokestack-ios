@@ -17,9 +17,11 @@ Activity Detection (VAD), wakeword activation, and Automatic Speech Recognition 
 ## Features
 
   - Voice activity detection
-  - Wakeword activation with three different models
+  - Wakeword activation with two different implementations
   - Simplified Automated Speech Recognition interface
-  - Speech pipeline seamlessly integrates VAD-triggered wakeword detection using on-device machine learning models with transcribing utterances using platform Automated Speech Recognition.
+  - Speech pipeline seamlessly integrates VAD-triggered wakeword detection using on-device machine learning models with transcribing utterances using platform Automated Speech Recognition
+  - On-device Natural Language Understanding utterance classifier
+  - Simple Text to Speech API
 
 ## Installation
 [![](https://img.shields.io/cocoapods/v/Spokestack-iOS.svg)](https://cocoapods.org/pods/Spokestack-iOS)
