@@ -64,7 +64,7 @@ import TensorFlowLite
     /// Initializes an NLU instance.
     /// - Requires: `SpeechConfiguration.nluVocabularyPath`, `SpeechConfiguration.nluTerminatorTokenIndex`, `SpeechConfiguration.nluPaddingTokenIndex`, `SpeechConfiguration.nluModelPath`, `SpeechConfiguration.nluModelMetadataPath`, and `SpeechConfiguration.nluMaxTokenLength`.
     /// - Parameters:
-    ///   - delegate: Initializes an NLU instance.
+    ///   - delegate: Delegate that receives NLU events.
     ///   - configuration: Configuration parameters for the NLU.
     @objc required public init(_ delegate: NLUDelegate, configuration: SpeechConfiguration) throws {
         self.delegate = delegate
@@ -107,7 +107,8 @@ import TensorFlowLite
     
     /// Classifies the provided input. The classification results are sent to the instance's configured NLUDelegate.
     /// - Parameter utterance: The provided utterance to classify.
-    @objc public func classify(utterance: String, context: [String : Any]) -> Void {
+    /// - Parameter context: Context for NLU operations
+    @objc public func classify(utterance: String, context: [String : Any] = [:]) -> Void {
         DispatchQueue.global(qos: .userInitiated).async {
             let prediction = self.classify(utterance)
             switch prediction {
@@ -124,10 +125,12 @@ import TensorFlowLite
     }
     
     /// Classifies the provided input. NLUResult is sent to all subscribers.
-    /// - Parameter inputs: The provided utterances to classify.
+    /// - Parameter utterances: A list of utterances to classify
+    /// - Parameter context: Context for NLU operations
     /// - Warning: `classify` is resource-intensive and should be used with `subscribe(on:)` to ensure it is not blocking the UI thread.
+    /// - Returns: `AnyPublisher<[NLUResult], Error>`
     @available(iOS 13.0, *)
-    public func classify(utterances: [String]) -> Publishers.Sequence<[Result<NLUResult, Error>], Never> {
+    public func classify(utterances: [String], context: [String : Any] = [:]) -> Publishers.Sequence<[Result<NLUResult, Error>], Never> {
         return utterances.map
             { self.classify($0) }
         .publisher
