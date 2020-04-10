@@ -62,6 +62,10 @@ enum TextToSpeechErrors: Error {
     case apiKey(String)
     /// The speak command could not be executed.
     case speak(String)
+    /// The input format was not specified correctly
+    case format(String)
+    /// The input voice was not specified correctly
+    case voice(String)
 }
 
 /// Errors thrown by a Tokenizer instance.

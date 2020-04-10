@@ -239,6 +239,10 @@ private let apiQueue = DispatchQueue(label: TTSSpeechQueueName, qos: .userInitia
         request.addValue(input.id, forHTTPHeaderField: "x-request-id")
         request.httpMethod = "POST"
         var body: [String:Any] = [:]
+        // necessary check due to objc interop with enum
+        guard let _ = TTSInputVoice.init(rawValue: input.voice.rawValue) else {
+            throw TextToSpeechErrors.voice("The input voice must be specified.")
+        }
         switch input.inputFormat {
         case .ssml:
             body = [
@@ -267,6 +271,9 @@ private let apiQueue = DispatchQueue(label: TTSSpeechQueueName, qos: .userInitia
                 ]
             ]
             break
+        default:
+            // necessary case due to objc interop with enum
+            throw TextToSpeechErrors.format("The input format must be specified.")
         }
         request.httpBody = try? JSONSerialization.data(withJSONObject: body, options: [.withoutEscapingSlashes])
         
