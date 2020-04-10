@@ -8,8 +8,8 @@
 
 import Foundation
 import UIKit
+import Combine
 import Spokestack
-import AVFoundation
 
 class NLUViewController: UIViewController {
     // MARK: Button declarations
@@ -20,6 +20,17 @@ class NLUViewController: UIViewController {
         button.setTitle("Predict", for: .normal)
         button.addTarget(self,
                          action: #selector(NLUViewController.predictAction),
+                         for: .touchUpInside)
+        button.setTitleColor(.purple, for: .normal)
+        return button
+    }()
+    
+    lazy var predictMultipleButton: UIButton = {
+        let button: UIButton = UIButton(frame: .zero)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.setTitle("Predict Multiple (# separated)", for: .normal)
+        button.addTarget(self,
+                         action: #selector(NLUViewController.predictActions),
                          for: .touchUpInside)
         button.setTitleColor(.purple, for: .normal)
         return button
@@ -59,11 +70,16 @@ class NLUViewController: UIViewController {
         super.viewDidLoad()
 
         self.view.addSubview(self.predictButton)
+        self.view.addSubview(self.predictMultipleButton)
         self.view.addSubview(nluInput)
 
         self.predictButton.centerYAnchor.constraint(equalTo: self.view.centerYAnchor).isActive = true
         self.predictButton.leftAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.leftAnchor).isActive = true
         self.predictButton.rightAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.rightAnchor).isActive = true
+        
+        self.predictMultipleButton.topAnchor.constraint(equalTo: self.predictButton.bottomAnchor, constant: 50.0).isActive = true
+        self.predictMultipleButton.leftAnchor.constraint(equalTo: self.predictButton.leftAnchor).isActive = true
+        self.predictMultipleButton.rightAnchor.constraint(equalTo: self.predictButton.rightAnchor).isActive = true
 
         self.configuration.tracing = .DEBUG
         
@@ -95,11 +111,26 @@ class NLUViewController: UIViewController {
     // MARK: Button Actions
 
     @objc func predictAction(_ sender: Any) {
-        var text = self.nluInput.text ?? ""
-        if (text == "") { text = "turn the lights on in the kitchen" }
         // I give this app a ten
         // Call 1234567890
-        self.nlu?.classify(utterance: text, context: [:])
+        self.nlu?.classify(utterance: self.nluInput.text ?? "turn the lights on in the kitchen")
+    }
+    
+    @objc func predictActions(_ sender: Any) {
+        let utterances = [self.nluInput.text ?? "turn the lights on in the kitchen"]
+        let _ = self.nlu?.classify(utterances: utterances)
+            .subscribe(on: DispatchQueue.global(qos: .userInitiated))
+            .sink(receiveCompletion: { completion in
+                switch completion {
+                case .failure(let error):
+                    print("Failure: \(error)")
+                    break
+                case .finished:
+                    break
+                }
+            }, receiveValue: { results in
+                let _ = results.map({ print("Classification \($0)") })
+            })
     }
 }   
 
