@@ -26,13 +26,18 @@ class NLUTensorflowSlotParserTest: XCTestCase {
     }
     
     func testParseSelset() {
-        let et = EncodedTokens(tokensByWhitespace: ["kitchen"], encodedTokensByWhitespaceIndex: [0], encoded: [0])
+        let et = EncodedTokens(tokensByWhitespace: ["kitchen"], encodedTokensByWhitespaceIndex: [0], encoded: [])
         let parsedSelset = try! parser.parse(tags: ["b_location"], intent: metadata!.intents.filter({ $0.name == "request.lights.deactivate" }).first!, encoder: encoder!, encodedTokens: et)
         XCTAssertEqual(parsedSelset!["location"]!.value as! String, "room")
+        
+        // selset value has appended punctuation
+        let et2 = EncodedTokens(tokensByWhitespace: ["kitchen."], encodedTokensByWhitespaceIndex: [0], encoded: [])
+        let parsedSelset2 = try! parser.parse(tags: ["b_location"], intent: metadata!.intents.filter({ $0.name == "request.lights.deactivate" }).first!, encoder: encoder!, encodedTokens: et2)
+        XCTAssertEqual(parsedSelset2!["location"]!.value as! String, "room")
     }
     
     func testParseInteger() {
-        let et1 = EncodedTokens(tokensByWhitespace: ["ten"], encodedTokensByWhitespaceIndex: [0], encoded: [0])
+        let et1 = EncodedTokens(tokensByWhitespace: ["ten"], encodedTokensByWhitespaceIndex: [0], encoded: [])
         let parsedInteger10 = try! parser.parse(tags: ["b_rating"], intent: metadata!.intents.filter({ $0.name == "rate.app" }).first!, encoder: encoder!, encodedTokens: et1)
         XCTAssertEqual(parsedInteger10!["rating"]!.value as! Int, 10)
         
@@ -44,7 +49,7 @@ class NLUTensorflowSlotParserTest: XCTestCase {
         let parsedIntegerNil = try! parser.parse(tags: ["b_rating", "i_rating", "i_rating", "i_rating"], intent: metadata!.intents.filter({ $0.name == "rate.app" }).first!, encoder: encoder!, encodedTokens: et3)
         XCTAssertNil(parsedIntegerNil)
         
-        let et4 = EncodedTokens(tokensByWhitespace: ["one", "million"], encodedTokensByWhitespaceIndex: [0, 1], encoded: [0])
+        let et4 = EncodedTokens(tokensByWhitespace: ["one", "million"], encodedTokensByWhitespaceIndex: [0, 1], encoded: [])
         let intent = metadata!.intents.filter({ $0.name == "i.i" }).first!
         let parsedIntegerMillion = try! parser.parse(tags: ["b_iMi", "i_iMi"], intent: intent, encoder: encoder!, encodedTokens: et4)
         XCTAssertEqual(parsedIntegerMillion!["iMi"]!.value as! Int, 1000000)
