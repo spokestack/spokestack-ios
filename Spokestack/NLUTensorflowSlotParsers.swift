@@ -52,7 +52,9 @@ internal struct NLUTensorflowSlotParser {
             guard let parsed = try slot.parsed() as? NLUTensorflowSelset else {
                 throw NLUError.metadata("The NLU metadata for the \(slot.name) slot was not found.")
             }
-            let decoded = try encoder.decodeWithWhitespace(encodedTokens: encodedTokens, whitespaceIndices: whitespaceIndices)
+            let decoded = try encoder
+                .decodeWithWhitespace(encodedTokens: encodedTokens, whitespaceIndices: whitespaceIndices)
+                .trimmingCharacters(in: .punctuationCharacters)
             let contains = parsed.selections.filter { selection in
                 selection.name == decoded || selection.aliases.contains(decoded)
             }

@@ -29,6 +29,11 @@ class NLUTensorflowSlotParserTest: XCTestCase {
         let et = EncodedTokens(tokensByWhitespace: ["kitchen"], encodedTokensByWhitespaceIndex: [0], encoded: [0])
         let parsedSelset = try! parser.parse(tags: ["b_location"], intent: metadata!.intents.filter({ $0.name == "request.lights.deactivate" }).first!, encoder: encoder!, encodedTokens: et)
         XCTAssertEqual(parsedSelset!["location"]!.value as! String, "room")
+        
+        // selset value has appended punctuation
+        let et2 = EncodedTokens(tokensByWhitespace: ["kitchen."], encodedTokensByWhitespaceIndex: [0], encoded: [0,1])
+        let parsedSelset2 = try! parser.parse(tags: ["b_location"], intent: metadata!.intents.filter({ $0.name == "request.lights.deactivate" }).first!, encoder: encoder!, encodedTokens: et2)
+        XCTAssertEqual(parsedSelset2!["location"]!.value as! String, "room")
     }
     
     func testParseInteger() {

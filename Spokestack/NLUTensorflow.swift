@@ -193,7 +193,7 @@ import TensorFlowLite
         }
         var intent = metadata.model.intents[intentsArgmax.0]
         intent.confidence = intentsArgmax.1
-        Trace.trace(Trace.Level.DEBUG, config: self.configuration, message: "classify intent: \(intent)", delegate: self.delegate, caller: self)
+        Trace.trace(Trace.Level.DEBUG, config: self.configuration, message: "classify intent: \(intent.name)", delegate: self.delegate, caller: self)
         return intent
     }
     
