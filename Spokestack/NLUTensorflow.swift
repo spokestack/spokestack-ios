@@ -76,7 +76,7 @@ import TensorFlowLite
             try self.configure()
         } catch let error {
             self.configuration.delegateDispatchQueue.async {
-                delegate.failure(error: error)
+                delegate.failure(nluError: error)
             }
         }
     }
@@ -118,7 +118,7 @@ import TensorFlowLite
                 }
             case .failure(let error):
                 self.configuration.delegateDispatchQueue.async {
-                    self.delegate?.failure(error: error)
+                    self.delegate?.failure(nluError: error)
                 }
             }
         }

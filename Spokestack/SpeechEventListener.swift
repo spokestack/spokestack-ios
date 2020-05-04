@@ -15,14 +15,14 @@ import Foundation
     
     /// The pipeline activate event. Occurs upon activation of speech recognition.  The pipeline remains active until the user stops talking or the activation timeout is reached.
     /// - SeeAlso:  wakeActiveMin
-    func activate() -> Void
+    func didActivate() -> Void
     
     /// The pipeline deactivate event. Occurs upon deactivation of speech recognition.  The pipeline remains inactive until activated again by either explicit activation or wakeword activation.
-    func deactivate() -> Void
+    func didDeactivate() -> Void
     
     /// The error event. An error occured in the speech pipeline.
     /// - Parameter error: A human-readable error message.
-    func didError(_ error: Error) -> Void
+    func failure(speechError: Error) -> Void
     
     /// The debug trace event.
     /// - Parameter trace: The debugging trace message.

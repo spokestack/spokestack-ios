@@ -21,5 +21,5 @@ import Foundation
     
     /// The NLU classification request has resulted in an error response.
     /// - Parameter error: The error representing the NLU response.
-    func failure(error: Error) -> Void
+    func failure(nluError: Error) -> Void
 }

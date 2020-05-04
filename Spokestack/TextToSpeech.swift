@@ -74,7 +74,7 @@ private let apiQueue = DispatchQueue(label: TTSSpeechQueueName, qos: .userInitia
             self.apiKey = SymmetricKey(data: apiSecretEncoded)
         } else {
             self.configuration.delegateDispatchQueue.async {
-                delegate.failure(error: TextToSpeechErrors.apiKey("Unable to encode apiSecret."))
+                delegate.failure(ttsError: TextToSpeechErrors.apiKey("Unable to encode apiSecret."))
             }
         }
         super.init()
@@ -99,7 +99,7 @@ private let apiQueue = DispatchQueue(label: TTSSpeechQueueName, qos: .userInitia
             DispatchQueue.global(qos: .userInitiated).async {
                 guard let url = result.url else {
                     self.configuration.delegateDispatchQueue.async {
-                        self.delegate?.failure(error: TextToSpeechErrors.speak("Synthesis response is invalid."))
+                        self.delegate?.failure(ttsError: TextToSpeechErrors.speak("Synthesis response is invalid."))
                     }
                     return
                 }
@@ -177,12 +177,12 @@ private let apiQueue = DispatchQueue(label: TTSSpeechQueueName, qos: .userInitia
             request = try createSynthesizeRequest(input)
         } catch TextToSpeechErrors.apiKey(let message) {
             self.configuration.delegateDispatchQueue.async {
-                self.delegate?.failure(error: TextToSpeechErrors.apiKey(message))
+                self.delegate?.failure(ttsError: TextToSpeechErrors.apiKey(message))
             }
             return
         } catch let error {
             self.configuration.delegateDispatchQueue.async {
-                self.delegate?.failure(error: error)
+                self.delegate?.failure(ttsError: error)
             }
             return
         }
@@ -195,20 +195,20 @@ private let apiQueue = DispatchQueue(label: TTSSpeechQueueName, qos: .userInitia
             DispatchQueue.global(qos: .userInitiated).async {
                 if let error = error {
                     self.configuration.delegateDispatchQueue.async {
-                        self.delegate?.failure(error: error)
+                        self.delegate?.failure(ttsError: error)
                     }
                 } else {
                     // unwrap the matryoshka doll that is the response body, responding with a failure if any layer is awry
                     do {
                         guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
                             self.configuration.delegateDispatchQueue.async {
-                                self.delegate?.failure(error: TextToSpeechErrors.deserialization("response cannot be deserialized"))
+                                self.delegate?.failure(ttsError: TextToSpeechErrors.deserialization("response cannot be deserialized"))
                             }
                             return
                         }
                         guard let d = data else {
                             self.configuration.delegateDispatchQueue.async {
-                                self.delegate?.failure(error: TextToSpeechErrors.deserialization("response body has no data"))
+                                self.delegate?.failure(ttsError: TextToSpeechErrors.deserialization("response body has no data"))
                             }
                             return
                         }
@@ -216,7 +216,7 @@ private let apiQueue = DispatchQueue(label: TTSSpeechQueueName, qos: .userInitia
                         success?(result)
                     } catch let error {
                         self.configuration.delegateDispatchQueue.async {
-                            self.delegate?.failure(error: error)
+                            self.delegate?.failure(ttsError: error)
                         }
                     }
                 }

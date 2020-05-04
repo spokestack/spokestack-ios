@@ -119,19 +119,19 @@ extension AppleWakewordViewController: SpeechEventListener, PipelineDelegate {
         print("timeout")
     }
     
-    func activate() {
-        print("activate")
+    func didActivate() {
+        print("didActivate")
         self.pipeline.activate()
     }
     
-    func deactivate() {
-        print("deactivate")
+    func didDeactivate() {
+        print("didDeactivate")
         self.pipeline.deactivate()
     }
     
-    func didError(_ error: Error) {
-        if !error.localizedDescription.starts(with: "The operation couldn’t be completed. (kAFAssistantErrorDomain error 216.)") {
-            print("didError: " + error.localizedDescription)
+    func failure(speechError: Error) {
+        if !speechError.localizedDescription.starts(with: "The operation couldn’t be completed. (kAFAssistantErrorDomain error 216.)") {
+            print("didError: " + speechError.localizedDescription)
         }
     }
     

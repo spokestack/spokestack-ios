@@ -155,7 +155,7 @@ public class TFLiteWakewordRecognizer: NSObject {
                     throw WakewordModelError.detect("\(c.detectModelPath) could not be initialized")
                 }
             } catch let message {
-               self.configuration?.delegateDispatchQueue.async { self.delegate!.didError(WakewordModelError.model("TFLiteWakewordRecognizer configureAttentionModels \(message)"))
+                self.configuration?.delegateDispatchQueue.async { self.delegate!.failure(speechError: WakewordModelError.model("TFLiteWakewordRecognizer configureAttentionModels \(message)"))
                 }
             }
         }
@@ -480,7 +480,7 @@ extension TFLiteWakewordRecognizer: AudioControllerDelegate {
                 strongSelf.context.isSpeech) }
             catch let error {
                 strongSelf.configuration?.delegateDispatchQueue.async {
-                    strongSelf.delegate?.didError(error)
+                    strongSelf.delegate?.failure(speechError: error)
                 }
             }
             
@@ -499,12 +499,12 @@ extension TFLiteWakewordRecognizer: AudioControllerDelegate {
                             strongSelf.reset()
                             strongSelf.stopStreaming(context: strongSelf.context)
                             strongSelf.configuration?.delegateDispatchQueue.async {
-                                strongSelf.delegate?.activate()
+                                strongSelf.delegate?.didActivate()
                             }
                         }
                     } catch let error {
                         strongSelf.configuration?.delegateDispatchQueue.async {
-                            strongSelf.delegate?.didError(error)
+                            strongSelf.delegate?.failure(speechError: error)
                         }
                     }
                 } else {
@@ -515,7 +515,7 @@ extension TFLiteWakewordRecognizer: AudioControllerDelegate {
                     if (strongSelf.activeLength > strongSelf.minActive) && (strongSelf.activeLength >= strongSelf.maxActive) {
                         strongSelf.context.isActive = false
                         strongSelf.configuration?.delegateDispatchQueue.async {
-                            strongSelf.delegate?.deactivate()
+                            strongSelf.delegate?.didDeactivate()
                         }
                     }
                 }

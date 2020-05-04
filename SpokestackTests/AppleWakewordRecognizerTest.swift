@@ -79,19 +79,19 @@ class AppleWakewordRecognizerTestDelegate: PipelineDelegate, SpeechEventListener
     /// Spy pattern for the system under test.
     /// asyncExpectation lets the caller's test know when the delegate has been called.
     var didError: Bool = false
-    var didDeactivate: Bool = false
+    var deactivated: Bool = false
     var asyncExpectation: XCTestExpectation?
     
     func reset() {
         self.didError = false
-        self.didDeactivate = false
+        self.deactivated = false
         asyncExpectation = .none
     }
     
     func didRecognize(_ result: SpeechContext) {}
     
-    func didError(_ error: Error) {
-        print(error)
+    func failure(speechError: Error) {
+        print(speechError)
         guard let _ = asyncExpectation else {
             XCTFail("AppleWakewordRecognizerTestDelegate was not setup correctly. Missing XCTExpectation reference")
             return
@@ -102,10 +102,10 @@ class AppleWakewordRecognizerTestDelegate: PipelineDelegate, SpeechEventListener
     
     func didTimeout() {}
     
-    func activate() {}
+    func didActivate() {}
     
-    func deactivate() {
-        self.didDeactivate = true
+    func didDeactivate() {
+        self.deactivated = true
     }
     
     func didInit() {}

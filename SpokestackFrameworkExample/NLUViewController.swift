@@ -145,8 +145,8 @@ extension NLUViewController: NLUDelegate {
         print("Trace: \(trace)")
     }
     
-    func failure(error: Error) {
-        print("Failure: \(error)")
+    func failure(nluError: Error) {
+        print("Failure: \(nluError)")
     }
     
 }

@@ -18,7 +18,7 @@ import Foundation
     
     /// The TTS synthesis request has resulted in an error response.
     /// - Parameter error: The error representing the TTS response.
-    func failure(error: Error) -> Void
+    func failure(ttsError: Error) -> Void
     
     /// The TTS synthesis request has begun playback over the default audio system.
     func didBeginSpeaking() -> Void
