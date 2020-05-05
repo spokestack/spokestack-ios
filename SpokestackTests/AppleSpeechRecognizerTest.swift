@@ -32,14 +32,14 @@ class AppleSpeechRecognizerTestDelegate: PipelineDelegate, SpeechEventListener {
     /// asyncExpectation lets the caller's test know when the delegate has been called.
     var didError: Bool = false
     var didDidTimeout: Bool = false
-    var didDeactivate: Bool = false
+    var deactivated: Bool = false
     var didRecognize: Bool = false
     var asyncExpectation: XCTestExpectation?
     
     func reset() {
         self.didError = false
         self.didDidTimeout = false
-        self.didDeactivate = false
+        self.deactivated = false
         self.didRecognize = false
         self.didRecognize = false
         asyncExpectation = .none
@@ -50,8 +50,8 @@ class AppleSpeechRecognizerTestDelegate: PipelineDelegate, SpeechEventListener {
         self.didRecognize = true
     }
     
-    func didError(_ error: Error) {
-        print(error)
+    func failure(speechError: Error) {
+        print(speechError)
         guard let _ = asyncExpectation else {
             XCTFail("AppleSpeechRecognizerTestDelegate was not setup correctly. Missing XCTExpectation reference")
             return
@@ -64,10 +64,10 @@ class AppleSpeechRecognizerTestDelegate: PipelineDelegate, SpeechEventListener {
         self.didDidTimeout = true
     }
     
-    func activate() {}
+    func didActivate() {}
 
-    func deactivate() {
-        self.didDeactivate = true
+    func didDeactivate() {
+        self.deactivated = true
     }
     
     func didStop() {}

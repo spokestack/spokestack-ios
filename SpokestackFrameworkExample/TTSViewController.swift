@@ -305,8 +305,8 @@ extension TTSViewController: TextToSpeechDelegate {
         Trace.trace(Trace.Level.DEBUG, config: self.configuration, message: "test downloaded to \(destinationUrl)", delegate: self, caller: self)
     }
     
-    func failure(error: Error) {
-        print(error)
+    func failure(ttsError: Error) {
+        print(ttsError)
     }
     
     func didTrace(_ trace: String) {

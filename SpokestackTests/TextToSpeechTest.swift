@@ -145,7 +145,7 @@ class TestTextToSpeechDelegate: TextToSpeechDelegate {
         didSucceed = true
     }
     
-    func failure(error: Error) {
+    func failure(ttsError error: Error) {
         asyncExpectation?.fulfill()
         didFail = true
     }

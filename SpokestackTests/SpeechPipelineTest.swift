@@ -76,9 +76,9 @@ class SpeechPipelineTest: XCTestCase {
         
         // assert that the pipeline's delegate references (and pipeline's service delegates) have changed
         XCTAssert(delegate === p.speechDelegate)
-        p.speechDelegate?.activate()
+        p.speechDelegate?.didActivate()
         wait(for: [activateExpectation], timeout: 1)
-        XCTAssert(delegate.didActivate)
+        XCTAssert(delegate.activated)
     }
     
     /// activate & deactivate
@@ -153,7 +153,7 @@ class SpeechPipelineTestDelegate: PipelineDelegate, SpeechEventListener {
     /// Spy pattern for the system under test.
     /// asyncExpectation lets the caller's test know when the delegate has been called.
     var didDidInit: Bool = false
-    var didActivate: Bool = false
+    var activated: Bool = false
     var didDidStart: Bool = false
     var didDidStop: Bool = false
     var asyncExpectation: XCTestExpectation?
@@ -165,18 +165,18 @@ class SpeechPipelineTestDelegate: PipelineDelegate, SpeechEventListener {
     
     func didRecognize(_ result: SpeechContext) {}
     
-    func deactivate() {}
+    func didDeactivate() {}
     
-    func didError(_ error: Error) {}
+    func failure(speechError: Error) {}
     
     func didTimeout() {}
     
-    func activate() {
+    func didActivate() {
         guard let _ = asyncExpectation else {
             XCTFail("SpeechPipelineTestDelegate was not setup correctly. Missing XCTExpectation reference")
             return
         }
-        self.didActivate = true
+        self.activated = true
         self.asyncExpectation?.fulfill()
         self.asyncExpectation = nil
     }

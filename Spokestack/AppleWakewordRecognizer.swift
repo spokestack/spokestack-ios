@@ -106,7 +106,7 @@ This pipeline component uses the Apple `SFSpeech` API to stream audio samples fo
             DispatchQueue.global(qos: .userInitiated).asyncAfter(deadline: .now() + .milliseconds(self.configuration!.wakewordRequestTimeout), execute: self.dispatchWorker!)
         } catch let error {
             self.configuration?.delegateDispatchQueue.async {
-                self.delegate?.didError(error)
+                self.delegate?.failure(speechError: error)
             }
         }
     }
@@ -152,12 +152,12 @@ This pipeline component uses the Apple `SFSpeech` API to stream audio samples fo
                                 break
                             default:
                                 strongSelf.configuration?.delegateDispatchQueue.async {
-                                    delegate.didError(e)
+                                    delegate.failure(speechError: e)
                                 }
                             }
                         }
                     } else {
-                        delegate.didError(e)
+                        delegate.failure(speechError: e)
                     }
                 }
                 if let r = result {
@@ -174,7 +174,7 @@ This pipeline component uses the Apple `SFSpeech` API to stream audio samples fo
                     if wakewordDetected {
                         strongSelf.context.isActive = true
                         strongSelf.configuration?.delegateDispatchQueue.async {
-                            delegate.activate()
+                            delegate.didActivate()
                         }
                     }
                 }
@@ -225,7 +225,7 @@ extension AppleWakewordRecognizer: AudioControllerDelegate {
             do { try strongSelf.vad.process(frame: frame, isSpeech: false) } // TODO: this will only trigger VAD activation the first time, and run the ASR continuously subsequently.
             catch let error {
                 strongSelf.configuration?.delegateDispatchQueue.async {
-                    strongSelf.delegate?.didError(error)
+                    strongSelf.delegate?.failure(speechError: error)
                 }
             }
         }
@@ -248,7 +248,7 @@ extension AppleWakewordRecognizer: VADDelegate {
                 self.startRecognition()
             } catch let error {
                 self.configuration?.delegateDispatchQueue.async {
-                    self.delegate?.didError(error)
+                    self.delegate?.failure(speechError: error)
                 }
             }
         }

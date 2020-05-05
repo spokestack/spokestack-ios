@@ -63,13 +63,13 @@ import Speech
                 context.isActive = false
                 self?.configuration?.delegateDispatchQueue.async {
                     self?.delegate?.didTimeout()
-                    self?.delegate?.deactivate()
+                    self?.delegate?.didDeactivate()
                 }
             }
             DispatchQueue.global(qos: .userInitiated).asyncAfter(deadline: .now() + .milliseconds(self.configuration!.wakeActiveMax), execute: self.wakeActiveMaxWorker!)
         } catch let error {
             self.configuration?.delegateDispatchQueue.async {
-                self.delegate?.didError(error)
+                self.delegate?.failure(speechError: error)
             }
         }
     }
@@ -132,7 +132,7 @@ import Speech
                                 Trace.trace(Trace.Level.INFO, config: strongSelf.configuration, message: "resultHandler error 203", delegate: strongSelf.delegate, caller: strongSelf)
                                 context.isActive = false
                                 strongSelf.configuration?.delegateDispatchQueue.async {
-                                    delegate.deactivate()
+                                    delegate.didDeactivate()
                                 }
                                 break
                             case 209: // ¯\_(ツ)_/¯
@@ -145,11 +145,11 @@ import Speech
                             case 300..<603: // Apple retry error: https://developer.nuance.com/public/Help/DragonMobileSDKReference_iOS/Error-codes.html
                                 break
                             default:
-                                delegate.didError(e)
+                                delegate.failure(speechError: e)
                             }
                         }
                     } else {
-                        delegate.didError(e)
+                        delegate.failure(speechError: e)
                     }
                 }
                 if let r = result {
@@ -164,7 +164,7 @@ import Speech
                         context.isActive = false
                         strongSelf.configuration?.delegateDispatchQueue.async {
                             self?.delegate?.didRecognize(context)
-                            self?.delegate?.deactivate()
+                            self?.delegate?.didDeactivate()
                         }
                     }
                     DispatchQueue.global(qos: .userInitiated).asyncAfter(deadline: DispatchTime.now() + .milliseconds(strongSelf.configuration!.vadFallDelay), execute: strongSelf.vadFallWorker!)

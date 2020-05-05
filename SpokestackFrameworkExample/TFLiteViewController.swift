@@ -122,18 +122,18 @@ extension TFLiteViewController: SpeechEventListener, PipelineDelegate {
         print("timeout")
     }
     
-    func activate() {
-        print("activate")
+    func didActivate() {
+        print("didActivate")
         self.pipeline?.activate()
     }
     
-    func deactivate() {
-        print("deactivate")
+    func didDeactivate() {
+        print("didDeactivate")
         self.pipeline?.deactivate()
     }
     
-    func didError(_ error: Error) {
-        print("didError \(String(describing: error))")
+    func failure(speechError: Error) {
+        print("failure \(String(describing: speechError))")
     }
     
     func didRecognize(_ result: SpeechContext) {
