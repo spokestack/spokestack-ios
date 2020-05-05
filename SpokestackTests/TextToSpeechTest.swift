@@ -50,7 +50,7 @@ class TextToSpeechTest: XCTestCase {
         // successful request with ssml formatting
         let didSucceedExpectation2 = expectation(description: "successful request calls TestTextToSpeechDelegate.success")
         delegate.asyncExpectation = didSucceedExpectation2
-        let ssmlInput = TextToSpeechInput("<speak>Yet right now the average age of this 52nd Parliament is 49 years old, <break time='500ms'/> OK Boomer.</speak>", voice: .demoMale, inputFormat: .ssml)
+        let ssmlInput = TextToSpeechInput("<speak>Yet right now the average age of this 52nd Parliament is 49 years old, <break time='500ms'/> OK Boomer.</speak>", voice: "demo-male", inputFormat: .ssml)
         tts.synthesize(ssmlInput)
         wait(for: [didSucceedExpectation2], timeout: 5)
         XCTAssert(delegate.didSucceed)
@@ -66,7 +66,7 @@ class TextToSpeechTest: XCTestCase {
         delegate.reset()
         let didSucceedExpectation3 = expectation(description: "successful request calls TestTextToSpeechDelegate.success")
         delegate.asyncExpectation = didSucceedExpectation3
-        let markdownInput = TextToSpeechInput("Yet right now the average age of this (50)[number] second Parliament is (49)[number] years old, [1s] OK Boomer.", voice: .demoMale, inputFormat: .markdown)
+        let markdownInput = TextToSpeechInput("Yet right now the average age of this (50)[number] second Parliament is (49)[number] years old, [1s] OK Boomer.", voice: "demo-male", inputFormat: .markdown)
         tts.synthesize(markdownInput)
         wait(for: [didSucceedExpectation3], timeout: 5)
         XCTAssert(delegate.didSucceed)

@@ -18,10 +18,6 @@ import Foundation
     case markdown
 }
 
-@objc public enum TTSInputVoice: Int {
-    case demoMale
-}
-
 /// Input parameters for speech synthesis. Parameters are considered transient and may change each time `synthesize` is called.
 /// - SeeAlso: `TextToSpeech.synthesize`
 @objc public class TextToSpeechInput: NSObject {
@@ -32,7 +28,7 @@ import Foundation
     /// - Parameter inputFormat: The formatting of the input.
     /// - Parameter id: A unique identifier for this input request.
     @objc public init(_ input:String = "Here I am, a brain the size of a planet.",
-                      voice: TTSInputVoice = .demoMale,
+                      voice: String = "demo-male",
                       inputFormat: TTSInputFormat = .text,
                       id: String = UUID().description) {
         self.input = input
@@ -43,7 +39,7 @@ import Foundation
     }
     
     /// The synthetic voice used to generate speech.
-    @objc public var voice: TTSInputVoice
+    @objc public var voice: String
     /// The input to the synthetic voice.
     /// - Note: SSML must be valid XML.
     @objc public var input: String

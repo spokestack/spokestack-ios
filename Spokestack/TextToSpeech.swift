@@ -42,7 +42,6 @@ private let apiQueue = DispatchQueue(label: TTSSpeechQueueName, qos: .userInitia
     private var configuration: SpeechConfiguration
     private lazy var player: AVPlayer = AVPlayer()
     private var apiKey: SymmetricKey?
-    private let ttsInputVoices = [0: "demo-male"]
     private let decoder = JSONDecoder()
     
     // MARK: Initializers
@@ -239,17 +238,13 @@ private let apiQueue = DispatchQueue(label: TTSSpeechQueueName, qos: .userInitia
         request.addValue(input.id, forHTTPHeaderField: "x-request-id")
         request.httpMethod = "POST"
         var body: [String:Any] = [:]
-        // necessary check due to objc interop with enum
-        guard let _ = TTSInputVoice.init(rawValue: input.voice.rawValue) else {
-            throw TextToSpeechErrors.voice("The input voice must be specified.")
-        }
         switch input.inputFormat {
         case .ssml:
             body = [
                 "query":"query iOSSynthesisSSML($voice: String!, $ssml: String!) {synthesizeSsml(voice: $voice, ssml: $ssml) {url}}",
                 "variables":[
-                    "voice":self.ttsInputVoices[input.voice.rawValue],
-                    "ssml":input.input
+                    "voice": input.voice,
+                    "ssml": input.input
                 ]
             ]
             break
@@ -257,8 +252,8 @@ private let apiQueue = DispatchQueue(label: TTSSpeechQueueName, qos: .userInitia
             body = [
                 "query":"query iOSSynthesisMarkdown($voice: String!, $markdown: String!) {synthesizeMarkdown(voice: $voice, markdown: $markdown) {url}}",
                 "variables":[
-                    "voice":self.ttsInputVoices[input.voice.rawValue],
-                    "markdown":input.input
+                    "voice": input.voice,
+                    "markdown": input.input
                 ]
             ]
             break
@@ -266,8 +261,8 @@ private let apiQueue = DispatchQueue(label: TTSSpeechQueueName, qos: .userInitia
             body = [
                 "query":"query iOSSynthesisText($voice: String!, $text: String!) {synthesizeText(voice: $voice, text: $text) {url}}",
                 "variables":[
-                    "voice":self.ttsInputVoices[input.voice.rawValue],
-                    "text":input.input
+                    "voice": input.voice,
+                    "text": input.input
                 ]
             ]
             break
