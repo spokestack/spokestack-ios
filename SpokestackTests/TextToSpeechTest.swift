@@ -32,6 +32,17 @@ class TextToSpeechTest: XCTestCase {
         let config = SpeechConfiguration()
         let tts = TextToSpeech(delegate, configuration: config)
         
+        // bad input results in a failed request that calls failure
+        delegate.reset()
+        let didFailInputExpectation = expectation(description: "bad input results in a failed request that calls failure")
+        delegate.asyncExpectation = didFailInputExpectation
+        let badInput = TextToSpeechInput()
+        badInput.voice = "tracy-throne"
+        tts.synthesize(badInput)
+        wait(for: [didFailInputExpectation], timeout: 5)
+        XCTAssert(delegate.didFail)
+        XCTAssertFalse(delegate.didSucceed)
+        
         // successful request calls success
         delegate.reset()
         let didSucceedExpectation = expectation(description: "successful request calls TestTextToSpeechDelegate.success")
