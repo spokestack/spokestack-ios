@@ -301,7 +301,7 @@ private let apiQueue = DispatchQueue(label: TTSSpeechQueueName, qos: .userInitia
         }
         let body = try self.decoder.decode(TTSTResponse.self, from: data)
         if let e = body.errors {
-            let message = e.map { $0.message }.joined("; ")
+            let message = e.map { $0.message }.joined(separator: " ")
             throw TextToSpeechErrors.format(message)
         }
         guard let data = body.data else
@@ -309,18 +309,14 @@ private let apiQueue = DispatchQueue(label: TTSSpeechQueueName, qos: .userInitia
             throw TextToSpeechErrors.deserialization("Could not deserialize the response.")
         }
         
-        switch inputFormat {
-        // NB the input format switch guarantees safe access to the synthesisFormat url.
-        case .ssml:
-            let result = TextToSpeechResult(id: id, url: data.synthesizeSsml!.url)
-            return result
-        case .markdown:
-            let result = TextToSpeechResult(id: id, url: data.synthesizeMarkdown!.url)
-            return result
-        case .text:
-            let result = TextToSpeechResult(id: id, url: data.synthesizeText!.url)
-            return result
-        }
+        var url: URL { switch inputFormat {
+        // NB the inputFormat switch guarantees safe access to the synthesisFormat url.
+        case .ssml: return data.synthesizeSsml!.url
+        case .markdown: return data.synthesizeMarkdown!.url
+        case .text: return data.synthesizeText!.url
+        }}
+        let result = TextToSpeechResult(id: id, url: url)
+        return result
     }
     
     /// Internal function that must be public for Objective-C compatibility reasons.
