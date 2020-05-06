@@ -153,7 +153,7 @@ private let apiQueue = DispatchQueue(label: TTSSpeechQueueName, qos: .userInitia
                                     throw TextToSpeechErrors.deserialization("Response is not a valid HTTPURLResponse")
                                 }
                                 if httpResponse.statusCode != 200 {
-                                    throw TextToSpeechErrors.httpStatusCode("The  response status code was \(httpResponse.statusCode), cannot process response.")
+                                    throw TextToSpeechErrors.httpStatusCode("The HTTP status was \(httpResponse.statusCode); cannot process response.")
                                 }
                                 do {
                                     let result = try self.createSynthesizeResponse(data: data, response: httpResponse, inputFormat: input.inputFormat)
@@ -210,7 +210,7 @@ private let apiQueue = DispatchQueue(label: TTSSpeechQueueName, qos: .userInitia
                         }
                         if httpResponse.statusCode != 200 {
                             self.configuration.delegateDispatchQueue.async {
-                            self.delegate?.failure(ttsError: TextToSpeechErrors.httpStatusCode("The  response status code was \(httpResponse.statusCode), cannot process response."))
+                            self.delegate?.failure(ttsError: TextToSpeechErrors.httpStatusCode("The HTTP status was \(httpResponse.statusCode); cannot process response."))
                             }
                             return
                         }
@@ -301,9 +301,7 @@ private let apiQueue = DispatchQueue(label: TTSSpeechQueueName, qos: .userInitia
         }
         let body = try self.decoder.decode(TTSTResponse.self, from: data)
         if let e = body.errors {
-            let message = e.reduce("", { msg, error in
-                return msg + error.message + " "
-            })
+            let message = e.map { $0.message }.joined("; ")
             throw TextToSpeechErrors.format(message)
         }
         guard let data = body.data else
