@@ -42,7 +42,6 @@ private let apiQueue = DispatchQueue(label: TTSSpeechQueueName, qos: .userInitia
     private var configuration: SpeechConfiguration
     private lazy var player: AVPlayer = AVPlayer()
     private var apiKey: SymmetricKey?
-    private let ttsInputVoices = [0: "demo-male"]
     private let decoder = JSONDecoder()
     
     // MARK: Initializers
@@ -150,8 +149,11 @@ private let apiQueue = DispatchQueue(label: TTSSpeechQueueName, qos: .userInitia
                             .dataTaskPublisher(for: urlRequst)
                             .receive(on: apiQueue)
                             .tryMap { data, response -> TextToSpeechResult in
-                                guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
-                                    throw TextToSpeechErrors.deserialization("response cannot be deserialized")
+                                guard let httpResponse = response as? HTTPURLResponse else {
+                                    throw TextToSpeechErrors.deserialization("Response is not a valid HTTPURLResponse")
+                                }
+                                if httpResponse.statusCode != 200 {
+                                    throw TextToSpeechErrors.httpStatusCode("The HTTP status was \(httpResponse.statusCode); cannot process response.")
                                 }
                                 do {
                                     let result = try self.createSynthesizeResponse(data: data, response: httpResponse, inputFormat: input.inputFormat)
@@ -200,9 +202,15 @@ private let apiQueue = DispatchQueue(label: TTSSpeechQueueName, qos: .userInitia
                 } else {
                     // unwrap the matryoshka doll that is the response body, responding with a failure if any layer is awry
                     do {
-                        guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
+                        guard let httpResponse = response as? HTTPURLResponse else {
                             self.configuration.delegateDispatchQueue.async {
-                                self.delegate?.failure(ttsError: TextToSpeechErrors.deserialization("response cannot be deserialized"))
+                            self.delegate?.failure(ttsError: TextToSpeechErrors.deserialization("Response is not a valid HTTPURLResponse"))
+                            }
+                            return
+                        }
+                        if httpResponse.statusCode != 200 {
+                            self.configuration.delegateDispatchQueue.async {
+                            self.delegate?.failure(ttsError: TextToSpeechErrors.httpStatusCode("The HTTP status was \(httpResponse.statusCode); cannot process response."))
                             }
                             return
                         }
@@ -239,17 +247,13 @@ private let apiQueue = DispatchQueue(label: TTSSpeechQueueName, qos: .userInitia
         request.addValue(input.id, forHTTPHeaderField: "x-request-id")
         request.httpMethod = "POST"
         var body: [String:Any] = [:]
-        // necessary check due to objc interop with enum
-        guard let _ = TTSInputVoice.init(rawValue: input.voice.rawValue) else {
-            throw TextToSpeechErrors.voice("The input voice must be specified.")
-        }
         switch input.inputFormat {
         case .ssml:
             body = [
                 "query":"query iOSSynthesisSSML($voice: String!, $ssml: String!) {synthesizeSsml(voice: $voice, ssml: $ssml) {url}}",
                 "variables":[
-                    "voice":self.ttsInputVoices[input.voice.rawValue],
-                    "ssml":input.input
+                    "voice": input.voice,
+                    "ssml": input.input
                 ]
             ]
             break
@@ -257,8 +261,8 @@ private let apiQueue = DispatchQueue(label: TTSSpeechQueueName, qos: .userInitia
             body = [
                 "query":"query iOSSynthesisMarkdown($voice: String!, $markdown: String!) {synthesizeMarkdown(voice: $voice, markdown: $markdown) {url}}",
                 "variables":[
-                    "voice":self.ttsInputVoices[input.voice.rawValue],
-                    "markdown":input.input
+                    "voice": input.voice,
+                    "markdown": input.input
                 ]
             ]
             break
@@ -266,8 +270,8 @@ private let apiQueue = DispatchQueue(label: TTSSpeechQueueName, qos: .userInitia
             body = [
                 "query":"query iOSSynthesisText($voice: String!, $text: String!) {synthesizeText(voice: $voice, text: $text) {url}}",
                 "variables":[
-                    "voice":self.ttsInputVoices[input.voice.rawValue],
-                    "text":input.input
+                    "voice": input.voice,
+                    "text": input.input
                 ]
             ]
             break
@@ -295,20 +299,24 @@ private let apiQueue = DispatchQueue(label: TTSSpeechQueueName, qos: .userInitia
         guard let id = response.value(forHTTPHeaderField: "x-request-id") else {
             throw TextToSpeechErrors.deserialization("response headers did not contain request id")
         }
-        switch inputFormat {
-        case .ssml:
-            let body = try self.decoder.decode(TTSSSMLResponseData.self, from: data)
-            let result = TextToSpeechResult(id: id, url: body.data.synthesizeSsml.url)
-            return result
-        case .markdown:
-            let body = try self.decoder.decode(TTSMarkdownResponseData.self, from: data)
-            let result = TextToSpeechResult(id: id, url: body.data.synthesizeMarkdown.url)
-            return result
-        case .text:
-            let body = try self.decoder.decode(TTSTextResponseData.self, from: data)
-            let result = TextToSpeechResult(id: id, url: body.data.synthesizeText.url)
-            return result
+        let body = try self.decoder.decode(TTSTResponse.self, from: data)
+        if let e = body.errors {
+            let message = e.map { $0.message }.joined(separator: " ")
+            throw TextToSpeechErrors.format(message)
         }
+        guard let data = body.data else
+        {
+            throw TextToSpeechErrors.deserialization("Could not deserialize the response.")
+        }
+        
+        var url: URL { switch inputFormat {
+        // NB the inputFormat switch guarantees safe access to the synthesisFormat url.
+        case .ssml: return data.synthesizeSsml!.url
+        case .markdown: return data.synthesizeMarkdown!.url
+        case .text: return data.synthesizeText!.url
+        }}
+        let result = TextToSpeechResult(id: id, url: url)
+        return result
     }
     
     /// Internal function that must be public for Objective-C compatibility reasons.
@@ -343,33 +351,27 @@ private let apiQueue = DispatchQueue(label: TTSSpeechQueueName, qos: .userInitia
 
 // MARK: Internal data structures
 
+fileprivate struct TTSResponseErrorLocation: Codable {
+    let column: Int
+    let line: Int
+}
+
+fileprivate struct TTSResponseError: Codable {
+    let locations: [TTSResponseErrorLocation]
+    let message: String
+}
+
 fileprivate struct TTSResponseURL: Codable {
     let url: URL
 }
 
-// SSML
-fileprivate struct TTSSSMLResponseSynthesize: Codable {
-    let synthesizeSsml: TTSResponseURL
+fileprivate struct TTSResponseSynthesize: Codable {
+    let synthesizeText: TTSResponseURL?
+    let synthesizeMarkdown: TTSResponseURL?
+    let synthesizeSsml: TTSResponseURL?
 }
 
-fileprivate struct TTSSSMLResponseData: Codable {
-    let data: TTSSSMLResponseSynthesize
-}
-
-// Markdown
-fileprivate struct TTSMarkdownResponseSynthesize: Codable {
-    let synthesizeMarkdown: TTSResponseURL
-}
-
-fileprivate struct TTSMarkdownResponseData: Codable {
-    let data: TTSMarkdownResponseSynthesize
-}
-
-// Text
-fileprivate struct TTSTextResponseSynthesize: Codable {
-    let synthesizeText: TTSResponseURL
-}
-
-fileprivate struct TTSTextResponseData: Codable {
-    let data: TTSTextResponseSynthesize
+fileprivate struct TTSTResponse: Codable {
+    let data: TTSResponseSynthesize?
+    let errors: [TTSResponseError]?
 }
