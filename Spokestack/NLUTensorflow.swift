@@ -100,9 +100,12 @@ import TensorFlowLite
         let inputCases = InputTensors.allCases.count
         let outputCount = self.interpreter!.outputTensorCount
         let outputCases = OutputTensors.allCases.count
-        if(inputCount != inputCases) || (outputCount != outputCases) {
+        if (inputCount != inputCases) || (outputCount != outputCases) {
             throw NLUError.model("NLU model provided is not shaped as expected. There are \(inputCount)/\(inputCases) inputs and \(outputCount)/\(outputCases) outputs")
         }
+        let dim = [Int32](repeating: Int32(0), count: self.configuration.nluMaxTokenLength)
+        _ = try dim.withUnsafeBytes { try self.interpreter!.copy(Data($0), toInputAt: InputTensors.input.rawValue) }
+        _ = try self.interpreter!.invoke()
     }
     
     /// Classifies the provided input. The classification results are sent to the instance's configured NLUDelegate.

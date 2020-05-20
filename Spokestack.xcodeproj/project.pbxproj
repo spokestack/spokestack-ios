@@ -68,6 +68,7 @@
 		59A8DBF92384ABF000F97700 /* TextToSpeechTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59A8DBF82384ABF000F97700 /* TextToSpeechTest.swift */; };
 		59A8DBFA2384AC0100F97700 /* TextToSpeech.swift in Sources */ = {isa = PBXBuildFile; fileRef = 596B82472384A097004BAEF4 /* TextToSpeech.swift */; };
 		59A8DBFB2384AC0500F97700 /* TextToSpeechInput.swift in Sources */ = {isa = PBXBuildFile; fileRef = 596567802384AA1100CFCE23 /* TextToSpeechInput.swift */; };
+		59AA893D2472EE5500197D7A /* NLUTensorflowTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59AA893C2472EE5500197D7A /* NLUTensorflowTest.swift */; };
 		59C15D53234D322A00B091F4 /* WebRTCVAD.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59C15D52234D322A00B091F4 /* WebRTCVAD.swift */; };
 		59C2AFDA2319CB7100E47AC5 /* RingBufferTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59C2AFD92319CB7100E47AC5 /* RingBufferTest.swift */; };
 		59C2AFDB2319CE5800E47AC5 /* SpeechConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59A0D5C52204E8E4003709C3 /* SpeechConfiguration.swift */; };
@@ -85,6 +86,7 @@
 		59C2AFE92319CF4100E47AC5 /* SignalProcessing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59E0E13422FE2C2B0060F012 /* SignalProcessing.swift */; };
 		59C2AFEA2319CF8A00E47AC5 /* Data+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59FB0C8A22AEE4F100FB9662 /* Data+Extensions.swift */; };
 		59C2AFEE231ED07100E47AC5 /* WebRTCVADTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59C2AFED231ED07100E47AC5 /* WebRTCVADTest.swift */; };
+		59D3685D247714DF0052F483 /* mock_nlu.tflite in Resources */ = {isa = PBXBuildFile; fileRef = 59D3685C247714DF0052F483 /* mock_nlu.tflite */; };
 		59D78F5F2322D13700728A98 /* AudioControllerTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59D78F5E2322D13700728A98 /* AudioControllerTest.swift */; };
 		59D78F612322EAE000728A98 /* SpeechPipelineTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59D78F602322EAE000728A98 /* SpeechPipelineTest.swift */; };
 		59E0E13522FE2C2B0060F012 /* SignalProcessing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59E0E13422FE2C2B0060F012 /* SignalProcessing.swift */; };
@@ -207,9 +209,11 @@
 		59A0D5C52204E8E4003709C3 /* SpeechConfiguration.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SpeechConfiguration.swift; sourceTree = "<group>"; };
 		59A45E4E2243ED530089D023 /* PipelineDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PipelineDelegate.swift; sourceTree = "<group>"; };
 		59A8DBF82384ABF000F97700 /* TextToSpeechTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TextToSpeechTest.swift; sourceTree = "<group>"; };
+		59AA893C2472EE5500197D7A /* NLUTensorflowTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NLUTensorflowTest.swift; sourceTree = "<group>"; };
 		59C15D52234D322A00B091F4 /* WebRTCVAD.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = WebRTCVAD.swift; path = Spokestack/WebRTCVAD.swift; sourceTree = SOURCE_ROOT; };
 		59C2AFD92319CB7100E47AC5 /* RingBufferTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RingBufferTest.swift; sourceTree = "<group>"; };
 		59C2AFED231ED07100E47AC5 /* WebRTCVADTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebRTCVADTest.swift; sourceTree = "<group>"; };
+		59D3685C247714DF0052F483 /* mock_nlu.tflite */ = {isa = PBXFileReference; lastKnownFileType = file; name = mock_nlu.tflite; path = ../../../Downloads/mock_nlu.tflite; sourceTree = "<group>"; };
 		59D78F5E2322D13700728A98 /* AudioControllerTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioControllerTest.swift; sourceTree = "<group>"; };
 		59D78F602322EAE000728A98 /* SpeechPipelineTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeechPipelineTest.swift; sourceTree = "<group>"; };
 		59E0E13422FE2C2B0060F012 /* SignalProcessing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignalProcessing.swift; sourceTree = "<group>"; };
@@ -336,6 +340,7 @@
 		01D31F48216BAF260055FD45 /* SpokestackTests */ = {
 			isa = PBXGroup;
 			children = (
+				59D3685C247714DF0052F483 /* mock_nlu.tflite */,
 				59A8DBF82384ABF000F97700 /* TextToSpeechTest.swift */,
 				59C2AFD92319CB7100E47AC5 /* RingBufferTest.swift */,
 				59D78F5E2322D13700728A98 /* AudioControllerTest.swift */,
@@ -348,6 +353,7 @@
 				59E8959A23DB7A0B00C424D3 /* NLUTensorflowTokenizerTest.swift */,
 				5917AC4E2405C86300CB4900 /* NLUTensorflowSlotParserTest.swift */,
 				5917AC502405C89A00CB4900 /* SharedTestMocks.swift */,
+				59AA893C2472EE5500197D7A /* NLUTensorflowTest.swift */,
 			);
 			path = SpokestackTests;
 			sourceTree = "<group>";
@@ -674,6 +680,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				59D3685D247714DF0052F483 /* mock_nlu.tflite in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -832,6 +839,7 @@
 				5917AC4F2405C86300CB4900 /* NLUTensorflowSlotParserTest.swift in Sources */,
 				59ECA8C823C939AA003CDB57 /* TextToSpeechResult.swift in Sources */,
 				597D0CAE23F716AF00018D71 /* NLUService.swift in Sources */,
+				59AA893D2472EE5500197D7A /* NLUTensorflowTest.swift in Sources */,
 				5942C4362384772600EC0B13 /* TextToSpeechDelegate.swift in Sources */,
 				59A8DBF92384ABF000F97700 /* TextToSpeechTest.swift in Sources */,
 				59C2AFE82319CF3900E47AC5 /* FFT.swift in Sources */,

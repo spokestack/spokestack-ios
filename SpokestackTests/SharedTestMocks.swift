@@ -19,6 +19,18 @@ internal struct SharedTestMocks {
         return encodings
     }
     
+    static func createModelMetadataPath() -> String {
+        let path = NSTemporaryDirectory() + "nlu.json"
+        let model = #"""
+                {
+                  "intents": [{"name": "","slots": []}],
+                  "tags": ["o"]
+                }
+        """#
+        let _ = FileManager.default.createFile(atPath: path, contents: model.data(using: .utf8), attributes: .none)
+        return path
+    }
+    
     static func createVocabularyPath() -> String {
         let path = NSTemporaryDirectory() + "vocab.txt"
         let vocab = """
