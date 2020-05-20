@@ -1,14 +1,14 @@
 Pod::Spec.new do |s|
   s.name = 'Spokestack-iOS'
   s.module_name = 'Spokestack'
-  s.version = '9.0.1'
+  s.version = '10.0.0'
   s.license = 'Apache'
-  s.summary = 'Spokestack provides an extensible speech recognition pipeline for the iOS platform.'
+  s.summary = 'Spokestack provides an extensible speech interface for the iOS platform.'
   s.homepage = 'https://www.spokestack.io'
   s.authors = { 'Spokestack' => 'support@spokestack.io' }
   s.source = { :git => 'https://github.com/spokestack/spokestack-ios.git', :tag => s.version.to_s }
   s.license = {:type => 'Apache', :file => 'LICENSE'}
-  s.ios.deployment_target = '11.0'
+  s.ios.deployment_target = '13.0'
   s.swift_version = '5.0'
   s.ios.framework = 'AVFoundation', 'CoreML'
   s.exclude_files = 'SpokestackFrameworkExample/*.*', 'SpokestackTests/*.*', 'Spokestack/Info.plist'
