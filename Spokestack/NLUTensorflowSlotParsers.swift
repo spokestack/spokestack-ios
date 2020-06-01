@@ -35,11 +35,9 @@ internal struct NLUTensorflowSlotParser {
             // send each tag's tokens through the slot parser and return the result
             .reduce(into: [:] as [String:Slot], { result, dictionaryEntry in
                 let (tag, whitespaceIndices) = dictionaryEntry
-                guard let slot = intent.slots.filter({ $0.name == tag }).first else {
-                    throw NLUError.metadata("Could not find a slot called \(tag) in NLU model metadata.")
-                }
-                if let slotValue = try self.slotFacetParser(slot: slot, whitespaceIndices: whitespaceIndices, encoder: encoder, encodedTokens: encodedTokens) {
-                    result[tag] = Slot(type: slot.type, value: slotValue)
+                let slot = intent.slots.filter({ $0.name == tag }).first
+                if let s = slot, let slotValue = try self.slotFacetParser(slot: s, whitespaceIndices: whitespaceIndices, encoder: encoder, encodedTokens: encodedTokens) {
+                    result[tag] = Slot(type: s.type, value: slotValue)
                 }
             })
         return slots.isEmpty ? nil : slots

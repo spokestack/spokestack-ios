@@ -79,6 +79,13 @@ class NLUTensorflowSlotParserTest: XCTestCase {
         XCTAssertEqual(parsedEntityO!["eponymous"]!.value as! String, "dead beef debug")
     }
     
+    func testParseUnspecifiedSlot() {
+        let taggedInput = ["o", "b_eponymous"]
+        let et = EncodedTokens(tokensByWhitespace: ["hey", "ma"], encodedTokensByWhitespaceIndex: [0, 1], encoded: [])
+        let parsed = try! parser.parse(tags: taggedInput, intent: metadata!.intents.filter({ $0.name == "i.i" }).first!, encoder: encoder!, encodedTokens: et)
+        XCTAssertNil(parsed)
+    }
+    
     func createMetadata() -> String {
         return #"""
         {
