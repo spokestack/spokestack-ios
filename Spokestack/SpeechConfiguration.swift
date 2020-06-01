@@ -120,7 +120,7 @@ import Foundation
     @objc public var nluModelMetadataPath: String = "nlu.json"
     /// The maximum utterance length the NLU can process. Determined  by the NLU model.
     /// - SeeAlso: `BertTokenizer`
-    @objc public var nluMaxTokenLength: Int = 128
+    @objc public var nluMaxTokenLength: Int = 50
     /// Debugging trace levels, for simple filtering.
     @objc public var tracing: Trace.Level = Trace.Level.NONE
     /// Delegate events will be sent using the specified dispatch queue.
