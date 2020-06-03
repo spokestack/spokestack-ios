@@ -8,19 +8,33 @@
 
 import Foundation
 
-/// Provides a parser for reconstructing tensorflow nlu slot values from the input and IOB tag labels.
+/// Provides a parser for reconstructing nlu slot values from the input and IOB tag labels.
 internal struct NLUTensorflowSlotParser {
     
-    /// Parse the classification output and predicted tag labels into a structured [intent : Slot] dictionary.
+    /// Parse the classification output and predicted tag labels into a structured `[intent : Slot]` dictionary.
     /// - Note: This operation effectively truncates the tag labels by the input size, ignoring all labels outside the input token count.
     /// - Parameters:
     ///   - tags: An array of classification tag labels.
     ///   - intent: The predicted intent.
     ///   - encoder: The tokenizer instance to decode the `encodedTokens`.
     ///   - encodedTokens: The tokens and associated metadata to decode for slot values.
+    /// - Throws: NLUError if the model output indicates a slot value that is not parseable.
+    /// - Returns: A structured `[intent : Slot]` dictionary of intent name keys with the slots defined by the intent and the slot's values as determined by the model output.
     internal func parse(tags: [String], intent: NLUTensorflowIntent, encoder: BertTokenizer, encodedTokens: EncodedTokens) throws -> [String:Slot]? {
         // zip together the tags (ignoring the "o" tag) and the index of the whitespaced encoded tokens, then process into the return type
-        let slots = try zip(tags, 0...encodedTokens.encodedTokensByWhitespaceIndex.count)
+        let tagsToTokens = zipTagsAndTokens(tags: tags, encodedTokens: encodedTokens)
+        // intents defined a fixed set of slots, so for each slot in the intent determine if the model has produced a value for it.
+        return try intentSlotMap(intent: intent, tagsToTokens: tagsToTokens, encoder: encoder, encodedTokens: encodedTokens)
+    }
+    
+    /// Zip together the tags (ignoring the "o" tag) and the index of the whitespaced encoded tokens.
+    /// - Parameters:
+    ///   - tags: An array of classification tag labels.
+    ///   - encodedTokens: The tokens and associated metadata to decode for slot values.
+    /// - Returns: A dictionary of slot name keys with input token values.
+    private func zipTagsAndTokens(tags: [String], encodedTokens: EncodedTokens) -> [String : [Int]] {
+        // The model output is fixed-length ordered tags, which can be zipped with the fixed-length ordered input tokens
+        zip(tags, 0...encodedTokens.encodedTokensByWhitespaceIndex.count)
             // create a dictionary of [tags: [tokenIndices]]
             .reduce(into: [:] as [String: [Int]], { result, tagIndex in
                 // the model slot classifier uses IOB tags. Ignore the "o" tag.
@@ -32,15 +46,32 @@ internal struct NLUTensorflowSlotParser {
                     result.merge(slotToken, uniquingKeysWith: { $0 + $1 })
                 }
             })
-            // send each tag's tokens through the slot parser and return the result
-            .reduce(into: [:] as [String:Slot], { result, dictionaryEntry in
-                let (tag, whitespaceIndices) = dictionaryEntry
-                let slot = intent.slots.filter({ $0.name == tag }).first
-                if let s = slot, let slotValue = try self.slotFacetParser(slot: s, whitespaceIndices: whitespaceIndices, encoder: encoder, encodedTokens: encodedTokens) {
-                    result[tag] = Slot(type: s.type, value: slotValue)
-                }
-            })
-        return slots.isEmpty ? nil : slots
+    }
+    
+    /// Return a fixed set of slots defined by the intent, with values determined by the zip of model output tags to input tokens.
+    /// - Parameters:
+    ///   - intent:  The predicted intent.
+    ///   - tagsToTokens: Zip of tags (ignoring the "o" tag) and the index of the whitespaced encoded tokens.
+    ///   - encoder: The tokenizer instance to decode the `encodedTokens`.
+    ///   - encodedTokens: The tokens and associated metadata to decode for slot values.
+    /// - Throws: NLUError if the model output indicates a slot value that is not parseable.
+    /// - Returns: A structured `[intent : Slot]` dictionary of intent name keys with the slots defined by the intent and the slot's values as determined by the model output.
+    private func intentSlotMap(intent: NLUTensorflowIntent, tagsToTokens: [String : [Int]], encoder: BertTokenizer, encodedTokens: EncodedTokens) throws -> [String:Slot]? {
+        // Go over the slots defined by the intent, checking if each one has a value in the model output.
+        try intent.slots.reduce(into: [:], { (result, intentSlot) in
+            // Check the dictionary of slot name keys with input token values to see if there's a match for this intent slot.
+            let taggedSlotValues = tagsToTokens.filter({ $0.key == intentSlot.name })
+            if taggedSlotValues.isEmpty {
+                // no match, so hyrdate this intent slot with nil
+                result?[intentSlot.name] = Slot(type: intentSlot.type, value: nil)
+            } else {
+                // matched, so send the dictionary of slot name keys with input token values to be parsed for the slot value
+                let _ = try taggedSlotValues.map({ taggedSlot in
+                    let taggedSlotValue = try self.slotFacetParser(slot: intentSlot, whitespaceIndices: taggedSlot.value, encoder: encoder, encodedTokens: encodedTokens)
+                    result?[intentSlot.name] = Slot(type: intentSlot.type, value: taggedSlotValue)
+                })
+            }
+        })
     }
     
     private func slotFacetParser(slot: NLUTensorflowSlot, whitespaceIndices: [Int], encoder: BertTokenizer, encodedTokens: EncodedTokens) throws -> Any? {

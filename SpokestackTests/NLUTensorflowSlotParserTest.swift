@@ -47,7 +47,7 @@ class NLUTensorflowSlotParserTest: XCTestCase {
 
         let et3 = EncodedTokens(tokensByWhitespace: ["fiftie", "six"],  encodedTokensByWhitespaceIndex: [0, 0, 0, 1], encoded: [])
         let parsedIntegerNil = try! parser.parse(tags: ["b_rating", "i_rating", "i_rating", "i_rating"], intent: metadata!.intents.filter({ $0.name == "rate.app" }).first!, encoder: encoder!, encodedTokens: et3)
-        XCTAssertNil(parsedIntegerNil)
+        XCTAssertNil(parsedIntegerNil!["rating"]!.value)
         
         let et4 = EncodedTokens(tokensByWhitespace: ["one", "million"], encodedTokensByWhitespaceIndex: [0, 1], encoded: [])
         let intent = metadata!.intents.filter({ $0.name == "i.i" }).first!
@@ -80,10 +80,16 @@ class NLUTensorflowSlotParserTest: XCTestCase {
     }
     
     func testParseUnspecifiedSlot() {
+        // Slots not declared by an intent but tagged by the model do not cause an error and are not returned to the caller
         let taggedInput = ["o", "b_eponymous"]
         let et = EncodedTokens(tokensByWhitespace: ["hey", "ma"], encodedTokensByWhitespaceIndex: [0, 1], encoded: [])
         let parsed = try! parser.parse(tags: taggedInput, intent: metadata!.intents.filter({ $0.name == "i.i" }).first!, encoder: encoder!, encodedTokens: et)
-        XCTAssertNil(parsed)
+        XCTAssertNil(parsed!["iMi"]!.value)
+        
+        // Slots declared by an intent but not tagged by the model are returned to the caller in the output with a null value
+        let taggedInputEmpty = ["o", "o"]
+        let parsedEmpty = try! parser.parse(tags: taggedInputEmpty, intent: metadata!.intents.filter({ $0.name == "i.i" }).first!, encoder: encoder!, encodedTokens: et)
+        XCTAssertNil(parsedEmpty!["iMi"]!.value)
     }
     
     func createMetadata() -> String {
