@@ -34,10 +34,12 @@ class NLUTensorflowTest: XCTestCase {
         let _ = try! NLUTensorflow(delegate, configuration: config)
         wait(for: [didFailExpectation], timeout: 5)
         XCTAssert(delegate.didFail)
+        delegate.reset()
         
         // good config can init
         config.nluModelPath = NLUModel.path
         let _ = try! NLUTensorflow(configuration: config)
+        XCTAssertFalse(delegate.didFail)
     }
     
     func testClassify() {
@@ -83,8 +85,8 @@ fileprivate enum NLUModel {
 }
 
 class TestNLUDelegate: NLUDelegate {
-    /// Spy pattern for the system under test.
-    /// asyncExpectation lets the caller's test know when the delegate has been called.
+    // Spy pattern for the system under test.
+    // asyncExpectation lets the caller's test know when the delegate has been called.
     var didClassify: Bool = false
     var didFail: Bool = false
     var asyncExpectation: XCTestExpectation?

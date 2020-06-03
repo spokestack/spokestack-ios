@@ -14,6 +14,11 @@ import XCTest
 
 class TFLiteWakewordRecognizerTest: XCTestCase {
     
+    let tflwr = TFLiteWakewordRecognizer.sharedInstance
+    let context = SpeechContext()
+    let delegate = TFLiteWakewordRecognizerTestDelegate()
+    let config = SpeechConfiguration()
+    
     func hexStringToData(hexString: String) -> Data? {
         let len = hexString.count / 2
         var data = Data(capacity: len)
@@ -31,6 +36,12 @@ class TFLiteWakewordRecognizerTest: XCTestCase {
     }
     
     override func setUp() {
+        self.config.encodeModelPath = MockWakewordModels.encodePath
+        self.config.filterModelPath = MockWakewordModels.filterPath
+        self.config.detectModelPath = MockWakewordModels.detectPath
+        self.tflwr.configuration = config
+        self.tflwr.context = context
+        self.tflwr.delegate = delegate
         //let filterHexString = filter.map { String(format: "%02hhx", $0) }.joined()
         //let filterData = hexStringToData(hexString: MockWakewordModels.filterString)
         //let _ = FileManager.default.createFile(atPath: MockWakewordModels.filterPath, contents: filterData, attributes: .none)
@@ -70,73 +81,40 @@ class TFLiteWakewordRecognizerTest: XCTestCase {
     }
     
     func testStartStop() {
-        // setup
-        let tflwr = TFLiteWakewordRecognizer.sharedInstance
-        let context = SpeechContext()
-        let delegate = TFLiteWakewordRecognizerTestDelegate()
-        let config = SpeechConfiguration()
-        config.encodeModelPath = MockWakewordModels.encodePath
-        config.filterModelPath = MockWakewordModels.filterPath
-        config.detectModelPath = MockWakewordModels.detectPath
-        tflwr.configuration = config
-        tflwr.context = context
-        tflwr.delegate = delegate
-        
         // start
-        context.isActive = false
-        tflwr.startStreaming(context: context)
-        XCTAssert(context.isStarted)
+        self.context.isActive = false
+        self.tflwr.startStreaming(context: self.context)
+        XCTAssert(self.context.isStarted)
         // stop
-        tflwr.stopStreaming(context: context)
-        XCTAssertFalse(context.isStarted)
+        self.tflwr.stopStreaming(context: self.context)
+        XCTAssertFalse(self.context.isStarted)
     }
     
     func testActivatetDeactivate() {
-        // setup
-        let tflwr = TFLiteWakewordRecognizer.sharedInstance
-        let context = SpeechContext()
-        let delegate = TFLiteWakewordRecognizerTestDelegate()
-        let config = SpeechConfiguration()
-        config.encodeModelPath = MockWakewordModels.encodePath
-        config.filterModelPath = MockWakewordModels.filterPath
-        config.detectModelPath = MockWakewordModels.detectPath
-        tflwr.configuration = config
-        tflwr.context = context
-        tflwr.delegate = delegate
-        
         // start
-        context.isActive = false
-        tflwr.startStreaming(context: context)
-        tflwr.activate(frame: Frame.voice(frameWidth: 10, sampleRate: 8000))
-        XCTAssert(context.isSpeech)
-        tflwr.deactivate()
-        XCTAssertFalse(context.isSpeech)
+        self.context.isActive = false
+        self.tflwr.startStreaming(context: self.context)
+        self.tflwr.activate(frame: Frame.voice(frameWidth: 10, sampleRate: 8000))
+        XCTAssert(self.context.isSpeech)
+        // stop
+        self.tflwr.deactivate()
+        XCTAssertFalse(self.context.isSpeech)
     }
     
     func testProcess() {
         // setup
-        let tflwr = TFLiteWakewordRecognizer.sharedInstance
-        let context = SpeechContext()
-        let delegate = TFLiteWakewordRecognizerTestDelegate()
-        let config = SpeechConfiguration()
         let successExpectation = XCTestExpectation(description: "process without failure.")
-        delegate.didActivateExpectation = successExpectation
-        config.encodeModelPath = MockWakewordModels.encodePath
-        config.filterModelPath = MockWakewordModels.filterPath
-        config.detectModelPath = MockWakewordModels.detectPath
-        config.vadMode = .HighlyPermissive
-        tflwr.configuration = config
-        tflwr.context = context
-        tflwr.delegate = delegate
+        self.delegate.didActivateExpectation = successExpectation
+        self.tflwr.configuration?.vadMode = .HighlyPermissive
         
         // process
-        context.isActive = false
-        context.isSpeech = false
+        self.context.isActive = false
+        self.context.isSpeech = false
         // NB: the detect model will always output 1.0 no matter the input
-        tflwr.process(Frame.voice(frameWidth: 10, sampleRate: 16000))
+        self.tflwr.process(Frame.voice(frameWidth: 10, sampleRate: 16000))
         wait(for: [successExpectation], timeout: 5)
-        XCTAssert(context.isActive)
-        XCTAssertFalse(delegate.didError)
+        XCTAssert(self.context.isActive)
+        XCTAssertFalse(self.delegate.didError)
     }
 }
 
@@ -173,12 +151,11 @@ fileprivate enum MockWakewordModels {
         let p = bundle.path(forResource: detectInfo.name, ofType: detectInfo.extension)
         return p!
     }()
-    // static let filterString = "5b3078316330302c203078303030302c203078353434362c203078346333332c203078303030302c203078313230302c203078316330302c203078303430302c0a3078303830302c203078306330302c203078313030302c203078313430302c203078303030302c203078313830302c203078313230302c203078303030302c0a3078303330302c203078303030302c203078313430302c203078303030302c203078313430302c203078303030302c203078376330302c203078303030302c0a3078313430302c203078303030302c203078323430302c203078303030302c203078303030302c203078303030302c203078303130302c203078303030302c0a3078386330302c203078303030302c203078303430302c203078303030302c203078663430312c203078303030302c203078663030312c203078303030302c0a3078633430302c203078303030302c203078333830302c203078303030302c203078303130302c203078303030302c203078306330302c20303030302c0a3078303830302c203078306330302c203078303430302c203078303830302c203078303830302c203078303030302c203078303830302c20303030302c0a3078303330302c203078303030302c203078313330302c203078303030302c203078366436392c203078366535662c203078373237352c20366537342c0a3078363936642c203078363535662c203078373636352c203078373237332c203078363936662c203078366530302c203078376566662c20666666662c0a3078303430302c203078303030302c203078313030302c203078303030302c203078303030302c203078303030302c203078303030302c20303030302c0a3078303030302c203078303030302c203078303030302c203078303030302c203078306630302c203078303030302c203078346434632c20343935322c0a3078323034332c203078366636652c203078373636352c203078373237342c203078363536342c203078326530302c203078303030302c20306530302c0a3078313830302c203078303430302c203078303830302c203078306330302c203078313030302c203078313430302c203078306530302c20303030302c0a3078313430302c203078303030302c203078316330302c203078303030302c203078323030302c203078303030302c203078323430302c20303030302c0a3078323430302c203078303030302c203078303230302c203078303030302c203078323030312c203078303030302c203078643430302c20303030302c0a3078303130302c203078303030302c203078303030302c203078303030302c203078303130302c203078303030302c203078303130302c20303030302c0a3078303030302c203078303030302c203078303430302c203078303030302c203078366436312c203078363936652c203078303030302c20303630302c0a3078303830302c203078303430302c203078303630302c203078303030302c203078303430302c203078303030302c203078613030302c20303030302c0a3078303030302c203078303030302c203078303030302c203078303030302c203078303030302c203078303030302c203078303030302c20303030302c0a3078303030302c203078303030302c203078303030302c203078303030302c203078303030302c203078303030302c203078303030302c20303030302c0a3078303030302c203078303030302c203078303030302c203078303030302c203078303030302c203078303030302c203078303030302c20303030302c0a3078303030302c203078303030302c203078303030302c203078303030302c203078303030302c203078303030302c203078303030302c20303030302c0a3078303030302c203078303030302c203078303030302c203078303030302c203078303030302c203078303030302c203078303030302c20303030302c0a3078303030302c203078303030302c203078303030302c203078303030302c203078303030302c203078303030302c203078303030302c20303030302c0a3078303030302c203078303030302c203078303030302c203078303030302c203078303030302c203078303030302c203078303030302c20303030302c0a3078303030302c203078303030302c203078303030302c203078303030302c203078303030302c203078303030302c203078303030302c20303030302c0a3078303030302c203078303030302c203078303030302c203078303030302c203078303030302c203078303030302c203078303030302c20303030302c0a3078303030302c203078303030302c203078303030302c203078303030302c203078303030302c203078303030302c203078303030302c20303030302c0a3078633666662c203078666666662c203078313030302c203078303030302c203078303230302c203078303030302c203078313430302c20303030302c0a3078323430302c203078303030302c203078303230302c203078303030302c203078303130302c203078303030302c203078323830302c20303030302c0a3078303830302c203078303030302c203078343936342c203078363536652c203078373436392c203078373437392c203078303030302c20303030302c0a3078303430302c203078303630302c203078303430302c203078303030302c203078303030302c203078306530302c203078313430302c20303430302c0a3078303030302c203078303830302c203078306330302c203078313030302c203078306530302c203078303030302c203078313030302c20303030302c0a3078303130302c203078303030302c203078313430302c203078303030302c203078316330302c203078303030302c203078303230302c20303030302c0a3078303130302c203078303030302c203078303130312c203078303030302c203078303630302c203078303030302c203078363936652c20373037352c0a3078373437332c203078303030302c203078666366662c203078666666662c203078303430302c203078303430302c203078303430302c20303030305d0a"
 }
 
 class TFLiteWakewordRecognizerTestDelegate: PipelineDelegate, SpeechEventListener {
-    /// Spy pattern for the system under test.
-    /// asyncExpectation lets the caller's test know when the delegate has been called.
+    // Spy pattern for the system under test.
+    // asyncExpectation lets the caller's test know when the delegate has been called.
     var didError: Bool = false
     var deactivated: Bool = false
     var activated: Bool = false
