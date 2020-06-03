@@ -23,7 +23,7 @@ internal struct NLUTensorflowSlotParser {
     internal func parse(tags: [String], intent: NLUTensorflowIntent, encoder: BertTokenizer, encodedTokens: EncodedTokens) throws -> [String:Slot]? {
         // zip together the tags (ignoring the "o" tag) and the index of the whitespaced encoded tokens, then process into the return type
         let tagsToTokens = zipTagsAndTokens(tags: tags, encodedTokens: encodedTokens)
-        // intents defined a fixed set of slots, so for each slot in the intent determine if the model has produced a value for it.
+        // intents define a fixed set of slots, so for each slot in the intent, determine if the model has produced a value for it.
         return try intentSlotMap(intent: intent, tagsToTokens: tagsToTokens, encoder: encoder, encodedTokens: encodedTokens)
     }
     

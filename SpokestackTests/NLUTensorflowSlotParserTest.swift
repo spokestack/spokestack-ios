@@ -86,7 +86,7 @@ class NLUTensorflowSlotParserTest: XCTestCase {
         let parsed = try! parser.parse(tags: taggedInput, intent: metadata!.intents.filter({ $0.name == "i.i" }).first!, encoder: encoder!, encodedTokens: et)
         XCTAssertNil(parsed!["iMi"]!.value)
         
-        // Slots declared by an intent but not tagged by the model are returned to the caller in the output with a null value
+        // Slots declared by an intent but not tagged by the model are returned to the caller in the output with a nil value
         let taggedInputEmpty = ["o", "o"]
         let parsedEmpty = try! parser.parse(tags: taggedInputEmpty, intent: metadata!.intents.filter({ $0.name == "i.i" }).first!, encoder: encoder!, encodedTokens: et)
         XCTAssertNil(parsedEmpty!["iMi"]!.value)
