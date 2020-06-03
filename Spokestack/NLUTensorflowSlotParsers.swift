@@ -57,21 +57,19 @@ internal struct NLUTensorflowSlotParser {
     /// - Throws: NLUError if the model output indicates a slot value that is not parseable.
     /// - Returns: A structured `[intent : Slot]` dictionary of intent name keys with the slots defined by the intent and the slot's values as determined by the model output.
     private func intentSlotMap(intent: NLUTensorflowIntent, tagsToTokens: [String : [Int]], encoder: BertTokenizer, encodedTokens: EncodedTokens) throws -> [String:Slot]? {
-        // Go over the slots defined by the intent, checking if each one has a value in the model output.
-        try intent.slots.reduce(into: [:], { (result, intentSlot) in
-            // Check the dictionary of slot name keys with input token values to see if there's a match for this intent slot.
-            let taggedSlotValues = tagsToTokens.filter({ $0.key == intentSlot.name })
-            if taggedSlotValues.isEmpty {
-                // no match, so hyrdate this intent slot with nil
-                result?[intentSlot.name] = Slot(type: intentSlot.type, value: nil)
+        var slots: [String:Slot] = [:]
+        // Iterate over the slots defined by the intent, checking if each one has a value in the model output.
+        for slot in intent.slots {
+            if let tokenIndices = tagsToTokens[slot.name] {
+                // decode and parse tokenIndices
+                let parsedValue = try self.slotFacetParser(slot: slot, whitespaceIndices: tokenIndices, encoder: encoder, encodedTokens: encodedTokens)
+                slots[slot.name] = Slot(type: slot.type, value: parsedValue)
             } else {
-                // matched, so send the dictionary of slot name keys with input token values to be parsed for the slot value
-                let _ = try taggedSlotValues.map({ taggedSlot in
-                    let taggedSlotValue = try self.slotFacetParser(slot: intentSlot, whitespaceIndices: taggedSlot.value, encoder: encoder, encodedTokens: encodedTokens)
-                    result?[intentSlot.name] = Slot(type: intentSlot.type, value: taggedSlotValue)
-                })
+                // no match, so create an empty slot
+                slots[slot.name] = Slot(type: slot.type, value: nil)
             }
-        })
+        }
+        return slots
     }
     
     private func slotFacetParser(slot: NLUTensorflowSlot, whitespaceIndices: [Int], encoder: BertTokenizer, encodedTokens: EncodedTokens) throws -> Any? {
