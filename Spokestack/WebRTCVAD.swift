@@ -48,19 +48,19 @@ public class WebRTCVAD: NSObject {
     /// - Throws: VADError.invalidConfiguration if the frameWidth or sampleRate are not supported.
     public func create(mode: VADMode, delegate: VADDelegate, frameWidth: Int, sampleRate: Int) throws {
         
-        /// validation of configurable parameters
+        // validation of configurable parameters
         try self.validate(frameWidth: frameWidth, sampleRate: sampleRate)
         
         /// set public property
         self.delegate = delegate
         
-        /// set private properties
-        frameBufferStride = frameWidth*(sampleRate/1000) /// eg 20*(16000/1000) = 320
+        // set private properties
+        frameBufferStride = frameWidth*(sampleRate/1000) // eg 20*(16000/1000) = 320
         sampleRate32 = Int32(sampleRate)
         frameBufferStride32 = Int32(frameBufferStride)
         frameBuffer = RingBuffer(frameBufferStride, repeating: 0)
         
-        /// initialize WebRtcVad with provided configuration
+        // initialize WebRtcVad with provided configuration
         var errorCode:Int32 = 0
         errorCode = WebRtcVad_Create(vad)
         if errorCode != 0 { throw VADError.initialization("unable to create a WebRTCVAD struct, which returned error code \(errorCode)") }
@@ -95,10 +95,10 @@ public class WebRTCVAD: NSObject {
             var detected: Bool = false
             let samples: Array<Int16> = frame.elements()
             for s in samples {
-                /// write the frame sample to the buffer
+                // write the frame sample to the buffer
                 try frameBuffer.write(s)
                 if frameBuffer.isFull {
-                    /// once the buffer is full, process its samples
+                    // once the buffer is full, process its samples
                     detecting: while !frameBuffer.isEmpty {
                         var sampleWindow: Array<Int16> = []
                         for _ in 0..<frameBufferStride {

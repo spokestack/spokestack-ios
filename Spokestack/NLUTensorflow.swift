@@ -91,6 +91,10 @@ import TensorFlowLite
         self.tokenizer = try BertTokenizer(configuration)
         self.metadata = try NLUTensorflowMeta(configuration)
         self.slotParser = NLUTensorflowSlotParser()
+        // warm up the interpreter to speed up a subsequent client call
+        let dim = [Int32](repeating: Int32(0), count: self.configuration.nluMaxTokenLength)
+        _ = try dim.withUnsafeBytes { try self.interpreter!.copy(Data($0), toInputAt: InputTensors.input.rawValue) }
+        _ = try self.interpreter!.invoke()
     }
     
     private func initializeInterpreter() throws {
@@ -100,7 +104,7 @@ import TensorFlowLite
         let inputCases = InputTensors.allCases.count
         let outputCount = self.interpreter!.outputTensorCount
         let outputCases = OutputTensors.allCases.count
-        if(inputCount != inputCases) || (outputCount != outputCases) {
+        if (inputCount != inputCases) || (outputCount != outputCases) {
             throw NLUError.model("NLU model provided is not shaped as expected. There are \(inputCount)/\(inputCases) inputs and \(outputCount)/\(outputCases) outputs")
         }
     }

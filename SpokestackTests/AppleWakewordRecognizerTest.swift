@@ -27,9 +27,11 @@ class AppleWakewordRecognizerTest: XCTestCase {
         awr.configuration = SpeechConfiguration()
         awr.delegate = delegate
         XCTAssertNoThrow(awr.startStreaming(context: context))
+        XCTAssert(context.isStarted)
         
         /// stopStreaming
         XCTAssertNoThrow(awr.stopStreaming(context: context))
+        XCTAssertFalse(context.isStarted)
     }
     
     /// process

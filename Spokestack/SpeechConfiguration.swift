@@ -15,10 +15,6 @@ import Foundation
     /// - Warning: cannot contain spaces
     /// - SeeAlso: `AppleWakewordRecognizer`
     @objc public var wakewords: String = "spokestack, spoke stack"
-    /// A comma-separated list of space-separated wakeword keyword phrases to detect, which defaults to no phrases (just individual keywords).
-    /// - Remark: ex: "up dog,dog dog"
-    /// - SeeAlso: `AppleWakewordRecognizer`
-    @objc public var wakePhrases: String = "spokestack"
     /// The name of the window function to apply to each audio frame before calculating the STFT.
     /// - Remark: Currently the "hann" window is supported.
     /// - SeeAlso: `TFLiteWakewordRecognizer`
@@ -124,7 +120,7 @@ import Foundation
     @objc public var nluModelMetadataPath: String = "nlu.json"
     /// The maximum utterance length the NLU can process. Determined  by the NLU model.
     /// - SeeAlso: `BertTokenizer`
-    @objc public var nluMaxTokenLength: Int = 128
+    @objc public var nluMaxTokenLength: Int = 50
     /// Debugging trace levels, for simple filtering.
     @objc public var tracing: Trace.Level = Trace.Level.NONE
     /// Delegate events will be sent using the specified dispatch queue.
