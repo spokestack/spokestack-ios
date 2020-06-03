@@ -1,7 +1,7 @@
 Pod::Spec.new do |s|
   s.name = 'Spokestack-iOS'
   s.module_name = 'Spokestack'
-  s.version = '10.0.0'
+  s.version = '10.1.0'
   s.license = 'Apache'
   s.summary = 'Spokestack provides an extensible speech interface for the iOS platform.'
   s.homepage = 'https://www.spokestack.io'
