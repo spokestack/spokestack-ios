@@ -8,19 +8,33 @@
 
 import Foundation
 
-/// Provides a parser for reconstructing tensorflow nlu slot values from the input and IOB tag labels.
+/// Provides a parser for reconstructing nlu slot values from the input and IOB tag labels.
 internal struct NLUTensorflowSlotParser {
     
-    /// Parse the classification output and predicted tag labels into a structured [intent : Slot] dictionary.
+    /// Parse the classification output and predicted tag labels into a structured `[intent : Slot]` dictionary.
     /// - Note: This operation effectively truncates the tag labels by the input size, ignoring all labels outside the input token count.
     /// - Parameters:
     ///   - tags: An array of classification tag labels.
     ///   - intent: The predicted intent.
     ///   - encoder: The tokenizer instance to decode the `encodedTokens`.
     ///   - encodedTokens: The tokens and associated metadata to decode for slot values.
+    /// - Throws: NLUError if the model output indicates a slot value that is not parseable.
+    /// - Returns: A structured `[intent : Slot]` dictionary of intent name keys with the slots defined by the intent and the slot's values as determined by the model output.
     internal func parse(tags: [String], intent: NLUTensorflowIntent, encoder: BertTokenizer, encodedTokens: EncodedTokens) throws -> [String:Slot]? {
         // zip together the tags (ignoring the "o" tag) and the index of the whitespaced encoded tokens, then process into the return type
-        let slots = try zip(tags, 0...encodedTokens.encodedTokensByWhitespaceIndex.count)
+        let tagsToTokens = zipTagsAndTokens(tags: tags, encodedTokens: encodedTokens)
+        // intents define a fixed set of slots, so for each slot in the intent, determine if the model has produced a value for it.
+        return try intentSlotMap(intent: intent, tagsToTokens: tagsToTokens, encoder: encoder, encodedTokens: encodedTokens)
+    }
+    
+    /// Zip together the tags (ignoring the "o" tag) and the index of the whitespaced encoded tokens.
+    /// - Parameters:
+    ///   - tags: An array of classification tag labels.
+    ///   - encodedTokens: The tokens and associated metadata to decode for slot values.
+    /// - Returns: A dictionary of slot name keys with input token values.
+    private func zipTagsAndTokens(tags: [String], encodedTokens: EncodedTokens) -> [String : [Int]] {
+        // The model output is fixed-length ordered tags, which can be zipped with the fixed-length ordered input tokens
+        zip(tags, 0...encodedTokens.encodedTokensByWhitespaceIndex.count)
             // create a dictionary of [tags: [tokenIndices]]
             .reduce(into: [:] as [String: [Int]], { result, tagIndex in
                 // the model slot classifier uses IOB tags. Ignore the "o" tag.
@@ -32,20 +46,33 @@ internal struct NLUTensorflowSlotParser {
                     result.merge(slotToken, uniquingKeysWith: { $0 + $1 })
                 }
             })
-            // send each tag's tokens through the slot parser and return the result
-            .reduce(into: [:] as [String:Slot], { result, dictionaryEntry in
-                let (tag, whitespaceIndices) = dictionaryEntry
-                guard let slot = intent.slots.filter({ $0.name == tag }).first else {
-                    throw NLUError.metadata("Could not find a slot called \(tag) in NLU model metadata.")
-                }
-                if let slotValue = try self.slotFacetParser(slot: slot, whitespaceIndices: whitespaceIndices, encoder: encoder, encodedTokens: encodedTokens) {
-                    result[tag] = Slot(type: slot.type, value: slotValue)
-                }
-            })
-        return slots.isEmpty ? nil : slots
     }
     
-    private func slotFacetParser(slot: NLUTensorflowSlot, whitespaceIndices: [Int], encoder: BertTokenizer, encodedTokens: EncodedTokens) throws -> Any? {
+    /// Return a fixed set of slots defined by the intent, with values determined by the zip of model output tags to input tokens.
+    /// - Parameters:
+    ///   - intent:  The predicted intent.
+    ///   - tagsToTokens: Zip of tags (ignoring the "o" tag) and the index of the whitespaced encoded tokens.
+    ///   - encoder: The tokenizer instance to decode the `encodedTokens`.
+    ///   - encodedTokens: The tokens and associated metadata to decode for slot values.
+    /// - Throws: NLUError if the model output indicates a slot value that is not parseable.
+    /// - Returns: A structured `[intent : Slot]` dictionary of intent name keys with the slots defined by the intent and the slot's values as determined by the model output.
+    private func intentSlotMap(intent: NLUTensorflowIntent, tagsToTokens: [String : [Int]], encoder: BertTokenizer, encodedTokens: EncodedTokens) throws -> [String:Slot]? {
+        var slots: [String:Slot] = [:]
+        // Iterate over the slots defined by the intent, checking if each one has a value in the model output.
+        for slot in intent.slots {
+            if let tokenIndices = tagsToTokens[slot.name] {
+                // decode and parse tokenIndices
+                let parsed = try self.slotFacetParser(slot: slot, whitespaceIndices: tokenIndices, encoder: encoder, encodedTokens: encodedTokens)
+                slots[slot.name] = Slot(type: slot.type, value: parsed.value, rawValue: parsed.rawValue)
+            } else {
+                // no match, so create an empty slot
+                slots[slot.name] = Slot(type: slot.type, value: nil, rawValue: nil)
+            }
+        }
+        return slots
+    }
+    
+    private func slotFacetParser(slot: NLUTensorflowSlot, whitespaceIndices: [Int], encoder: BertTokenizer, encodedTokens: EncodedTokens) throws -> (value: Any?, rawValue: String?) {
         switch slot.type {
         case "selset":
             // filter the slot selection aliases (and the slot selection name itself) to see if they match any tokens
@@ -59,28 +86,30 @@ internal struct NLUTensorflowSlotParser {
                 selection.name == decoded || selection.aliases.contains(decoded)
             }
             // just pick the first, if any, that matched
-            return contains.first?.name
+            return (contains.first?.name, decoded)
         case "integer":
             guard let parsed = try slot.parsed() as? NLUTensorflowInteger else {
                 throw NLUError.metadata("The NLU metadata for the \(slot.name) slot was not found.")
             }
-            let integer = try encoder
+            let decoded = try encoder
                 .decode(encodedTokens: encodedTokens, whitespaceIndices: whitespaceIndices)
+            let integer = decoded
                 .reduce([], { self.parseReduceNumber($0, next: $1) })
                 .reduce(0, { $0 + $1 })
             guard let lowerBound = parsed.range.first,
                 let upperBound = parsed.range.last
                 else {
-                    return nil
+                    return (nil, decoded.joined(separator: " "))
             }
             let range = lowerBound...upperBound
-            return range.contains(integer) ? integer : nil
+            return (range.contains(integer) ? integer : nil, decoded.joined(separator: " "))
         case "digits":
             guard let parsed = try slot.parsed() as? NLUTensorflowDigits else {
                 throw NLUError.metadata("The NLU metadata for the \(slot.name) slot was not found.")
             }
-            let digits = try encoder
+            let decoded = try encoder
                 .decode(encodedTokens: encodedTokens, whitespaceIndices: whitespaceIndices)
+            let digits = decoded
                 .map({ value in
                     if let cardinal = self.wordToNumber(value) {
                         return cardinal as String
@@ -89,11 +118,12 @@ internal struct NLUTensorflowSlotParser {
                     }
                 })
                 .joined()
-            return parsed.count == digits.count ? digits : nil
+            return (parsed.count == digits.count ? digits : nil, decoded.joined(separator: " "))
         case "entity":
-            return try encoder.decodeWithWhitespace(encodedTokens: encodedTokens, whitespaceIndices: whitespaceIndices)
+            let v = try encoder.decodeWithWhitespace(encodedTokens: encodedTokens, whitespaceIndices: whitespaceIndices)
+            return (v,v)
         default:
-            return nil
+            return (nil, nil)
         }
     }
     

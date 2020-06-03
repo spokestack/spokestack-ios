@@ -14,7 +14,7 @@ import Foundation
     /// - Remark: ex: "up,dog"
     /// - Warning: cannot contain spaces
     /// - SeeAlso: `AppleWakewordRecognizer`
-    @objc public var wakewords: String = "spokestack, spoke stack"
+    @objc public var wakewords: String = "spokestack, spoke stack, smokestack, smoke stack"
     /// The name of the window function to apply to each audio frame before calculating the STFT.
     /// - Remark: Currently the "hann" window is supported.
     /// - SeeAlso: `TFLiteWakewordRecognizer`
