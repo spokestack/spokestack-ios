@@ -69,6 +69,8 @@ import Foundation
     
     /// The slot's value.
     @objc public var value: Any?
+    
+    @objc public var rawValue: String?
 
     public override var description: String {
         return "(\(type): \(value ?? ""))"
@@ -78,9 +80,10 @@ import Foundation
     /// - Parameters:
     ///   - type: The underlying type of the slot value.
     ///   - value: The slot's value.
-    public init(type: String, value: Any?) {
+    public init(type: String, value: Any?, rawValue: String?) {
         self.type = type
         self.value = value
+        self.rawValue = rawValue
         super.init()
     }
 }

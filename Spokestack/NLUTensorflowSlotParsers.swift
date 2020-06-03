@@ -62,17 +62,17 @@ internal struct NLUTensorflowSlotParser {
         for slot in intent.slots {
             if let tokenIndices = tagsToTokens[slot.name] {
                 // decode and parse tokenIndices
-                let parsedValue = try self.slotFacetParser(slot: slot, whitespaceIndices: tokenIndices, encoder: encoder, encodedTokens: encodedTokens)
-                slots[slot.name] = Slot(type: slot.type, value: parsedValue)
+                let parsed = try self.slotFacetParser(slot: slot, whitespaceIndices: tokenIndices, encoder: encoder, encodedTokens: encodedTokens)
+                slots[slot.name] = Slot(type: slot.type, value: parsed.value, rawValue: parsed.rawValue)
             } else {
                 // no match, so create an empty slot
-                slots[slot.name] = Slot(type: slot.type, value: nil)
+                slots[slot.name] = Slot(type: slot.type, value: nil, rawValue: nil)
             }
         }
         return slots
     }
     
-    private func slotFacetParser(slot: NLUTensorflowSlot, whitespaceIndices: [Int], encoder: BertTokenizer, encodedTokens: EncodedTokens) throws -> Any? {
+    private func slotFacetParser(slot: NLUTensorflowSlot, whitespaceIndices: [Int], encoder: BertTokenizer, encodedTokens: EncodedTokens) throws -> (value: Any?, rawValue: String?) {
         switch slot.type {
         case "selset":
             // filter the slot selection aliases (and the slot selection name itself) to see if they match any tokens
@@ -86,28 +86,30 @@ internal struct NLUTensorflowSlotParser {
                 selection.name == decoded || selection.aliases.contains(decoded)
             }
             // just pick the first, if any, that matched
-            return contains.first?.name
+            return (contains.first?.name, decoded)
         case "integer":
             guard let parsed = try slot.parsed() as? NLUTensorflowInteger else {
                 throw NLUError.metadata("The NLU metadata for the \(slot.name) slot was not found.")
             }
-            let integer = try encoder
+            let decoded = try encoder
                 .decode(encodedTokens: encodedTokens, whitespaceIndices: whitespaceIndices)
+            let integer = decoded
                 .reduce([], { self.parseReduceNumber($0, next: $1) })
                 .reduce(0, { $0 + $1 })
             guard let lowerBound = parsed.range.first,
                 let upperBound = parsed.range.last
                 else {
-                    return nil
+                    return (nil, decoded.joined(separator: " "))
             }
             let range = lowerBound...upperBound
-            return range.contains(integer) ? integer : nil
+            return (range.contains(integer) ? integer : nil, decoded.joined(separator: " "))
         case "digits":
             guard let parsed = try slot.parsed() as? NLUTensorflowDigits else {
                 throw NLUError.metadata("The NLU metadata for the \(slot.name) slot was not found.")
             }
-            let digits = try encoder
+            let decoded = try encoder
                 .decode(encodedTokens: encodedTokens, whitespaceIndices: whitespaceIndices)
+            let digits = decoded
                 .map({ value in
                     if let cardinal = self.wordToNumber(value) {
                         return cardinal as String
@@ -116,11 +118,12 @@ internal struct NLUTensorflowSlotParser {
                     }
                 })
                 .joined()
-            return parsed.count == digits.count ? digits : nil
+            return (parsed.count == digits.count ? digits : nil, decoded.joined(separator: " "))
         case "entity":
-            return try encoder.decodeWithWhitespace(encodedTokens: encodedTokens, whitespaceIndices: whitespaceIndices)
+            let v = try encoder.decodeWithWhitespace(encodedTokens: encodedTokens, whitespaceIndices: whitespaceIndices)
+            return (v,v)
         default:
-            return nil
+            return (nil, nil)
         }
     }
     

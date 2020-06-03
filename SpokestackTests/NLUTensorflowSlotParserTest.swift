@@ -29,7 +29,8 @@ class NLUTensorflowSlotParserTest: XCTestCase {
         let et = EncodedTokens(tokensByWhitespace: ["kitchen"], encodedTokensByWhitespaceIndex: [0], encoded: [])
         let parsedSelset = try! parser.parse(tags: ["b_location"], intent: metadata!.intents.filter({ $0.name == "request.lights.deactivate" }).first!, encoder: encoder!, encodedTokens: et)
         XCTAssertEqual(parsedSelset!["location"]!.value as! String, "room")
-        
+        XCTAssertEqual(parsedSelset!["location"]!.rawValue!, "kitchen")
+
         // selset value has appended punctuation
         let et2 = EncodedTokens(tokensByWhitespace: ["kitchen."], encodedTokensByWhitespaceIndex: [0], encoded: [])
         let parsedSelset2 = try! parser.parse(tags: ["b_location"], intent: metadata!.intents.filter({ $0.name == "request.lights.deactivate" }).first!, encoder: encoder!, encodedTokens: et2)
@@ -40,7 +41,8 @@ class NLUTensorflowSlotParserTest: XCTestCase {
         let et1 = EncodedTokens(tokensByWhitespace: ["ten"], encodedTokensByWhitespaceIndex: [0], encoded: [])
         let parsedInteger10 = try! parser.parse(tags: ["b_rating"], intent: metadata!.intents.filter({ $0.name == "rate.app" }).first!, encoder: encoder!, encodedTokens: et1)
         XCTAssertEqual(parsedInteger10!["rating"]!.value as! Int, 10)
-        
+        XCTAssertEqual(parsedInteger10!["rating"]!.rawValue!, "ten")
+
         let et2 = EncodedTokens(tokensByWhitespace: ["fiftie", "one"],  encodedTokensByWhitespaceIndex: [0, 0, 0, 1], encoded: [])
         let parsedInteger51 = try! parser.parse(tags: ["b_rating", "i_rating", "i_rating", "i_rating"], intent: metadata!.intents.filter({ $0.name == "rate.app" }).first!, encoder: encoder!, encodedTokens: et2)
         XCTAssertEqual(parsedInteger51!["rating"]!.value as! Int, 51)
@@ -62,9 +64,11 @@ class NLUTensorflowSlotParserTest: XCTestCase {
         XCTAssertEqual(parsedDigitsNumeric!["phone_number"]!.value as! String, "4238341746")
 
         let taggedInputPhoneCardinal = ["b_phone_number", "i_phone_number", "i_phone_number", "i_phone_number", "i_phone_number", "i_phone_number", "i_phone_number", "i_phone_number", "i_phone_number", "i_phone_number"]
-        let et6 = EncodedTokens(tokensByWhitespace: ["4", "second", "three", "eighth", "three", "four", "one", "seven", "four", "six"], encodedTokensByWhitespaceIndex: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9], encoded: [])
+        let inputPhoneCardinal = ["4", "second", "three", "eighth", "three", "four", "one", "seven", "four", "six"]
+        let et6 = EncodedTokens(tokensByWhitespace: inputPhoneCardinal, encodedTokensByWhitespaceIndex: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9], encoded: [])
         let parsedDigitsCardinal = try! parser.parse(tags: taggedInputPhoneCardinal, intent: metadata!.intents.filter({ $0.name == "inform.phone_number" }).first!, encoder: encoder!, encodedTokens: et6)
         XCTAssertEqual(parsedDigitsCardinal!["phone_number"]!.value as! String, "4238341746")
+        XCTAssertEqual(parsedDigitsCardinal!["phone_number"]!.rawValue!, inputPhoneCardinal.joined(separator: " "))
     }
     
     func testParseEntity() {
