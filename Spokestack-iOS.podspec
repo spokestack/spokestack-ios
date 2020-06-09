@@ -16,7 +16,7 @@ Pod::Spec.new do |s|
   s.pod_target_xcconfig = {'SWIFT_INCLUDE_PATHS' => '$(SRCROOT)/Spokestack/VAD/Wit', 'HEADER_SEARCH_PATHS' => '$(SRCROOT)/Spokestack/VAD/Wit'}
   s.preserve_paths = 'Spokestack/**/*.modulemap'
   s.public_header_files = 'Spokestack/Spokestack.h'
-  s.dependency 'TensorFlowLiteSwift', '~> 1.14.0', :modular_headers => true
+  s.dependency 'TensorFlowLiteSwift', '~> 1.14.0'
   s.dependency 'filter_audio', '~> 0.5.0'
   s.static_framework = true
 
