@@ -1,7 +1,7 @@
 Pod::Spec.new do |s|
   s.name = 'Spokestack-iOS'
   s.module_name = 'Spokestack'
-  s.version = '10.1.0'
+  s.version = '10.1.1'
   s.license = 'Apache'
   s.summary = 'Spokestack provides an extensible speech interface for the iOS platform.'
   s.homepage = 'https://www.spokestack.io'
@@ -17,7 +17,7 @@ Pod::Spec.new do |s|
   s.preserve_paths = 'Spokestack/**/*.modulemap'
   s.public_header_files = 'Spokestack/Spokestack.h'
   s.dependency 'TensorFlowLiteSwift', '~> 1.14.0'
-  s.dependency 'filter_audio', '~> 0.4.3'
+  s.dependency 'filter_audio', '~> 0.5.0'
   s.static_framework = true
 
 end
