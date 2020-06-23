@@ -28,19 +28,13 @@ This pipeline component uses the Apple `SFSpeech` API to stream audio samples fo
                 phrases = self.configuration!.wakewords.components(separatedBy: ",")
                 // Tracing
                 self.traceLevel = self.configuration!.tracing
-                /// VAD
-                do {
-                    try self.vad.create(mode: self.configuration!.vadMode, delegate: self, frameWidth: self.configuration!.frameWidth, sampleRate: self.configuration!.sampleRate)
-                } catch {
-                    assertionFailure("AppleWakewordRecognizer failed to create a valid VAD")
-                }
             }
         }
     }
     /// Delegate which receives speech pipeline control events.
     public weak var delegate: SpeechEventListener?
     /// Global state for the speech pipeline.
-    public var context: SpeechContext = SpeechContext()
+    public var context: SpeechContext?
     
     // MARK: private properties
     
@@ -68,20 +62,11 @@ This pipeline component uses the Apple `SFSpeech` API to stream audio samples fo
     // MARK: private functions
     
     private func prepareAudioEngine() {
-        do {
-            try self.vad.create(mode: .HighlyPermissive,
-                                delegate: self,
-                                frameWidth: self.configuration!.frameWidth,
-                                sampleRate: self.configuration!.sampleRate)
-        } catch {
-            assertionFailure("AppleWakewordRecognizer failed to create a valid VAD")
-        }
-        
-        let buffer: Int = (self.configuration!.sampleRate / 1000) * self.configuration!.frameWidth
+        let bufferSize: Int = (self.configuration!.sampleRate / 1000) * self.configuration!.frameWidth
         self.audioEngine.inputNode.removeTap(onBus: 0) // a belt-and-suspenders approach to fixing https://github.com/wenkesj/react-native-voice/issues/46
         self.audioEngine.inputNode.installTap(
             onBus: 0,
-            bufferSize: AVAudioFrameCount(buffer),
+            bufferSize: AVAudioFrameCount(bufferSize),
             format: nil)
         {[weak self] buffer, when in
             guard let strongSelf = self else {
@@ -172,7 +157,7 @@ This pipeline component uses the Apple `SFSpeech` API to stream audio samples fo
                                     .contains($0.lowercased())})
                             .isEmpty
                     if wakewordDetected {
-                        strongSelf.context.isActive = true
+                        strongSelf.context?.isActive = true
                         strongSelf.configuration?.delegateDispatchQueue.async {
                             delegate.didActivate()
                         }
@@ -189,77 +174,42 @@ extension AppleWakewordRecognizer: SpeechProcessor {
     /// Triggered by the speech pipeline, instructing the recognizer to begin streaming and processing audio.
     /// - Parameter context: The current speech context.
     public func startStreaming(context: SpeechContext) {
-        AudioController.sharedInstance.delegate = self
         self.context = context
         self.prepareAudioEngine()
         self.audioEngine.prepare()
-        self.context.isStarted = true
+        self.context?.isStarted = true
     }
     
     /// Triggered by the speech pipeline, instructing the recognizer to stop streaming audio and complete processing.
     /// - Parameter context: The current speech context.
     public func stopStreaming(context: SpeechContext) {
-        AudioController.sharedInstance.delegate = nil
         self.context = context
         self.stopRecognition()
         self.dispatchWorker?.cancel()
         self.dispatchWorker = nil
         self.audioEngine.stop()
         self.audioEngine.inputNode.removeTap(onBus: 0)
-        self.context.isStarted = false
+        self.context?.isStarted = false
     }
-}
-
-// MARK: AudioControllerDelegate implementation
-
-extension AppleWakewordRecognizer: AudioControllerDelegate {
     
     /// Receives a frame of audio samples for processing. Interface between the `SpeechProcessor` and `AudioController` components.
     ///
     /// Processes audio in an async thread.
     /// - Parameter frame: Frame of audio samples.
-    func process(_ frame: Data) -> Void {
-        /// multiplex the audio frame data to both the vad and, if activated, the model pipelines
-        audioProcessingQueue.async {[weak self] in
-            guard let strongSelf = self else { return }
-            do { try strongSelf.vad.process(frame: frame, isSpeech: false) } // TODO: this will only trigger VAD activation the first time, and run the ASR continuously subsequently.
-            catch let error {
-                strongSelf.configuration?.delegateDispatchQueue.async {
-                    strongSelf.delegate?.failure(speechError: error)
+    public func process(_ frame: Data) throws -> Void {
+        guard let context = self.context else { return }
+        if context.isSpeech {
+            if !context.isActive {
+                do {
+                    try self.audioEngine.start()
+                    self.startRecognition()
+                } catch let error {
+                    self.configuration?.delegateDispatchQueue.async {
+                        self.delegate?.failure(speechError: error)
+                    }
                 }
             }
-        }
-    }
-}
-
-// MARK: VADDelegate implementation
-
-extension AppleWakewordRecognizer: VADDelegate {
-    
-    /// Called when the VAD has detected speech.
-    /// - Parameter frame: The first frame of audio samples with speech detected in it.
-    public func activate(frame: Data) {
-        if (self.context.isActive || self.recognitionTaskRunning) {
-            // asr is active, so don't interrupt
-        } else if (self.context.isStarted){
-            self.context.isSpeech = true
-            do {
-                try self.audioEngine.start()
-                self.startRecognition()
-            } catch let error {
-                self.configuration?.delegateDispatchQueue.async {
-                    self.delegate?.failure(speechError: error)
-                }
-            }
-        }
-    }
-    
-    /// Called when the VAD has stopped detecting speech.
-    public func deactivate() {
-        if (self.context.isActive) {
-            // asr is active, so don't interrupt
-        } else {
-            self.context.isSpeech = false
+        } else if context.isActive {
             self.stopRecognition()
             self.audioEngine.pause()
         }

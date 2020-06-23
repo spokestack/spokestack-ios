@@ -48,12 +48,8 @@ class AppleASRViewController: UIViewController {
         let config: SpeechConfiguration = SpeechConfiguration()
         config.tracing = .DEBUG
         config.delegateDispatchQueue = DispatchQueue.main
-        
-        return SpeechPipeline(SpeechProcessors.appleSpeech.processor,
-                              speechConfiguration: config,
-                              speechDelegate: self,
-                              wakewordService: SpeechProcessors.appleWakeword.processor,
-                              pipelineDelegate: self)
+        config.stages = [.appleSpeech]
+        return SpeechPipeline(configuration: config, listeners: [self])
     }()
     
     override func loadView() {

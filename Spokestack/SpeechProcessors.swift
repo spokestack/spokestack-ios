@@ -16,6 +16,8 @@ import Foundation
     case tfLiteWakeword
     /// AppleSpeechRecognizer
     case appleSpeech
+    /// WebRTCVAD
+    case vad
 }
 
 extension SpeechProcessors {
@@ -23,6 +25,8 @@ extension SpeechProcessors {
     /// - Returns: singleton instance of the specified `SpeechProcessor`
     public var processor: SpeechProcessor {
         switch self {
+        case .vad:
+            return WebRTCVAD.sharedInstance
         case .appleWakeword:
             return AppleWakewordRecognizer.sharedInstance
         case .tfLiteWakeword:

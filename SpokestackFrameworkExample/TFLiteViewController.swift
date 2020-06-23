@@ -81,11 +81,8 @@ class TFLiteViewController: UIViewController {
         c.detectModelPath = detectPath
         c.tracing = Trace.Level.PERF
         c.delegateDispatchQueue = DispatchQueue.main
-        return SpeechPipeline(SpeechProcessors.appleSpeech.processor,
-                              speechConfiguration: c,
-                              speechDelegate: self,
-                              wakewordService: SpeechProcessors.tfLiteWakeword.processor,
-                              pipelineDelegate: self)
+        c.stages = [.tfLiteWakeword]
+        return SpeechPipeline(configuration: c, listeners: [self])
     }
     
     @objc func startRecordingAction(_ sender: Any) {

@@ -16,13 +16,8 @@ import Foundation
     /// The global configuration for all speech pipeline components.
     var configuration: SpeechConfiguration? { get set }
     
-    /// Delegate for sending speech pipeline control events.
-    ///
-    /// The interpretation of what control event to trigger based on a component processing result is left to the component.
-    var delegate: SpeechEventListener? { get set }
-    
     /// Global speech context.
-    var context: SpeechContext { get set }
+    var context: SpeechContext? { get set }
     
     /// Trigger from the speech pipeline for the component to begin processing the audio stream.
     /// - Parameter context: The current speech context.
@@ -31,4 +26,8 @@ import Foundation
     /// Trigger from the speech pipeline for the component to stop processing the audio stream.
     /// - Parameter context: The current speech context.
     func stopStreaming(context: SpeechContext) -> Void
+    
+    /// Receives a frame of audio samples for processing. Interface between the `SpeechProcessor` and `AudioController` components.
+    /// - Parameter frame: Audio frame of samples.
+    func process(_ frame: Data) throws -> Void
 }

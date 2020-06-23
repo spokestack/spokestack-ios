@@ -221,7 +221,7 @@ class SpeechPipelineTestDelegate: PipelineDelegate, SpeechEventListener {
 class TestProcessor: SpeechProcessor {
     var configuration: SpeechConfiguration?
     var delegate: SpeechEventListener?
-    var context: SpeechContext = SpeechContext()
+    var context: SpeechContext? = SpeechContext()
     var isSpeechProcessor: Bool = false
     
     init() {}

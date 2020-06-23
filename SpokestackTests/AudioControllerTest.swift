@@ -26,7 +26,6 @@ class AudioControllerTest: XCTestCase {
         
         // Initialized PipelineDelegate is called during startStreaming
         controller.pipelineDelegate = delegate
-        controller.delegate = delegate
         delegate.asyncExpectation = setupFailedExpectation
         XCTAssertNoThrow(try AVAudioSession.sharedInstance().setCategory(.ambient))
         XCTAssertNoThrow(controller.startStreaming(context: context))
@@ -40,7 +39,6 @@ class AudioControllerTest: XCTestCase {
         // AudioControllerDelegate processFrame is called
         XCTAssertNoThrow(try AVAudioSession.sharedInstance().setCategory(.record))
         delegate.asyncExpectation = processFrameExpectation
-        XCTAssertNotNil(controller.delegate)
         XCTAssertNotNil(delegate.asyncExpectation)
         XCTAssertNoThrow(controller.startStreaming(context: context))
         wait(for: [processFrameExpectation], timeout: 2)

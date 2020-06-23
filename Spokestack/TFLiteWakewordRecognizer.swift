@@ -15,15 +15,15 @@ import TensorFlowLite
  This pipeline component streams audio samples and uses a TensorFlow Lite binary classifier to detect keyword phrases to process for wakeword recognition. Once a wakeword phrase is detected, the speech pipeline is activated.
  
  Upon activating the speech pipeline, the recognizer completes processing and awaits another coordination call. Once speech pipeline coordination via `stopStreaming` is received, the recognizer stops processing and awaits another coordination event.
-
+ 
  Once speech pipeline coordination via `startStreaming` is received, the recognizer begins streaming buffered frames that are first normalized and then converted to the magnitude Short-Time Fourier Transform (STFT) representation over a hopped sliding window. This linear spectrogram is then converted to a mel spectrogram via a "filter" TensorFlow model. These mel frames are batched together into a sliding window.
-
+ 
  The mel spectrogram represents the features to be passed to the autoregressive encoder (usually an rnn or crnn), which is implemented in an "encode" TensorFlow model. This encoder outputs an encoded vector and a state vector. The encoded vectors are batched together into a sliding window for classification, and the state vector is used to perform the autoregressive transduction over the mel frames.
  
  The "detect" TensorFlow model takes the encoded sliding window and outputs a single posterior value in the range [0, 1]. The higher the value, the more likely a keyword phrase is detected. This classifier is commonly implemented as an attention mechanism over the encoder window.
  
  The detector's outputs are then compared against a configured threshold in order to determine whether to activate the pipeline. If the posterior is greater than the threshold, the pipeline is activated.
-*/
+ */
 public class TFLiteWakewordRecognizer: NSObject {
     
     // MARK: Public (properties)
@@ -44,9 +44,9 @@ public class TFLiteWakewordRecognizer: NSObject {
             }
         }
     }
-
+    
     /// Global state for the speech pipeline.
-    public var context: SpeechContext = SpeechContext()
+    public var context: SpeechContext?
     
     // MARK: Private (properties)
     
@@ -94,7 +94,7 @@ public class TFLiteWakewordRecognizer: NSObject {
     
     /// attention model posteriors
     private var posteriorThreshold: Float = 0
-
+    
     /// Tracing
     private var traceLevel: Trace.Level = Trace.Level.NONE
     private var sampleCollector: Array<Float>?
@@ -104,7 +104,7 @@ public class TFLiteWakewordRecognizer: NSObject {
     private var stateCollector: Array<Float>?
     private var detectCollector: Array<Float>?
     private var posteriorMax: Float?
-
+    
     // MARK: NSObject methods
     
     deinit {
@@ -113,7 +113,7 @@ public class TFLiteWakewordRecognizer: NSObject {
     public override init() {
         super.init()
     }
-        
+    
     // MARK: Configuration processing
     
     private func validateConfiguration() -> Void {
@@ -173,20 +173,13 @@ public class TFLiteWakewordRecognizer: NSObject {
                 self.stateCollector = []
                 self.detectCollector = []
             }
-
-            /// VAD
-            do {
-                try self.vad.create(mode: c.vadMode, delegate: self, frameWidth: c.frameWidth, sampleRate: c.sampleRate)
-            } catch {
-                assertionFailure("TFLiteWakewordRecognizer failed to create a valid VAD")
-            }
             
             // Signal normalization
             self.rmsAlpha = c.rmsAlpha
             self.rmsTarget = c.rmsTarget
             self.rmsValue = self.rmsTarget
             self.preEmphasis = c.preEmphasis
-
+            
             // Sliding window buffers
             self.fftFrame = Array(repeating: 0.0, count: c.fftWindowSize)
             self.melWidth = c.melFrameWidth
@@ -245,7 +238,7 @@ public class TFLiteWakewordRecognizer: NSObject {
             self.prevSample = currentSample
             
             if self.traceLevel.rawValue < Trace.Level.PERF.rawValue {
-              self.sampleCollector?.append(sample)
+                self.sampleCollector?.append(sample)
             }
             
             // Process the sample
@@ -401,7 +394,7 @@ public class TFLiteWakewordRecognizer: NSObject {
                     if posterior > self.posteriorThreshold {
                         return true
                     }
-                 }
+                }
             }
         }
         return false
@@ -424,7 +417,7 @@ public class TFLiteWakewordRecognizer: NSObject {
         
         // control flow deactivation
         self.activeLength = 0
-}
+    }
     
     private func debug() -> Void {
         Trace.trace(Trace.Level.PERF, config: self.configuration, message: "wake: \(self.posteriorMax!)", delegate: self.delegate, caller: self)
@@ -442,51 +435,31 @@ public class TFLiteWakewordRecognizer: NSObject {
 // MARK: SpeechProcessor implementation
 
 extension TFLiteWakewordRecognizer : SpeechProcessor {
-
+    
     /// Triggered by the speech pipeline, instructing the recognizer to begin streaming and processing audio.
     /// - Parameter context: The current speech context.
     public func startStreaming(context: SpeechContext) -> Void {
-        AudioController.sharedInstance.delegate = self
         self.context = context
-        self.context.isStarted = true
-
+        self.context?.isStarted = true
     }
     
     /// Triggered by the speech pipeline, instructing the recognizer to stop streaming audio and complete processing.
     /// - Parameter context: The current speech context.
     public func stopStreaming(context: SpeechContext) -> Void {
-        AudioController.sharedInstance.delegate = nil
         self.context = context
-        self.context.isStarted = false
-
+        self.context?.isStarted = false
     }
-}
-
-// MARK: AudioControllerDelegate implementation
-
-extension TFLiteWakewordRecognizer: AudioControllerDelegate {
     
     /// Receives a frame of audio samples for processing. Interface between the `SpeechProcessor` and `AudioController` components.
     ///
     /// Processes audio in an async thread.
     /// - Parameter frame: Frame of audio samples.
-    func process(_ frame: Data) -> Void {
-        // multiplex the audio frame data to both the vad and, if activated, the model pipelines
+    public func process(_ frame: Data) throws -> Void {
         audioProcessingQueue.async {[weak self] in
             guard let strongSelf = self else { return }
-        
-            // always run the frame through the vad, since that will determine speech activation/deactivation edges
-            do { try strongSelf.vad.process(frame: frame, isSpeech:
-                strongSelf.context.isSpeech) }
-            catch let error {
-                strongSelf.configuration?.delegateDispatchQueue.async {
-                    strongSelf.delegate?.failure(speechError: error)
-                }
-            }
-            
-            // if the vad is detecting speech, check for wakeword activation
-            if strongSelf.context.isSpeech {
-                if !strongSelf.context.isActive {
+            guard let context = strongSelf.context else { return }
+            if context.isSpeech {
+                if !context.isActive {
                     // Run the current frame through the detector pipeline.
                     // Activate the pipeline if a keyword phrase was detected.
                     do {
@@ -495,9 +468,9 @@ extension TFLiteWakewordRecognizer: AudioControllerDelegate {
                         try strongSelf.sample(frame)
                         let activate = try strongSelf.detect()
                         if activate {
-                            strongSelf.context.isActive = true
+                            strongSelf.context?.isActive = true
                             strongSelf.reset()
-                            strongSelf.stopStreaming(context: strongSelf.context)
+                            strongSelf.stopStreaming(context: context)
                             strongSelf.configuration?.delegateDispatchQueue.async {
                                 strongSelf.delegate?.didActivate()
                             }
@@ -511,41 +484,24 @@ extension TFLiteWakewordRecognizer: AudioControllerDelegate {
                     strongSelf.activeLength += 1
                     // Continue this wakeword (or external) activation for at least the activation minimum, until a vad deactivation or timeout
                     if (strongSelf.activeLength > strongSelf.minActive) && (strongSelf.activeLength >= strongSelf.maxActive) {
-                        strongSelf.context.isActive = false
+                        strongSelf.context?.isActive = false
                         strongSelf.configuration?.delegateDispatchQueue.async {
                             strongSelf.delegate?.didDeactivate()
                         }
                     }
                 }
-            // detect speech deactivation edge
+                // detect speech deactivation edge
             } else if strongSelf.isSpeech {
-                if !strongSelf.context.isActive {
+                if !context.isActive {
                     strongSelf.debug()
                 }
+            } else {
+                if (!context.isActive ||
+                    (context.isActive && strongSelf.activeLength >= strongSelf.maxActive)) {
+                    context.isSpeech = false
+                }
             }
-            strongSelf.isSpeech = strongSelf.context.isSpeech
-        }
-    }
-}
-
-// MARK: VADDelegate implementation
-
-extension TFLiteWakewordRecognizer: VADDelegate {
-    
-    /// Called when the VAD has detected speech.
-    /// - Parameter frame: The first frame of audio samples with speech detected in it.
-    public func activate(frame: Data) {
-        // activate the speech context
-        self.context.isSpeech = true
-        // process the first frames of speech data from the vad
-        self.process(frame)
-    }
-    
-    // Called when the VAD as stopped detecting speech.
-    public func deactivate() {
-        if !self.context.isActive ||
-            (self.context.isActive && self.activeLength >= self.maxActive) {
-            self.context.isSpeech = false
+            strongSelf.isSpeech = context.isSpeech
         }
     }
 }

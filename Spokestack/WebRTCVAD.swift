@@ -30,10 +30,35 @@ private var sampleRate32: Int32 = 16000
 private var frameBuffer: RingBuffer<Int16>!
 
 /// Swift wrapper for WebRTC's voice activity detector.
-public class WebRTCVAD: NSObject {
+@objc public class WebRTCVAD: NSObject, SpeechProcessor {
+
+    /// Singleton instance.
+    @objc public static let sharedInstance: WebRTCVAD = WebRTCVAD()
     
-    /// Callback delegate for activation and error events.
-    public var delegate: VADDelegate?
+    public var configuration: SpeechConfiguration? = SpeechConfiguration() {
+        didSet {
+            if let _ = configuration {
+                do { try self.configure() }
+                catch let error {
+                    /// - TODO: implement
+                }
+            }
+        }
+    }
+    
+    public var context: SpeechContext?
+    
+    public func startStreaming(context: SpeechContext) {
+        self.context = context
+    }
+    
+    public func stopStreaming(context: SpeechContext) {
+        self.context = context
+    }
+    
+    public override init() {
+        super.init()
+    }
     
     deinit {
         WebRtcVad_Free(vad.pointee)
@@ -46,17 +71,14 @@ public class WebRTCVAD: NSObject {
     /// - Parameter sampleRate: Rate of the samples in an audio frame.
     ///
     /// - Throws: VADError.invalidConfiguration if the frameWidth or sampleRate are not supported.
-    public func create(mode: VADMode, delegate: VADDelegate, frameWidth: Int, sampleRate: Int) throws {
-        
+    private func configure() throws {
+        guard let c = self.configuration else { return }
         // validation of configurable parameters
-        try self.validate(frameWidth: frameWidth, sampleRate: sampleRate)
-        
-        /// set public property
-        self.delegate = delegate
-        
+        try self.validate(frameWidth: c.frameWidth, sampleRate: c.sampleRate)
+                
         // set private properties
-        frameBufferStride = frameWidth*(sampleRate/1000) // eg 20*(16000/1000) = 320
-        sampleRate32 = Int32(sampleRate)
+        frameBufferStride = c.frameWidth*(c.sampleRate/1000) // eg 20*(16000/1000) = 320
+        sampleRate32 = Int32(c.sampleRate)
         frameBufferStride32 = Int32(frameBufferStride)
         frameBuffer = RingBuffer(frameBufferStride, repeating: 0)
         
@@ -66,7 +88,7 @@ public class WebRTCVAD: NSObject {
         if errorCode != 0 { throw VADError.initialization("unable to create a WebRTCVAD struct, which returned error code \(errorCode)") }
         errorCode = WebRtcVad_Init(vad.pointee)
         if errorCode != 0 { throw VADError.initialization("unable to initialize WebRTCVAD, which returned error code \(errorCode)") }
-        errorCode = WebRtcVad_set_mode(vad.pointee, Int32(mode.rawValue))
+        errorCode = WebRtcVad_set_mode(vad.pointee, Int32(c.vadMode.rawValue))
         if errorCode != 0 {
             WebRtcVad_Free(vad.pointee)
             throw VADError.initialization("unable to set WebRTCVAD mode, which returned error code \(errorCode)")
@@ -90,7 +112,7 @@ public class WebRTCVAD: NSObject {
     /// - Parameter isSpeech: Whether speech was detected in the last frame.
     ///
     /// - Throws: RingBufferStateError.illegalState if the frame buffer enters an invalid state
-    public func process(frame: Data, isSpeech: Bool) throws -> Void {
+    public func process(_ frame: Data) throws -> Void {
         do {
             var detected: Bool = false
             let samples: Array<Int16> = frame.elements()
@@ -123,13 +145,15 @@ public class WebRTCVAD: NSObject {
                     }
                 }
             }
-            if detected {
-                if !isSpeech {
-                    self.delegate?.activate(frame: frame)
-                }
-            } else {
-                if isSpeech {
-                    self.delegate?.deactivate()
+            if let isSpeech = self.context?.isSpeech {
+                if detected {
+                    if !isSpeech {
+                        self.context?.isSpeech = detected
+                    }
+                } else {
+                    if isSpeech {
+                        self.context?.isSpeech = detected
+                    }
                 }
             }
         } catch let error {

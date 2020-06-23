@@ -23,10 +23,11 @@ func recordingCallback(
     inBusNumber: UInt32,
     inNumberFrames: UInt32,
     ioData: UnsafeMutablePointer<AudioBufferList>?) -> OSStatus {
-
+    
     guard let remoteIOUnit: AudioComponentInstance = AudioController.sharedInstance.remoteIOUnit else {
         return kAudioServicesSystemSoundUnspecifiedError
     }
+    guard let config = AudioController.sharedInstance.configuration else { return OSStatus(-1) } // TODO: what OSStatus should be returned?
     var status: OSStatus = noErr
     let channelCount: UInt32 = 1
     var bufferList = AudioBufferList()
@@ -48,14 +49,21 @@ func recordingCallback(
     if status != noErr {
         return status
     }
-        
+    
     if buffers[0].mData != nil {
         let data: Data = Data(bytes: buffers[0].mData!, count: Int(buffers[0].mDataByteSize))
         // NB: errors like
         // AUBuffer.h:61:GetBufferList: EXCEPTION (-1) [mPtrState == kPtrsInvalid is false]: ""
         // are irrelevant
         audioProcessingQueue.sync {
-            AudioController.sharedInstance.delegate?.process(data)
+            config.stages.forEach({ stage in
+                do {
+                    try stage.processor.process(data)
+                }
+                catch let error {
+                    /// - TODO: implement
+                }
+            })
         }
     }
     
@@ -69,14 +77,13 @@ class AudioController {
     
     /// Singleton instance
     public static let sharedInstance: AudioController = AudioController()
-    /// Delegate for receivng the `recordingCallback`'s `process` function.
-    /// - SeeAlso: recordingCallback
-    public weak var delegate: AudioControllerDelegate?
     /// Delegate for receiving `setupFailure` events in the speech pipeline.
     public weak var pipelineDelegate: PipelineDelegate?
     /// Configuration for the audio controller.
-    public var configuration: SpeechConfiguration = SpeechConfiguration()
+    public var configuration: SpeechConfiguration?
+    public var context: SpeechContext?
 
+    
     // MARK: Private (properties)
     
     // private var bufferDuration: TimeInterval = TimeInterval((configuration.sampleRate / 1000) * configuration.frameWidth)
@@ -115,15 +122,16 @@ class AudioController {
     /// - SeeAlso: AudioControllerDelegate
     /// - Parameter context: Global state for the speech pipeline.
     func startStreaming(context: SpeechContext) -> Void {
+        self.context = context
         self.checkAudioSession()
         do {
             try self.start()
         } catch AudioError.audioSessionSetup(let message) {
-            self.configuration.delegateDispatchQueue.async {
+            self.configuration?.delegateDispatchQueue.async {
                 self.pipelineDelegate?.setupFailed(message)
             }
         } catch {
-            self.configuration.delegateDispatchQueue.async {
+            self.configuration?.delegateDispatchQueue.async {
                 self.pipelineDelegate?.setupFailed("An unknown error occured starting the stream")
             }
         }
@@ -133,14 +141,15 @@ class AudioController {
     /// - SeeAlso: AudioControllerDelegate
     /// - Parameter context: Global state for the speech pipeline.
     func stopStreaming(context: SpeechContext) -> Void {
+        self.context = context
         do {
             try self.stop()
         } catch AudioError.audioSessionSetup(let message) {
-            self.configuration.delegateDispatchQueue.async {
+            self.configuration?.delegateDispatchQueue.async {
                 self.pipelineDelegate?.setupFailed(message)
             }
         } catch {
-            self.configuration.delegateDispatchQueue.async {
+            self.configuration?.delegateDispatchQueue.async {
                 self.pipelineDelegate?.setupFailed("An unknown error occured ending the stream")
             }
         }
@@ -183,7 +192,7 @@ class AudioController {
         case AVAudioSession.Category.playAndRecord:
             break
         default:
-            self.configuration.delegateDispatchQueue.async {
+            self.configuration?.delegateDispatchQueue.async {
                 self.pipelineDelegate?.setupFailed("Incompatible AudioSession category is set.")
             }
         }
@@ -191,13 +200,14 @@ class AudioController {
     
     private func prepareRemoteIOUnit() -> OSStatus {
         var status: OSStatus = noErr
+        guard let config = self.configuration else { return OSStatus(-1) } // TODO: value for OSStatus?
         let remoteIOComponent = AudioComponentFindNext(nil, &audioComponentDescription)
         status = AudioComponentInstanceNew(remoteIOComponent!, &remoteIOUnit)
         if status != noErr {
             return status
         }
         
-        // MARK: Configure the RemoteIO unit for input
+        // Configure the RemoteIO unit for input
         
         let bus1: AudioUnitElement = 1
         var oneFlag: UInt32 = 1
@@ -211,9 +221,9 @@ class AudioController {
             return status
         }
         
-        // MARK: set format for mic input (bus 1) on RemoteIO unit's output scope
+        // set format for mic input (bus 1) on RemoteIO unit's output scope
         var asbd: AudioStreamBasicDescription = AudioStreamBasicDescription()
-        asbd.mSampleRate = Double(self.configuration.sampleRate)
+        asbd.mSampleRate = Double(config.sampleRate)
         asbd.mFormatID = kAudioFormatLinearPCM
         asbd.mFormatFlags = kAudioFormatFlagIsSignedInteger | kAudioFormatFlagIsPacked
         asbd.mBytesPerPacket = 2
@@ -231,7 +241,7 @@ class AudioController {
             return status
         }
         
-        // MARK: Set the recording callback
+        // Set the recording callback
         
         var callbackStruct: AURenderCallbackStruct = AURenderCallbackStruct()
         callbackStruct.inputProc = recordingCallback
@@ -246,7 +256,7 @@ class AudioController {
             return status
         }
         
-        // MARK: Initialize the RemoteIO unit
+        // Initialize the RemoteIO unit
         
         return AudioUnitInitialize(self.remoteIOUnit!)
     }

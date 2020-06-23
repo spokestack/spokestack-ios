@@ -30,115 +30,41 @@ import Foundation
     // MARK: Public (properties)
     
     /// Pipeline configuration parameters.
-    public private (set) var speechConfiguration: SpeechConfiguration?
-    /// Delegate that receives speech events.
-    public weak var speechDelegate: SpeechEventListener?
-    /// Delegate that receives pipeline events.
-    public private (set) var pipelineDelegate: PipelineDelegate?
+    public private (set) var configuration: SpeechConfiguration
     /// Global state for the speech pipeline.
     public let context: SpeechContext = SpeechContext()
     
     
     // MARK: Private (properties)
     
-    private var speechRecognizerService: SpeechProcessor
-    private var wakewordRecognizerService: SpeechProcessor
+    private var stages: [SpeechProcessors]?
+    private var listeners: [SpeechEventListener]?
     
     // MARK: Initializers
     
     deinit {
-        speechRecognizerService.delegate = nil
-        wakewordRecognizerService.delegate = nil
-    }
-    
-    /// Initializes a new speech pipeline instance with reasonable defaults for configuration, wakeword, and asr recognizers.
-    /// - Parameter speechDelegate: An implementation of `SpeechEventListener`.
-    /// - Parameter pipelineDelegate: An implementation of `PipelineDelegate`.
-    @objc public init(_ speechDelegate: SpeechEventListener,
-                      pipelineDelegate: PipelineDelegate) {
-        let c = SpeechConfiguration()
-        self.speechConfiguration = SpeechConfiguration()
-        self.speechDelegate = speechDelegate
-        
-        self.speechRecognizerService = SpeechProcessors.appleSpeech.processor
-        /// order is important: set the delegate first so that configuration errors/tracing can be sent back
-        self.speechRecognizerService.delegate = self.speechDelegate
-        self.speechRecognizerService.configuration = c
-        self.wakewordRecognizerService = SpeechProcessors.appleWakeword.processor
-        /// see previous comment
-        self.wakewordRecognizerService.delegate = self.speechDelegate
-        self.wakewordRecognizerService.configuration = c
-        
-        AudioController.sharedInstance.configuration = c
-        
-        self.pipelineDelegate = pipelineDelegate
-        AudioController.sharedInstance.pipelineDelegate = self.pipelineDelegate
-        super.init()
-        c.delegateDispatchQueue.async {
-            self.pipelineDelegate?.didInit()
-        }
+        self.listeners = nil
+        self.stages = nil
     }
     
     /// Initializes a new speech pipeline instance.
-    /// - Parameter speechService: An implementation of `SpeechProcessor`.
     /// - Parameter speechConfiguration: Configuration parameters for the speech pipeline.
-    /// - Parameter speechDelegate: An implementation of `SpeechEventListener`.
-    /// - Parameter wakewordService: An implementation of `SpeechProcessor`.
-    /// - Parameter pipelineDelegate: An implementation of `PipelineDelegate`.
-    @objc public init(_ speechService: SpeechProcessor,
-                      speechConfiguration: SpeechConfiguration,
-                      speechDelegate: SpeechEventListener,
-                      wakewordService: SpeechProcessor,
-                      pipelineDelegate: PipelineDelegate) {
-        self.speechConfiguration = speechConfiguration
-        self.speechDelegate = speechDelegate
-        
-        self.speechRecognizerService = speechService
-        /// order is important: set the delegate first so that configuration errors/tracing can be sent back
-        self.speechRecognizerService.delegate = self.speechDelegate
-        self.speechRecognizerService.configuration = speechConfiguration
-        self.wakewordRecognizerService = wakewordService
-        /// see previous comment
-        self.wakewordRecognizerService.delegate = self.speechDelegate
-        self.wakewordRecognizerService.configuration = speechConfiguration
-        
-        AudioController.sharedInstance.configuration = speechConfiguration
-        
-        self.pipelineDelegate = pipelineDelegate
-        AudioController.sharedInstance.pipelineDelegate = self.pipelineDelegate
+    /// - Parameter listeners: Client implementations of `SpeechEventListener`.
+    @objc public init(configuration: SpeechConfiguration, listeners: [SpeechEventListener]?) {
+        self.configuration = configuration
+        self.stages = configuration.stages
+        self.listeners = listeners
+        AudioController.sharedInstance.configuration = configuration
         super.init()
-        self.speechConfiguration?.delegateDispatchQueue.async {
-            self.pipelineDelegate?.didInit()
+        
+        // initialization finished, emit the corresponding event
+        self.configuration.delegateDispatchQueue.async {
+            self.listeners?.forEach({ listener in
+                listener.didInit()
+            })
         }
     }
-    
-    /// MARK: Pipeline status
-    
-    /// Checks the status of the delegates provided in the constructor.
-    ///
-    /// - Remarks: Verifies that a strong reference to the delegates is being held.
-    /// - SeeAlso: `setDelegates`
-    /// - Returns: whether the delegate properties are currently set
-    @objc public func status() -> Bool {
-        guard
-            let _ = self.speechDelegate,
-            let _ = self.pipelineDelegate
-        else {
-            return false
-        }
-        return true
-    }
-    
-    /// Sets the property for the`SpeechEventListener` delegate .
-    /// - Parameter speechDelegate: a `SpeechEventListener` protocol implementer.
-    @objc public func setDelegates(_ speechDelegate: SpeechEventListener, pipelineDelegate: PipelineDelegate) -> Void {
-        self.speechDelegate = speechDelegate
-        self.speechRecognizerService.delegate = self.speechDelegate
-        self.wakewordRecognizerService.delegate = self.speechDelegate
-        self.pipelineDelegate = pipelineDelegate
-        AudioController.sharedInstance.pipelineDelegate = self.pipelineDelegate
-    }
-    
+ 
     /// MARK: Pipeline control
     
     /**
@@ -151,40 +77,41 @@ import Foundation
      - SeeAlso: `wakeActiveMin`, `wakeActiveMax`
     */
     @objc public func activate() -> Void {
-        self.wakewordRecognizerService.stopStreaming(context: self.context)
-        self.speechRecognizerService.startStreaming(context: self.context)
+        self.context.isActive = true
     }
     
     /// Deactivates speech recognition.  The pipeline returns to awaiting either wakeword activation or an explicit `activate` call.
     /// - SeeAlso: `activate`
     @objc public func deactivate() -> Void {
-        self.speechRecognizerService.stopStreaming(context: self.context)
-        self.wakewordRecognizerService.startStreaming(context: self.context)
+        self.context.isActive = false
     }
     
     /// Starts  the speech pipeline.
     ///
     /// The pipeline starts in a deactivated state, awaiting either a wakeword activation or an explicit call to `activate`.
     @objc public func start() -> Void {
-        if (self.context.isActive) {
-            self.stop()
-        }
+        self.context.isStarted = true
         AudioController.sharedInstance.startStreaming(context: self.context)
-        self.wakewordRecognizerService.startStreaming(context: self.context)
-        self.speechConfiguration?.delegateDispatchQueue.async {
-            self.pipelineDelegate?.didStart()
-        }
+        self.stages?.forEach({ stage in
+            stage.processor.configuration = self.configuration
+            stage.processor.startStreaming(context: self.context)
+        })
+        self.listeners?.forEach({ listener in
+            listener.didStart()
+        })
     }
     
     /// Stops the speech pipeline.
     ///
     /// All pipeline activity is stopped, and the pipeline cannot be activated until it is `start`ed again.
     @objc public func stop() -> Void {
-        self.speechRecognizerService.stopStreaming(context: self.context)
-        self.wakewordRecognizerService.stopStreaming(context: self.context)
+        self.context.isStarted = false
+        self.stages?.forEach({ stage in
+            stage.processor.stopStreaming(context: self.context)
+        })
         AudioController.sharedInstance.stopStreaming(context: self.context)
-        self.speechConfiguration?.delegateDispatchQueue.async {
-            self.pipelineDelegate?.didStop()
-        }
+        self.listeners?.forEach({ listener in
+            listener.didStop()
+        })
     }
 }
