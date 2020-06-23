@@ -25,7 +25,7 @@ import Speech
     /// Delegate which receives speech pipeline control events.
     public weak var delegate: SpeechEventListener?
     /// Global state for the speech pipeline.
-    public var context: SpeechContext = SpeechContext()
+    public var context: SpeechContext? = SpeechContext()
     
     // MARK: private properties
     
@@ -52,7 +52,7 @@ import Speech
     /// - Parameter context: The current speech context.
     public func startStreaming(context: SpeechContext) {
         do {
-            context.isActive = true
+            self.context?.isActive = true
             self.prepareAudioEngine()
             self.recognitionRequest = SFSpeechAudioBufferRecognitionRequest()
             self.recognitionRequest?.shouldReportPartialResults = true
@@ -60,7 +60,7 @@ import Speech
             self.audioEngine.prepare()
             try self.audioEngine.start()
             self.wakeActiveMaxWorker = DispatchWorkItem {[weak self] in
-                context.isActive = false
+                self?.context?.isActive = false
                 self?.configuration?.delegateDispatchQueue.async {
                     self?.delegate?.didTimeout()
                     self?.delegate?.didDeactivate()
@@ -85,7 +85,7 @@ import Speech
         self.wakeActiveMaxWorker?.cancel()
         self.audioEngine.stop()
         self.audioEngine.inputNode.removeTap(onBus: 0)
-        context.isActive = false
+        self.context?.isActive = false
     }
     
     // MARK: private functions
@@ -130,7 +130,7 @@ import Speech
                                 break
                             case 203: // request timed out, retry
                                 Trace.trace(Trace.Level.INFO, config: strongSelf.configuration, message: "resultHandler error 203", delegate: strongSelf.delegate, caller: strongSelf)
-                                context.isActive = false
+                                self?.context?.isActive = false
                                 strongSelf.configuration?.delegateDispatchQueue.async {
                                     delegate.didDeactivate()
                                 }
@@ -158,10 +158,10 @@ import Speech
                     let confidence = r.transcriptions.first?.segments.sorted(
                         by: { (a, b) -> Bool in
                             a.confidence <= b.confidence }).first?.confidence ?? 0.0
-                    context.transcript = r.bestTranscription.formattedString
-                    context.confidence = confidence
+                    self?.context?.transcript = r.bestTranscription.formattedString
+                    self?.context?.confidence = confidence
                     strongSelf.vadFallWorker = DispatchWorkItem {[weak self] in
-                        context.isActive = false
+                        self?.context?.isActive = false
                         strongSelf.configuration?.delegateDispatchQueue.async {
                             self?.delegate?.didRecognize(context)
                             self?.delegate?.didDeactivate()

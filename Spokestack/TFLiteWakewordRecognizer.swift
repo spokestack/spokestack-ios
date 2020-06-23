@@ -46,7 +46,7 @@ public class TFLiteWakewordRecognizer: NSObject {
     }
 
     /// Global state for the speech pipeline.
-    public var context: SpeechContext = SpeechContext()
+    public var context: SpeechContext? = SpeechContext()
     
     // MARK: Private (properties)
     
@@ -448,7 +448,7 @@ extension TFLiteWakewordRecognizer : SpeechProcessor {
     public func startStreaming(context: SpeechContext) -> Void {
         AudioController.sharedInstance.delegate = self
         self.context = context
-        self.context.isStarted = true
+        self.context?.isStarted = true
 
     }
     
@@ -457,7 +457,7 @@ extension TFLiteWakewordRecognizer : SpeechProcessor {
     public func stopStreaming(context: SpeechContext) -> Void {
         AudioController.sharedInstance.delegate = nil
         self.context = context
-        self.context.isStarted = false
+        self.context?.isStarted = false
 
     }
 }
@@ -477,7 +477,7 @@ extension TFLiteWakewordRecognizer: AudioControllerDelegate {
         
             // always run the frame through the vad, since that will determine speech activation/deactivation edges
             do { try strongSelf.vad.process(frame: frame, isSpeech:
-                strongSelf.context.isSpeech) }
+                strongSelf.context!.isSpeech) }
             catch let error {
                 strongSelf.configuration?.delegateDispatchQueue.async {
                     strongSelf.delegate?.failure(speechError: error)
@@ -485,8 +485,8 @@ extension TFLiteWakewordRecognizer: AudioControllerDelegate {
             }
             
             // if the vad is detecting speech, check for wakeword activation
-            if strongSelf.context.isSpeech {
-                if !strongSelf.context.isActive {
+            if strongSelf.context!.isSpeech {
+                if !strongSelf.context!.isActive {
                     // Run the current frame through the detector pipeline.
                     // Activate the pipeline if a keyword phrase was detected.
                     do {
@@ -495,9 +495,9 @@ extension TFLiteWakewordRecognizer: AudioControllerDelegate {
                         try strongSelf.sample(frame)
                         let activate = try strongSelf.detect()
                         if activate {
-                            strongSelf.context.isActive = true
+                            strongSelf.context?.isActive = true
                             strongSelf.reset()
-                            strongSelf.stopStreaming(context: strongSelf.context)
+                            strongSelf.stopStreaming(context: strongSelf.context!)
                             strongSelf.configuration?.delegateDispatchQueue.async {
                                 strongSelf.delegate?.didActivate()
                             }
@@ -511,7 +511,7 @@ extension TFLiteWakewordRecognizer: AudioControllerDelegate {
                     strongSelf.activeLength += 1
                     // Continue this wakeword (or external) activation for at least the activation minimum, until a vad deactivation or timeout
                     if (strongSelf.activeLength > strongSelf.minActive) && (strongSelf.activeLength >= strongSelf.maxActive) {
-                        strongSelf.context.isActive = false
+                        strongSelf.context?.isActive = false
                         strongSelf.configuration?.delegateDispatchQueue.async {
                             strongSelf.delegate?.didDeactivate()
                         }
@@ -519,11 +519,11 @@ extension TFLiteWakewordRecognizer: AudioControllerDelegate {
                 }
             // detect speech deactivation edge
             } else if strongSelf.isSpeech {
-                if !strongSelf.context.isActive {
+                if !strongSelf.context!.isActive {
                     strongSelf.debug()
                 }
             }
-            strongSelf.isSpeech = strongSelf.context.isSpeech
+            strongSelf.isSpeech = strongSelf.context!.isSpeech
         }
     }
 }
@@ -536,16 +536,16 @@ extension TFLiteWakewordRecognizer: VADDelegate {
     /// - Parameter frame: The first frame of audio samples with speech detected in it.
     public func activate(frame: Data) {
         // activate the speech context
-        self.context.isSpeech = true
+        self.context?.isSpeech = true
         // process the first frames of speech data from the vad
         self.process(frame)
     }
     
     // Called when the VAD as stopped detecting speech.
     public func deactivate() {
-        if !self.context.isActive ||
-            (self.context.isActive && self.activeLength >= self.maxActive) {
-            self.context.isSpeech = false
+        if !self.context!.isActive ||
+            (self.context!.isActive && self.activeLength >= self.maxActive) {
+            self.context?.isSpeech = false
         }
     }
 }

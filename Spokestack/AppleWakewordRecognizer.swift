@@ -40,7 +40,7 @@ This pipeline component uses the Apple `SFSpeech` API to stream audio samples fo
     /// Delegate which receives speech pipeline control events.
     public weak var delegate: SpeechEventListener?
     /// Global state for the speech pipeline.
-    public var context: SpeechContext = SpeechContext()
+    public var context: SpeechContext? = SpeechContext()
     
     // MARK: private properties
     
@@ -172,7 +172,7 @@ This pipeline component uses the Apple `SFSpeech` API to stream audio samples fo
                                     .contains($0.lowercased())})
                             .isEmpty
                     if wakewordDetected {
-                        strongSelf.context.isActive = true
+                        strongSelf.context?.isActive = true
                         strongSelf.configuration?.delegateDispatchQueue.async {
                             delegate.didActivate()
                         }
@@ -193,7 +193,7 @@ extension AppleWakewordRecognizer: SpeechProcessor {
         self.context = context
         self.prepareAudioEngine()
         self.audioEngine.prepare()
-        self.context.isStarted = true
+        self.context?.isStarted = true
     }
     
     /// Triggered by the speech pipeline, instructing the recognizer to stop streaming audio and complete processing.
@@ -206,7 +206,7 @@ extension AppleWakewordRecognizer: SpeechProcessor {
         self.dispatchWorker = nil
         self.audioEngine.stop()
         self.audioEngine.inputNode.removeTap(onBus: 0)
-        self.context.isStarted = false
+        self.context?.isStarted = false
     }
 }
 
@@ -239,10 +239,10 @@ extension AppleWakewordRecognizer: VADDelegate {
     /// Called when the VAD has detected speech.
     /// - Parameter frame: The first frame of audio samples with speech detected in it.
     public func activate(frame: Data) {
-        if (self.context.isActive || self.recognitionTaskRunning) {
+        if (self.context!.isActive || self.recognitionTaskRunning) {
             // asr is active, so don't interrupt
-        } else if (self.context.isStarted){
-            self.context.isSpeech = true
+        } else if (self.context!.isStarted){
+            self.context?.isSpeech = true
             do {
                 try self.audioEngine.start()
                 self.startRecognition()
@@ -256,10 +256,10 @@ extension AppleWakewordRecognizer: VADDelegate {
     
     /// Called when the VAD has stopped detecting speech.
     public func deactivate() {
-        if (self.context.isActive) {
+        if (self.context!.isActive) {
             // asr is active, so don't interrupt
         } else {
-            self.context.isSpeech = false
+            self.context?.isSpeech = false
             self.stopRecognition()
             self.audioEngine.pause()
         }
