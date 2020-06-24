@@ -73,7 +73,7 @@ import Speech
         self.audioEngine.inputNode.removeTap(onBus: 0)
     }
     
-    @objc public func process(_ frame: Data) throws {
+    @objc public func process(_ frame: Data) {
         guard let context = self.context else { return }
         if context.isActive {
             if !self.active {
