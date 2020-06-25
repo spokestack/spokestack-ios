@@ -18,14 +18,16 @@ class AudioControllerTest: XCTestCase {
         let context = SpeechContext()
         let setupFailedExpectation = expectation(description: "testStartStreaming calls AudioControllerTestDelegate as the result of setupFailed method completion")
         let processFrameExpectation = expectation(description: "testStartStreaming calls AudioControllerTestDelegate as the result of processFrame method completion")
-
+        
         // Uninititalized delegates do not cause an exception during startStreaming
         XCTAssertNoThrow(controller.startStreaming(context: context))
         /// stopStreaming does not cause an exception
         XCTAssertNoThrow(controller.stopStreaming(context: context))
         
-        // Initialized PipelineDelegate is called during startStreaming
-        controller.pipelineDelegate = delegate
+        // Initialized delegate is called during startStreaming
+        context.listeners = [delegate]
+        context.stageInstances = [delegate]
+        controller.context = context
         delegate.asyncExpectation = setupFailedExpectation
         XCTAssertNoThrow(try AVAudioSession.sharedInstance().setCategory(.ambient))
         XCTAssertNoThrow(controller.startStreaming(context: context))
@@ -49,7 +51,45 @@ class AudioControllerTest: XCTestCase {
 }
 
 /// Spy pattern for the system under test.
-class AudioControllerTestDelegate: AudioControllerDelegate, PipelineDelegate {
+class AudioControllerTestDelegate: SpeechProcessor, SpeechEventListener {
+    var configuration: SpeechConfiguration?
+    
+    var context: SpeechContext?
+    
+    func startStreaming(context: SpeechContext) {
+        
+    }
+    
+    func stopStreaming(context: SpeechContext) {
+        
+    }
+    
+    func didActivate() {
+        
+    }
+    
+    func didDeactivate() {
+        
+    }
+    
+    func didRecognize(_ result: SpeechContext) {
+        
+    }
+    
+    func failure(speechError: Error) {
+        guard let ae = self.asyncExpectation else {
+            XCTFail("AudioControllerTestDelegate was not setup correctly. Missing XCTExpectation reference")
+            return
+        }
+        self.didSetupFailed = true
+        ae.fulfill()
+        self.asyncExpectation = nil
+    }
+    
+    func didTimeout() {
+        
+    }
+    
     
     var didProcessFrame: Bool = false
     var didSetupFailed: Bool = false
@@ -88,16 +128,6 @@ class AudioControllerTestDelegate: AudioControllerDelegate, PipelineDelegate {
     
     func didStop() {
         
-    }
-    
-    func setupFailed(_ error: String) {
-        guard let ae = self.asyncExpectation else {
-            XCTFail("AudioControllerTestDelegate was not setup correctly. Missing XCTExpectation reference")
-            return
-        }
-        self.didSetupFailed = true
-        ae.fulfill()
-        self.asyncExpectation = nil
     }
     
     func didTrace(_ trace: String) {

@@ -16,16 +16,15 @@ class AppleWakewordRecognizerTest: XCTestCase {
     /// init & deinit & startStreaming & stopStreaming
     func testStartStreaming() {
         /// setup
-        let awr = AppleWakewordRecognizer.sharedInstance
+        let configuration = SpeechConfiguration()
+        let awr = AppleWakewordRecognizer(configuration)
         let context = SpeechContext()
-        let delegate = AppleWakewordRecognizerTestDelegate()
-        
+        awr.context = context
+
         /// no delegate & no configuration
         XCTAssertNoThrow(awr.startStreaming(context: context))
         
         /// strong delegate & configuration
-        awr.configuration = SpeechConfiguration()
-        awr.delegate = delegate
         XCTAssertNoThrow(awr.startStreaming(context: context))
         XCTAssert(context.isStarted)
         
@@ -42,19 +41,21 @@ class AppleWakewordRecognizerTest: XCTestCase {
     /// activate & deactivate
     func testActivatetDeactivate() {
         /// setup
-        let awr = AppleWakewordRecognizer.sharedInstance
+        let configuration = SpeechConfiguration()
+        let awr = AppleWakewordRecognizer(configuration)
         let context = SpeechContext()
+        awr.context = context
         let delegate = AppleWakewordRecognizerTestDelegate()
-        awr.delegate = delegate
-        awr.configuration = SpeechConfiguration()
+        context.stageInstances = [awr]
+        context.listeners = [delegate]
         awr.context = context
         
         /// activate without startStreaming does not trip AudioEngine assertion
-        awr.activate(frame: Frame.silence(frameWidth: 10, sampleRate: 8000))
+        awr.process(Frame.silence(frameWidth: 10, sampleRate: 8000))
         
         /// activate while asr is running is a noop
         context.isActive = true
-        awr.activate(frame: Frame.silence(frameWidth: 10, sampleRate: 8000))
+        awr.process(Frame.silence(frameWidth: 10, sampleRate: 8000))
         
         /// activate
         context.isActive = false
@@ -63,20 +64,13 @@ class AppleWakewordRecognizerTest: XCTestCase {
         // awr.activate(frame: Frame.silence(frameWidth: 10, sampleRate: 8000))
         /* TODO: fails the delegate assertion in the resultHandler callback because the callback occurs after the test has completed and thus the testdelegate has been destroyed. Need to refactor SpeechProcessor so that an expectation can be fulfilled for this type of async testing. */
 
-        /// deactivate while asr is running is a noop
-        context.isActive = true
-        awr.context = context
-        awr.deactivate()
-        XCTAssert(context.isStarted)
-
         /// deactivate
         awr.stopStreaming(context: context)
-        awr.deactivate()
         XCTAssert(!context.isStarted)
     }
 }
 
-class AppleWakewordRecognizerTestDelegate: PipelineDelegate, SpeechEventListener {
+class AppleWakewordRecognizerTestDelegate: SpeechEventListener {
     
     /// Spy pattern for the system under test.
     /// asyncExpectation lets the caller's test know when the delegate has been called.

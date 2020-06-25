@@ -13,6 +13,8 @@ import Foundation
 public enum AudioError: Error, Equatable {
     /// An audio unit system error
     case audioSessionSetup(String)
+    /// An audio controller
+    case audioController(String)
 }
 
 /// Errors thrown by the `SpeechPipeline`.

@@ -20,4 +20,7 @@ import Foundation
     @objc public var isActive: Bool = false
     /// Speech detected indicator
     @objc public var isSpeech: Bool = false
+    
+    public var stageInstances: [SpeechProcessor] = []
+    public var listeners: [SpeechEventListener] = []
 }

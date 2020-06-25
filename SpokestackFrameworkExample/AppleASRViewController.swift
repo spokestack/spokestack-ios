@@ -1,5 +1,5 @@
 //
-//  ViewController.swift
+//  AppleASRViewController.swift
 //  SpokestackFrameworkExample
 //
 //  Created by Cory D. Wiles on 10/8/18.
@@ -95,7 +95,7 @@ class AppleASRViewController: UIViewController {
     }
 }
 
-extension AppleASRViewController: SpeechEventListener, PipelineDelegate {
+extension AppleASRViewController: SpeechEventListener {
     
     func setupFailed(_ error: String) {
         print("setupFailed: " + error)

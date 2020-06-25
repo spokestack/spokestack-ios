@@ -15,11 +15,10 @@ class AppleSpeechRecognizerTest: XCTestCase {
 
     /// startStreaming
     func testStartStopStreaming() {
-        let delegate = AppleSpeechRecognizerTestDelegate()
-        let asr = AppleSpeechRecognizer.sharedInstance
         let context = SpeechContext()
-        asr.configuration = SpeechConfiguration()
-        asr.delegate = delegate
+        let configuration = SpeechConfiguration()
+        let asr = AppleSpeechRecognizer(configuration)
+        asr.context = context
         asr.startStreaming(context: context)
         XCTAssert(context.isActive)
         asr.stopStreaming(context: context)
@@ -27,7 +26,7 @@ class AppleSpeechRecognizerTest: XCTestCase {
     }
 }
 
-class AppleSpeechRecognizerTestDelegate: PipelineDelegate, SpeechEventListener {
+class AppleSpeechRecognizerTestDelegate: SpeechEventListener {
     /// Spy pattern for the system under test.
     /// asyncExpectation lets the caller's test know when the delegate has been called.
     var didError: Bool = false

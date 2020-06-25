@@ -110,7 +110,7 @@ class AppleWakewordViewController: UIViewController {
     }
 }
 
-extension AppleWakewordViewController: SpeechEventListener, PipelineDelegate {
+extension AppleWakewordViewController: SpeechEventListener {
 
     func didTimeout() {
         print("timeout")

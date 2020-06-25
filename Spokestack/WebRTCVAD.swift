@@ -32,19 +32,7 @@ private var frameBuffer: RingBuffer<Int16>!
 /// Swift wrapper for WebRTC's voice activity detector.
 @objc public class WebRTCVAD: NSObject, SpeechProcessor {
 
-    /// Singleton instance.
-    @objc public static let sharedInstance: WebRTCVAD = WebRTCVAD()
-    
-    public var configuration: SpeechConfiguration? = SpeechConfiguration() {
-        didSet {
-            if let _ = configuration {
-                do { try self.configure() }
-                catch let error {
-                    /// - TODO: implement
-                }
-            }
-        }
-    }
+    public var configuration: SpeechConfiguration?
     
     public var context: SpeechContext?
     
@@ -56,21 +44,25 @@ private var frameBuffer: RingBuffer<Int16>!
         self.context = context
     }
     
-    public override init() {
+    public init(_ configuration: SpeechConfiguration) {
+        self.configuration = configuration
         super.init()
+        do {
+            try self.configure()
+        } catch let error {
+            self.context?.listeners.forEach({ listener in
+                listener.failure(speechError: error)
+            })
+        }
     }
     
     deinit {
         WebRtcVad_Free(vad.pointee)
     }
     
-    ///  Creates and configures a new WebRTC VAD component.
-    /// - Parameter mode: Indicate to the VAD the level of permissiveness to non-speech activation.
-    /// - Parameter delegate: Callback delegate for activation and error events.
-    /// - Parameter frameWidth: Number of samples in an audio frame.
-    /// - Parameter sampleRate: Rate of the samples in an audio frame.
+    /// Creates and configures a new WebRTC VAD component.
     ///
-    /// - Throws: VADError.invalidConfiguration if the frameWidth or sampleRate are not supported.
+    ///  - Throws: VADError.invalidConfiguration if the frameWidth or sampleRate are not supported.
     private func configure() throws {
         guard let c = self.configuration else { return }
         // validation of configurable parameters
@@ -112,7 +104,7 @@ private var frameBuffer: RingBuffer<Int16>!
     /// - Parameter isSpeech: Whether speech was detected in the last frame.
     ///
     /// - Throws: RingBufferStateError.illegalState if the frame buffer enters an invalid state
-    public func process(_ frame: Data) throws -> Void {
+    public func process(_ frame: Data) -> Void {
         do {
             var detected: Bool = false
             let samples: Array<Int16> = frame.elements()
@@ -139,7 +131,6 @@ private var frameBuffer: RingBuffer<Int16>!
                             break detecting
                         default:
                             // WebRtcVad_Process error case
-                            // self.delegate?.deactivate()
                             break
                         }
                     }
@@ -157,7 +148,9 @@ private var frameBuffer: RingBuffer<Int16>!
                 }
             }
         } catch let error {
-            throw VADError.processing("error occurred while vad is processing \(error.localizedDescription)")
+            self.context?.listeners.forEach({ listener in
+                listener.failure(speechError: VADError.processing("error occurred while vad is processing \(error.localizedDescription)"))
+            })
         }
     }
 }

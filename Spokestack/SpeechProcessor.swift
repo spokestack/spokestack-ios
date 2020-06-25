@@ -29,5 +29,17 @@ import Foundation
     
     /// Receives a frame of audio samples for processing. Interface between the `SpeechProcessor` and `AudioController` components.
     /// - Parameter frame: Audio frame of samples.
-    func process(_ frame: Data) throws -> Void
+    func process(_ frame: Data) -> Void
+}
+
+/// Convenience enum for the singletons of the different implementers of the `SpeechProcessor` protocol.
+@objc public enum SpeechProcessors: Int {
+    /// AppleWakewordRecognizer
+    case appleWakeword
+    /// TFLiteWakewordRecognizer
+    case tfLiteWakeword
+    /// AppleSpeechRecognizer
+    case appleSpeech
+    /// WebRTCVAD
+    case vad
 }

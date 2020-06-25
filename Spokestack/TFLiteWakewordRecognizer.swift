@@ -24,26 +24,12 @@ import TensorFlowLite
  
  The detector's outputs are then compared against a configured threshold in order to determine whether to activate the pipeline. If the posterior is greater than the threshold, the pipeline is activated.
  */
-public class TFLiteWakewordRecognizer: NSObject {
+@objc public class TFLiteWakewordRecognizer: NSObject {
     
     // MARK: Public (properties)
     
-    /// Singleton instance.
-    @objc public static let sharedInstance: TFLiteWakewordRecognizer = TFLiteWakewordRecognizer()
-    
-    /// Delegate which receives speech pipeline control events.
-    public weak var delegate: SpeechEventListener?
-    
     /// Configuration for the recognizer.
-    public var configuration: SpeechConfiguration? = SpeechConfiguration() {
-        didSet {
-            if configuration != nil {
-                self.validateConfiguration()
-                self.configureAttentionModels()
-                self.setConfiguration()
-            }
-        }
-    }
+    public var configuration: SpeechConfiguration?
     
     /// Global state for the speech pipeline.
     public var context: SpeechContext?
@@ -54,8 +40,6 @@ public class TFLiteWakewordRecognizer: NSObject {
         case encode
         case state
     }
-    
-    private var vad: WebRTCVAD = WebRTCVAD()
     
     /// Wakeword Activation Management
     private var activeLength: Int = 0
@@ -110,8 +94,12 @@ public class TFLiteWakewordRecognizer: NSObject {
     deinit {
     }
     
-    public override init() {
+    public init(_ configuration: SpeechConfiguration) {
+        self.configuration = configuration
         super.init()
+        self.validateConfiguration()
+        self.configureAttentionModels()
+        self.setConfiguration()
     }
     
     // MARK: Configuration processing
@@ -153,7 +141,10 @@ public class TFLiteWakewordRecognizer: NSObject {
                     throw WakewordModelError.detect("\(c.detectModelPath) could not be initialized")
                 }
             } catch let message {
-                self.configuration?.delegateDispatchQueue.async { self.delegate!.failure(speechError: WakewordModelError.model("TFLiteWakewordRecognizer configureAttentionModels \(message)"))
+                self.configuration?.delegateDispatchQueue.async {
+                    self.context?.listeners.forEach({ listener in
+                        listener.failure(speechError: WakewordModelError.model("TFLiteWakewordRecognizer configureAttentionModels \(message)"))
+                    })
                 }
             }
         }
@@ -420,14 +411,14 @@ public class TFLiteWakewordRecognizer: NSObject {
     }
     
     private func debug() -> Void {
-        Trace.trace(Trace.Level.PERF, config: self.configuration, message: "wake: \(self.posteriorMax!)", delegate: self.delegate, caller: self)
+        Trace.trace(Trace.Level.PERF, message: "wake: \(self.posteriorMax!)", config: self.configuration, context: self.context, caller: self)
         
         if self.traceLevel.rawValue <= Trace.Level.DEBUG.rawValue {
-            Trace.spit(data: "[\((self.sampleCollector! as NSArray).componentsJoined(by: ", "))]".data(using: .utf8)!, fileName: "samples.txt", delegate: self.delegate!, config: self.configuration)
-            Trace.spit(data: self.fftFrameCollector!.data(using: .utf8)!, fileName: "fftFrame.txt", delegate: self.delegate!, config: self.configuration)
-            Trace.spit(data: "[\((self.filterCollector! as NSArray).componentsJoined(by: ", "))]".data(using: .utf8)!, fileName: "filterOutput.txt", delegate: self.delegate!, config: self.configuration)
-            Trace.spit(data: "[\((self.encodeCollector! as NSArray).componentsJoined(by: ", "))]".data(using: .utf8)!, fileName: "encodeOutput.txt", delegate: self.delegate!, config: self.configuration)
-            Trace.spit(data: "[\((self.stateCollector! as NSArray).componentsJoined(by: ", "))]".data(using: .utf8)!, fileName: "stateOutput.txt", delegate: self.delegate!, config: self.configuration)
+            Trace.spit(data: "[\((self.sampleCollector! as NSArray).componentsJoined(by: ", "))]".data(using: .utf8)!, fileName: "samples.txt", context: self.context, config: self.configuration)
+            Trace.spit(data: self.fftFrameCollector!.data(using: .utf8)!, fileName: "fftFrame.txt", context: self.context, config: self.configuration)
+            Trace.spit(data: "[\((self.filterCollector! as NSArray).componentsJoined(by: ", "))]".data(using: .utf8)!, fileName: "filterOutput.txt", context: self.context, config: self.configuration)
+            Trace.spit(data: "[\((self.encodeCollector! as NSArray).componentsJoined(by: ", "))]".data(using: .utf8)!, fileName: "encodeOutput.txt", context: self.context, config: self.configuration)
+            Trace.spit(data: "[\((self.stateCollector! as NSArray).componentsJoined(by: ", "))]".data(using: .utf8)!, fileName: "stateOutput.txt", context: self.context, config: self.configuration)
         }
     }
 }
@@ -454,7 +445,7 @@ extension TFLiteWakewordRecognizer : SpeechProcessor {
     ///
     /// Processes audio in an async thread.
     /// - Parameter frame: Frame of audio samples.
-    public func process(_ frame: Data) throws -> Void {
+    public func process(_ frame: Data) -> Void {
         audioProcessingQueue.async {[weak self] in
             guard let strongSelf = self else { return }
             guard let context = strongSelf.context else { return }
@@ -470,14 +461,18 @@ extension TFLiteWakewordRecognizer : SpeechProcessor {
                         if activate {
                             strongSelf.context?.isActive = true
                             strongSelf.reset()
-                            strongSelf.stopStreaming(context: context)
+                            try strongSelf.stopStreaming(context: context)
                             strongSelf.configuration?.delegateDispatchQueue.async {
-                                strongSelf.delegate?.didActivate()
+                                context.listeners.forEach { listener in
+                                    listener.didActivate()
+                                }
                             }
                         }
                     } catch let error {
                         strongSelf.configuration?.delegateDispatchQueue.async {
-                            strongSelf.delegate?.failure(speechError: error)
+                            context.listeners.forEach { listener in
+                                listener.failure(speechError: error)
+                            }
                         }
                     }
                 } else {
@@ -486,7 +481,9 @@ extension TFLiteWakewordRecognizer : SpeechProcessor {
                     if (strongSelf.activeLength > strongSelf.minActive) && (strongSelf.activeLength >= strongSelf.maxActive) {
                         strongSelf.context?.isActive = false
                         strongSelf.configuration?.delegateDispatchQueue.async {
-                            strongSelf.delegate?.didDeactivate()
+                            context.listeners.forEach { listener in
+                                listener.didDeactivate()
+                            }
                         }
                     }
                 }

@@ -18,19 +18,9 @@ This pipeline component uses the Apple `SFSpeech` API to stream audio samples fo
     
     // MARK: public properties
     
-    /// Singleton instance.
-    @objc public static let sharedInstance: AppleWakewordRecognizer = AppleWakewordRecognizer()
     /// Configuration for the recognizer.
-    public var configuration: SpeechConfiguration? = SpeechConfiguration() {
-        didSet {
-            if self.configuration != nil {
-                // wakeword
-                phrases = self.configuration!.wakewords.components(separatedBy: ",")
-                // Tracing
-                self.traceLevel = self.configuration!.tracing
-            }
-        }
-    }
+    public var configuration: SpeechConfiguration?
+
     /// Delegate which receives speech pipeline control events.
     public weak var delegate: SpeechEventListener?
     /// Global state for the speech pipeline.
@@ -44,9 +34,7 @@ This pipeline component uses the Apple `SFSpeech` API to stream audio samples fo
     private var recognitionTask: SFSpeechRecognitionTask?
     private let audioEngine: AVAudioEngine = AVAudioEngine()
     private var dispatchWorker: DispatchWorkItem?
-    private var vad: WebRTCVAD = WebRTCVAD()
     private var recognitionTaskRunning: Bool = false
-    
     private var traceLevel: Trace.Level = Trace.Level.NONE
     
     // MARK: NSObject methods
@@ -55,8 +43,18 @@ This pipeline component uses the Apple `SFSpeech` API to stream audio samples fo
         self.speechRecognizer.delegate = nil
     }
     
-    public override init() {
+    public init(_ configuration: SpeechConfiguration) {
+        self.configuration = configuration
         super.init()
+        self.configure()
+    }
+    
+    private func configure() {
+        guard let config = self.configuration else { return }
+        // wakeword
+        phrases = config.wakewords.components(separatedBy: ",")
+        // Tracing
+        self.traceLevel = config.tracing
     }
     
     // MARK: private functions
@@ -122,7 +120,7 @@ This pipeline component uses the Apple `SFSpeech` API to stream audio samples fo
                         if nse.domain == "kAFAssistantErrorDomain" {
                             switch nse.code {
                             case 0..<200: // Apple retry error: https://developer.nuance.com/public/Help/DragonMobileSDKReference_iOS/Error-codes.html
-                                Trace.trace(Trace.Level.INFO, config: strongSelf.configuration, message: "resultHandler error \(nse.code.description)", delegate: strongSelf.delegate, caller: strongSelf)
+                                Trace.trace(Trace.Level.INFO, message: "resultHandler error \(nse.code.description)", config: strongSelf.configuration, context: strongSelf.context, caller: strongSelf)
                                 break
                             case 203: // request timed out, retry
                                 strongSelf.stopRecognition()
@@ -133,7 +131,7 @@ This pipeline component uses the Apple `SFSpeech` API to stream audio samples fo
                             case 216: // Apple internal error: https://stackoverflow.com/questions/53037789/sfspeechrecognizer-216-error-with-multiple-requests?noredirect=1&lq=1)
                                 break
                             case 300..<603: // Apple retry error: https://developer.nuance.com/public/Help/DragonMobileSDKReference_iOS/Error-codes.html
-                                Trace.trace(Trace.Level.INFO, config: strongSelf.configuration, message: "resultHandler error \(nse.code.description)", delegate: strongSelf.delegate, caller: strongSelf)
+                                Trace.trace(Trace.Level.INFO, message: "resultHandler error \(nse.code.description)", config: strongSelf.configuration, context: strongSelf.context, caller: strongSelf)
                                 break
                             default:
                                 strongSelf.configuration?.delegateDispatchQueue.async {
@@ -146,7 +144,7 @@ This pipeline component uses the Apple `SFSpeech` API to stream audio samples fo
                     }
                 }
                 if let r = result {
-                    Trace.trace(Trace.Level.DEBUG, config: strongSelf.configuration, message: "hears \(r.bestTranscription.formattedString)", delegate: strongSelf.delegate, caller: strongSelf)
+                    Trace.trace(Trace.Level.DEBUG, message: "hears \(r.bestTranscription.formattedString)", config: strongSelf.configuration, context: strongSelf.context, caller: strongSelf)
                     let wakewordDetected: Bool =
                         !strongSelf.phrases
                             .filter({
@@ -196,7 +194,7 @@ extension AppleWakewordRecognizer: SpeechProcessor {
     ///
     /// Processes audio in an async thread.
     /// - Parameter frame: Frame of audio samples.
-    public func process(_ frame: Data) throws -> Void {
+    public func process(_ frame: Data) -> Void {
         guard let context = self.context else { return }
         if context.isSpeech {
             if !context.isActive {

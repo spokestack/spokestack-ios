@@ -11,7 +11,7 @@ import AVFoundation
 import Dispatch
 
 /// DispatchQueue for handling Spokestack audio processing
-let audioProcessingQueue: DispatchQueue = DispatchQueue(label: "io.spokestack.audiocontroller", qos: .userInteractive)
+internal let audioProcessingQueue: DispatchQueue = DispatchQueue(label: "io.spokestack.audiocontroller", qos: .userInteractive)
 
 /// Required callback function for AudioUnitSetProperty's AURenderCallbackStruct.
 ///
@@ -27,7 +27,6 @@ func recordingCallback(
     guard let remoteIOUnit: AudioComponentInstance = AudioController.sharedInstance.remoteIOUnit else {
         return kAudioServicesSystemSoundUnspecifiedError
     }
-    guard let config = AudioController.sharedInstance.configuration else { return OSStatus(-1) } // TODO: what OSStatus should be returned?
     var status: OSStatus = noErr
     let channelCount: UInt32 = 1
     var bufferList = AudioBufferList()
@@ -56,14 +55,9 @@ func recordingCallback(
         // AUBuffer.h:61:GetBufferList: EXCEPTION (-1) [mPtrState == kPtrsInvalid is false]: ""
         // are irrelevant
         audioProcessingQueue.sync {
-            config.stages.forEach({ stage in
-                do {
-                    try stage.processor.process(data)
-                }
-                catch let error {
-                    /// - TODO: implement
-                }
-            })
+            AudioController.sharedInstance.context?.stageInstances.forEach { stage in
+                stage.process(data)
+            }
         }
     }
     
@@ -77,12 +71,9 @@ class AudioController {
     
     /// Singleton instance
     public static let sharedInstance: AudioController = AudioController()
-    /// Delegate for receiving `setupFailure` events in the speech pipeline.
-    public weak var pipelineDelegate: PipelineDelegate?
     /// Configuration for the audio controller.
     public var configuration: SpeechConfiguration?
     public var context: SpeechContext?
-
     
     // MARK: Private (properties)
     
@@ -128,11 +119,15 @@ class AudioController {
             try self.start()
         } catch AudioError.audioSessionSetup(let message) {
             self.configuration?.delegateDispatchQueue.async {
-                self.pipelineDelegate?.setupFailed(message)
+                self.context?.listeners.forEach({ listener in
+                    listener.failure(speechError: AudioError.audioController(message))
+                })
             }
         } catch {
             self.configuration?.delegateDispatchQueue.async {
-                self.pipelineDelegate?.setupFailed("An unknown error occured starting the stream")
+                self.context?.listeners.forEach({ listener in
+                    listener.failure(speechError: AudioError.audioController("An unknown error occured starting the stream"))
+                })
             }
         }
     }
@@ -146,11 +141,15 @@ class AudioController {
             try self.stop()
         } catch AudioError.audioSessionSetup(let message) {
             self.configuration?.delegateDispatchQueue.async {
-                self.pipelineDelegate?.setupFailed(message)
+                self.context?.listeners.forEach({ listener in
+                    listener.failure(speechError: AudioError.audioController(message))
+                })
             }
         } catch {
             self.configuration?.delegateDispatchQueue.async {
-                self.pipelineDelegate?.setupFailed("An unknown error occured ending the stream")
+                self.context?.listeners.forEach({ listener in
+                    listener.failure(speechError: AudioError.audioController("An unknown error occured ending the stream"))
+                })
             }
         }
     }
@@ -193,7 +192,9 @@ class AudioController {
             break
         default:
             self.configuration?.delegateDispatchQueue.async {
-                self.pipelineDelegate?.setupFailed("Incompatible AudioSession category is set.")
+                self.context?.listeners.forEach({ listener in
+                    listener.failure(speechError: AudioError.audioSessionSetup("Incompatible AudioSession category is set."))
+                })
             }
         }
     }
@@ -266,13 +267,13 @@ class AudioController {
         let sss: String = session.category.rawValue
         let sco: String = session.categoryOptions.rawValue.description
         let sioap: String = session.isOtherAudioPlaying.description
-        Trace.trace(Trace.Level.DEBUG, config: self.configuration, message: "current category: \(sss) +  options: \(sco) isOtherAudioPlaying: \(sioap) bufferduration  \(session.ioBufferDuration.description)", delegate: self.pipelineDelegate, caller: self)
+        Trace.trace(Trace.Level.DEBUG, message: "current category: \(sss) +  options: \(sco) isOtherAudioPlaying: \(sioap) bufferduration  \(session.ioBufferDuration.description)", config: self.configuration, context: self.context, caller: self)
         let route_inputs: String = session.currentRoute.inputs.debugDescription
         let route_outputs: String = session.currentRoute.outputs.debugDescription
         let preferredInput: String = session.preferredInput.debugDescription
         let usb_outputs: String = session.outputDataSources?.debugDescription ?? "none"
         let inputs: String = session.availableInputs?.debugDescription ?? "none"
-        Trace.trace(Trace.Level.DEBUG, config: self.configuration, message: "inputs: \(inputs) preferredinput: \(preferredInput) input: \(route_inputs) output: \(route_outputs) usb_outputs: \(usb_outputs)", delegate: self.pipelineDelegate, caller: self)
+        Trace.trace(Trace.Level.DEBUG, message: "inputs: \(inputs) preferredinput: \(preferredInput) input: \(route_inputs) output: \(route_outputs) usb_outputs: \(usb_outputs)", config: self.configuration, context: self.context, caller: self)
     }
     
     @objc private func audioRouteChanged(_ notification: Notification) {
@@ -281,19 +282,19 @@ class AudioController {
             let reason = AVAudioSession.RouteChangeReason(rawValue:reasonValue) else {
                 return
         }
-        Trace.trace(Trace.Level.DEBUG, config: self.configuration, message: "audioRouteChanged reason: \(reasonValue.description) notification: \(userInfo.debugDescription)", delegate: self.pipelineDelegate, caller: self)
+        Trace.trace(Trace.Level.DEBUG, message: "audioRouteChanged reason: \(reasonValue.description) notification: \(userInfo.debugDescription)", config: self.configuration, context: self.context, caller: self)
         debug()
         let session = AVAudioSession.sharedInstance()
         switch reason {
         case .newDeviceAvailable:
-            Trace.trace(Trace.Level.DEBUG, config: self.configuration, message: "AudioController audioRouteChanged new output:  \(session.currentRoute.outputs.description)", delegate: self.pipelineDelegate, caller: self)
+            Trace.trace(Trace.Level.DEBUG, message: "AudioController audioRouteChanged new output:  \(session.currentRoute.outputs.description)", config: self.configuration, context: self.context, caller: self)
         case .oldDeviceUnavailable:
             if let previousRoute =
                 userInfo[AVAudioSessionRouteChangePreviousRouteKey] as? AVAudioSessionRouteDescription {
-                Trace.trace(Trace.Level.DEBUG, config: self.configuration, message: "AudioController audioRouteChanged old output: \(previousRoute.outputs.description)", delegate: self.pipelineDelegate, caller: self)
+                Trace.trace(Trace.Level.DEBUG, message: "AudioController audioRouteChanged old output: \(previousRoute.outputs.description)", config: self.configuration, context: self.context, caller: self)
             }
         case .categoryChange:
-            Trace.trace(Trace.Level.DEBUG, config: self.configuration, message: "AudioController audioRouteChanged new category: \(session.category.rawValue)", delegate: self.pipelineDelegate, caller: self)
+            Trace.trace(Trace.Level.DEBUG, message: "AudioController audioRouteChanged new category: \(session.category.rawValue)", config: self.configuration, context: self.context, caller: self)
         default: ()
         }
     }
