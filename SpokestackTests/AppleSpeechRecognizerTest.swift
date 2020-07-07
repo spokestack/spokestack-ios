@@ -17,7 +17,7 @@ class AppleSpeechRecognizerTest: XCTestCase {
     func testStartStopStreaming() {
         let context = SpeechContext()
         let configuration = SpeechConfiguration()
-        let asr = AppleSpeechRecognizer(configuration)
+        let asr = AppleSpeechRecognizer(configuration, context: context)
         asr.context = context
         asr.startStreaming(context: context)
         XCTAssert(context.isActive)

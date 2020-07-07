@@ -32,9 +32,9 @@ private var frameBuffer: RingBuffer<Int16>!
 /// Swift wrapper for WebRTC's voice activity detector.
 @objc public class WebRTCVAD: NSObject, SpeechProcessor {
 
-    public var configuration: SpeechConfiguration?
+    public var configuration: SpeechConfiguration
     
-    public var context: SpeechContext?
+    public var context: SpeechContext
     
     public func startStreaming(context: SpeechContext) {
         self.context = context
@@ -44,13 +44,14 @@ private var frameBuffer: RingBuffer<Int16>!
         self.context = context
     }
     
-    public init(_ configuration: SpeechConfiguration) {
+    public init(_ configuration: SpeechConfiguration, context: SpeechContext) {
         self.configuration = configuration
+        self.context = context
         super.init()
         do {
             try self.configure()
         } catch let error {
-            self.context?.listeners.forEach({ listener in
+            self.context.listeners.forEach({ listener in
                 listener.failure(speechError: error)
             })
         }
@@ -64,7 +65,7 @@ private var frameBuffer: RingBuffer<Int16>!
     ///
     ///  - Throws: VADError.invalidConfiguration if the frameWidth or sampleRate are not supported.
     private func configure() throws {
-        guard let c = self.configuration else { return }
+        let c = self.configuration
         // validation of configurable parameters
         try self.validate(frameWidth: c.frameWidth, sampleRate: c.sampleRate)
                 
@@ -136,19 +137,17 @@ private var frameBuffer: RingBuffer<Int16>!
                     }
                 }
             }
-            if let isSpeech = self.context?.isSpeech {
-                if detected {
-                    if !isSpeech {
-                        self.context?.isSpeech = detected
-                    }
-                } else {
-                    if isSpeech {
-                        self.context?.isSpeech = detected
-                    }
+            if detected {
+                if !self.context.isSpeech {
+                    self.context.isSpeech = detected
+                }
+            } else {
+                if self.context.isSpeech {
+                    self.context.isSpeech = detected
                 }
             }
         } catch let error {
-            self.context?.listeners.forEach({ listener in
+            self.context.listeners.forEach({ listener in
                 listener.failure(speechError: VADError.processing("error occurred while vad is processing \(error.localizedDescription)"))
             })
         }

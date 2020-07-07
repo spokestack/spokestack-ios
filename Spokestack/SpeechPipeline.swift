@@ -97,13 +97,13 @@ import Dispatch
             let stageInstance: SpeechProcessor = {
                 switch stage {
                 case .vad:
-                    return WebRTCVAD(self.configuration)
+                    return WebRTCVAD(self.configuration, context: self.context)
                 case .appleWakeword:
-                    return AppleWakewordRecognizer(self.configuration)
+                    return AppleWakewordRecognizer(self.configuration, context: self.context)
                 case .tfLiteWakeword:
-                    return TFLiteWakewordRecognizer(self.configuration)
+                    return TFLiteWakewordRecognizer(self.configuration, context: self.context)
                 case .appleSpeech:
-                    return AppleSpeechRecognizer(self.configuration)
+                    return AppleSpeechRecognizer(self.configuration, context: self.context)
                 }
             }()
             self.context.stageInstances.append(stageInstance)
@@ -116,10 +116,10 @@ import Dispatch
         }
         
         // notify listeners of start
-        self.context.isStarted = true
         self.context.listeners.forEach({ listener in
             listener.didStart()
         })
+        self.context.isStarted = true
     }
     
     /// Stops the speech pipeline.

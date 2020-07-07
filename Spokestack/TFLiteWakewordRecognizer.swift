@@ -29,10 +29,10 @@ import TensorFlowLite
     // MARK: Public (properties)
     
     /// Configuration for the recognizer.
-    public var configuration: SpeechConfiguration?
+    public var configuration: SpeechConfiguration
     
     /// Global state for the speech pipeline.
-    public var context: SpeechContext?
+    public var context: SpeechContext
     
     // MARK: Private (properties)
     
@@ -42,7 +42,7 @@ import TensorFlowLite
     }
     
     /// Wakeword Activation Management
-    private var activeLength: Int = 0
+    internal var activeLength: Int = 0
     private var minActive: Int = 0
     private var maxActive: Int = 0
     private var isSpeech: Bool = false
@@ -94,8 +94,9 @@ import TensorFlowLite
     deinit {
     }
     
-    public init(_ configuration: SpeechConfiguration) {
+    public init(_ configuration: SpeechConfiguration, context: SpeechContext) {
         self.configuration = configuration
+        self.context = context
         super.init()
         self.validateConfiguration()
         self.configureAttentionModels()
@@ -105,100 +106,96 @@ import TensorFlowLite
     // MARK: Configuration processing
     
     private func validateConfiguration() -> Void {
-        if let c = self.configuration {
-            /// Validate stft/mel spectrogram configuration
-            let windowSize: Int = c.fftWindowSize
-            if windowSize % 2 != 0 {
-                assertionFailure("TFLiteWakewordRecognizer validateConfiguration invalid fft-window-size")
-                return
-            }
+        /// Validate stft/mel spectrogram configuration
+        let windowSize: Int = self.configuration.fftWindowSize
+        if windowSize % 2 != 0 {
+            assertionFailure("TFLiteWakewordRecognizer validateConfiguration invalid fft-window-size")
+            return
         }
     }
     
     private func configureAttentionModels() -> Void {
         // tensorflow model initialization
-        if let c = self.configuration {
-            do {
-                self.filterModel = try Interpreter(modelPath: c.filterModelPath)
-                if let model = self.filterModel {
-                    try model.allocateTensors()
-                } else {
-                    throw WakewordModelError.filter("\(c.filterModelPath) could not be initialized")
-                }
-                
-                self.encodeModel = try Interpreter(modelPath: c.encodeModelPath)
-                if let model = self.encodeModel {
-                    try model.allocateTensors()
-                    assert(model.inputTensorCount == Tensors.allCases.count)
-                } else {
-                    throw WakewordModelError.encode("\(c.encodeModelPath) could not be initialized")
-                }
-                
-                self.detectModel = try Interpreter(modelPath: c.detectModelPath)
-                if let model = self.detectModel {
-                    try model.allocateTensors()
-                } else {
-                    throw WakewordModelError.detect("\(c.detectModelPath) could not be initialized")
-                }
-            } catch let message {
-                self.configuration?.delegateDispatchQueue.async {
-                    self.context?.listeners.forEach({ listener in
-                        listener.failure(speechError: WakewordModelError.model("TFLiteWakewordRecognizer configureAttentionModels \(message)"))
-                    })
-                }
+        let c = self.configuration
+        do {
+            self.filterModel = try Interpreter(modelPath: c.filterModelPath)
+            if let model = self.filterModel {
+                try model.allocateTensors()
+            } else {
+                throw WakewordModelError.filter("\(c.filterModelPath) could not be initialized")
+            }
+            
+            self.encodeModel = try Interpreter(modelPath: c.encodeModelPath)
+            if let model = self.encodeModel {
+                try model.allocateTensors()
+                assert(model.inputTensorCount == Tensors.allCases.count)
+            } else {
+                throw WakewordModelError.encode("\(c.encodeModelPath) could not be initialized")
+            }
+            
+            self.detectModel = try Interpreter(modelPath: c.detectModelPath)
+            if let model = self.detectModel {
+                try model.allocateTensors()
+            } else {
+                throw WakewordModelError.detect("\(c.detectModelPath) could not be initialized")
+            }
+        } catch let message {
+            self.configuration.delegateDispatchQueue.async {
+                self.context.listeners.forEach({ listener in
+                    listener.failure(speechError: WakewordModelError.model("TFLiteWakewordRecognizer configureAttentionModels \(message)"))
+                })
             }
         }
     }
     
     private func setConfiguration() -> Void {
-        if let c = self.configuration {
-            
-            // Tracing
-            self.traceLevel = c.tracing
-            if self.traceLevel.rawValue <= Trace.Level.DEBUG.rawValue {
-                self.posteriorMax = 0
-                self.sampleCollector = []
-                self.fftFrameCollector = ""
-                self.filterCollector = []
-                self.encodeCollector = []
-                self.stateCollector = []
-                self.detectCollector = []
-            }
-            
-            // Signal normalization
-            self.rmsAlpha = c.rmsAlpha
-            self.rmsTarget = c.rmsTarget
-            self.rmsValue = self.rmsTarget
-            self.preEmphasis = c.preEmphasis
-            
-            // Sliding window buffers
-            self.fftFrame = Array(repeating: 0.0, count: c.fftWindowSize)
-            self.melWidth = c.melFrameWidth
-            self.hopLength = c.fftHopLength * c.sampleRate / 1000
-            let melLength: Int = c.melFrameLength * c.sampleRate / 1000 / self.hopLength
-            self.frameWindow = RingBuffer(melLength * self.melWidth, repeating: 0.0)
-            self.sampleWindow = RingBuffer(c.fftWindowSize, repeating: 0.0)
-            self.fftWindow = SignalProcessing.fftWindowDispatch(windowType: c.fftWindowType, windowLength: c.fftWindowSize)
-            self.fft = FFT(c.fftWindowSize)
-            
-            // Attention model buffers
-            self.encodeWidth = c.encodeWidth
-            self.encodeLength = c.encodeLength * c.sampleRate / 1000 / self.hopLength
-            self.stateWidth = c.stateWidth
-            self.encodeWindow = RingBuffer(self.encodeLength * c.encodeWidth, repeating: 0.0)
-            self.encodeState = RingBuffer(c.stateWidth, repeating: 0.0)
-            self.encodeState.fill(0.0)
-            self.detectWindow = RingBuffer(self.encodeLength * c.encodeWidth, repeating: 0.0)
-            
-            // attention model posteriors
-            self.posteriorThreshold = c.wakeThreshold
+        let c = self.configuration
+        
+        // Tracing
+        self.traceLevel = c.tracing
+        if self.traceLevel.rawValue <= Trace.Level.DEBUG.rawValue {
             self.posteriorMax = 0
-            
-            // Wakeword activation lengths
-            let frameWidth: Int = c.frameWidth
-            self.minActive = c.wakeActiveMin / frameWidth
-            self.maxActive = c.wakeActiveMax / frameWidth
+            self.sampleCollector = []
+            self.fftFrameCollector = ""
+            self.filterCollector = []
+            self.encodeCollector = []
+            self.stateCollector = []
+            self.detectCollector = []
         }
+        
+        // Signal normalization
+        self.rmsAlpha = c.rmsAlpha
+        self.rmsTarget = c.rmsTarget
+        self.rmsValue = self.rmsTarget
+        self.preEmphasis = c.preEmphasis
+        
+        // Sliding window buffers
+        self.fftFrame = Array(repeating: 0.0, count: c.fftWindowSize)
+        self.melWidth = c.melFrameWidth
+        self.hopLength = c.fftHopLength * c.sampleRate / 1000
+        let melLength: Int = c.melFrameLength * c.sampleRate / 1000 / self.hopLength
+        self.frameWindow = RingBuffer(melLength * self.melWidth, repeating: 0.0)
+        self.sampleWindow = RingBuffer(c.fftWindowSize, repeating: 0.0)
+        self.fftWindow = SignalProcessing.fftWindowDispatch(windowType: c.fftWindowType, windowLength: c.fftWindowSize)
+        self.fft = FFT(c.fftWindowSize)
+        
+        // Attention model buffers
+        self.encodeWidth = c.encodeWidth
+        self.encodeLength = c.encodeLength * c.sampleRate / 1000 / self.hopLength
+        self.stateWidth = c.stateWidth
+        self.encodeWindow = RingBuffer(self.encodeLength * c.encodeWidth, repeating: 0.0)
+        self.encodeState = RingBuffer(c.stateWidth, repeating: 0.0)
+        self.encodeState.fill(0.0)
+        self.detectWindow = RingBuffer(self.encodeLength * c.encodeWidth, repeating: 0.0)
+        
+        // attention model posteriors
+        self.posteriorThreshold = c.wakeThreshold
+        self.posteriorMax = 0
+        
+        // Wakeword activation lengths
+        let frameWidth: Int = c.frameWidth
+        self.minActive = c.wakeActiveMin / frameWidth
+        self.maxActive = c.wakeActiveMax / frameWidth
     }
     
     // MARK: Audio processing
@@ -431,14 +428,14 @@ extension TFLiteWakewordRecognizer : SpeechProcessor {
     /// - Parameter context: The current speech context.
     public func startStreaming(context: SpeechContext) -> Void {
         self.context = context
-        self.context?.isStarted = true
+        self.context.isStarted = true
     }
     
     /// Triggered by the speech pipeline, instructing the recognizer to stop streaming audio and complete processing.
     /// - Parameter context: The current speech context.
     public func stopStreaming(context: SpeechContext) -> Void {
         self.context = context
-        self.context?.isStarted = false
+        self.context.isStarted = false
     }
     
     /// Receives a frame of audio samples for processing. Interface between the `SpeechProcessor` and `AudioController` components.
@@ -448,57 +445,53 @@ extension TFLiteWakewordRecognizer : SpeechProcessor {
     public func process(_ frame: Data) -> Void {
         audioProcessingQueue.async {[weak self] in
             guard let strongSelf = self else { return }
-            guard let context = strongSelf.context else { return }
-            if context.isSpeech {
-                if !context.isActive {
+            if !strongSelf.context.isActive {
+                if (strongSelf.context.isSpeech &&
+                    // don't exceed max activation length
+                    strongSelf.activeLength <= strongSelf.maxActive)
+                    ||
+                    // don't deactivate if vad previously detected speech and the min activation length hasn't been met
+                    (strongSelf.isSpeech &&
+                        strongSelf.activeLength <= strongSelf.minActive) {
                     // Run the current frame through the detector pipeline.
                     // Activate the pipeline if a keyword phrase was detected.
                     do {
-                        strongSelf.activeLength = 0
+                        strongSelf.isSpeech = true
+                        strongSelf.activeLength += 1
                         // Decode the FFT outputs into the filter model's input
                         try strongSelf.sample(frame)
                         let activate = try strongSelf.detect()
                         if activate {
-                            strongSelf.context?.isActive = true
+                            strongSelf.context.isActive = true
                             strongSelf.reset()
-                            try strongSelf.stopStreaming(context: context)
-                            strongSelf.configuration?.delegateDispatchQueue.async {
-                                context.listeners.forEach { listener in
+                            strongSelf.stopStreaming(context: strongSelf.context)
+                            strongSelf.configuration.delegateDispatchQueue.async {
+                                strongSelf.context.listeners.forEach { listener in
                                     listener.didActivate()
                                 }
                             }
                         }
                     } catch let error {
-                        strongSelf.configuration?.delegateDispatchQueue.async {
-                            context.listeners.forEach { listener in
+                        strongSelf.configuration.delegateDispatchQueue.async {
+                            strongSelf.context.listeners.forEach { listener in
                                 listener.failure(speechError: error)
                             }
                         }
                     }
                 } else {
-                    strongSelf.activeLength += 1
-                    // Continue this wakeword (or external) activation for at least the activation minimum, until a vad deactivation or timeout
-                    if (strongSelf.activeLength > strongSelf.minActive) && (strongSelf.activeLength >= strongSelf.maxActive) {
-                        strongSelf.context?.isActive = false
-                        strongSelf.configuration?.delegateDispatchQueue.async {
-                            context.listeners.forEach { listener in
-                                listener.didDeactivate()
-                            }
+                    strongSelf.reset()
+                    strongSelf.isSpeech = false
+                    strongSelf.context.isActive = false
+                    strongSelf.configuration.delegateDispatchQueue.async {
+                        strongSelf.context.listeners.forEach { listener in
+                            listener.didDeactivate()
                         }
                     }
                 }
-                // detect speech deactivation edge
-            } else if strongSelf.isSpeech {
-                if !context.isActive {
-                    strongSelf.debug()
-                }
-            } else {
-                if (!context.isActive ||
-                    (context.isActive && strongSelf.activeLength >= strongSelf.maxActive)) {
-                    context.isSpeech = false
-                }
             }
-            strongSelf.isSpeech = context.isSpeech
+            if strongSelf.isSpeech && strongSelf.context.isActive {
+                strongSelf.debug()
+            }
         }
     }
 }

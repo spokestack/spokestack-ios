@@ -31,10 +31,11 @@ class SpeechPipelineTest: XCTestCase {
         let didInitExpectation = expectation(description: "testInit calls SpeechPipelineTestDelegate as the result of didInit method completion")
         delegate.asyncExpectation = didInitExpectation
         let config = SpeechConfiguration()
+        let context = SpeechContext()
         config.fftHopLength = 30
 
         // successful init calls didInit
-        let tp = TestProcessor(true)
+        let tp = TestProcessor(true, config: config, context: context)
         let p = SpeechPipeline(configuration: config, listeners: [delegate])
         p.context.stageInstances = [tp]
         wait(for: [didInitExpectation], timeout: 1)
@@ -50,10 +51,11 @@ class SpeechPipelineTest: XCTestCase {
         let delegate = SpeechPipelineTestDelegate()
         delegate.asyncExpectation = didInitExpectation
         let config = SpeechConfiguration()
+        let context = SpeechContext()
 
         // init the pipeline
         let p = SpeechPipeline(configuration: config, listeners: [delegate])
-        _ = TestProcessor(true)
+        _ = TestProcessor(true, config: config, context: context)
         wait(for: [didInitExpectation], timeout: 1)
         
         // activate and deactivate the pipeline
@@ -70,11 +72,12 @@ class SpeechPipelineTest: XCTestCase {
         let didStopExpectation = expectation(description: "didStopExpectation fulfills when testStartStop calls SpeechPipelineTestDelegate as the result of didStop method completion")
         let delegate = SpeechPipelineTestDelegate()
         let config = SpeechConfiguration()
+        let context = SpeechContext()
 
         // init the pipeline
         delegate.asyncExpectation = didInitExpectation
         let p = SpeechPipeline(configuration: config, listeners: [delegate])
-        let tp = TestProcessor(true)
+        let tp = TestProcessor(true, config: config, context: context)
         p.context.stageInstances = [tp]
         wait(for: [didInitExpectation], timeout: 1)
         
@@ -82,11 +85,37 @@ class SpeechPipelineTest: XCTestCase {
         delegate.asyncExpectation = didStartExpectation
         p.start()
         wait(for: [didStartExpectation], timeout: 1)
-        XCTAssert(!p.context.isActive)
+        XCTAssert(p.context.isStarted)
         delegate.asyncExpectation = didStopExpectation
         p.stop()
         wait(for: [didStopExpectation], timeout: 1)
-        XCTAssert(!p.context.isActive)
+        XCTAssertFalse(p.context.isStarted)
+    }
+    
+    func testEmptyPipeline() {
+        let didInitExpectation = expectation(description: "didInitExpectation fulfills when testSpeechProcessors calls SpeechPipelineTestDelegate as the result of didInit method completion")
+        let didStartExpectation = expectation(description: "didStartExpectation fulfills when testSpeechProcessors calls SpeechPipelineTestDelegate as the result of didStart method completion")
+        let didStopExpectation = expectation(description: "didStopExpectation fulfills when testSpeechProcessors calls SpeechPipelineTestDelegate as the result of didStop method completion")
+        let delegate = SpeechPipelineTestDelegate()
+        
+        // init the pipeline with no stages
+        delegate.asyncExpectation = didInitExpectation
+        let config = SpeechConfiguration()
+        config.stages = []
+        let p = SpeechPipeline(configuration: config, listeners: [delegate])
+        wait(for: [didInitExpectation], timeout: 1)
+        
+        // start and stop the pipeline
+        delegate.asyncExpectation = didStartExpectation
+        p.start()
+        wait(for: [didStartExpectation], timeout: 1)
+        XCTAssert(p.context.isStarted)
+        XCTAssertFalse(p.context.isActive)
+        delegate.asyncExpectation = didStopExpectation
+        p.stop()
+        wait(for: [didStopExpectation], timeout: 1)
+        XCTAssertFalse(p.context.isStarted)
+        XCTAssertFalse(p.context.isActive)
     }
     
     /// integration test
@@ -96,21 +125,23 @@ class SpeechPipelineTest: XCTestCase {
         let didStopExpectation = expectation(description: "didStopExpectation fulfills when testSpeechProcessors calls SpeechPipelineTestDelegate as the result of didStop method completion")
         let delegate = SpeechPipelineTestDelegate()
         
-        // init the pipeline
+        // init the pipeline with stages
         delegate.asyncExpectation = didInitExpectation
-        let p = SpeechPipeline(configuration: SpeechConfiguration(), listeners: [delegate])
+        let config = SpeechConfiguration()
+        //config.stages = [.vad]
+        let p = SpeechPipeline(configuration: config, listeners: [delegate])
         wait(for: [didInitExpectation], timeout: 1)
-        
-        // start and stop the pipeline
+        delegate.reset()
         delegate.asyncExpectation = didStartExpectation
         p.start()
         wait(for: [didStartExpectation], timeout: 1)
-        XCTAssert(!p.context.isActive)
+        XCTAssert(p.context.isStarted)
+        XCTAssert(p.context.isActive)
         delegate.asyncExpectation = didStopExpectation
         p.stop()
         wait(for: [didStopExpectation], timeout: 1)
-        sleep(5)
-        XCTAssert(!p.context.isActive)
+        XCTAssertFalse(p.context.isStarted)
+        XCTAssertFalse(p.context.isActive)
     }
 }
 
@@ -186,14 +217,14 @@ class SpeechPipelineTestDelegate: SpeechEventListener {
 class TestProcessor: SpeechProcessor {
     func process(_ frame: Data) { }
     
-    var configuration: SpeechConfiguration?
+    var configuration: SpeechConfiguration
     var delegate: SpeechEventListener?
-    var context: SpeechContext? = SpeechContext()
+    var context: SpeechContext
     var isSpeechProcessor: Bool = false
     
-    init() {}
-    
-    init(_ isSpeechProcessor: Bool) {
+    init(_ isSpeechProcessor: Bool, config: SpeechConfiguration, context: SpeechContext) {
+        self.configuration = config
+        self.context = context
         self.isSpeechProcessor = isSpeechProcessor
     }
     

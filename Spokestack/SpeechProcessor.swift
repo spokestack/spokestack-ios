@@ -14,10 +14,10 @@ import Foundation
 @objc public protocol SpeechProcessor: AnyObject {
     
     /// The global configuration for all speech pipeline components.
-    var configuration: SpeechConfiguration? { get set }
+    var configuration: SpeechConfiguration { get set }
     
     /// Global speech context.
-    var context: SpeechContext? { get set }
+    var context: SpeechContext { get set }
     
     /// Trigger from the speech pipeline for the component to begin processing the audio stream.
     /// - Parameter context: The current speech context.

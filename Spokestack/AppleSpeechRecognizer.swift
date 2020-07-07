@@ -19,9 +19,9 @@ import Speech
     // MARK: Public properties
     
     /// Configuration for the recognizer.
-    @objc public var configuration: SpeechConfiguration?
+    @objc public var configuration: SpeechConfiguration
     /// Global state for the speech pipeline.
-    @objc public var context: SpeechContext?
+    @objc public var context: SpeechContext
     
     // MARK: Private properties
     
@@ -39,8 +39,9 @@ import Speech
         speechRecognizer.delegate = nil
     }
     
-    public init(_ configuration: SpeechConfiguration) {
+    public init(_ configuration: SpeechConfiguration, context: SpeechContext) {
         self.configuration = configuration
+        self.context = context
         super.init()
     }
     
@@ -50,6 +51,7 @@ import Speech
     /// - Parameter context: The current speech context.
     @objc public func startStreaming(context: SpeechContext) {
         self.context = context
+        self.context.isActive = true
         self.prepareAudioEngine()
         self.audioEngine.prepare()
         self.recognitionRequest = SFSpeechAudioBufferRecognitionRequest()
@@ -68,11 +70,11 @@ import Speech
         self.wakeActiveMaxWorker?.cancel()
         self.audioEngine.stop()
         self.audioEngine.inputNode.removeTap(onBus: 0)
+        self.context.isActive = false
     }
     
     @objc public func process(_ frame: Data) {
-        guard let context = self.context else { return }
-        if context.isActive {
+        if self.context.isActive {
             if !self.active {
                 do {
                     self.active = true
@@ -80,17 +82,17 @@ import Speech
                     try self.createRecognitionTask()
                     self.wakeActiveMaxWorker = DispatchWorkItem {[weak self] in
                         self?.active = false
-                        self?.configuration?.delegateDispatchQueue.async {
-                            context.listeners.forEach { listener in
+                        self?.configuration.delegateDispatchQueue.async {
+                            self?.context.listeners.forEach { listener in
                                 listener.didTimeout()
                                 listener.didDeactivate()
                             }
                         }
                     }
-                    DispatchQueue.global(qos: .userInitiated).asyncAfter(deadline: .now() + .milliseconds(self.configuration!.wakeActiveMax), execute: self.wakeActiveMaxWorker!)
+                    DispatchQueue.global(qos: .userInitiated).asyncAfter(deadline: .now() + .milliseconds(self.configuration.wakeActiveMax), execute: self.wakeActiveMaxWorker!)
                 } catch let error {
-                    self.configuration?.delegateDispatchQueue.async {
-                        context.listeners.forEach { listener in
+                    self.configuration.delegateDispatchQueue.async {
+                        self.context.listeners.forEach { listener in
                             listener.failure(speechError: error)
                         }
                     }
@@ -107,7 +109,7 @@ import Speech
     // MARK: Private functions
     
     private func prepareAudioEngine() {
-        let bufferSize: Int = (self.configuration!.sampleRate / 1000) * self.configuration!.frameWidth
+        let bufferSize: Int = (self.configuration.sampleRate / 1000) * self.configuration.frameWidth
         self.audioEngine.inputNode.removeTap(onBus: 0) // a belt-and-suspenders approach to fixing https://github.com/wenkesj/react-native-voice/issues/46
         self.audioEngine.inputNode.installTap(
             onBus: 0,
@@ -125,12 +127,9 @@ import Speech
         self.recognitionTask = self.speechRecognizer.recognitionTask(
             with: recognitionRequest!,
             resultHandler: { [weak self] result, error in
-                guard
-                    let strongSelf = self,
-                    let context = strongSelf.context
-                    else {
-                        assertionFailure("AppleSpeechRecognizer recognitionTask resultHandler strongSelf is nil")
-                        return
+                guard let strongSelf = self else {
+                    assertionFailure("AppleSpeechRecognizer recognitionTask resultHandler strongSelf is nil")
+                    return
                 }
                 guard let _ = strongSelf.recognitionTask else {
                     // this task has been cancelled and set to nil by `stopStreaming`, so just end things here.
@@ -145,9 +144,9 @@ import Speech
                                 break
                             case 203: // request timed out, retry
                                 Trace.trace(Trace.Level.INFO, message: "resultHandler error 203", config: strongSelf.configuration, context: strongSelf.context, caller: strongSelf)
-                                context.isActive = false
-                                strongSelf.configuration?.delegateDispatchQueue.async {
-                                    context.listeners.forEach({ listener in
+                                strongSelf.context.isActive = false
+                                strongSelf.configuration.delegateDispatchQueue.async {
+                                    strongSelf.context.listeners.forEach({ listener in
                                         listener.didDeactivate()
                                     })
                                 }
@@ -162,13 +161,13 @@ import Speech
                             case 300..<603: // Apple retry error: https://developer.nuance.com/public/Help/DragonMobileSDKReference_iOS/Error-codes.html
                                 break
                             default:
-                                context.listeners.forEach({ listener in
+                                strongSelf.context.listeners.forEach({ listener in
                                     listener.failure(speechError: e)
                                 })
                             }
                         }
                     } else {
-                        strongSelf.context?.listeners.forEach({ listener in
+                        strongSelf.context.listeners.forEach({ listener in
                             listener.failure(speechError: e)
                         })
                     }
@@ -179,19 +178,19 @@ import Speech
                     let confidence = r.transcriptions.first?.segments.sorted(
                         by: { (a, b) -> Bool in
                             a.confidence <= b.confidence }).first?.confidence ?? 0.0
-                    context.transcript = r.bestTranscription.formattedString
-                    context.confidence = confidence
+                    strongSelf.context.transcript = r.bestTranscription.formattedString
+                    strongSelf.context.confidence = confidence
                     strongSelf.vadFallWorker = DispatchWorkItem {[weak self] in
-                        context.isActive = false
-                        strongSelf.active = false
-                        strongSelf.configuration?.delegateDispatchQueue.async {
-                            context.listeners.forEach({ listener in
-                                listener.didRecognize(context)
+                        self?.context.isActive = false
+                        self?.active = false
+                        self?.configuration.delegateDispatchQueue.async {
+                            self!.context.listeners.forEach({ listener in
+                                listener.didRecognize(self!.context)
                                 listener.didDeactivate()
                             })
                         }
                     }
-                    DispatchQueue.global(qos: .userInitiated).asyncAfter(deadline: DispatchTime.now() + .milliseconds(strongSelf.configuration!.vadFallDelay), execute: strongSelf.vadFallWorker!)
+                    DispatchQueue.global(qos: .userInitiated).asyncAfter(deadline: DispatchTime.now() + .milliseconds(strongSelf.configuration.vadFallDelay), execute: strongSelf.vadFallWorker!)
                 }
             }
         )

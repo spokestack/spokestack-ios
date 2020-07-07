@@ -17,8 +17,8 @@ class AppleWakewordRecognizerTest: XCTestCase {
     func testStartStreaming() {
         /// setup
         let configuration = SpeechConfiguration()
-        let awr = AppleWakewordRecognizer(configuration)
         let context = SpeechContext()
+        let awr = AppleWakewordRecognizer(configuration, context: context)
         awr.context = context
 
         /// no delegate & no configuration
@@ -42,8 +42,8 @@ class AppleWakewordRecognizerTest: XCTestCase {
     func testActivatetDeactivate() {
         /// setup
         let configuration = SpeechConfiguration()
-        let awr = AppleWakewordRecognizer(configuration)
         let context = SpeechContext()
+        let awr = AppleWakewordRecognizer(configuration, context: context)
         awr.context = context
         let delegate = AppleWakewordRecognizerTestDelegate()
         context.stageInstances = [awr]

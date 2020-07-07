@@ -39,8 +39,10 @@ class TFLiteWakewordRecognizerTest: XCTestCase {
         self.config.encodeModelPath = MockWakewordModels.encodePath
         self.config.filterModelPath = MockWakewordModels.filterPath
         self.config.detectModelPath = MockWakewordModels.detectPath
+        self.config.wakeActiveMin = 20
+        self.config.wakeActiveMax = 100
 
-        self.tflwr = TFLiteWakewordRecognizer(config)
+        self.tflwr = TFLiteWakewordRecognizer(config, context: context)
         self.tflwr?.context = context
         //let filterHexString = filter.map { String(format: "%02hhx", $0) }.joined()
         //let filterData = hexStringToData(hexString: MockWakewordModels.filterString)
@@ -90,30 +92,44 @@ class TFLiteWakewordRecognizerTest: XCTestCase {
         XCTAssertFalse(self.context.isStarted)
     }
     
-    func testActivatetDeactivate() {
-        // start
-        self.context.isActive = false
-        self.tflwr?.startStreaming(context: self.context)
-        self.tflwr?.process(Frame.voice(frameWidth: 10, sampleRate: 8000))
-        XCTAssert(self.context.isSpeech)
-        // stop
-        self.tflwr?.process(Frame.silence(frameWidth: 10, sampleRate: 8000))
-        XCTAssertFalse(self.context.isSpeech)
-    }
-    
     func testProcess() {
         // setup
-        let successExpectation = XCTestExpectation(description: "process without failure.")
-        self.delegate.didActivateExpectation = successExpectation
-        self.tflwr?.configuration?.vadMode = .HighlyPermissive
+        self.tflwr?.context.listeners = [self.delegate]
+        self.tflwr?.context.isStarted = true
+        self.tflwr?.context.isSpeech = true
+        self.tflwr?.context.isActive = false
+        self.tflwr?.startStreaming(context: self.context)
+        let activateExpectation = XCTestExpectation(description: "process without failure.")
+        let deactivateMinActiveExpectation = XCTestExpectation(description: "process without failure.")
+        let deactivateMaxActiveExpectation = XCTestExpectation(description: "process without failure.")
+        self.delegate.didActivateExpectation = activateExpectation
         
-        // process
-        self.context.isActive = false
-        self.context.isSpeech = false
-        // NB: the detect model will always output 1.0 no matter the input
-        self.tflwr?.process(Frame.voice(frameWidth: 10, sampleRate: 16000))
-        wait(for: [successExpectation], timeout: 5)
-        XCTAssert(self.context.isActive)
+        // activate
+        for _ in 0...1 {
+            self.tflwr?.process(Frame.voice(frameWidth: 20, sampleRate: 8000))
+        }
+        wait(for: [activateExpectation], timeout: 1)
+        XCTAssert(self.tflwr!.context.isActive)
+        XCTAssert(self.delegate.activated)
+        XCTAssertFalse(self.delegate.didError)
+        XCTAssertFalse(self.delegate.deactivated)
+        
+        // deactivate because activation exceeded maxActive
+        delegate.reset()
+        self.tflwr?.startStreaming(context: self.context)
+        self.tflwr?.context.isStarted = true
+        self.tflwr?.context.isSpeech = true
+        self.tflwr?.context.isActive = false
+        self.tflwr?.activeLength = 10
+        self.delegate.didDeactivateExpectation = deactivateMaxActiveExpectation
+        self.delegate.didActivateExpectation = activateExpectation
+        for _ in 0...1 {
+            self.tflwr?.process(Frame.silence(frameWidth: 20, sampleRate: 8000))
+        }
+        wait(for:[deactivateMaxActiveExpectation], timeout: 1)
+        XCTAssertFalse(self.tflwr!.context.isActive)
+        XCTAssert(self.delegate.deactivated)
+        XCTAssertFalse(self.delegate.activated)
         XCTAssertFalse(self.delegate.didError)
     }
 }
@@ -161,13 +177,15 @@ class TFLiteWakewordRecognizerTestDelegate: SpeechEventListener {
     var activated: Bool = false
     var asyncExpectation: XCTestExpectation?
     var didActivateExpectation: XCTestExpectation?
-
+    var didDeactivateExpectation: XCTestExpectation?
+    
     func reset() {
         self.didError = false
         self.deactivated = false
         self.activated = false
         asyncExpectation = .none
         self.didActivateExpectation = .none
+        didDeactivateExpectation = .none
     }
     
     func didRecognize(_ result: SpeechContext) {}
@@ -195,6 +213,12 @@ class TFLiteWakewordRecognizerTestDelegate: SpeechEventListener {
     
     func didDeactivate() {
         self.deactivated = true
+        guard let _ = self.didDeactivateExpectation else {
+            XCTFail("TFLiteWakewordRecognizerTestDelegate was not setup correctly. Missing XCTExpectation reference")
+            return
+        }
+        self.deactivated = true
+        self.didDeactivateExpectation?.fulfill()
     }
     
     func didInit() {}

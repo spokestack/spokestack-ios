@@ -14,68 +14,102 @@ import AVFoundation
 class AudioControllerTest: XCTestCase {
     func testStreaming() {
         let controller = AudioController.sharedInstance
-        let delegate = AudioControllerTestDelegate()
+        let config = SpeechConfiguration()
         let context = SpeechContext()
-        let setupFailedExpectation = expectation(description: "testStartStreaming calls AudioControllerTestDelegate as the result of setupFailed method completion")
-        let processFrameExpectation = expectation(description: "testStartStreaming calls AudioControllerTestDelegate as the result of processFrame method completion")
-        
+        controller.configuration = config
+        controller.context = context
+        let delegate = AudioControllerTestDelegate(config, context: context)
+        controller.context?.listeners = [delegate]
+        let setupFailedExpectation = expectation(description: "testStartStreaming calls AudioControllerTestDelegate as the result of failure method completion")
+
         // Uninititalized delegates do not cause an exception during startStreaming
-        XCTAssertNoThrow(controller.startStreaming(context: context))
-        /// stopStreaming does not cause an exception
-        XCTAssertNoThrow(controller.stopStreaming(context: context))
+        controller.startStreaming(context: context)
+        XCTAssertFalse(delegate.didSetupFailed)
         
-        // Initialized delegate is called during startStreaming
+        /// stopStreaming does not cause an exception
+        controller.stopStreaming(context: context)
+        XCTAssertFalse(delegate.didSetupFailed)
+        
+        // Incompatible AVAudioSession category fails
+        delegate.reset()
         context.listeners = [delegate]
         context.stageInstances = [delegate]
         controller.context = context
         delegate.asyncExpectation = setupFailedExpectation
         XCTAssertNoThrow(try AVAudioSession.sharedInstance().setCategory(.ambient))
-        XCTAssertNoThrow(controller.startStreaming(context: context))
+        controller.startStreaming(context: context)
         wait(for: [setupFailedExpectation], timeout: 1)
         XCTAssert(delegate.didSetupFailed)
+        
         /// stopStreaming does not cause an exception
-        XCTAssertNoThrow(controller.stopStreaming(context: context))
-
-        delegate.reset()
+        controller.stopStreaming(context: context)
+    }
+    
+    func testProcess() {
+        let controller = AudioController.sharedInstance
+        let config = SpeechConfiguration()
+        let context = SpeechContext()
+        controller.configuration = config
+        controller.context = context
+        let delegate = AudioControllerTestDelegate(config, context: context)
+        controller.context?.listeners = [delegate]
+        context.stageInstances = [delegate]
+        let processFrameExpectation = expectation(description: "testStartStreaming calls AudioControllerTestDelegate as the result of processFrame method completion")
 
         // AudioControllerDelegate processFrame is called
+        delegate.reset()
         XCTAssertNoThrow(try AVAudioSession.sharedInstance().setCategory(.record))
         delegate.asyncExpectation = processFrameExpectation
         XCTAssertNotNil(delegate.asyncExpectation)
-        XCTAssertNoThrow(controller.startStreaming(context: context))
-        wait(for: [processFrameExpectation], timeout: 2)
+        controller.startStreaming(context: context)
+        wait(for: [processFrameExpectation], timeout: 1)
         XCTAssert(delegate.didProcessFrame)
-        // stopStreaming does not cause an exception
-        XCTAssertNoThrow(controller.stopStreaming(context: context))
+        
+        // stopStreaming works
+        controller.stopStreaming(context: context)
+        XCTAssertFalse(delegate.didSetupFailed)
     }
 }
 
 /// Spy pattern for the system under test.
 class AudioControllerTestDelegate: SpeechProcessor, SpeechEventListener {
-    var configuration: SpeechConfiguration?
+    var configuration: SpeechConfiguration
     
-    var context: SpeechContext?
+    var context: SpeechContext
+    var didProcessFrame: Bool = false
+    var didSetupFailed: Bool = false
+    /// asyncExpectation lets the caller's test know when the delegate has been called.
+    var asyncExpectation: XCTestExpectation?
     
-    func startStreaming(context: SpeechContext) {
-        
+    init(_ config: SpeechConfiguration, context: SpeechContext) {
+        self.configuration = config
+        self.context = context
     }
     
-    func stopStreaming(context: SpeechContext) {
-        
+    func reset() {
+        didSetupFailed = false
+        didProcessFrame = false
+        asyncExpectation = .none
     }
     
-    func didActivate() {
-        
-    }
+    func startStreaming(context: SpeechContext) {}
     
-    func didDeactivate() {
-        
-    }
+    func stopStreaming(context: SpeechContext) {}
     
-    func didRecognize(_ result: SpeechContext) {
-        
-    }
+    func didActivate() { }
     
+    func didDeactivate() {}
+    
+    func didRecognize(_ result: SpeechContext) {}
+    
+    func didTimeout() {}
+    
+    func didInit() {}
+    
+    func didStart() {}
+    
+    func didStop() {}
+
     func failure(speechError: Error) {
         guard let ae = self.asyncExpectation else {
             XCTFail("AudioControllerTestDelegate was not setup correctly. Missing XCTExpectation reference")
@@ -84,21 +118,6 @@ class AudioControllerTestDelegate: SpeechProcessor, SpeechEventListener {
         self.didSetupFailed = true
         ae.fulfill()
         self.asyncExpectation = nil
-    }
-    
-    func didTimeout() {
-        
-    }
-    
-    
-    var didProcessFrame: Bool = false
-    var didSetupFailed: Bool = false
-    /// asyncExpectation lets the caller's test know when the delegate has been called.
-    var asyncExpectation: XCTestExpectation?
-    
-    func reset() {
-        didSetupFailed = false
-        asyncExpectation = .none
     }
     
     func process(_ frame: Data) -> Void {
@@ -118,21 +137,7 @@ class AudioControllerTestDelegate: SpeechProcessor, SpeechEventListener {
         }
     }
     
-    func didInit() {
-        
-    }
-    
-    func didStart() {
-        
-    }
-    
-    func didStop() {
-        
-    }
-    
     func didTrace(_ trace: String) {
         print(trace)
     }
-    
-    
 }
