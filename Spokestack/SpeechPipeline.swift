@@ -56,6 +56,7 @@ import Dispatch
         self.stages = configuration.stages
         self.context.listeners = listeners
         AudioController.sharedInstance.configuration = configuration
+        AudioController.sharedInstance.context = self.context
         super.init()
         
         // initialization finished, emit the corresponding event
@@ -104,33 +105,33 @@ import Dispatch
                     return TFLiteWakewordRecognizer(self.configuration, context: self.context)
                 case .appleSpeech:
                     return AppleSpeechRecognizer(self.configuration, context: self.context)
+                case .vadTrigger:
+                    return VADTrigger(self.configuration, context: self.context)
                 }
             }()
             self.context.stageInstances.append(stageInstance)
         })
         
         // notify stages to start
-        AudioController.sharedInstance.startStreaming(context: self.context)
+        AudioController.sharedInstance.startStreaming()
         self.context.stageInstances.forEach { stage in
-            stage.startStreaming(context: self.context)
+            stage.startStreaming()
         }
         
         // notify listeners of start
         self.context.listeners.forEach({ listener in
             listener.didStart()
         })
-        self.context.isStarted = true
     }
     
     /// Stops the speech pipeline.
     ///
     /// All pipeline activity is stopped, and the pipeline cannot be activated until it is `start`ed again.
     @objc public func stop() -> Void {
-        self.context.isStarted = false
         self.context.stageInstances.forEach({ stage in
-            stage.stopStreaming(context: self.context)
+            stage.stopStreaming()
         })
-        AudioController.sharedInstance.stopStreaming(context: self.context)
+        AudioController.sharedInstance.stopStreaming()
         self.context.listeners.forEach({ listener in
             listener.didStop()
         })

@@ -14,12 +14,10 @@ import Foundation
     @objc public var transcript: String = ""
     /// Current speech recognition confidence: [0-1)
     @objc public var confidence: Float = 0.0
-    /// Speech pipeline active indicator
-    @objc public var isStarted: Bool = false
     /// Speech recognition active indicator
     @objc public var isActive: Bool = false
-    /// Speech detected indicator
-    @objc public var isSpeech: Bool = false
+    /// Speech detected indicator. Default to true for non-vad activation
+    @objc public var isSpeech: Bool = true
     
     public var stageInstances: [SpeechProcessor] = []
     public var listeners: [SpeechEventListener] = []

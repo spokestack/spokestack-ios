@@ -48,7 +48,7 @@ class AppleASRViewController: UIViewController {
         let config: SpeechConfiguration = SpeechConfiguration()
         config.tracing = .DEBUG
         config.delegateDispatchQueue = DispatchQueue.main
-        config.stages = [.appleSpeech]
+        config.stages = [.vad, .vadTrigger, .appleSpeech]
         return SpeechPipeline(configuration: config, listeners: [self])
     }()
     
@@ -82,7 +82,6 @@ class AppleASRViewController: UIViewController {
     @objc func startRecordingAction(_ sender: Any) {
         print("pipeline started")
         self.pipeline.start()
-        self.pipeline.activate()
     }
     
     @objc func stopRecordingAction(_ sender: Any) {

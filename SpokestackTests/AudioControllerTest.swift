@@ -19,15 +19,17 @@ class AudioControllerTest: XCTestCase {
         controller.configuration = config
         controller.context = context
         let delegate = AudioControllerTestDelegate(config, context: context)
-        controller.context?.listeners = [delegate]
+        context.listeners = [delegate]
+        context.stageInstances = [delegate]
         let setupFailedExpectation = expectation(description: "testStartStreaming calls AudioControllerTestDelegate as the result of failure method completion")
 
         // Uninititalized delegates do not cause an exception during startStreaming
-        controller.startStreaming(context: context)
+        XCTAssertNoThrow(try AVAudioSession.sharedInstance().setCategory(.playAndRecord))
+        controller.startStreaming()
         XCTAssertFalse(delegate.didSetupFailed)
         
         /// stopStreaming does not cause an exception
-        controller.stopStreaming(context: context)
+        controller.stopStreaming()
         XCTAssertFalse(delegate.didSetupFailed)
         
         // Incompatible AVAudioSession category fails
@@ -37,12 +39,12 @@ class AudioControllerTest: XCTestCase {
         controller.context = context
         delegate.asyncExpectation = setupFailedExpectation
         XCTAssertNoThrow(try AVAudioSession.sharedInstance().setCategory(.ambient))
-        controller.startStreaming(context: context)
+        controller.startStreaming()
         wait(for: [setupFailedExpectation], timeout: 1)
         XCTAssert(delegate.didSetupFailed)
         
         /// stopStreaming does not cause an exception
-        controller.stopStreaming(context: context)
+        controller.stopStreaming()
     }
     
     func testProcess() {
@@ -57,16 +59,15 @@ class AudioControllerTest: XCTestCase {
         let processFrameExpectation = expectation(description: "testStartStreaming calls AudioControllerTestDelegate as the result of processFrame method completion")
 
         // AudioControllerDelegate processFrame is called
-        delegate.reset()
         XCTAssertNoThrow(try AVAudioSession.sharedInstance().setCategory(.record))
         delegate.asyncExpectation = processFrameExpectation
         XCTAssertNotNil(delegate.asyncExpectation)
-        controller.startStreaming(context: context)
+        controller.startStreaming()
         wait(for: [processFrameExpectation], timeout: 1)
         XCTAssert(delegate.didProcessFrame)
         
         // stopStreaming works
-        controller.stopStreaming(context: context)
+        controller.stopStreaming()
         XCTAssertFalse(delegate.didSetupFailed)
     }
 }
@@ -92,9 +93,9 @@ class AudioControllerTestDelegate: SpeechProcessor, SpeechEventListener {
         asyncExpectation = .none
     }
     
-    func startStreaming(context: SpeechContext) {}
+    func startStreaming() {}
     
-    func stopStreaming(context: SpeechContext) {}
+    func stopStreaming() {}
     
     func didActivate() { }
     

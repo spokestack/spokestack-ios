@@ -85,11 +85,9 @@ class SpeechPipelineTest: XCTestCase {
         delegate.asyncExpectation = didStartExpectation
         p.start()
         wait(for: [didStartExpectation], timeout: 1)
-        XCTAssert(p.context.isStarted)
         delegate.asyncExpectation = didStopExpectation
         p.stop()
         wait(for: [didStopExpectation], timeout: 1)
-        XCTAssertFalse(p.context.isStarted)
     }
     
     func testEmptyPipeline() {
@@ -109,12 +107,10 @@ class SpeechPipelineTest: XCTestCase {
         delegate.asyncExpectation = didStartExpectation
         p.start()
         wait(for: [didStartExpectation], timeout: 1)
-        XCTAssert(p.context.isStarted)
         XCTAssertFalse(p.context.isActive)
         delegate.asyncExpectation = didStopExpectation
         p.stop()
         wait(for: [didStopExpectation], timeout: 1)
-        XCTAssertFalse(p.context.isStarted)
         XCTAssertFalse(p.context.isActive)
     }
     
@@ -124,23 +120,25 @@ class SpeechPipelineTest: XCTestCase {
         let didStartExpectation = expectation(description: "didStartExpectation fulfills when testSpeechProcessors calls SpeechPipelineTestDelegate as the result of didStart method completion")
         let didStopExpectation = expectation(description: "didStopExpectation fulfills when testSpeechProcessors calls SpeechPipelineTestDelegate as the result of didStop method completion")
         let delegate = SpeechPipelineTestDelegate()
-        
-        // init the pipeline with stages
-        delegate.asyncExpectation = didInitExpectation
         let config = SpeechConfiguration()
+
+        // init the pipeline
+        delegate.asyncExpectation = didInitExpectation
         //config.stages = [.vad]
         let p = SpeechPipeline(configuration: config, listeners: [delegate])
         wait(for: [didInitExpectation], timeout: 1)
         delegate.reset()
+        
+        // add stages
+        let processor = TestProcessor(true, config: config, context: p.context)
+        p.context.stageInstances = [processor]
         delegate.asyncExpectation = didStartExpectation
         p.start()
         wait(for: [didStartExpectation], timeout: 1)
-        XCTAssert(p.context.isStarted)
         XCTAssert(p.context.isActive)
         delegate.asyncExpectation = didStopExpectation
         p.stop()
         wait(for: [didStopExpectation], timeout: 1)
-        XCTAssertFalse(p.context.isStarted)
         XCTAssertFalse(p.context.isActive)
     }
 }
@@ -228,11 +226,11 @@ class TestProcessor: SpeechProcessor {
         self.isSpeechProcessor = isSpeechProcessor
     }
     
-    func startStreaming(context: SpeechContext) {
+    func startStreaming() {
         context.isActive = isSpeechProcessor ? true: false
     }
     
-    func stopStreaming(context: SpeechContext) {
-        context.isActive = false
+    func stopStreaming() {
+        context.isActive = isSpeechProcessor ? false: true
     }
 }

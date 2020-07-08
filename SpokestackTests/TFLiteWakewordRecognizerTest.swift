@@ -85,22 +85,17 @@ class TFLiteWakewordRecognizerTest: XCTestCase {
     func testStartStop() {
         // start
         self.context.isActive = false
-        self.tflwr?.startStreaming(context: self.context)
-        XCTAssert(self.context.isStarted)
+        self.tflwr?.startStreaming()
         // stop
-        self.tflwr?.stopStreaming(context: self.context)
-        XCTAssertFalse(self.context.isStarted)
+        self.tflwr?.stopStreaming()
     }
     
     func testProcess() {
         // setup
         self.tflwr?.context.listeners = [self.delegate]
-        self.tflwr?.context.isStarted = true
-        self.tflwr?.context.isSpeech = true
         self.tflwr?.context.isActive = false
-        self.tflwr?.startStreaming(context: self.context)
+        self.tflwr?.startStreaming()
         let activateExpectation = XCTestExpectation(description: "process without failure.")
-        let deactivateMinActiveExpectation = XCTestExpectation(description: "process without failure.")
         let deactivateMaxActiveExpectation = XCTestExpectation(description: "process without failure.")
         self.delegate.didActivateExpectation = activateExpectation
         
@@ -116,8 +111,7 @@ class TFLiteWakewordRecognizerTest: XCTestCase {
         
         // deactivate because activation exceeded maxActive
         delegate.reset()
-        self.tflwr?.startStreaming(context: self.context)
-        self.tflwr?.context.isStarted = true
+        self.tflwr?.startStreaming()
         self.tflwr?.context.isSpeech = true
         self.tflwr?.context.isActive = false
         self.tflwr?.activeLength = 10

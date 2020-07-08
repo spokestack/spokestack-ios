@@ -112,8 +112,7 @@ class AudioController {
     /// Begin sending audio frames to the AudioControllerDelegate.
     /// - SeeAlso: AudioControllerDelegate
     /// - Parameter context: Global state for the speech pipeline.
-    func startStreaming(context: SpeechContext) -> Void {
-        self.context = context
+    func startStreaming() -> Void {
         self.checkAudioSession()
         do {
             try self.start()
@@ -135,8 +134,7 @@ class AudioController {
     /// Stop sending audio frames to the AudioControllerDelegate.
     /// - SeeAlso: AudioControllerDelegate
     /// - Parameter context: Global state for the speech pipeline.
-    func stopStreaming(context: SpeechContext) -> Void {
-        self.context = context
+    func stopStreaming() -> Void {
         do {
             try self.stop()
         } catch AudioError.audioSessionSetup(let message) {

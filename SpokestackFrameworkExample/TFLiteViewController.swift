@@ -121,12 +121,10 @@ extension TFLiteViewController: SpeechEventListener {
     
     func didActivate() {
         print("didActivate")
-        self.pipeline?.activate()
     }
     
     func didDeactivate() {
         print("didDeactivate")
-        self.pipeline?.deactivate()
     }
     
     func failure(speechError: Error) {

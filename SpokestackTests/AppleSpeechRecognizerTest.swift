@@ -18,11 +18,37 @@ class AppleSpeechRecognizerTest: XCTestCase {
         let context = SpeechContext()
         let configuration = SpeechConfiguration()
         let asr = AppleSpeechRecognizer(configuration, context: context)
+        let delegate = AppleSpeechRecognizerTestDelegate()
+        context.listeners = [delegate]
+        context.isActive = true
+        context.isSpeech = true
         asr.context = context
-        asr.startStreaming(context: context)
+        asr.startStreaming()
         XCTAssert(context.isActive)
-        asr.stopStreaming(context: context)
-        XCTAssert(!context.isActive)
+        XCTAssertFalse(delegate.didError)
+        asr.stopStreaming()
+        // asr does not set active
+        XCTAssertFalse(context.isActive)
+        XCTAssertFalse(delegate.didError)
+    }
+    
+    func testProcess() {
+        let context = SpeechContext()
+        let configuration = SpeechConfiguration()
+        let asr = AppleSpeechRecognizer(configuration, context: context)
+        let delegate = AppleSpeechRecognizerTestDelegate()
+        context.listeners = [delegate]
+        context.isActive = true
+        context.isSpeech = true
+        context.stageInstances = [asr]
+        asr.context = context
+        asr.startStreaming()
+        
+        asr.process(Frame.silence(frameWidth: 10, sampleRate: 8000))
+        asr.stopStreaming()
+        // asr does not set active
+        XCTAssertFalse(context.isActive)
+        XCTAssertFalse(delegate.didError)
     }
 }
 

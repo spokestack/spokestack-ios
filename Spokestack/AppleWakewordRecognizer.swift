@@ -158,7 +158,7 @@ This pipeline component uses the Apple `SFSpeech` API to stream audio samples fo
                         strongSelf.context.isActive = true
                         strongSelf.configuration.delegateDispatchQueue.async {
                             strongSelf.context.listeners.forEach { listener in
-                                listener.didDeactivate()
+                                listener.didActivate()
                             }
                         }
                     }
@@ -172,24 +172,18 @@ This pipeline component uses the Apple `SFSpeech` API to stream audio samples fo
 extension AppleWakewordRecognizer: SpeechProcessor {
     
     /// Triggered by the speech pipeline, instructing the recognizer to begin streaming and processing audio.
-    /// - Parameter context: The current speech context.
-    public func startStreaming(context: SpeechContext) {
-        self.context = context
+    public func startStreaming() {
         self.prepareAudioEngine()
         self.audioEngine.prepare()
-        self.context.isStarted = true
     }
     
     /// Triggered by the speech pipeline, instructing the recognizer to stop streaming audio and complete processing.
-    /// - Parameter context: The current speech context.
-    public func stopStreaming(context: SpeechContext) {
-        self.context = context
+    public func stopStreaming() {
         self.stopRecognition()
         self.dispatchWorker?.cancel()
         self.dispatchWorker = nil
         self.audioEngine.stop()
         self.audioEngine.inputNode.removeTap(onBus: 0)
-        self.context.isStarted = false
     }
     
     /// Receives a frame of audio samples for processing. Interface between the `SpeechProcessor` and `AudioController` components.
@@ -197,16 +191,14 @@ extension AppleWakewordRecognizer: SpeechProcessor {
     /// Processes audio in an async thread.
     /// - Parameter frame: Frame of audio samples.
     public func process(_ frame: Data) -> Void {
-        if self.context.isSpeech {
-            if !self.context.isActive {
-                do {
-                    try self.audioEngine.start()
-                    self.startRecognition()
-                } catch let error {
-                    self.configuration.delegateDispatchQueue.async {
-                        self.context.listeners.forEach { listener in
-                            listener.failure(speechError: error)
-                        }
+        if !self.recognitionTaskRunning && self.context.isSpeech && !self.context.isActive {
+            do {
+                try self.audioEngine.start()
+                self.startRecognition()
+            } catch let error {
+                self.configuration.delegateDispatchQueue.async {
+                    self.context.listeners.forEach { listener in
+                        listener.failure(speechError: error)
                     }
                 }
             }

@@ -30,7 +30,6 @@ class WebRTCVADTest: XCTestCase {
         config.sampleRate = 8000
         let _ = WebRTCVAD(config, context: context)
         XCTAssertFalse(delegate.failed)
-
         
         config.vadMode = .Permissive
         config.frameWidth = 20
@@ -44,13 +43,13 @@ class WebRTCVADTest: XCTestCase {
         let _ = WebRTCVAD(config, context: context)
         XCTAssertFalse(delegate.failed)
         
-        /// - TODO: .HighlyRestrictive is an invalid config but should be valid
-//        config.vadMode = .HighlyRestrictive
-//        config.frameWidth = 10
-//        config.sampleRate = 16000
-//        let _ = WebRTCVAD(config, context: context)
-//        XCTAssertFalse(delegate.failed)
-                
+        /// - TODO: .HighlyRestrictive is a valid config but WebRTC asserts is invalid
+        //        config.vadMode = .HighlyRestrictive
+        //        config.frameWidth = 10
+        //        config.sampleRate = 16000
+        //        let _ = WebRTCVAD(config, context: context)
+        //        XCTAssertFalse(delegate.failed)
+        
         // invalid config
         
         config.vadMode = .HighlyPermissive
@@ -61,7 +60,7 @@ class WebRTCVADTest: XCTestCase {
         XCTAssert(delegate.failed, "WebRTCVAD initialization should fail")
         XCTAssert(delegate.error is VADError, "unexpected error type \(type(of: delegate.error)) during read()")
         XCTAssertEqual(delegate.error as? VADError, VADError.invalidConfiguration("Invalid sampleRate of 44100"))
-
+        
         delegate.reset()
         delegate.failureExpectation = failureFrameWidthExpectation
         config.vadMode = .HighlyPermissive
@@ -72,7 +71,6 @@ class WebRTCVADTest: XCTestCase {
         XCTAssert(delegate.failed, "WebRTCVAD initialization should fail")
         XCTAssert(delegate.error is VADError, "unexpected error type \(type(of: delegate.error)) during read()")
         XCTAssertEqual(delegate.error as? VADError, VADError.invalidConfiguration("Invalid frameWidth of 40"))
-        delegate.reset()
     }
     
     /// Since WebRTCVAD uses Data for frames, there's no danger of null pointers, so our tests are simple =)
@@ -110,7 +108,7 @@ class WebRTCVADTest: XCTestCase {
         vad.process(Frame.voice(frameWidth: 10, sampleRate: 8000))
         XCTAssertFalse(delegate.failed, "Process should not cause a failure")
         XCTAssert(context.isSpeech, "isSpeech should be true because voice + isSpeech: false")
-
+        
         /// speech
         delegate.reset()
         context.isSpeech = true
@@ -123,7 +121,7 @@ class WebRTCVADTest: XCTestCase {
 }
 
 class WebRTCVADTestDelegate: SpeechEventListener {
-  
+    
     /// Spy pattern for the system under test.
     /// asyncExpectation lets the caller's test know when the delegate has been called.
     var initialized: Bool = false
@@ -183,10 +181,10 @@ class WebRTCVADTestDelegate: SpeechEventListener {
     }
     
     func activate(frame: Data) {
-         Trace.trace(.DEBUG, message: "activate", config: config, context: context, caller: self)
+        Trace.trace(.DEBUG, message: "activate", config: config, context: context, caller: self)
     }
     
     func deactivate() {
-         Trace.trace(.DEBUG, message: "deactivate", config: config, context: context, caller: self)
+        Trace.trace(.DEBUG, message: "deactivate", config: config, context: context, caller: self)
     }
 }

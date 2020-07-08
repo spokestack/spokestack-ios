@@ -45,7 +45,7 @@ import TensorFlowLite
     internal var activeLength: Int = 0
     private var minActive: Int = 0
     private var maxActive: Int = 0
-    private var isSpeech: Bool = false
+    private var active: Bool = false
     
     /// TensorFlowLite models
     private var filterModel: Interpreter?
@@ -425,17 +425,13 @@ import TensorFlowLite
 extension TFLiteWakewordRecognizer : SpeechProcessor {
     
     /// Triggered by the speech pipeline, instructing the recognizer to begin streaming and processing audio.
-    /// - Parameter context: The current speech context.
-    public func startStreaming(context: SpeechContext) -> Void {
-        self.context = context
-        self.context.isStarted = true
+    public func startStreaming() -> Void {
+        self.active = true
     }
     
     /// Triggered by the speech pipeline, instructing the recognizer to stop streaming audio and complete processing.
-    /// - Parameter context: The current speech context.
-    public func stopStreaming(context: SpeechContext) -> Void {
-        self.context = context
-        self.context.isStarted = false
+    public func stopStreaming() -> Void {
+        self.active = false
     }
     
     /// Receives a frame of audio samples for processing. Interface between the `SpeechProcessor` and `AudioController` components.
@@ -451,12 +447,12 @@ extension TFLiteWakewordRecognizer : SpeechProcessor {
                     strongSelf.activeLength <= strongSelf.maxActive)
                     ||
                     // don't deactivate if vad previously detected speech and the min activation length hasn't been met
-                    (strongSelf.isSpeech &&
+                    (strongSelf.active &&
                         strongSelf.activeLength <= strongSelf.minActive) {
                     // Run the current frame through the detector pipeline.
                     // Activate the pipeline if a keyword phrase was detected.
                     do {
-                        strongSelf.isSpeech = true
+                        strongSelf.active = true
                         strongSelf.activeLength += 1
                         // Decode the FFT outputs into the filter model's input
                         try strongSelf.sample(frame)
@@ -464,7 +460,7 @@ extension TFLiteWakewordRecognizer : SpeechProcessor {
                         if activate {
                             strongSelf.context.isActive = true
                             strongSelf.reset()
-                            strongSelf.stopStreaming(context: strongSelf.context)
+                            strongSelf.stopStreaming()
                             strongSelf.configuration.delegateDispatchQueue.async {
                                 strongSelf.context.listeners.forEach { listener in
                                     listener.didActivate()
@@ -480,7 +476,7 @@ extension TFLiteWakewordRecognizer : SpeechProcessor {
                     }
                 } else {
                     strongSelf.reset()
-                    strongSelf.isSpeech = false
+                    strongSelf.active = false
                     strongSelf.context.isActive = false
                     strongSelf.configuration.delegateDispatchQueue.async {
                         strongSelf.context.listeners.forEach { listener in
@@ -489,7 +485,7 @@ extension TFLiteWakewordRecognizer : SpeechProcessor {
                     }
                 }
             }
-            if strongSelf.isSpeech && strongSelf.context.isActive {
+            if strongSelf.active && strongSelf.context.isActive {
                 strongSelf.debug()
             }
         }

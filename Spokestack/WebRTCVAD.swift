@@ -36,17 +36,14 @@ private var frameBuffer: RingBuffer<Int16>!
     
     public var context: SpeechContext
     
-    public func startStreaming(context: SpeechContext) {
-        self.context = context
-    }
+    public func startStreaming() {}
     
-    public func stopStreaming(context: SpeechContext) {
-        self.context = context
-    }
+    public func stopStreaming() {}
     
     public init(_ configuration: SpeechConfiguration, context: SpeechContext) {
         self.configuration = configuration
         self.context = context
+        self.context.isSpeech = false
         super.init()
         do {
             try self.configure()
@@ -58,6 +55,7 @@ private var frameBuffer: RingBuffer<Int16>!
     }
     
     deinit {
+        vad.deinitialize(count: 1)
         WebRtcVad_Free(vad.pointee)
     }
     
@@ -83,7 +81,7 @@ private var frameBuffer: RingBuffer<Int16>!
         if errorCode != 0 { throw VADError.initialization("unable to initialize WebRTCVAD, which returned error code \(errorCode)") }
         errorCode = WebRtcVad_set_mode(vad.pointee, Int32(c.vadMode.rawValue))
         if errorCode != 0 {
-            WebRtcVad_Free(vad.pointee)
+            vad.pointee = nil
             throw VADError.initialization("unable to set WebRTCVAD mode, which returned error code \(errorCode)")
         }
     }
@@ -91,12 +89,16 @@ private var frameBuffer: RingBuffer<Int16>!
     private func validate(frameWidth: Int, sampleRate: Int) throws {
         switch frameWidth {
         case 10, 20, 30: break
-        default: throw VADError.invalidConfiguration("Invalid frameWidth of \(frameWidth)")
+        default:
+            vad.pointee = nil
+            throw VADError.invalidConfiguration("Invalid frameWidth of \(frameWidth)")
         }
         
         switch sampleRate {
         case 8000, 16000, 32000, 48000: break
-        default: throw VADError.invalidConfiguration("Invalid sampleRate of \(sampleRate)")
+        default:
+            vad.pointee = nil
+            throw VADError.invalidConfiguration("Invalid sampleRate of \(sampleRate)")
         }
     }
     
@@ -122,8 +124,10 @@ private var frameBuffer: RingBuffer<Int16>!
                                 sampleWindow.append(s)
                             }
                         }
-                        let sampleWindowUBP = Array(UnsafeBufferPointer(start: sampleWindow, count: sampleWindow.count))
+                        let ubp = UnsafeBufferPointer(start: sampleWindow, count: sampleWindow.count)
+                        let sampleWindowUBP = Array(ubp)
                         let result = WebRtcVad_Process(vad.pointee, sampleRate32, sampleWindowUBP, frameBufferStride32)
+                        
                         switch result {
                         // if activation state changes, stop the detecting loop but finish writing the samples to the buffer (in the outer for loop)
                         case 1:

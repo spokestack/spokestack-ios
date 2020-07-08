@@ -48,65 +48,59 @@ import Speech
     // MARK: SpeechProcessor implementation
     
     /// Triggered by the speech pipeline, instructing the recognizer to begin streaming and processing audio.
-    /// - Parameter context: The current speech context.
-    @objc public func startStreaming(context: SpeechContext) {
-        self.context = context
-        self.context.isActive = true
-        self.prepareAudioEngine()
-        self.audioEngine.prepare()
-        self.recognitionRequest = SFSpeechAudioBufferRecognitionRequest()
-        self.recognitionRequest?.shouldReportPartialResults = true
+    @objc public func startStreaming() {
+        self.activate()
     }
     
     /// Triggered by the speech pipeline, instructing the recognizer to stop streaming audio and complete processing.
-    /// - Parameter context: The current speech context.
-    @objc public func stopStreaming(context: SpeechContext) {
-        self.context = context
+    @objc public func stopStreaming() {
+        self.deactivate()
         self.recognitionTask?.cancel()
         self.recognitionTask = nil
         self.recognitionRequest?.endAudio()
         self.recognitionRequest = nil
-        self.vadFallWorker?.cancel()
-        self.wakeActiveMaxWorker?.cancel()
         self.audioEngine.stop()
         self.audioEngine.inputNode.removeTap(onBus: 0)
-        self.context.isActive = false
     }
     
     @objc public func process(_ frame: Data) {
         if self.context.isActive {
             if !self.active {
-                do {
-                    self.active = true
-                    try self.audioEngine.start()
-                    try self.createRecognitionTask()
-                    self.wakeActiveMaxWorker = DispatchWorkItem {[weak self] in
-                        self?.active = false
-                        self?.configuration.delegateDispatchQueue.async {
-                            self?.context.listeners.forEach { listener in
-                                listener.didTimeout()
-                                listener.didDeactivate()
-                            }
-                        }
-                    }
-                    DispatchQueue.global(qos: .userInitiated).asyncAfter(deadline: .now() + .milliseconds(self.configuration.wakeActiveMax), execute: self.wakeActiveMaxWorker!)
-                } catch let error {
-                    self.configuration.delegateDispatchQueue.async {
-                        self.context.listeners.forEach { listener in
-                            listener.failure(speechError: error)
-                        }
-                    }
-                }
+                self.activate()
             }
-        } else {
-            self.active = false
-            self.recognitionTask?.cancel()
-            self.recognitionRequest?.endAudio()
-            self.wakeActiveMaxWorker?.cancel()
+        } else if self.active {
+            self.deactivate()
         }
     }
     
     // MARK: Private functions
+    
+    private func activate() {
+        do {
+            self.active = true
+            self.recognitionRequest = SFSpeechAudioBufferRecognitionRequest()
+            self.recognitionRequest?.shouldReportPartialResults = true
+            self.prepareAudioEngine()
+            self.audioEngine.prepare()
+            try self.audioEngine.start()
+            try self.createRecognitionTask()
+            self.wakeActiveMaxWorker = DispatchWorkItem {[weak self] in
+                self?.configuration.delegateDispatchQueue.async {
+                    self?.context.listeners.forEach { listener in
+                        listener.didTimeout()
+                        self?.deactivate()
+                    }
+                }
+            }
+            DispatchQueue.global(qos: .userInitiated).asyncAfter(deadline: .now() + .milliseconds(self.configuration.wakeActiveMax), execute: self.wakeActiveMaxWorker!)
+        } catch let error {
+            self.configuration.delegateDispatchQueue.async {
+                self.context.listeners.forEach { listener in
+                    listener.failure(speechError: error)
+                }
+            }
+        }
+    }
     
     private func prepareAudioEngine() {
         let bufferSize: Int = (self.configuration.sampleRate / 1000) * self.configuration.frameWidth
@@ -123,16 +117,29 @@ import Speech
         }
     }
     
+    private func deactivate() {
+        self.active = false
+        self.context.isActive = false
+        self.recognitionTask?.finish()
+        self.recognitionRequest?.endAudio()
+        self.wakeActiveMaxWorker?.cancel()
+        self.configuration.delegateDispatchQueue.async {
+            self.context.listeners.forEach({ listener in
+                listener.didDeactivate()
+            })
+        }
+    }
+    
     private func createRecognitionTask() throws -> Void {
         self.recognitionTask = self.speechRecognizer.recognitionTask(
             with: recognitionRequest!,
             resultHandler: { [weak self] result, error in
                 guard let strongSelf = self else {
-                    assertionFailure("AppleSpeechRecognizer recognitionTask resultHandler strongSelf is nil")
+                    // the callback has been orphaned by stopStreaming, so just end things here.
                     return
                 }
                 guard let _ = strongSelf.recognitionTask else {
-                    // this task has been cancelled and set to nil by `stopStreaming`, so just end things here.
+                    // the task has been cancelled and set to nil by stopStreaming, so just end things here.
                     return
                 }
                 strongSelf.vadFallWorker?.cancel()
@@ -144,12 +151,7 @@ import Speech
                                 break
                             case 203: // request timed out, retry
                                 Trace.trace(Trace.Level.INFO, message: "resultHandler error 203", config: strongSelf.configuration, context: strongSelf.context, caller: strongSelf)
-                                strongSelf.context.isActive = false
-                                strongSelf.configuration.delegateDispatchQueue.async {
-                                    strongSelf.context.listeners.forEach({ listener in
-                                        listener.didDeactivate()
-                                    })
-                                }
+                                strongSelf.deactivate()
                                 break
                             case 209: // ¯\_(ツ)_/¯
                                 Trace.trace(Trace.Level.INFO, message: "resultHandler error 209", config: strongSelf.configuration, context: strongSelf.context, caller: strongSelf)
@@ -180,15 +182,13 @@ import Speech
                             a.confidence <= b.confidence }).first?.confidence ?? 0.0
                     strongSelf.context.transcript = r.bestTranscription.formattedString
                     strongSelf.context.confidence = confidence
+                    strongSelf.configuration.delegateDispatchQueue.async {
+                        strongSelf.context.listeners.forEach({ listener in
+                            listener.didRecognize(strongSelf.context)
+                        })
+                    }
                     strongSelf.vadFallWorker = DispatchWorkItem {[weak self] in
-                        self?.context.isActive = false
-                        self?.active = false
-                        self?.configuration.delegateDispatchQueue.async {
-                            self!.context.listeners.forEach({ listener in
-                                listener.didRecognize(self!.context)
-                                listener.didDeactivate()
-                            })
-                        }
+                        self?.deactivate()
                     }
                     DispatchQueue.global(qos: .userInitiated).asyncAfter(deadline: DispatchTime.now() + .milliseconds(strongSelf.configuration.vadFallDelay), execute: strongSelf.vadFallWorker!)
                 }
