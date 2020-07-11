@@ -124,10 +124,9 @@ private var frameBuffer: RingBuffer<Int16>!
                                 sampleWindow.append(s)
                             }
                         }
-                        let ubp = UnsafeBufferPointer(start: sampleWindow, count: sampleWindow.count)
-                        let sampleWindowUBP = Array(ubp)
-                        let result = WebRtcVad_Process(vad.pointee, sampleRate32, sampleWindowUBP, frameBufferStride32)
-                        
+                        let result = sampleWindow.withUnsafeBufferPointer {
+                            return WebRtcVad_Process(vad.pointee, sampleRate32, $0.baseAddress, frameBufferStride32)
+                        }
                         switch result {
                         // if activation state changes, stop the detecting loop but finish writing the samples to the buffer (in the outer for loop)
                         case 1:

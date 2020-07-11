@@ -124,7 +124,7 @@ class AudioControllerTestDelegate: SpeechProcessor, SpeechEventListener {
     func process(_ frame: Data) -> Void {
         audioProcessingQueue.async {[weak self] in
             // NB the as? cast is necessary for integration testing
-            guard let strongSelf = self as? AudioControllerTestDelegate else {
+            guard let strongSelf = self else {
                 XCTFail("AudioControllerTestDelegate was not setup correctly. Missing strong self reference")
                 return
             }

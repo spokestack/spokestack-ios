@@ -29,39 +29,39 @@ func recordingCallback(
     }
     var status: OSStatus = noErr
     let channelCount: UInt32 = 1
+    let bufferSize = inNumberFrames * 2
     var bufferList = AudioBufferList()
     bufferList.mNumberBuffers = channelCount
-    let buffers = UnsafeMutableBufferPointer<AudioBuffer>(start: &bufferList.mBuffers,
-                                                          count: Int(bufferList.mNumberBuffers))
-    buffers[0].mNumberChannels = 1
-    buffers[0].mDataByteSize = inNumberFrames * 2
-    buffers[0].mData = nil
+    bufferList.mBuffers.mNumberChannels = 1
+    bufferList.mBuffers.mDataByteSize = bufferSize
+    bufferList.mBuffers.mData = nil
     
-    /// get the recorded samples
-    
-    status = AudioUnitRender(remoteIOUnit,
-                             ioActionFlags,
-                             inTimeStamp,
-                             inBusNumber,
-                             inNumberFrames,
-                             UnsafeMutablePointer<AudioBufferList>(&bufferList))
-    if status != noErr {
-        return status
-    }
-    
-    if buffers[0].mData != nil {
-        let data: Data = Data(bytes: buffers[0].mData!, count: Int(buffers[0].mDataByteSize))
-        // NB: errors like
-        // AUBuffer.h:61:GetBufferList: EXCEPTION (-1) [mPtrState == kPtrsInvalid is false]: ""
-        // are irrelevant
-        audioProcessingQueue.sync {
-            AudioController.sharedInstance.context?.stageInstances.forEach { stage in
-                stage.process(data)
+    return withUnsafeMutablePointer(to: &bufferList) { (buffers) -> OSStatus in
+        // render the recorded samples into the AudioBuffers
+        status = AudioUnitRender(remoteIOUnit,
+                                 ioActionFlags,
+                                 inTimeStamp,
+                                 inBusNumber,
+                                 inNumberFrames,
+                                 buffers)
+        // verify that the rendering did not error
+        if status != noErr {
+            return status
+        }
+        // convert the samples into Data and send to the stages
+        if let samples = buffers.pointee.mBuffers.mData {
+            let data: Data = Data(bytes: samples, count: Int(bufferSize))
+            // NB: errors like
+            // AUBuffer.h:61:GetBufferList: EXCEPTION (-1) [mPtrState == kPtrsInvalid is false]: ""
+            // are irrelevant
+            audioProcessingQueue.sync {
+                AudioController.sharedInstance.context?.stageInstances.forEach { stage in
+                    stage.process(data)
+                }
             }
         }
+        return noErr
     }
-    
-    return noErr
 }
 
 /// Singleton class for configuring and controlling a stream of audio frames.
