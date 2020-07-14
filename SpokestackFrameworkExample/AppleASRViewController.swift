@@ -44,12 +44,13 @@ class AppleASRViewController: UIViewController {
     }()
     
     lazy private var pipeline: SpeechPipeline = {
-        
-        let config: SpeechConfiguration = SpeechConfiguration()
-        config.tracing = .DEBUG
-        config.delegateDispatchQueue = DispatchQueue.main
-        config.stages = [.vad, .vadTrigger, .appleSpeech]
-        return SpeechPipeline(configuration: config, listeners: [self])
+        return SpeechPipelineBuilder()
+            .setListener(self)
+            .useProfile(.vadTriggerAppleSpeech)
+            .setProperty("tracing", ".DEBUG")
+            .setProperty("vadFallDelay", "1600")
+            .setDelegateDispatchQueue(DispatchQueue.main)
+            .build()
     }()
     
     override func loadView() {

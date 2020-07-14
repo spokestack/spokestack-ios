@@ -80,12 +80,18 @@ import Dispatch
      */
     @objc public func activate() -> Void {
         self.context.isActive = true
+        self.context.listeners.forEach({ listener in
+            listener.didActivate()
+        })
     }
     
     /// Deactivates speech recognition.  The pipeline returns to awaiting either wakeword activation or an explicit `activate` call.
     /// - SeeAlso: `activate`
     @objc public func deactivate() -> Void {
         self.context.isActive = false
+        self.context.listeners.forEach({ listener in
+            listener.didDeactivate()
+        })
     }
     
     /// Starts  the speech pipeline.
@@ -136,5 +142,34 @@ import Dispatch
             listener.didStop()
         })
         self.context.stageInstances = []
+    }
+}
+
+@objc public class SpeechPipelineBuilder: NSObject {
+    private let config = SpeechConfiguration()
+    private var listeners: [SpeechEventListener] = []
+    
+    @objc public func useProfile(_ profile: SpeechPipelineProfiles) -> SpeechPipelineBuilder {
+        self.config.stages = profile.set
+        return self
+    }
+    
+    @objc public func setProperty(_ key: String, _ value: String) -> SpeechPipelineBuilder {
+        self.config.setValue(value, forKey: key)
+        return self
+    }
+    
+    @objc public func setDelegateDispatchQueue(_ queue: DispatchQueue) -> SpeechPipelineBuilder {
+        self.config.delegateDispatchQueue = queue
+        return self
+    }
+    
+    @objc public func setListener(_ listener: SpeechEventListener) -> SpeechPipelineBuilder {
+        self.listeners.append(listener)
+        return self
+    }
+
+    @objc public func build() -> SpeechPipeline {
+        return SpeechPipeline(configuration: self.config, listeners: self.listeners)
     }
 }

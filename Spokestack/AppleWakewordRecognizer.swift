@@ -108,7 +108,7 @@ This pipeline component uses the Apple `SFSpeech` API to stream audio samples fo
             with: recognitionRequest!,
             resultHandler: {[weak self] result, error in
                 guard let strongSelf = self else {
-                    assertionFailure("AppleWakewordRecognizer recognitionTask resultHandler strongSelf is nil")
+                    // the callback has been orphaned by stopStreaming, so just end things here.
                     return
                 }
                 if let e = error {

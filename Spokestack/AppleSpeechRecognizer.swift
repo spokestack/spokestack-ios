@@ -138,10 +138,6 @@ import Speech
                     // the callback has been orphaned by stopStreaming, so just end things here.
                     return
                 }
-                guard let _ = strongSelf.recognitionTask else {
-                    // the task has been cancelled and set to nil by stopStreaming, so just end things here.
-                    return
-                }
                 strongSelf.vadFallWorker?.cancel()
                 if let e = error {
                     if let nse: NSError = error as NSError? {

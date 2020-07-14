@@ -125,5 +125,5 @@ import Foundation
     @objc public var tracing: Trace.Level = Trace.Level.NONE
     /// Delegate events will be sent using the specified dispatch queue.
     @objc public var delegateDispatchQueue: DispatchQueue = DispatchQueue.global(qos: .userInitiated)
-    public var stages: [SpeechProcessors] = [.vad, .tfLiteWakeword, .appleSpeech]
+    public var stages: [SpeechProcessors] = []
 }

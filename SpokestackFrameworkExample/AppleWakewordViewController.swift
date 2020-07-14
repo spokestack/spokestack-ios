@@ -49,10 +49,12 @@ class AppleWakewordViewController: UIViewController {
     }()
     
     lazy public var pipeline: SpeechPipeline = {
-        let c = SpeechConfiguration()
-        c.tracing = Trace.Level.DEBUG
-        c.stages = [.appleWakeword]
-        return SpeechPipeline(configuration: c, listeners: [self])
+        return SpeechPipelineBuilder()
+            .setListener(self)
+            .useProfile(.appleWakewordAppleSpeech)
+            .setProperty("delegateDispatchQueue", "DispatchQueue.main")
+            .setProperty("tracing", "Trace.Level.DEBUG")
+            .build()
     }()
     
     override func loadView() {

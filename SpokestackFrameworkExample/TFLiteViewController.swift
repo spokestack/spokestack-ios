@@ -70,19 +70,21 @@ class TFLiteViewController: UIViewController {
         guard let filterPath = Bundle(for: type(of: self)).path(forResource: c.filterModelName, ofType: "lite") else {
             throw WakewordModelError.filter("could not find \(c.filterModelName).lite in bundle \(self.debugDescription)")
         }
-        c.filterModelPath = filterPath
         guard let encodePath = Bundle(for: type(of: self)).path(forResource: c.encodeModelName, ofType: "lite") else {
             throw WakewordModelError.encode("could not find \(c.encodeModelName).lite in bundle \(self.debugDescription)")
         }
-        c.encodeModelPath = encodePath
         guard let detectPath = Bundle(for: type(of: self)).path(forResource: c.detectModelName, ofType: "lite") else {
             throw WakewordModelError.detect("could not find \(c.detectModelName).lite in bundle \(self.debugDescription)")
         }
-        c.detectModelPath = detectPath
-        c.tracing = Trace.Level.PERF
-        c.delegateDispatchQueue = DispatchQueue.main
-        c.stages = [.tfLiteWakeword]
-        return SpeechPipeline(configuration: c, listeners: [self])
+        return SpeechPipelineBuilder()
+            .setListener(self)
+            .setDelegateDispatchQueue(DispatchQueue.main)
+            .useProfile(.tfLiteWakewordAppleSpeech)
+            .setProperty("tracing", ".PERF")
+            .setProperty("detectModelPath", detectPath)
+            .setProperty("encodeModelPath", encodePath)
+            .setProperty("filterModelPath", filterPath)
+            .build()
     }
     
     @objc func startRecordingAction(_ sender: Any) {

@@ -44,3 +44,25 @@ import Foundation
     /// VADTrigger
     case vadTrigger
 }
+
+@objc public enum SpeechPipelineProfiles: Int {
+    case appleWakewordAppleSpeech
+    case tfLiteWakewordAppleSpeech
+    case vadTriggerAppleSpeech
+    case pushToTalkAppleSpeech
+}
+
+extension SpeechPipelineProfiles {
+    public var set: [SpeechProcessors]  {
+        switch self {
+        case .appleWakewordAppleSpeech:
+            return [.vad, .appleWakeword, .appleSpeech]
+        case .tfLiteWakewordAppleSpeech:
+            return [.vad, .tfLiteWakeword, .appleSpeech]
+        case .vadTriggerAppleSpeech:
+            return [.vad, .vadTrigger, .appleSpeech]
+        case .pushToTalkAppleSpeech:
+            return [.appleSpeech]
+        }
+    }
+}
