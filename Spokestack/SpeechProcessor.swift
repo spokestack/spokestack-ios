@@ -45,14 +45,20 @@ import Foundation
     case vadTrigger
 }
 
+/// Profiles that may be passed to `SpeechPipelineBuilder` for easy pipeline configuring.
 @objc public enum SpeechPipelineProfiles: Int {
+    /// VAD-sensitive Apple wakeword activates Apple ASR
     case appleWakewordAppleSpeech
+    /// VAD-sensitive TFLiteWakeword activates Apple ASR
     case tfLiteWakewordAppleSpeech
+    /// VAD-triggered Apple ASR
     case vadTriggerAppleSpeech
+    /// Apple ASR that is manually activated and deactivated
     case pushToTalkAppleSpeech
 }
 
 extension SpeechPipelineProfiles {
+    /// Convenience property for getting a profile for use by `SpeechPipelineBuilder`.
     public var set: [SpeechProcessors]  {
         switch self {
         case .appleWakewordAppleSpeech:

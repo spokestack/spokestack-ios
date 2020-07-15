@@ -16,16 +16,6 @@ import Dispatch
  The pipeline may be stopped/restarted any number of times during its lifecycle. While stopped, the pipeline consumes as few resources as possible. The pipeline runs asynchronously on a dedicated thread, so it does not block the caller when performing I/O and speech processing.
  
  When running, the pipeline communicates with the client via delegates that receive events.
- 
- ```
- // assume that self implements the SpeechEventListener and PipelineDelegate protocols
- let pipeline = SpeechPipeline(SpeechProcessors.appleSpeech.processor,
- speechConfiguration: SpeechConfiguration(),
- speechDelegate: self,
- wakewordService: SpeechProcessors.appleWakeword.processor,
- pipelineDelegate: self)
- pipeline.start()
- ```
  */
 @objc public final class SpeechPipeline: NSObject {
     
@@ -50,7 +40,7 @@ import Dispatch
     
     /// Initializes a new speech pipeline instance.
     /// - Parameter speechConfiguration: Configuration parameters for the speech pipeline.
-    /// - Parameter listeners: Client implementations of `SpeechEventListener`.
+    /// - Parameter listeners: Delegate implementations of `SpeechEventListener` that receive speech pipeline events.
     @objc public init(configuration: SpeechConfiguration, listeners: [SpeechEventListener]) {
         self.configuration = configuration
         self.stages = configuration.stages
@@ -75,9 +65,7 @@ import Dispatch
      Activations have configurable minimum/maximum lengths. The minimum length prevents the activation from being aborted if the user pauses after saying the wakeword (which deactivates the VAD). The maximum activation length allows the activation to timeout if the user doesn't say anything after saying the wakeword.
      
      The wakeword detector can be used in a multi-turn dialogue system. In such an environment, the user is not expected to say the wakeword during each turn. Therefore, an application can manually activate the pipeline by calling `activate` (after a system turn), and the wakeword detector will apply its minimum/maximum activation lengths to control the duration of the activation.
-     
-     - SeeAlso: `wakeActiveMin`, `wakeActiveMax`
-     */
+    */
     @objc public func activate() -> Void {
         self.context.isActive = true
         self.context.listeners.forEach({ listener in
@@ -96,7 +84,7 @@ import Dispatch
     
     /// Starts  the speech pipeline.
     ///
-    /// The pipeline starts in a deactivated state, awaiting either a wakeword activation or an explicit call to `activate`.
+    /// The pipeline starts in a deactivated state, awaiting either a triggered activation  from a wakeword or VAD, or an explicit call to `activate`.
     @objc public func start() -> Void {
         
         // initialize stages
@@ -145,30 +133,68 @@ import Dispatch
     }
 }
 
+/**
+    Convenince initializer for building a `SpeechPipeline` instance using a pre-configured profile. A pipeline profile encapsulates a series of configuration values tuned for a specific task.
+ 
+    Profiles are not authoritative; they act just like calling a series of methods on a {@link SpeechPipeline.Builder}, and any configuration properties they set can be overridden by subsequent calls.
+ 
+     Example:
+     ```
+     // assume that self implements the SpeechEventListener protocol
+     let pipeline = SpeechPipelineBuilder()
+         .setListener(self)
+         .setDelegateDispatchQueue(DispatchQueue.main)
+         .useProfile(.tfLiteWakewordAppleSpeech)
+         .setProperty("tracing", ".PERF")
+         .setProperty("detectModelPath", detectPath)
+         .setProperty("encodeModelPath", encodePath)
+         .setProperty("filterModelPath", filterPath)
+         .build()
+     pipeline.start()
+     ```
+ */
 @objc public class SpeechPipelineBuilder: NSObject {
     private let config = SpeechConfiguration()
     private var listeners: [SpeechEventListener] = []
     
+    /// Applies configuration from `SpeechPipelineProfiles` to the current builder, returning the modified builder.
+    /// - Parameter profile: Name of the profile to apply.
+    /// - Returns: An updated instance of `SpeechPipelineBuilder` for instace function  call chaining.
     @objc public func useProfile(_ profile: SpeechPipelineProfiles) -> SpeechPipelineBuilder {
         self.config.stages = profile.set
         return self
     }
     
+    /// Sets a `SpeechConfiguration` configuration value.
+    /// - SeeAlso: `SpeechConfiguration`
+    /// - Parameters:
+    ///   - key: Configuration property name
+    ///   - value: Configuration property name
+    /// - Returns: An updated instance of `SpeechPipelineBuilder` for instace function  call chaining.
     @objc public func setProperty(_ key: String, _ value: String) -> SpeechPipelineBuilder {
         self.config.setValue(value, forKey: key)
         return self
     }
     
+    /// Delegate events will be sent using the specified dispatch queue.
+    /// - SeeAlso: `SpeechConfiguration`
+    /// - Parameter queue: A `DispatchQueue` instance
+    /// - Returns: An updated instance of `SpeechPipelineBuilder` for instace function  call chaining.
     @objc public func setDelegateDispatchQueue(_ queue: DispatchQueue) -> SpeechPipelineBuilder {
         self.config.delegateDispatchQueue = queue
         return self
     }
     
+    /// Delegate events will be sent to the specified listener.
+    /// - Parameter listener: A `SpeechEventListener` instance.
+    /// - Returns: An updated instance of `SpeechPipelineBuilder` for instace function  call chaining.
     @objc public func setListener(_ listener: SpeechEventListener) -> SpeechPipelineBuilder {
         self.listeners.append(listener)
         return self
     }
-
+    
+    /// Build this configuration into a `SpeechPipeline` instance.
+    /// - Returns: A `SpeechPipeline` instance.
     @objc public func build() -> SpeechPipeline {
         return SpeechPipeline(configuration: self.config, listeners: self.listeners)
     }

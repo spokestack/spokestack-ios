@@ -13,7 +13,7 @@ import Dispatch
 /// DispatchQueue for handling Spokestack audio processing
 internal let audioProcessingQueue: DispatchQueue = DispatchQueue(label: "io.spokestack.audiocontroller", qos: .userInteractive)
 
-/// Required callback function for AudioUnitSetProperty's AURenderCallbackStruct.
+/// Required callback function for AudioUnitSetProperty's AURenderCallbackStruct. Sends the `stageInstances` in `SpeechContext`the audio frame samples to process.
 ///
 /// - SeeAlso: AURenderCallbackStruct
 func recordingCallback(

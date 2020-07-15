@@ -18,7 +18,8 @@ import Foundation
     @objc public var isActive: Bool = false
     /// Speech detected indicator. Default to true for non-vad activation
     @objc public var isSpeech: Bool = true
-    
+    /// `SpeechProcessor` instances that process audio frames from `AudioController`.
     public var stageInstances: [SpeechProcessor] = []
+    /// `SpeechEventListener`s that are sent `SpeechPipeline` events.
     public var listeners: [SpeechEventListener] = []
 }
