@@ -101,6 +101,8 @@ import Dispatch
                     return AppleSpeechRecognizer(self.configuration, context: self.context)
                 case .vadTrigger:
                     return VADTrigger(self.configuration, context: self.context)
+                case .spokestackSpeech:
+                    return SpokestackSpeechRecognizer(self.configuration, context: self.context)
                 }
             }()
             self.context.stageInstances.append(stageInstance)

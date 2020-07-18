@@ -15,25 +15,25 @@ class AppleWakewordRecognizerTest: XCTestCase {
     
     // init & deinit & startStreaming & stopStreaming
     func testStartStreaming() {
-        /// setup
+        // setup
         let configuration = SpeechConfiguration()
         let context = SpeechContext()
         let awr = AppleWakewordRecognizer(configuration, context: context)
         awr.context = context
 
-        /// no delegate & no configuration
+        // no delegate & no configuration
         XCTAssertNoThrow(awr.startStreaming())
         
-        /// strong delegate & configuration
+        // strong delegate & configuration
         awr.startStreaming()
         
-        /// stopStreaming
+        // stopStreaming
         awr.stopStreaming()
     }
     
     // process
     func testProcess() {
-        /// setup
+        // setup
         let configuration = SpeechConfiguration()
         let context = SpeechContext()
         let awr = AppleWakewordRecognizer(configuration, context: context)
@@ -43,18 +43,18 @@ class AppleWakewordRecognizerTest: XCTestCase {
         context.listeners = [delegate]
         awr.context = context
         
-        /// activate
+        // activate
         context.isActive = false
         awr.startStreaming()
         awr.process(Frame.silence(frameWidth: 10, sampleRate: 8000))
         XCTAssertFalse(context.isActive)
 
-        /// activate while asr is running is a noop
+        // activate while asr is running is a noop
         context.isActive = true
         awr.process(Frame.voice(frameWidth: 10, sampleRate: 8000))
         XCTAssert(context.isActive)
         
-        /// stopStreaming does not change active status (that's the job of SpeechPipeline)
+        // stopStreaming does not change active status (that's the job of SpeechPipeline)
         awr.stopStreaming()
         XCTAssert(context.isActive)
     }

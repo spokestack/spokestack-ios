@@ -43,6 +43,8 @@ import Foundation
     case vad
     /// VADTrigger
     case vadTrigger
+    /// spokestackSpeech
+    case spokestackSpeech
 }
 
 /// Profiles that may be passed to `SpeechPipelineBuilder` for easy pipeline configuring.
@@ -55,6 +57,8 @@ import Foundation
     case vadTriggerAppleSpeech
     /// Apple ASR that is manually activated and deactivated
     case pushToTalkAppleSpeech
+    /// VAD-triggered Spokestack ASR
+    case vadTriggeredSpokestackSpeech
 }
 
 extension SpeechPipelineProfiles {
@@ -69,6 +73,8 @@ extension SpeechPipelineProfiles {
             return [.vad, .vadTrigger, .appleSpeech]
         case .pushToTalkAppleSpeech:
             return [.appleSpeech]
+        case .vadTriggeredSpokestackSpeech:
+            return [.vad, .vadTrigger, .spokestackSpeech]
         }
     }
 }

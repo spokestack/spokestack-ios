@@ -22,6 +22,10 @@ public enum AudioError: Error, Equatable {
 public enum SpeechPipelineError: Error, Equatable {
     /// The SpeechPipeline internal buffers entered an illegal state.
     case illegalState(String)
+    /// The SpeechPipeline received a response that was invalid.
+    case invalidResponse(String)
+    /// The SpeechPipeline encountered a failure in a component.
+    case failure(String)
 }
 
 /// Errors thrown by the Voice Activity Detector.

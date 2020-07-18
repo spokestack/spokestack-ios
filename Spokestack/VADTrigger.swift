@@ -35,6 +35,4 @@ import Foundation
 //            self.context.isActive = false
         }
     }
-    
-    
 }
