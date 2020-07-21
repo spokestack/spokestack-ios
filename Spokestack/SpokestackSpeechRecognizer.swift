@@ -11,15 +11,23 @@ import CryptoKit
 
 @available(iOS 13.0, *)
 @objc public class SpokestackSpeechRecognizer: NSObject, SpeechProcessor {
-    public var configuration: SpeechConfiguration
     
+    /// Configuration for the recognizer.
+    public var configuration: SpeechConfiguration
+    /// Global state for the speech pipeline.
     public var context: SpeechContext
     
     private var task: URLSessionWebSocketTask?
     private var apiKey: SymmetricKey?
     private let decoder = JSONDecoder()
-
+    private var active = false
+    private var activation = 0
+    private let emptyFrame = ([] as [Int]).withUnsafeBufferPointer {Data(buffer: $0)}
     
+    /// Initializes an instance of SpokestackSpeechRecognizer.
+    /// - Parameters:
+    ///   - configuration: Configuration for the recognizer.
+    ///   - context: Global state for the speech pipeline.
     @objc public init(_ configuration: SpeechConfiguration, context: SpeechContext) {
         self.configuration = configuration
         self.context = context
@@ -31,6 +39,7 @@ import CryptoKit
         super.init()
     }
     
+    /// Triggered by the speech pipeline, instructing the recognizer to begin streaming and processing audio.
     public func startStreaming() {
         // setup
         guard let key = self.apiKey else {
@@ -40,6 +49,7 @@ import CryptoKit
         self.task = URLSession.shared.webSocketTask(with: URL(string: "wss://api.spokestack.io/v1/asr/websocket")!)
         
         // construct auth message
+        /// - TODO: should use self.configuration.sampleRate, not hardcoded 16000hz
         let bodyDoubleEncoded = """
 "{\\"format\\": \\"PCM16LE\\", \\"rate\\": 16000, \\"language\\": \\"en\\", \\"limit\\": 10}"
 """
@@ -76,12 +86,14 @@ import CryptoKit
                         }
                     }
                 }
+                self.activate()
             })
         }
     }
     
+    /// Triggered by the speech pipeline, instructing the recognizer to stop streaming audio and complete processing.
     public func stopStreaming() {
-        self.context.isActive = false
+        self.deactivate()
         self.task?.cancel()
         self.configuration.delegateDispatchQueue.async {
             self.context.listeners.forEach({ listener in
@@ -90,7 +102,36 @@ import CryptoKit
         }
     }
     
+    /// Receives a frame of audio samples for processing. Interface between the `SpeechProcessor` and `AudioController` components.
+    /// - Parameter frame: Frame of audio samples.
     public func process(_ frame: Data) {
+        if (self.active && self.context.isActive && self.activation < self.configuration.wakeActiveMax) || (self.active && self.activation < self.configuration.wakeActiveMin) {
+            self.stream(frame)
+        } else if (self.active && !self.context.isActive && self.activation >= self.configuration.wakeActiveMin) || (self.active && self.activation >= self.configuration.wakeActiveMax) {
+            self.deactivate()
+        } else if !self.active && self.context.isActive {
+            self.activate()
+            self.stream(frame)
+        }
+    }
+    
+    private func activate() {
+        self.activation = 0
+        self.active = true
+    }
+    
+    private func deactivate() {
+        self.context.isActive = false
+        self.active = false
+        self.activation = 0
+        // send an empty frame to trigger the asr into sending a final response
+        self.stream(self.emptyFrame)
+    }
+    
+    private func stream(_ frame: Data) {
+        /// - TODO: implement a frame chunking policy to maximize MTU utilization. Should be able to chunk ~50ms of frame data at 16000khz (~1500 bytes).
+        self.activation += self.configuration.frameWidth
+
         self.task?.send(URLSessionWebSocketTask.Message.data(frame)) { error in
             if let error = error {
                 self.configuration.delegateDispatchQueue.async {
