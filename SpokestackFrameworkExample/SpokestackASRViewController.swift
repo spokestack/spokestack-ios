@@ -1,16 +1,17 @@
 //
-//  AppleASRViewController.swift
+//  SpokestackASRViewController.swift
 //  SpokestackFrameworkExample
 //
-//  Created by Cory D. Wiles on 10/8/18.
+//  Created by Noel Weichbrodt on 7/20/20.
 //  Copyright © 2020 Spokestack, Inc. All rights reserved.
 //
 
+import Foundation
 import UIKit
 import Spokestack
 import AVFoundation
 
-class AppleASRViewController: UIViewController {
+class SpokestackASRViewController: UIViewController {
     
     lazy var startRecordingButton: UIButton = {
         
@@ -19,7 +20,7 @@ class AppleASRViewController: UIViewController {
         button.translatesAutoresizingMaskIntoConstraints = false
         button.setTitle("Start", for: .normal)
         button.addTarget(self,
-                         action: #selector(AppleASRViewController.startRecordingAction(_:)),
+                         action: #selector(SpokestackASRViewController.startRecordingAction(_:)),
                          for: .touchUpInside)
         
         button.setTitleColor(.blue, for: .normal)
@@ -34,7 +35,7 @@ class AppleASRViewController: UIViewController {
         button.translatesAutoresizingMaskIntoConstraints = false
         button.setTitle("Stop", for: .normal)
         button.addTarget(self,
-                         action: #selector(AppleASRViewController.stopRecordingAction(_:)),
+                         action: #selector(SpokestackASRViewController.stopRecordingAction(_:)),
                          for: .touchUpInside)
         
         button.setTitleColor(.blue, for: .normal)
@@ -46,7 +47,7 @@ class AppleASRViewController: UIViewController {
     lazy private var pipeline: SpeechPipeline = {
         return SpeechPipelineBuilder()
             .setListener(self)
-            .useProfile(.vadTriggerAppleSpeech)
+            .useProfile(.vadTriggeredSpokestackSpeech)
             .setProperty("tracing", ".DEBUG")
             .setProperty("vadFallDelay", "1600")
             .setDelegateDispatchQueue(DispatchQueue.main)
@@ -57,11 +58,11 @@ class AppleASRViewController: UIViewController {
         
         super.loadView()
         self.view.backgroundColor = .white
-        self.title = "Apple ASR"
+        self.title = "Spokestack ASR"
         
         let doneBarButtonItem: UIBarButtonItem = UIBarButtonItem(barButtonSystemItem: .done,
                                                                  target: self,
-                                                                 action: #selector(AppleASRViewController.dismissViewController(_:)))
+                                                                 action: #selector(SpokestackASRViewController.dismissViewController(_:)))
         self.navigationItem.rightBarButtonItem = doneBarButtonItem
     }
     
@@ -95,7 +96,7 @@ class AppleASRViewController: UIViewController {
     }
 }
 
-extension AppleASRViewController: SpeechEventListener {
+extension SpokestackASRViewController: SpeechEventListener {
     
     func setupFailed(_ error: String) {
         print("setupFailed: " + error)
@@ -143,4 +144,3 @@ extension AppleASRViewController: SpeechEventListener {
         print("didTrace: \(trace)")
     }
 }
-

@@ -13,6 +13,8 @@ class ViewController: UIViewController {
 
     // MARK: Outlets
     
+    @IBOutlet weak var spokestackASRButton: UIButton!
+    
     @IBOutlet weak var appleASRButton: UIButton!
     
     @IBOutlet weak var appleWakewordButton: UIButton!
@@ -31,6 +33,14 @@ class ViewController: UIViewController {
     
         let appleViewController: AppleASRViewController = AppleASRViewController()
         let navigationViewController: UINavigationController = UINavigationController(rootViewController: appleViewController)
+        
+        self.present(navigationViewController, animated: true, completion: nil)
+    }
+    
+    @IBAction func spokestackASRAction(_ sender: Any) {
+    
+        let spokestackViewController: SpokestackASRViewController = SpokestackASRViewController()
+        let navigationViewController: UINavigationController = UINavigationController(rootViewController: spokestackViewController)
         
         self.present(navigationViewController, animated: true, completion: nil)
     }
