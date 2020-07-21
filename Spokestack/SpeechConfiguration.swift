@@ -10,7 +10,7 @@ import Foundation
 
 /// Configuration properties for the pipeline abstraction to pass down to implementations.
 @objc public class SpeechConfiguration: NSObject {
-    /// A comma-separated list of wakeword keywords, in the order they appear in the classifier outputs, not including the null (non-keyword) class.
+    /// A comma-separated list of wakeword keywords
     /// - Remark: ex: "up,dog"
     /// - Warning: cannot contain spaces
     /// - SeeAlso: `AppleWakewordRecognizer`
@@ -61,7 +61,7 @@ import Foundation
     /// - SeeAlso: `AppleWakewordRecognizer`, `TFLiteWakewordRecognizer`
     public var vadMode: VADMode = VADMode.Restrictive
     /// Delay between a VAD deactivation and the delivery of the recognition results.
-    /// - SeeAlso: `AppleWakewordRecognizer`
+    /// - SeeAlso: `AppleSpeechRecognizer`
     /// - Remark: unique to iOS
     @objc public var vadFallDelay: Int = 800
     /// Audio sampling rate, in Hz.

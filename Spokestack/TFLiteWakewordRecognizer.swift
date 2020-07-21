@@ -94,6 +94,10 @@ import TensorFlowLite
     deinit {
     }
     
+    /// Initializes an instance of TFLiteWakewordRecognizer.
+    /// - Parameters:
+    ///   - configuration: Configuration for the recognizer.
+    ///   - context: Global state for the speech pipeline.
     public init(_ configuration: SpeechConfiguration, context: SpeechContext) {
         self.configuration = configuration
         self.context = context

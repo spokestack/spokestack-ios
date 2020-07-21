@@ -39,6 +39,10 @@ import Speech
         speechRecognizer.delegate = nil
     }
     
+    /// Initializes an instance of AppleSpeechRecognizer.
+    /// - Parameters:
+    ///   - configuration: Configuration for the recognizer.
+    ///   - context: Global state for the speech pipeline.
     public init(_ configuration: SpeechConfiguration, context: SpeechContext) {
         self.configuration = configuration
         self.context = context
@@ -63,6 +67,8 @@ import Speech
         self.audioEngine.inputNode.removeTap(onBus: 0)
     }
     
+    /// Receives a frame of audio samples for processing. Interface between the `SpeechProcessor` and `AudioController` components.
+    /// - Parameter frame: Frame of audio samples.
     @objc public func process(_ frame: Data) {
         if self.context.isActive {
             if !self.active {
