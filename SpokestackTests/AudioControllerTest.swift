@@ -23,7 +23,7 @@ class AudioControllerTest: XCTestCase {
         context.stageInstances = [delegate]
         let setupFailedExpectation = expectation(description: "testStartStreaming calls AudioControllerTestDelegate as the result of failure method completion")
 
-        // Uninititalized delegates do not cause an exception during startStreaming
+        // Uninitialized delegates do not cause an exception during startStreaming
         XCTAssertNoThrow(try AVAudioSession.sharedInstance().setCategory(.playAndRecord))
         controller.startStreaming()
         XCTAssertFalse(delegate.didSetupFail)
@@ -54,7 +54,7 @@ class AudioControllerTest: XCTestCase {
         controller.configuration = config
         controller.context = context
         let delegate = AudioControllerTestDelegate(config, context: context)
-        controller.context?.listeners = [delegate]
+        context.listeners = [delegate]
         context.stageInstances = [delegate]
         let processFrameExpectation = expectation(description: "testStartStreaming calls AudioControllerTestDelegate as the result of processFrame method completion")
 
@@ -97,7 +97,7 @@ class AudioControllerTestDelegate: SpeechProcessor, SpeechEventListener {
     
     func stopStreaming() {}
     
-    func didActivate() { }
+    func didActivate() {}
     
     func didDeactivate() {}
     
