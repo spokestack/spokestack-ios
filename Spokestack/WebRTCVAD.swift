@@ -104,7 +104,6 @@ private var frameBuffer: RingBuffer<Int16>!
     
     /// Processes an audio frame, detecting speech.
     /// - Parameter frame: Audio frame of samples.
-    /// - Parameter isSpeech: Whether speech was detected in the last frame.
     ///
     /// - Throws: RingBufferStateError.illegalState if the frame buffer enters an invalid state
     public func process(_ frame: Data) -> Void {

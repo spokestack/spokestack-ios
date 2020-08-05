@@ -45,7 +45,7 @@ class AppleASRViewController: UIViewController {
     
     lazy private var pipeline: SpeechPipeline = {
         return SpeechPipelineBuilder()
-            .setListener(self)
+            .addListener(self)
             .useProfile(.vadTriggerAppleSpeech)
             .setProperty("tracing", ".DEBUG")
             .setProperty("vadFallDelay", "1600")

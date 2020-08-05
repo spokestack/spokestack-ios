@@ -50,9 +50,9 @@ class AppleWakewordViewController: UIViewController {
     
     lazy public var pipeline: SpeechPipeline = {
         return SpeechPipelineBuilder()
-            .setListener(self)
+            .addListener(self)
             .useProfile(.appleWakewordAppleSpeech)
-            .setProperty("delegateDispatchQueue", "DispatchQueue.main")
+            .setDelegateDispatchQueue(DispatchQueue.main)
             .setProperty("tracing", "Trace.Level.DEBUG")
             .build()
     }()

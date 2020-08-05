@@ -153,7 +153,7 @@ import TensorFlowLite
         
         // Tracing
         self.traceLevel = c.tracing
-        if self.traceLevel.rawValue <= Trace.Level.DEBUG.rawValue {
+        if self.traceLevel.rawValue >= Trace.Level.DEBUG.rawValue {
             self.posteriorMax = 0
             self.sampleCollector = []
             self.fftFrameCollector = ""
@@ -410,7 +410,7 @@ import TensorFlowLite
     private func debug() -> Void {
         Trace.trace(Trace.Level.PERF, message: "wake: \(self.posteriorMax!)", config: self.configuration, context: self.context, caller: self)
         
-        if self.traceLevel.rawValue <= Trace.Level.DEBUG.rawValue {
+        if self.traceLevel.rawValue >= Trace.Level.DEBUG.rawValue {
             Trace.spit(data: "[\((self.sampleCollector! as NSArray).componentsJoined(by: ", "))]".data(using: .utf8)!, fileName: "samples.txt", context: self.context, config: self.configuration)
             Trace.spit(data: self.fftFrameCollector!.data(using: .utf8)!, fileName: "fftFrame.txt", context: self.context, config: self.configuration)
             Trace.spit(data: "[\((self.filterCollector! as NSArray).componentsJoined(by: ", "))]".data(using: .utf8)!, fileName: "filterOutput.txt", context: self.context, config: self.configuration)
@@ -474,19 +474,11 @@ extension TFLiteWakewordRecognizer : SpeechProcessor {
                             }
                         }
                     }
-                } else {
+                // activation edge
+                } else if strongSelf.active {
                     strongSelf.reset()
                     strongSelf.active = false
-                    strongSelf.context.isActive = false
-                    strongSelf.configuration.delegateDispatchQueue.async {
-                        strongSelf.context.listeners.forEach { listener in
-                            listener.didDeactivate()
-                        }
-                    }
                 }
-            }
-            if strongSelf.active && strongSelf.context.isActive {
-                strongSelf.debug()
             }
         }
     }

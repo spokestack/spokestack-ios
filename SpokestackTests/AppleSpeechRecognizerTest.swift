@@ -27,7 +27,7 @@ class AppleSpeechRecognizerTest: XCTestCase {
         XCTAssert(context.isActive)
         XCTAssertFalse(delegate.didError)
         asr.stopStreaming()
-        // asr does not set active
+        // stopStreaming sets isActive
         XCTAssertFalse(context.isActive)
         XCTAssertFalse(delegate.didError)
     }
@@ -43,11 +43,8 @@ class AppleSpeechRecognizerTest: XCTestCase {
         context.stageInstances = [asr]
         asr.context = context
         asr.startStreaming()
-        
         asr.process(Frame.silence(frameWidth: 10, sampleRate: 8000))
         asr.stopStreaming()
-        // asr does not set active
-        XCTAssertFalse(context.isActive)
         XCTAssertFalse(delegate.didError)
     }
 }

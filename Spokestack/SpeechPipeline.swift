@@ -67,10 +67,12 @@ import Dispatch
      The wakeword detector can be used in a multi-turn dialogue system. In such an environment, the user is not expected to say the wakeword during each turn. Therefore, an application can manually activate the pipeline by calling `activate` (after a system turn), and the wakeword detector will apply its minimum/maximum activation lengths to control the duration of the activation.
     */
     @objc public func activate() -> Void {
-        self.context.isActive = true
-        self.context.listeners.forEach({ listener in
-            listener.didActivate()
-        })
+        if !self.context.isActive {
+            self.context.isActive = true
+            self.context.listeners.forEach({ listener in
+                listener.didActivate()
+            })
+        }
     }
     
     /// Deactivates speech recognition.  The pipeline returns to awaiting either wakeword activation or an explicit `activate` call.
@@ -142,7 +144,7 @@ import Dispatch
      ```
      // assume that self implements the SpeechEventListener protocol
      let pipeline = SpeechPipelineBuilder()
-         .setListener(self)
+         .addListener(self)
          .setDelegateDispatchQueue(DispatchQueue.main)
          .useProfile(.tfLiteWakewordAppleSpeech)
          .setProperty("tracing", ".PERF")
@@ -188,7 +190,7 @@ import Dispatch
     /// Delegate events will be sent to the specified listener.
     /// - Parameter listener: A `SpeechEventListener` instance.
     /// - Returns: An updated instance of `SpeechPipelineBuilder` for instace function  call chaining.
-    @objc public func setListener(_ listener: SpeechEventListener) -> SpeechPipelineBuilder {
+    @objc public func addListener(_ listener: SpeechEventListener) -> SpeechPipelineBuilder {
         self.listeners.append(listener)
         return self
     }

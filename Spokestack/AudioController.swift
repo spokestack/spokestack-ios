@@ -23,7 +23,7 @@ func recordingCallback(
     inBusNumber: UInt32,
     inNumberFrames: UInt32,
     ioData: UnsafeMutablePointer<AudioBufferList>?) -> OSStatus {
-    
+
     guard let remoteIOUnit: AudioComponentInstance = AudioController.sharedInstance.remoteIOUnit else {
         return kAudioServicesSystemSoundUnspecifiedError
     }
@@ -111,7 +111,6 @@ class AudioController {
     
     /// Begin sending audio frames to the AudioControllerDelegate.
     /// - SeeAlso: AudioControllerDelegate
-    /// - Parameter context: Global state for the speech pipeline.
     func startStreaming() -> Void {
         self.checkAudioSession()
         do {
@@ -133,7 +132,6 @@ class AudioController {
     
     /// Stop sending audio frames to the AudioControllerDelegate.
     /// - SeeAlso: AudioControllerDelegate
-    /// - Parameter context: Global state for the speech pipeline.
     func stopStreaming() -> Void {
         do {
             try self.stop()
@@ -239,9 +237,7 @@ class AudioController {
         if (status != noErr) {
             return status
         }
-        
-        // Set the recording callback
-        
+                
         var callbackStruct: AURenderCallbackStruct = AURenderCallbackStruct()
         callbackStruct.inputProc = recordingCallback
         callbackStruct.inputProcRefCon = nil
@@ -254,9 +250,7 @@ class AudioController {
         if status != noErr {
             return status
         }
-        
-        // Initialize the RemoteIO unit
-        
+                
         return AudioUnitInitialize(self.remoteIOUnit!)
     }
     

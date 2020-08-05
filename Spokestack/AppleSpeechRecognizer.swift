@@ -186,7 +186,7 @@ import Speech
                     strongSelf.vadFallWorker = DispatchWorkItem {[weak self] in
                         self?.deactivate()
                     }
-                    DispatchQueue.global(qos: .userInitiated).asyncAfter(deadline: DispatchTime.now() + .milliseconds(strongSelf.configuration.vadFallDelay), execute: strongSelf.vadFallWorker!)
+                    DispatchQueue.global(qos: .userInitiated).asyncAfter(deadline: .now() + .milliseconds(strongSelf.configuration.vadFallDelay), execute: strongSelf.vadFallWorker!)
                 }
             }
         )

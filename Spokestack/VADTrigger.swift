@@ -31,8 +31,6 @@ import Foundation
                     listener.didActivate()
                 }
             }
-        } else if !self.context.isSpeech && self.context.isActive {
-//            self.context.isActive = false
         }
     }
     

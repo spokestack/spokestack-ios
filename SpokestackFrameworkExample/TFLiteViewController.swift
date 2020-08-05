@@ -77,7 +77,7 @@ class TFLiteViewController: UIViewController {
             throw WakewordModelError.detect("could not find \(c.detectModelName).lite in bundle \(self.debugDescription)")
         }
         return SpeechPipelineBuilder()
-            .setListener(self)
+            .addListener(self)
             .setDelegateDispatchQueue(DispatchQueue.main)
             .useProfile(.tfLiteWakewordAppleSpeech)
             .setProperty("tracing", ".PERF")
@@ -123,6 +123,7 @@ extension TFLiteViewController: SpeechEventListener {
     
     func didActivate() {
         print("didActivate")
+        pipeline?.deactivate()
     }
     
     func didDeactivate() {

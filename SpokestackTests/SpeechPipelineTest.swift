@@ -42,7 +42,7 @@ class SpeechPipelineTest: XCTestCase {
         XCTAssert(delegate.didDidInit)
         
         // successful init sets config property
-        XCTAssert(p.configuration.fftHopLength == 30)
+        XCTAssertEqual(p.configuration.fftHopLength, 30)
     }
     
     /// activate & deactivate
@@ -52,12 +52,10 @@ class SpeechPipelineTest: XCTestCase {
         let didDeActivateExpectation = expectation(description: "didDeActivateExpectation fulfills when testActivateDeactivate calls SpeechPipelineTestDelegate as the result of deactive method completion")
         let delegate = SpeechPipelineTestDelegate()
         let config = SpeechConfiguration()
-        let context = SpeechContext()
 
         // init the pipeline
         delegate.asyncExpectation = didInitExpectation
         let p = SpeechPipeline(configuration: config, listeners: [delegate])
-        _ = TestProcessor(true, config: config, context: context)
         wait(for: [didInitExpectation], timeout: 1)
         
         // activate and deactivate the pipeline
@@ -154,7 +152,7 @@ class SpeechPipelineBuilderTest: XCTestCase {
         let expectedTFStages: [SpeechProcessors] = [.vad, .tfLiteWakeword, .appleSpeech]
         let p1 = SpeechPipelineBuilder()
             .useProfile(.tfLiteWakewordAppleSpeech)
-            .setListener(delegate)
+            .addListener(delegate)
             .build()
         wait(for: [didInit1Expectation], timeout: 1)
         XCTAssertEqual(expectedTFStages, p1.configuration.stages)
@@ -168,7 +166,6 @@ class SpeechPipelineBuilderTest: XCTestCase {
             .useProfile(.appleWakewordAppleSpeech)
             .setProperty("wakeActiveMax", wakeActiveMax.description)
             .build()
-        //wait(for: [didInit2Expectation], timeout: 1)
         XCTAssertEqual(expectedAppleWWStages, p2.configuration.stages)
         XCTAssertEqual(wakeActiveMax, p2.configuration.wakeActiveMax)
         

@@ -26,11 +26,11 @@ class AudioControllerTest: XCTestCase {
         // Uninititalized delegates do not cause an exception during startStreaming
         XCTAssertNoThrow(try AVAudioSession.sharedInstance().setCategory(.playAndRecord))
         controller.startStreaming()
-        XCTAssertFalse(delegate.didSetupFailed)
+        XCTAssertFalse(delegate.didSetupFail)
         
         /// stopStreaming does not cause an exception
         controller.stopStreaming()
-        XCTAssertFalse(delegate.didSetupFailed)
+        XCTAssertFalse(delegate.didSetupFail)
         
         // Incompatible AVAudioSession category fails
         delegate.reset()
@@ -41,7 +41,7 @@ class AudioControllerTest: XCTestCase {
         XCTAssertNoThrow(try AVAudioSession.sharedInstance().setCategory(.ambient))
         controller.startStreaming()
         wait(for: [setupFailedExpectation], timeout: 1)
-        XCTAssert(delegate.didSetupFailed)
+        XCTAssert(delegate.didSetupFail)
         
         /// stopStreaming does not cause an exception
         controller.stopStreaming()
@@ -68,7 +68,7 @@ class AudioControllerTest: XCTestCase {
         
         // stopStreaming works
         controller.stopStreaming()
-        XCTAssertFalse(delegate.didSetupFailed)
+        XCTAssertFalse(delegate.didSetupFail)
     }
 }
 
@@ -78,7 +78,7 @@ class AudioControllerTestDelegate: SpeechProcessor, SpeechEventListener {
     
     var context: SpeechContext
     var didProcessFrame: Bool = false
-    var didSetupFailed: Bool = false
+    var didSetupFail: Bool = false
     /// asyncExpectation lets the caller's test know when the delegate has been called.
     var asyncExpectation: XCTestExpectation?
     
@@ -88,7 +88,7 @@ class AudioControllerTestDelegate: SpeechProcessor, SpeechEventListener {
     }
     
     func reset() {
-        didSetupFailed = false
+        didSetupFail = false
         didProcessFrame = false
         asyncExpectation = .none
     }
@@ -116,7 +116,7 @@ class AudioControllerTestDelegate: SpeechProcessor, SpeechEventListener {
             XCTFail("AudioControllerTestDelegate was not setup correctly. Missing XCTExpectation reference")
             return
         }
-        self.didSetupFailed = true
+        self.didSetupFail = true
         ae.fulfill()
         self.asyncExpectation = nil
     }

@@ -30,7 +30,7 @@ import Foundation
     func didDeactivate() -> Void
     
     /// The pipeline speech recognition result event. The pipeline was activated and recognized speech.
-    /// - Parameter result: The speech recognition result.
+    /// - Parameter result: The speech pipeline context, which contains the result.
     func didRecognize(_ result: SpeechContext) -> Void
     
     /// The error event. An error occured in the speech pipeline.

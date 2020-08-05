@@ -16,7 +16,7 @@ This pipeline component uses the Apple `SFSpeech` API to stream audio samples fo
 */
 @objc public class AppleWakewordRecognizer: NSObject {
     
-    // MARK: public properties
+    // MARK: Public properties
     
     /// Configuration for the recognizer.
     public var configuration: SpeechConfiguration
@@ -24,7 +24,7 @@ This pipeline component uses the Apple `SFSpeech` API to stream audio samples fo
     /// Global state for the speech pipeline.
     public var context: SpeechContext
     
-    // MARK: private properties
+    // MARK: Private properties
     
     private var phrases: Array<String> = []
     private let speechRecognizer: SFSpeechRecognizer = SFSpeechRecognizer(locale: NSLocale.current)!
@@ -55,7 +55,7 @@ This pipeline component uses the Apple `SFSpeech` API to stream audio samples fo
         self.traceLevel = self.configuration.tracing
     }
     
-    // MARK: private functions
+    // MARK: Private functions
     
     private func prepareAudioEngine() {
         let bufferSize: Int = (self.configuration.sampleRate / 1000) * self.configuration.frameWidth
@@ -144,7 +144,7 @@ This pipeline component uses the Apple `SFSpeech` API to stream audio samples fo
                     }
                 }
                 if let r = result {
-                    Trace.trace(Trace.Level.DEBUG, message: "hears \(r.bestTranscription.formattedString)", config: strongSelf.configuration, context: strongSelf.context, caller: strongSelf)
+                    Trace.trace(Trace.Level.DEBUG, message: "heard \(r.bestTranscription.formattedString)", config: strongSelf.configuration, context: strongSelf.context, caller: strongSelf)
                     let wakewordDetected: Bool =
                         !strongSelf.phrases
                             .filter({
