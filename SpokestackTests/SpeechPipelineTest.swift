@@ -49,7 +49,7 @@ class SpeechPipelineTest: XCTestCase {
     func testActivateDeactivate() {
         let didInitExpectation = expectation(description: "didInitExpectation fulfills when testActivateDeactivate calls SpeechPipelineTestDelegate as the result of didInit method completion")
         let didActivateExpectation = expectation(description: "didActivateExpectation fulfills when testActivateDeactivate calls SpeechPipelineTestDelegate as the result of activate method completion")
-        let didDeActivateExpectation = expectation(description: "didDeActivateExpectation fulfills when testActivateDeactivate calls SpeechPipelineTestDelegate as the result of deactive method completion")
+        let didDeactivateExpectation = expectation(description: "didDeactivateExpectation fulfills when testActivateDeactivate calls SpeechPipelineTestDelegate as the result of deactivate method completion")
         let delegate = SpeechPipelineTestDelegate()
         let config = SpeechConfiguration()
         let context = SpeechContext()
@@ -66,9 +66,9 @@ class SpeechPipelineTest: XCTestCase {
         p.activate()
         wait(for: [didActivateExpectation], timeout: 1)
         XCTAssert(p.context.isActive)
-        delegate.deactivateExpectation = didDeActivateExpectation
+        delegate.deactivateExpectation = didDeactivateExpectation
         p.deactivate()
-        wait(for: [didDeActivateExpectation], timeout: 1)
+        wait(for: [didDeactivateExpectation], timeout: 1)
         XCTAssert(!p.context.isActive)
     }
     

@@ -84,7 +84,7 @@ import Dispatch
     
     /// Starts  the speech pipeline.
     ///
-    /// The pipeline starts in a deactivated state, awaiting either a triggered activation  from a wakeword or VAD, or an explicit call to `activate`.
+    /// The pipeline starts in a deactivated state, awaiting either a triggered activation from a wakeword or VAD, or an explicit call to `activate`.
     @objc public func start() -> Void {
         
         // initialize stages
@@ -134,9 +134,9 @@ import Dispatch
 }
 
 /**
-    Convenince initializer for building a `SpeechPipeline` instance using a pre-configured profile. A pipeline profile encapsulates a series of configuration values tuned for a specific task.
+    Convenience initializer for building a `SpeechPipeline` instance using a pre-configured profile. A pipeline profile encapsulates a series of configuration values tuned for a specific task.
  
-    Profiles are not authoritative; they act just like calling a series of methods on a {@link SpeechPipeline.Builder}, and any configuration properties they set can be overridden by subsequent calls.
+    Profiles are not authoritative; they act just like calling a series of methods on a `SpeechPipelineBuilder`, and any configuration properties they set can be overridden by subsequent calls.
  
      Example:
      ```
@@ -159,7 +159,7 @@ import Dispatch
     
     /// Applies configuration from `SpeechPipelineProfiles` to the current builder, returning the modified builder.
     /// - Parameter profile: Name of the profile to apply.
-    /// - Returns: An updated instance of `SpeechPipelineBuilder` for instace function  call chaining.
+    /// - Returns: An updated instance of `SpeechPipelineBuilder` for call chaining.
     @objc public func useProfile(_ profile: SpeechPipelineProfiles) -> SpeechPipelineBuilder {
         self.config.stages = profile.set
         return self
@@ -170,7 +170,7 @@ import Dispatch
     /// - Parameters:
     ///   - key: Configuration property name
     ///   - value: Configuration property name
-    /// - Returns: An updated instance of `SpeechPipelineBuilder` for instace function  call chaining.
+    /// - Returns: An updated instance of `SpeechPipelineBuilder` for call chaining.
     @objc public func setProperty(_ key: String, _ value: String) -> SpeechPipelineBuilder {
         self.config.setValue(value, forKey: key)
         return self
@@ -179,7 +179,7 @@ import Dispatch
     /// Delegate events will be sent using the specified dispatch queue.
     /// - SeeAlso: `SpeechConfiguration`
     /// - Parameter queue: A `DispatchQueue` instance
-    /// - Returns: An updated instance of `SpeechPipelineBuilder` for instace function  call chaining.
+    /// - Returns: An updated instance of `SpeechPipelineBuilder` for call chaining.
     @objc public func setDelegateDispatchQueue(_ queue: DispatchQueue) -> SpeechPipelineBuilder {
         self.config.delegateDispatchQueue = queue
         return self
@@ -187,7 +187,7 @@ import Dispatch
     
     /// Delegate events will be sent to the specified listener.
     /// - Parameter listener: A `SpeechEventListener` instance.
-    /// - Returns: An updated instance of `SpeechPipelineBuilder` for instace function  call chaining.
+    /// - Returns: An updated instance of `SpeechPipelineBuilder` for call chaining.
     @objc public func setListener(_ listener: SpeechEventListener) -> SpeechPipelineBuilder {
         self.listeners.append(listener)
         return self
