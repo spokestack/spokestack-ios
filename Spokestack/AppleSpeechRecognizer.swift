@@ -85,20 +85,13 @@ import Speech
             try self.audioEngine.start()
             try self.createRecognitionTask()
             self.wakeActiveMaxWorker = DispatchWorkItem {[weak self] in
-                self?.configuration.delegateDispatchQueue.async {
-                    self?.context.listeners.forEach { listener in
-                        listener.didTimeout()
-                        self?.deactivate()
-                    }
-                }
+                self?.context.notifyListener(.deactivate)
+                self?.deactivate()
             }
             DispatchQueue.global(qos: .userInitiated).asyncAfter(deadline: .now() + .milliseconds(self.configuration.wakeActiveMax), execute: self.wakeActiveMaxWorker!)
         } catch let error {
-            self.configuration.delegateDispatchQueue.async {
-                self.context.listeners.forEach { listener in
-                    listener.failure(speechError: error)
-                }
-            }
+            self.context.error = error
+            self.context.notifyListener(.error)
         }
     }
     
@@ -123,11 +116,7 @@ import Speech
         self.recognitionTask?.finish()
         self.recognitionRequest?.endAudio()
         self.wakeActiveMaxWorker?.cancel()
-        self.configuration.delegateDispatchQueue.async {
-            self.context.listeners.forEach({ listener in
-                listener.didDeactivate()
-            })
-        }
+        self.context.notifyListener(.deactivate)
     }
     
     private func createRecognitionTask() throws -> Void {
@@ -159,15 +148,13 @@ import Speech
                             case 300..<603: // Apple retry error: https://developer.nuance.com/public/Help/DragonMobileSDKReference_iOS/Error-codes.html
                                 break
                             default:
-                                strongSelf.context.listeners.forEach({ listener in
-                                    listener.failure(speechError: e)
-                                })
+                                strongSelf.context.error = e
+                                strongSelf.context.notifyListener(.error)
                             }
                         }
                     } else {
-                        strongSelf.context.listeners.forEach({ listener in
-                            listener.failure(speechError: e)
-                        })
+                        strongSelf.context.error = e
+                        strongSelf.context.notifyListener(.error)
                     }
                 }
                 if let r = result {
@@ -178,11 +165,7 @@ import Speech
                             a.confidence <= b.confidence }).first?.confidence ?? 0.0
                     strongSelf.context.transcript = r.bestTranscription.formattedString
                     strongSelf.context.confidence = confidence
-                    strongSelf.configuration.delegateDispatchQueue.async {
-                        strongSelf.context.listeners.forEach({ listener in
-                            listener.didRecognize(strongSelf.context)
-                        })
-                    }
+                    strongSelf.context.notifyListener(.recognize)
                     strongSelf.vadFallWorker = DispatchWorkItem {[weak self] in
                         self?.deactivate()
                     }

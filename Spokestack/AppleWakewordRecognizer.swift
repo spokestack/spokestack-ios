@@ -86,11 +86,8 @@ This pipeline component uses the Apple `SFSpeech` API to stream audio samples fo
             }
             DispatchQueue.global(qos: .userInitiated).asyncAfter(deadline: .now() + .milliseconds(self.configuration.wakewordRequestTimeout), execute: self.dispatchWorker!)
         } catch let error {
-            self.configuration.delegateDispatchQueue.async {
-                self.context.listeners.forEach { listener in
-                    listener.failure(speechError: error)
-                }
-            }
+            self.context.error = error
+            self.context.notifyListener(.error)
         }
     }
     
@@ -130,17 +127,13 @@ This pipeline component uses the Apple `SFSpeech` API to stream audio samples fo
                                 Trace.trace(Trace.Level.INFO, message: "resultHandler error \(nse.code.description)", config: strongSelf.configuration, context: strongSelf.context, caller: strongSelf)
                                 break
                             default:
-                                strongSelf.configuration.delegateDispatchQueue.async {
-                                    strongSelf.context.listeners.forEach { listener in
-                                        listener.failure(speechError: e)
-                                    }
-                                }
+                                strongSelf.context.error = e
+                                strongSelf.context.notifyListener(.error)
                             }
                         }
                     } else {
-                        strongSelf.context.listeners.forEach { listener in
-                            listener.failure(speechError: e)
-                        }
+                        strongSelf.context.error = e
+                        strongSelf.context.notifyListener(.error)
                     }
                 }
                 if let r = result {
@@ -156,11 +149,7 @@ This pipeline component uses the Apple `SFSpeech` API to stream audio samples fo
                             .isEmpty
                     if wakewordDetected {
                         strongSelf.context.isActive = true
-                        strongSelf.configuration.delegateDispatchQueue.async {
-                            strongSelf.context.listeners.forEach { listener in
-                                listener.didActivate()
-                            }
-                        }
+                        strongSelf.context.notifyListener(.activate)
                     }
                 }
         })
@@ -196,11 +185,8 @@ extension AppleWakewordRecognizer: SpeechProcessor {
                 try self.audioEngine.start()
                 self.startRecognition()
             } catch let error {
-                self.configuration.delegateDispatchQueue.async {
-                    self.context.listeners.forEach { listener in
-                        listener.failure(speechError: error)
-                    }
-                }
+                self.context.error = error
+                self.context.notifyListener(.error)
             }
         } else if context.isActive {
             self.stopRecognition()

@@ -15,11 +15,11 @@ class AudioControllerTest: XCTestCase {
     func testStreaming() {
         let controller = AudioController.sharedInstance
         let config = SpeechConfiguration()
-        let context = SpeechContext()
+        let context = SpeechContext(config)
         controller.configuration = config
         controller.context = context
         let delegate = AudioControllerTestDelegate(config, context: context)
-        context.listeners = [delegate]
+        context.setListener(delegate)
         context.stageInstances = [delegate]
         let setupFailedExpectation = expectation(description: "testStartStreaming calls AudioControllerTestDelegate as the result of failure method completion")
 
@@ -34,7 +34,7 @@ class AudioControllerTest: XCTestCase {
         
         // Incompatible AVAudioSession category fails
         delegate.reset()
-        context.listeners = [delegate]
+        context.setListener(delegate)
         context.stageInstances = [delegate]
         controller.context = context
         delegate.asyncExpectation = setupFailedExpectation
@@ -50,11 +50,11 @@ class AudioControllerTest: XCTestCase {
     func testProcess() {
         let controller = AudioController.sharedInstance
         let config = SpeechConfiguration()
-        let context = SpeechContext()
+        let context = SpeechContext(config)
         controller.configuration = config
         controller.context = context
         let delegate = AudioControllerTestDelegate(config, context: context)
-        context.listeners = [delegate]
+        context.setListener(delegate)
         context.stageInstances = [delegate]
         let processFrameExpectation = expectation(description: "testStartStreaming calls AudioControllerTestDelegate as the result of processFrame method completion")
 

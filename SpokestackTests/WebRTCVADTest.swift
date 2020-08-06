@@ -14,13 +14,13 @@ class WebRTCVADTest: XCTestCase {
     func testCreate() {
         // setup
         let config = SpeechConfiguration()
-        let context = SpeechContext()
+        let context = SpeechContext(config)
         let failureSampleRateExpectation = expectation(description: "testCreate calls WebRTCVADTestDelegate when WebRTCVAD initialization fails due to invalid sampleRate")
         let failureFrameWidthExpectation = expectation(description: "testCreate calls WebRTCVADTestDelegate when WebRTCVAD initialization fails due to invalid frameWidth")
         let delegate = WebRTCVADTestDelegate()
         delegate.context = context
         delegate.config = config
-        context.listeners = [delegate]
+        context.setListener(delegate)
         delegate.failureExpectation = failureSampleRateExpectation
         
         // valid configs
@@ -78,10 +78,10 @@ class WebRTCVADTest: XCTestCase {
         /// setup
         let delegate = WebRTCVADTestDelegate()
         let config = SpeechConfiguration()
-        let context = SpeechContext()
+        let context = SpeechContext(config)
         delegate.context = context
         delegate.config = config
-        context.listeners = [delegate]
+        context.setListener(delegate)
         config.vadMode = .Permissive
         config.frameWidth = 10
         config.sampleRate = 8000
@@ -129,10 +129,11 @@ class WebRTCVADTestDelegate: SpeechEventListener {
     var failureExpectation: XCTestExpectation?
     var error: Error?
     var config = SpeechConfiguration()
-    var context = SpeechContext()
+    var context: SpeechContext
     
     init() {
         config.tracing = .DEBUG
+        self.context = SpeechContext(config)
     }
     
     func reset() {

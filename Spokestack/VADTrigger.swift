@@ -26,11 +26,7 @@ import Foundation
     public func process(_ frame: Data) {
         if self.context.isSpeech && !self.context.isActive {
             self.context.isActive = true
-            self.configuration.delegateDispatchQueue.async {
-                self.context.listeners.forEach { listener in
-                    listener.didActivate()
-                }
-            }
+            self.context.notifyListener(.activate)
         }
     }
     

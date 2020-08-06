@@ -116,17 +116,11 @@ class AudioController {
         do {
             try self.start()
         } catch AudioError.audioSessionSetup(let message) {
-            self.configuration?.delegateDispatchQueue.async {
-                self.context?.listeners.forEach({ listener in
-                    listener.failure(speechError: AudioError.audioController(message))
-                })
-            }
+            self.context?.error = AudioError.audioController(message)
+            self.context?.notifyListener(.error)
         } catch {
-            self.configuration?.delegateDispatchQueue.async {
-                self.context?.listeners.forEach({ listener in
-                    listener.failure(speechError: AudioError.audioController("An unknown error occured starting the stream"))
-                })
-            }
+            self.context?.error = AudioError.audioController("An unknown error occured starting the stream")
+            self.context?.notifyListener(.error)
         }
     }
     
@@ -136,17 +130,11 @@ class AudioController {
         do {
             try self.stop()
         } catch AudioError.audioSessionSetup(let message) {
-            self.configuration?.delegateDispatchQueue.async {
-                self.context?.listeners.forEach({ listener in
-                    listener.failure(speechError: AudioError.audioController(message))
-                })
-            }
+            self.context?.error = AudioError.audioController(message)
+            self.context?.notifyListener(.error)
         } catch {
-            self.configuration?.delegateDispatchQueue.async {
-                self.context?.listeners.forEach({ listener in
-                    listener.failure(speechError: AudioError.audioController("An unknown error occured ending the stream"))
-                })
-            }
+            self.context?.error = AudioError.audioController("An unknown error occured ending the stream")
+            self.context?.notifyListener(.error)
         }
     }
     
@@ -187,11 +175,8 @@ class AudioController {
         case AVAudioSession.Category.playAndRecord:
             break
         default:
-            self.configuration?.delegateDispatchQueue.async {
-                self.context?.listeners.forEach({ listener in
-                    listener.failure(speechError: AudioError.audioSessionSetup("Incompatible AudioSession category is set."))
-                })
-            }
+            self.context?.error = AudioError.audioSessionSetup("Incompatible AudioSession category is set.")
+            self.context?.notifyListener(.error)
         }
     }
     

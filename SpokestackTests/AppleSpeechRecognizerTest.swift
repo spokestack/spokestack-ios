@@ -15,11 +15,11 @@ class AppleSpeechRecognizerTest: XCTestCase {
 
     /// startStreaming
     func testStartStopStreaming() {
-        let context = SpeechContext()
         let configuration = SpeechConfiguration()
+        let context = SpeechContext(configuration)
         let asr = AppleSpeechRecognizer(configuration, context: context)
         let delegate = AppleSpeechRecognizerTestDelegate()
-        context.listeners = [delegate]
+        context.setListener(delegate)
         context.isActive = true
         context.isSpeech = true
         asr.context = context
@@ -33,11 +33,11 @@ class AppleSpeechRecognizerTest: XCTestCase {
     }
     
     func testProcess() {
-        let context = SpeechContext()
         let configuration = SpeechConfiguration()
+        let context = SpeechContext(configuration)
         let asr = AppleSpeechRecognizer(configuration, context: context)
         let delegate = AppleSpeechRecognizerTestDelegate()
-        context.listeners = [delegate]
+        context.setListener(delegate)
         context.isActive = true
         context.isSpeech = true
         context.stageInstances = [asr]

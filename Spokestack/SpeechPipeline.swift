@@ -24,7 +24,7 @@ import Dispatch
     /// Pipeline configuration parameters.
     public private (set) var configuration: SpeechConfiguration
     /// Global state for the speech pipeline.
-    public let context: SpeechContext = SpeechContext()
+    public let context: SpeechContext
     
     
     // MARK: Private (properties)
@@ -34,7 +34,7 @@ import Dispatch
     // MARK: Initializers
     
     deinit {
-        self.context.listeners = []
+        self.context.removeListeners()
         self.stages = nil
     }
     
@@ -44,17 +44,12 @@ import Dispatch
     @objc public init(configuration: SpeechConfiguration, listeners: [SpeechEventListener]) {
         self.configuration = configuration
         self.stages = configuration.stages
-        self.context.listeners = listeners
+        self.context = SpeechContext(configuration)
         AudioController.sharedInstance.configuration = configuration
         AudioController.sharedInstance.context = self.context
         super.init()
-        
-        // initialization finished, emit the corresponding event
-        self.configuration.delegateDispatchQueue.async {
-            self.context.listeners.forEach({ listener in
-                listener.didInit()
-            })
-        }
+        listeners.forEach { self.context.setListener($0) }
+        self.context.notifyListener(.initialize)
     }
     
     /// MARK: Pipeline control
@@ -69,9 +64,7 @@ import Dispatch
     @objc public func activate() -> Void {
         if !self.context.isActive {
             self.context.isActive = true
-            self.context.listeners.forEach({ listener in
-                listener.didActivate()
-            })
+            self.context.notifyListener(.activate)
         }
     }
     
@@ -79,9 +72,7 @@ import Dispatch
     /// - SeeAlso: `activate`
     @objc public func deactivate() -> Void {
         self.context.isActive = false
-        self.context.listeners.forEach({ listener in
-            listener.didDeactivate()
-        })
+        self.context.notifyListener(.deactivate)
     }
     
     /// Starts  the speech pipeline.
@@ -115,9 +106,7 @@ import Dispatch
         }
         
         // notify listeners of start
-        self.context.listeners.forEach({ listener in
-            listener.didStart()
-        })
+        self.context.notifyListener(.start)
     }
     
     /// Stops the speech pipeline.
@@ -128,9 +117,7 @@ import Dispatch
             stage.stopStreaming()
         })
         AudioController.sharedInstance.stopStreaming()
-        self.context.listeners.forEach({ listener in
-            listener.didStop()
-        })
+        self.context.notifyListener(.stop)
         self.context.stageInstances = []
     }
 }

@@ -14,9 +14,9 @@ import XCTest
 
 class TFLiteWakewordRecognizerTest: XCTestCase {
     
-    let context = SpeechContext()
     let delegate = TFLiteWakewordRecognizerTestDelegate()
     let config = SpeechConfiguration()
+    var context: SpeechContext?
     var tflwr: TFLiteWakewordRecognizer?
 
     func hexStringToData(hexString: String) -> Data? {
@@ -41,9 +41,10 @@ class TFLiteWakewordRecognizerTest: XCTestCase {
         self.config.detectModelPath = MockWakewordModels.detectPath
         self.config.wakeActiveMin = 20
         self.config.wakeActiveMax = 100
+        self.context = SpeechContext(config)
 
-        self.tflwr = TFLiteWakewordRecognizer(config, context: context)
-        self.tflwr?.context = context
+        self.tflwr = TFLiteWakewordRecognizer(config, context: self.context!)
+        self.tflwr?.context = context!
         //let filterHexString = filter.map { String(format: "%02hhx", $0) }.joined()
         //let filterData = hexStringToData(hexString: MockWakewordModels.filterString)
         //let _ = FileManager.default.createFile(atPath: MockWakewordModels.filterPath, contents: filterData, attributes: .none)
@@ -84,7 +85,7 @@ class TFLiteWakewordRecognizerTest: XCTestCase {
     
     func testStartStop() {
         // start
-        self.context.isActive = false
+        self.context!.isActive = false
         self.tflwr?.startStreaming()
         // stop
         self.tflwr?.stopStreaming()
@@ -92,7 +93,7 @@ class TFLiteWakewordRecognizerTest: XCTestCase {
     
     func testProcess() {
         // setup
-        self.tflwr?.context.listeners = [self.delegate]
+        self.tflwr?.context.setListener(self.delegate)
         self.tflwr?.context.isActive = false
         self.tflwr?.startStreaming()
         let activateExpectation = XCTestExpectation(description: "process without failure.")
@@ -109,7 +110,7 @@ class TFLiteWakewordRecognizerTest: XCTestCase {
         XCTAssertFalse(self.delegate.didError)
         XCTAssertFalse(self.delegate.deactivated)
         
-        // deactivate because activation exceeded maxActive
+        // reset at activation edge
         delegate.reset()
         self.tflwr?.startStreaming()
         self.tflwr?.context.isSpeech = true
@@ -120,9 +121,7 @@ class TFLiteWakewordRecognizerTest: XCTestCase {
         for _ in 0...1 {
             self.tflwr?.process(Frame.silence(frameWidth: 20, sampleRate: 8000))
         }
-        wait(for:[deactivateMaxActiveExpectation], timeout: 1)
         XCTAssertFalse(self.tflwr!.context.isActive)
-        XCTAssert(self.delegate.deactivated)
         XCTAssertFalse(self.delegate.activated)
         XCTAssertFalse(self.delegate.didError)
     }

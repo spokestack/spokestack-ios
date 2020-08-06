@@ -31,7 +31,7 @@ class SpeechPipelineTest: XCTestCase {
         let didInitExpectation = expectation(description: "testInit calls SpeechPipelineTestDelegate as the result of didInit method completion")
         delegate.asyncExpectation = didInitExpectation
         let config = SpeechConfiguration()
-        let context = SpeechContext()
+        let context = SpeechContext(config)
         config.fftHopLength = 30
 
         // successful init calls didInit
@@ -76,13 +76,14 @@ class SpeechPipelineTest: XCTestCase {
         let didStopExpectation = expectation(description: "didStopExpectation fulfills when testStartStop calls SpeechPipelineTestDelegate as the result of didStop method completion")
         let delegate = SpeechPipelineTestDelegate()
         let config = SpeechConfiguration()
-        let context = SpeechContext()
+        let context = SpeechContext(config)
 
         // init the pipeline
         let p = SpeechPipeline(configuration: config, listeners: [])
         let tp = TestProcessor(true, config: config, context: context)
         p.context.stageInstances = [tp]
-        p.context.listeners = [delegate]
+        p.context.setListener(delegate)
+
         
         /// start and stop the pipeline
         delegate.asyncExpectation = didStartExpectation
@@ -129,7 +130,7 @@ class SpeechPipelineTest: XCTestCase {
         
         // add stages
         let processor = TestProcessor(true, config: config, context: p.context)
-        p.context.listeners = [delegate]
+        p.context.setListener(delegate)
         p.context.stageInstances = [processor]
         delegate.asyncExpectation = didStartExpectation
         p.start()
@@ -156,7 +157,6 @@ class SpeechPipelineBuilderTest: XCTestCase {
             .build()
         wait(for: [didInit1Expectation], timeout: 1)
         XCTAssertEqual(expectedTFStages, p1.configuration.stages)
-        XCTAssert(delegate === p1.context.listeners[0])
         
         // appleWW
         delegate.reset()
