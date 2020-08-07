@@ -19,8 +19,6 @@ import Foundation
     @objc public var isActive: Bool = false
     /// Speech detected indicator. Default to true for non-vad activation
     @objc public var isSpeech: Bool = true
-    /// A set of `SpeechProcessor` instances that process audio frames from `AudioController`.
-    public var stageInstances: [SpeechProcessor] = []
     /// A set of `SpeechEventListener`s that are sent `SpeechPipeline` events.
     private var listeners: [SpeechEventListener] = []
     /// Current error in the pipeline
@@ -56,14 +54,6 @@ import Foundation
     /// Removes all listeners.
     @objc public func removeListeners() {
         self.listeners = []
-    }
-
-    @objc public func setStage(_ stage: SpeechProcessor) {
-        
-    }
-
-    @objc public func removeStage(_ stage: SpeechProcessor) {
-        
     }
 
     @objc internal func notifyListener(_ about: SpeechEvents) {

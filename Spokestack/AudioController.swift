@@ -55,7 +55,7 @@ func recordingCallback(
             // AUBuffer.h:61:GetBufferList: EXCEPTION (-1) [mPtrState == kPtrsInvalid is false]: ""
             // are irrelevant
             audioProcessingQueue.sync {
-                AudioController.sharedInstance.context?.stageInstances.forEach { stage in
+                AudioController.sharedInstance.stageInstances.forEach { stage in
                     stage.process(data)
                 }
             }
@@ -74,6 +74,8 @@ class AudioController {
     /// Configuration for the audio controller.
     public var configuration: SpeechConfiguration?
     public var context: SpeechContext?
+    /// A set of `SpeechProcessor` instances that process audio frames from `AudioController`.
+    public var stageInstances: [SpeechProcessor] = []
     
     // MARK: Private (properties)
     

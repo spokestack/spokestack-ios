@@ -30,6 +30,8 @@ import Dispatch
     // MARK: Private (properties)
     
     private var stages: [SpeechProcessors]?
+    /// A set of `SpeechProcessor` instances that process audio frames from `AudioController`.
+    private var stageInstances: [SpeechProcessor] = []
     
     // MARK: Initializers
     
@@ -96,12 +98,13 @@ import Dispatch
                     return VADTrigger(self.configuration, context: self.context)
                 }
             }()
-            self.context.stageInstances.append(stageInstance)
+            self.stageInstances.append(stageInstance)
+            AudioController.sharedInstance.stageInstances.append(stageInstance)
         })
         
         // notify stages to start
         AudioController.sharedInstance.startStreaming()
-        self.context.stageInstances.forEach { stage in
+        self.stageInstances.forEach { stage in
             stage.startStreaming()
         }
         
@@ -113,12 +116,13 @@ import Dispatch
     ///
     /// All pipeline activity is stopped, and the pipeline cannot be activated until it is `start`ed again.
     @objc public func stop() -> Void {
-        self.context.stageInstances.forEach({ stage in
+        self.stageInstances.forEach({ stage in
             stage.stopStreaming()
         })
         AudioController.sharedInstance.stopStreaming()
         self.context.notifyListener(.stop)
-        self.context.stageInstances = []
+        self.stageInstances = []
+        AudioController.sharedInstance.stageInstances = []
     }
 }
 
