@@ -32,7 +32,7 @@ import Foundation
 }
 
 /// Convenience enum for the singletons of the different implementers of the `SpeechProcessor` protocol.
-@objc public enum SpeechProcessors: Int {
+internal enum SpeechProcessors: Int {
     /// AppleWakewordRecognizer
     case appleWakeword
     /// TFLiteWakewordRecognizer
@@ -59,7 +59,7 @@ import Foundation
 
 extension SpeechPipelineProfiles {
     /// Convenience property for getting a profile for use by `SpeechPipelineBuilder`.
-    public var set: [SpeechProcessors]  {
+    internal var set: [SpeechProcessors]  {
         switch self {
         case .appleWakewordAppleSpeech:
             return [.vad, .appleWakeword, .appleSpeech]

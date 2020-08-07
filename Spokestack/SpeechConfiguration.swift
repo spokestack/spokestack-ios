@@ -125,7 +125,7 @@ import Foundation
     @objc public var tracing: Trace.Level = Trace.Level.NONE
     /// Delegate events will be sent using the specified dispatch queue.
     @objc public var delegateDispatchQueue: DispatchQueue = DispatchQueue.global(qos: .userInitiated)
-    /// `SpeechProcessors` that will be transformed into `SpeechProcessor` instances in `SpeechContext` to process audio frames from `AudioController`.
+    /// `SpeechProcessor` instances process audio frames from `AudioController`.
     /// - SeeAlso: `AudioController`, `SpeechPipeline`, `SpeechContext`
-    public var stages: [SpeechProcessors] = []
+    public var stages: [SpeechProcessor] = []
 }

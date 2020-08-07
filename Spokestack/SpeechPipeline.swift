@@ -29,15 +29,14 @@ import Dispatch
     
     // MARK: Private (properties)
     
-    private var stages: [SpeechProcessors]?
     /// A set of `SpeechProcessor` instances that process audio frames from `AudioController`.
-    private var stageInstances: [SpeechProcessor] = []
+    private var stages: [SpeechProcessor] = []
     
     // MARK: Initializers
     
     deinit {
         self.context.removeListeners()
-        self.stages = nil
+        self.stages = []
     }
     
     /// Initializes a new speech pipeline instance.
@@ -45,11 +44,35 @@ import Dispatch
     /// - Parameter listeners: Delegate implementations of `SpeechEventListener` that receive speech pipeline events.
     @objc public init(configuration: SpeechConfiguration, listeners: [SpeechEventListener]) {
         self.configuration = configuration
-        self.stages = configuration.stages
         self.context = SpeechContext(configuration)
         AudioController.sharedInstance.configuration = configuration
         AudioController.sharedInstance.context = self.context
         super.init()
+        listeners.forEach { self.context.setListener($0) }
+        self.context.notifyListener(.initialize)
+    }
+    
+    internal init(configuration: SpeechConfiguration, listeners: [SpeechEventListener], profile: SpeechPipelineProfiles) {
+        self.configuration = configuration
+        self.context = SpeechContext(configuration)
+        super.init()
+        self.configuration.stages = profile.set.map { stage in
+            switch stage {
+            case .vad:
+                return WebRTCVAD(configuration, context: self.context)
+            case .appleWakeword:
+                return AppleWakewordRecognizer(configuration, context: self.context)
+            case .tfLiteWakeword:
+                return TFLiteWakewordRecognizer(configuration, context: self.context)
+            case .appleSpeech:
+                return AppleSpeechRecognizer(configuration, context: self.context)
+            case .vadTrigger:
+                return VADTrigger(configuration, context: self.context)
+            }
+        }
+        self.stages = configuration.stages
+        AudioController.sharedInstance.configuration = configuration
+        AudioController.sharedInstance.context = self.context
         listeners.forEach { self.context.setListener($0) }
         self.context.notifyListener(.initialize)
     }
@@ -83,28 +106,14 @@ import Dispatch
     @objc public func start() -> Void {
         
         // initialize stages
-        self.stages?.forEach({ stage in
-            let stageInstance: SpeechProcessor = {
-                switch stage {
-                case .vad:
-                    return WebRTCVAD(self.configuration, context: self.context)
-                case .appleWakeword:
-                    return AppleWakewordRecognizer(self.configuration, context: self.context)
-                case .tfLiteWakeword:
-                    return TFLiteWakewordRecognizer(self.configuration, context: self.context)
-                case .appleSpeech:
-                    return AppleSpeechRecognizer(self.configuration, context: self.context)
-                case .vadTrigger:
-                    return VADTrigger(self.configuration, context: self.context)
-                }
-            }()
-            self.stageInstances.append(stageInstance)
-            AudioController.sharedInstance.stageInstances.append(stageInstance)
-        })
+        self.configuration.stages.forEach { stage in
+            self.stages.append(stage)
+            AudioController.sharedInstance.stages.append(stage)
+        }
         
         // notify stages to start
         AudioController.sharedInstance.startStreaming()
-        self.stageInstances.forEach { stage in
+        self.stages.forEach { stage in
             stage.startStreaming()
         }
         
@@ -116,13 +125,27 @@ import Dispatch
     ///
     /// All pipeline activity is stopped, and the pipeline cannot be activated until it is `start`ed again.
     @objc public func stop() -> Void {
-        self.stageInstances.forEach({ stage in
+        self.stages.forEach({ stage in
             stage.stopStreaming()
         })
         AudioController.sharedInstance.stopStreaming()
         self.context.notifyListener(.stop)
-        self.stageInstances = []
-        AudioController.sharedInstance.stageInstances = []
+        self.stages = []
+        AudioController.sharedInstance.stages = []
+    }
+    
+    @objc public func setStage(_ stage: SpeechProcessor) {
+        self.stages.append(stage)
+        AudioController.sharedInstance.stages.append(stage)
+    }
+
+    @objc public func removeStage(_ stage: SpeechProcessor) {
+        for (i, s) in self.stages.enumerated() {
+            if stage === s {
+                self.stages.remove(at: i)
+                AudioController.sharedInstance.stages.remove(at: i)
+            }
+        }
     }
 }
 
@@ -149,12 +172,13 @@ import Dispatch
 @objc public class SpeechPipelineBuilder: NSObject {
     private let config = SpeechConfiguration()
     private var listeners: [SpeechEventListener] = []
+    private var profile: SpeechPipelineProfiles?
     
     /// Applies configuration from `SpeechPipelineProfiles` to the current builder, returning the modified builder.
     /// - Parameter profile: Name of the profile to apply.
     /// - Returns: An updated instance of `SpeechPipelineBuilder` for call chaining.
     @objc public func useProfile(_ profile: SpeechPipelineProfiles) -> SpeechPipelineBuilder {
-        self.config.stages = profile.set
+        self.profile = profile
         return self
     }
     

@@ -20,7 +20,7 @@ class AudioControllerTest: XCTestCase {
         controller.context = context
         let delegate = AudioControllerTestDelegate(config, context: context)
         context.setListener(delegate)
-        context.stageInstances = [delegate]
+        config.stages = [delegate]
         let setupFailedExpectation = expectation(description: "testStartStreaming calls AudioControllerTestDelegate as the result of failure method completion")
 
         // Uninitialized delegates do not cause an exception during startStreaming
@@ -35,7 +35,7 @@ class AudioControllerTest: XCTestCase {
         // Incompatible AVAudioSession category fails
         delegate.reset()
         context.setListener(delegate)
-        context.stageInstances = [delegate]
+        config.stages = [delegate]
         controller.context = context
         delegate.asyncExpectation = setupFailedExpectation
         XCTAssertNoThrow(try AVAudioSession.sharedInstance().setCategory(.ambient))
@@ -55,7 +55,8 @@ class AudioControllerTest: XCTestCase {
         controller.context = context
         let delegate = AudioControllerTestDelegate(config, context: context)
         context.setListener(delegate)
-        context.stageInstances = [delegate]
+        config.stages = [delegate]
+        controller.stages = [delegate]
         let processFrameExpectation = expectation(description: "testStartStreaming calls AudioControllerTestDelegate as the result of processFrame method completion")
 
         // AudioControllerDelegate processFrame is called

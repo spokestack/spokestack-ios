@@ -36,8 +36,8 @@ class SpeechPipelineTest: XCTestCase {
 
         // successful init calls didInit
         let tp = TestProcessor(true, config: config, context: context)
+        config.stages = [tp]
         let p = SpeechPipeline(configuration: config, listeners: [delegate])
-        p.context.stageInstances = [tp]
         wait(for: [didInitExpectation], timeout: 1)
         XCTAssert(delegate.didDidInit)
         
@@ -79,9 +79,9 @@ class SpeechPipelineTest: XCTestCase {
         let context = SpeechContext(config)
 
         // init the pipeline
-        let p = SpeechPipeline(configuration: config, listeners: [])
         let tp = TestProcessor(true, config: config, context: context)
-        p.context.stageInstances = [tp]
+        config.stages = [tp]
+        let p = SpeechPipeline(configuration: config, listeners: [])
         p.context.setListener(delegate)
 
         
@@ -124,18 +124,18 @@ class SpeechPipelineTest: XCTestCase {
         let didStopExpectation = expectation(description: "didStopExpectation fulfills when testSpeechProcessors calls SpeechPipelineTestDelegate as the result of didStop method completion")
         let delegate = SpeechPipelineTestDelegate()
         let config = SpeechConfiguration()
+        let context = SpeechContext(config)
 
         // init the pipeline
-        let p = SpeechPipeline(configuration: config, listeners: [])
         
         // add stages
-        let processor = TestProcessor(true, config: config, context: p.context)
+        let processor = TestProcessor(true, config: config, context: context)
+        config.stages = [processor]
+        let p = SpeechPipeline(configuration: config, listeners: [])
         p.context.setListener(delegate)
-        p.context.stageInstances = [processor]
         delegate.asyncExpectation = didStartExpectation
         p.start()
         wait(for: [didStartExpectation], timeout: 1)
-        XCTAssert(p.context.isActive)
         delegate.asyncExpectation = didStopExpectation
         p.stop()
         wait(for: [didStopExpectation], timeout: 1)
@@ -150,43 +150,63 @@ class SpeechPipelineBuilderTest: XCTestCase {
 
         // tflite
         delegate.asyncExpectation = didInit1Expectation
-        let expectedTFStages: [SpeechProcessors] = [.vad, .tfLiteWakeword, .appleSpeech]
         let p1 = SpeechPipelineBuilder()
             .useProfile(.tfLiteWakewordAppleSpeech)
             .addListener(delegate)
             .build()
         wait(for: [didInit1Expectation], timeout: 1)
-        XCTAssertEqual(expectedTFStages, p1.configuration.stages)
+        let expectedTFStages = [WebRTCVAD.self, TFLiteWakewordRecognizer.self, AppleSpeechRecognizer.self]
+        let expectedTFStagesMatch = p1.configuration.stages.reduce(true, { isSameSoFar, stage in
+            return isSameSoFar && expectedTFStages.reduce(true, { isSame, expectedStage in
+                return isSame || (type(of: stage) == expectedStage)
+            })
+        })
+        XCTAssert(expectedTFStagesMatch)
         
         // appleWW
         delegate.reset()
-        let expectedAppleWWStages: [SpeechProcessors] = [.vad, .appleWakeword, .appleSpeech]
         let wakeActiveMax = 10000
         let p2 = SpeechPipelineBuilder()
             .useProfile(.appleWakewordAppleSpeech)
             .setProperty("wakeActiveMax", wakeActiveMax.description)
             .build()
-        XCTAssertEqual(expectedAppleWWStages, p2.configuration.stages)
         XCTAssertEqual(wakeActiveMax, p2.configuration.wakeActiveMax)
+        let expectedAppleWWStages = [WebRTCVAD.self, AppleWakewordRecognizer.self, AppleSpeechRecognizer.self]
+        let expectedAppleWWStagesMatch = p2.configuration.stages.reduce(true, { isSameSoFar, stage in
+            return isSameSoFar && expectedAppleWWStages.reduce(true, { isSame, expectedStage in
+                return isSame || (type(of: stage) == expectedStage)
+            })
+        })
+        XCTAssert(expectedAppleWWStagesMatch)
         
         // vadTrigger
         delegate.reset()
-        let expectedVADTriggerStages: [SpeechProcessors] = [.vad, .vadTrigger, .appleSpeech]
         let p3 = SpeechPipelineBuilder()
             .useProfile(.vadTriggerAppleSpeech)
             .build()
-        XCTAssertEqual(expectedVADTriggerStages, p3.configuration.stages)
+        let expectedVADTriggerStages = [WebRTCVAD.self, VADTrigger.self, AppleSpeechRecognizer.self]
+        let expectedVADTriggerStagesMatch = p3.configuration.stages.reduce(true, { isSameSoFar, stage in
+            return isSameSoFar && expectedVADTriggerStages.reduce(true, { isSame, expectedStage in
+                return isSame || (type(of: stage) == expectedStage)
+            })
+        })
+        XCTAssert(expectedVADTriggerStagesMatch)
         
         // p2t
         delegate.reset()
-        let expectedP2TStages: [SpeechProcessors] = [.appleSpeech]
         let queue = DispatchQueue.main
         let p4 = SpeechPipelineBuilder()
             .useProfile(.pushToTalkAppleSpeech)
             .setDelegateDispatchQueue(queue)
             .build()
-        XCTAssertEqual(expectedP2TStages, p4.configuration.stages)
         XCTAssert(queue === p4.configuration.delegateDispatchQueue)
+        let expectedP2TStages = [AppleSpeechRecognizer.self]
+        let expectedP2TStagesMatch = p4.configuration.stages.reduce(true, { isSameSoFar, stage in
+            return isSameSoFar && expectedP2TStages.reduce(true, { isSame, expectedStage in
+                return isSame || (type(of: stage) == expectedStage)
+            })
+        })
+        XCTAssert(expectedP2TStagesMatch)
     }
 }
 
