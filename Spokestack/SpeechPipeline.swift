@@ -29,8 +29,9 @@ import Dispatch
     
     // MARK: Private (properties)
     
-    /// A set of `SpeechProcessor` instances that process audio frames from `AudioController`.
+    /// A list of `SpeechProcessor` instances that process audio frames from `AudioController`.
     private var stages: [SpeechProcessor] = []
+    private var isStarted = false
     
     // MARK: Initializers
     
@@ -48,8 +49,8 @@ import Dispatch
         AudioController.sharedInstance.configuration = configuration
         AudioController.sharedInstance.context = self.context
         super.init()
-        listeners.forEach { self.context.setListener($0) }
-        self.context.notifyListener(.initialize)
+        listeners.forEach { self.context.addListener($0) }
+        self.context.dispatch(.initialize)
     }
     
     internal init(configuration: SpeechConfiguration, listeners: [SpeechEventListener], profile: SpeechPipelineProfiles) {
@@ -73,8 +74,8 @@ import Dispatch
         self.stages = configuration.stages
         AudioController.sharedInstance.configuration = configuration
         AudioController.sharedInstance.context = self.context
-        listeners.forEach { self.context.setListener($0) }
-        self.context.notifyListener(.initialize)
+        listeners.forEach { self.context.addListener($0) }
+        self.context.dispatch(.initialize)
     }
     
     /// MARK: Pipeline control
@@ -88,8 +89,9 @@ import Dispatch
     */
     @objc public func activate() -> Void {
         if !self.context.isActive {
+            self.context.isSpeech = true
             self.context.isActive = true
-            self.context.notifyListener(.activate)
+            self.context.dispatch(.activate)
         }
     }
     
@@ -97,44 +99,46 @@ import Dispatch
     /// - SeeAlso: `activate`
     @objc public func deactivate() -> Void {
         self.context.isActive = false
-        self.context.notifyListener(.deactivate)
+        self.context.isSpeech = false
+        self.context.dispatch(.deactivate)
     }
     
     /// Starts  the speech pipeline.
     ///
     /// The pipeline starts in a deactivated state, awaiting either a triggered activation from a wakeword or VAD, or an explicit call to `activate`.
     @objc public func start() -> Void {
-        
-        // initialize stages
-        self.configuration.stages.forEach { stage in
-            self.stages.append(stage)
-            AudioController.sharedInstance.stages.append(stage)
+        if !self.isStarted {
+            // notify stages to start
+            self.stages.forEach { stage in
+                stage.startStreaming()
+            }
+            
+            // begin streaming audio to the stages via `process`
+            AudioController.sharedInstance.startStreaming()
+            
+            // notify listeners of start
+            self.context.dispatch(.start)
+            
+            // repeated calls to start are idempotent
+            self.isStarted = true
         }
-        
-        // notify stages to start
-        AudioController.sharedInstance.startStreaming()
-        self.stages.forEach { stage in
-            stage.startStreaming()
-        }
-        
-        // notify listeners of start
-        self.context.notifyListener(.start)
     }
     
     /// Stops the speech pipeline.
     ///
     /// All pipeline activity is stopped, and the pipeline cannot be activated until it is `start`ed again.
     @objc public func stop() -> Void {
-        self.stages.forEach({ stage in
-            stage.stopStreaming()
-        })
-        AudioController.sharedInstance.stopStreaming()
-        self.context.notifyListener(.stop)
-        self.stages = []
-        AudioController.sharedInstance.stages = []
+        if self.isStarted {
+            self.stages.forEach({ stage in
+                stage.stopStreaming()
+            })
+            AudioController.sharedInstance.stopStreaming()
+            self.context.dispatch(.stop)
+            self.isStarted = false
+        }
     }
     
-    @objc public func setStage(_ stage: SpeechProcessor) {
+    @objc public func addStage(_ stage: SpeechProcessor) {
         self.stages.append(stage)
         AudioController.sharedInstance.stages.append(stage)
     }

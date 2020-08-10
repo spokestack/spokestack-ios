@@ -82,7 +82,7 @@ class SpeechPipelineTest: XCTestCase {
         let tp = TestProcessor(true, config: config, context: context)
         config.stages = [tp]
         let p = SpeechPipeline(configuration: config, listeners: [])
-        p.context.setListener(delegate)
+        p.context.addListener(delegate)
 
         
         /// start and stop the pipeline
@@ -132,7 +132,7 @@ class SpeechPipelineTest: XCTestCase {
         let processor = TestProcessor(true, config: config, context: context)
         config.stages = [processor]
         let p = SpeechPipeline(configuration: config, listeners: [])
-        p.context.setListener(delegate)
+        p.context.addListener(delegate)
         delegate.asyncExpectation = didStartExpectation
         p.start()
         wait(for: [didStartExpectation], timeout: 1)

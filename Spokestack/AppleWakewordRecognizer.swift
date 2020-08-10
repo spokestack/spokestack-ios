@@ -87,7 +87,7 @@ This pipeline component uses the Apple `SFSpeech` API to stream audio samples fo
             DispatchQueue.global(qos: .userInitiated).asyncAfter(deadline: .now() + .milliseconds(self.configuration.wakewordRequestTimeout), execute: self.dispatchWorker!)
         } catch let error {
             self.context.error = error
-            self.context.notifyListener(.error)
+            self.context.dispatch(.error)
         }
     }
     
@@ -128,12 +128,12 @@ This pipeline component uses the Apple `SFSpeech` API to stream audio samples fo
                                 break
                             default:
                                 strongSelf.context.error = e
-                                strongSelf.context.notifyListener(.error)
+                                strongSelf.context.dispatch(.error)
                             }
                         }
                     } else {
                         strongSelf.context.error = e
-                        strongSelf.context.notifyListener(.error)
+                        strongSelf.context.dispatch(.error)
                     }
                 }
                 if let r = result {
@@ -149,7 +149,7 @@ This pipeline component uses the Apple `SFSpeech` API to stream audio samples fo
                             .isEmpty
                     if wakewordDetected {
                         strongSelf.context.isActive = true
-                        strongSelf.context.notifyListener(.activate)
+                        strongSelf.context.dispatch(.activate)
                     }
                 }
         })
@@ -186,7 +186,7 @@ extension AppleWakewordRecognizer: SpeechProcessor {
                 self.startRecognition()
             } catch let error {
                 self.context.error = error
-                self.context.notifyListener(.error)
+                self.context.dispatch(.error)
             }
         } else if context.isActive {
             self.stopRecognition()

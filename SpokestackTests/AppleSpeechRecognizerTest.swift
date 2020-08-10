@@ -19,7 +19,7 @@ class AppleSpeechRecognizerTest: XCTestCase {
         let context = SpeechContext(configuration)
         let asr = AppleSpeechRecognizer(configuration, context: context)
         let delegate = AppleSpeechRecognizerTestDelegate()
-        context.setListener(delegate)
+        context.addListener(delegate)
         context.isActive = true
         context.isSpeech = true
         asr.context = context
@@ -37,7 +37,7 @@ class AppleSpeechRecognizerTest: XCTestCase {
         let context = SpeechContext(configuration)
         let asr = AppleSpeechRecognizer(configuration, context: context)
         let delegate = AppleSpeechRecognizerTestDelegate()
-        context.setListener(delegate)
+        context.addListener(delegate)
         context.isActive = true
         context.isSpeech = true
         configuration.stages = [asr]

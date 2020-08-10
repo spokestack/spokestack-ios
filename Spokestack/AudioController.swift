@@ -119,10 +119,10 @@ class AudioController {
             try self.start()
         } catch AudioError.audioSessionSetup(let message) {
             self.context?.error = AudioError.audioController(message)
-            self.context?.notifyListener(.error)
+            self.context?.dispatch(.error)
         } catch {
             self.context?.error = AudioError.audioController("An unknown error occured starting the stream")
-            self.context?.notifyListener(.error)
+            self.context?.dispatch(.error)
         }
     }
     
@@ -133,10 +133,10 @@ class AudioController {
             try self.stop()
         } catch AudioError.audioSessionSetup(let message) {
             self.context?.error = AudioError.audioController(message)
-            self.context?.notifyListener(.error)
+            self.context?.dispatch(.error)
         } catch {
             self.context?.error = AudioError.audioController("An unknown error occured ending the stream")
-            self.context?.notifyListener(.error)
+            self.context?.dispatch(.error)
         }
     }
     
@@ -178,7 +178,7 @@ class AudioController {
             break
         default:
             self.context?.error = AudioError.audioSessionSetup("Incompatible AudioSession category is set.")
-            self.context?.notifyListener(.error)
+            self.context?.dispatch(.error)
         }
     }
     

@@ -49,7 +49,7 @@ private var frameBuffer: RingBuffer<Int16>!
             try self.configure()
         } catch let error {
             self.context.error = error
-            self.context.notifyListener(.error)
+            self.context.dispatch(.error)
         }
     }
     
@@ -149,7 +149,7 @@ private var frameBuffer: RingBuffer<Int16>!
             }
         } catch let error {
             self.context.error = VADError.processing("error occurred while vad is processing \(error.localizedDescription)")
-            self.context.notifyListener(.error)
+            self.context.dispatch(.error)
         }
     }
 }

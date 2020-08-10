@@ -26,7 +26,7 @@ import Foundation
     public func process(_ frame: Data) {
         if self.context.isSpeech && !self.context.isActive {
             self.context.isActive = true
-            self.context.notifyListener(.activate)
+            self.context.dispatch(.activate)
         }
     }
     

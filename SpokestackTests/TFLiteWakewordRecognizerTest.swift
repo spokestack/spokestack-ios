@@ -93,7 +93,7 @@ class TFLiteWakewordRecognizerTest: XCTestCase {
     
     func testProcess() {
         // setup
-        self.tflwr?.context.setListener(self.delegate)
+        self.tflwr?.context.addListener(self.delegate)
         self.tflwr?.context.isActive = false
         self.tflwr?.startStreaming()
         let activateExpectation = XCTestExpectation(description: "process without failure.")

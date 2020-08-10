@@ -141,7 +141,7 @@ import TensorFlowLite
             }
         } catch let message {
             self.context.error = WakewordModelError.model("TFLiteWakewordRecognizer configureAttentionModels \(message)")
-            self.context.notifyListener(.error)
+            self.context.dispatch(.error)
         }
     }
     
@@ -458,11 +458,11 @@ extension TFLiteWakewordRecognizer : SpeechProcessor {
                             strongSelf.context.isActive = true
                             strongSelf.reset()
                             strongSelf.stopStreaming()
-                            strongSelf.context.notifyListener(.activate)
+                            strongSelf.context.dispatch(.activate)
                         }
                     } catch let error {
                         strongSelf.context.error = error
-                        strongSelf.context.notifyListener(.error)
+                        strongSelf.context.dispatch(.error)
                     }
                 // activation edge
                 } else if strongSelf.active {

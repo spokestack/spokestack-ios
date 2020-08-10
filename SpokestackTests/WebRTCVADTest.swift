@@ -20,7 +20,7 @@ class WebRTCVADTest: XCTestCase {
         let delegate = WebRTCVADTestDelegate()
         delegate.context = context
         delegate.config = config
-        context.setListener(delegate)
+        context.addListener(delegate)
         delegate.failureExpectation = failureSampleRateExpectation
         
         // valid configs
@@ -81,7 +81,7 @@ class WebRTCVADTest: XCTestCase {
         let context = SpeechContext(config)
         delegate.context = context
         delegate.config = config
-        context.setListener(delegate)
+        context.addListener(delegate)
         config.vadMode = .Permissive
         config.frameWidth = 10
         config.sampleRate = 8000

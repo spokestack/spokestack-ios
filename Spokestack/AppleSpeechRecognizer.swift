@@ -85,13 +85,13 @@ import Speech
             try self.audioEngine.start()
             try self.createRecognitionTask()
             self.wakeActiveMaxWorker = DispatchWorkItem {[weak self] in
-                self?.context.notifyListener(.deactivate)
+                self?.context.dispatch(.deactivate)
                 self?.deactivate()
             }
             DispatchQueue.global(qos: .userInitiated).asyncAfter(deadline: .now() + .milliseconds(self.configuration.wakeActiveMax), execute: self.wakeActiveMaxWorker!)
         } catch let error {
             self.context.error = error
-            self.context.notifyListener(.error)
+            self.context.dispatch(.error)
         }
     }
     
@@ -116,7 +116,7 @@ import Speech
         self.recognitionTask?.finish()
         self.recognitionRequest?.endAudio()
         self.wakeActiveMaxWorker?.cancel()
-        self.context.notifyListener(.deactivate)
+        self.context.dispatch(.deactivate)
     }
     
     private func createRecognitionTask() throws -> Void {
@@ -149,12 +149,12 @@ import Speech
                                 break
                             default:
                                 strongSelf.context.error = e
-                                strongSelf.context.notifyListener(.error)
+                                strongSelf.context.dispatch(.error)
                             }
                         }
                     } else {
                         strongSelf.context.error = e
-                        strongSelf.context.notifyListener(.error)
+                        strongSelf.context.dispatch(.error)
                     }
                 }
                 if let r = result {
@@ -165,7 +165,7 @@ import Speech
                             a.confidence <= b.confidence }).first?.confidence ?? 0.0
                     strongSelf.context.transcript = r.bestTranscription.formattedString
                     strongSelf.context.confidence = confidence
-                    strongSelf.context.notifyListener(.recognize)
+                    strongSelf.context.dispatch(.recognize)
                     strongSelf.vadFallWorker = DispatchWorkItem {[weak self] in
                         self?.deactivate()
                     }

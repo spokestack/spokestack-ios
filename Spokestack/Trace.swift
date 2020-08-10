@@ -30,7 +30,7 @@ public struct Trace {
     public static func trace(_ level: Trace.Level, message: String, config: SpeechConfiguration?, context: SpeechContext?, caller: Any) {
         if level.rawValue >= config?.tracing.rawValue ?? Level.DEBUG.rawValue {
             context?.trace = "\(level.rawValue) \(String(describing: type(of: caller))) \(message)"
-            context?.notifyListener(.trace)
+            context?.dispatch(.trace)
         }
     }
     
@@ -73,14 +73,14 @@ public struct Trace {
             if !filemgr.fileExists(atPath: path.path) {
                 filemgr.createFile(atPath: path.path, contents: data, attributes: nil)
                 context?.trace = "Trace spit created \(data.count) fileURL: \(path.path)"
-                context?.notifyListener(.trace)
+                context?.dispatch(.trace)
                 do {
                     let handle = try FileHandle(forWritingTo: path)
                     handle.write(data)
                     handle.synchronizeFile()
                 } catch let error {
                     context?.trace = "Trace spit failed to open a handle to \(path.path) because \(error)"
-                    context?.notifyListener(.trace)
+                    context?.dispatch(.trace)
                 }
             } else {
                 do {
@@ -89,15 +89,15 @@ public struct Trace {
                     handle.write(data)
                     handle.synchronizeFile()
                     context?.trace = "Trace spit appended \(data.count) to: \(path.path)"
-                    context?.notifyListener(.trace)
+                    context?.dispatch(.trace)
                 } catch let error {
                     context?.trace = "Trace spit failed to open a handle to \(path.path) because \(error)"
-                    context?.notifyListener(.trace)
+                    context?.dispatch(.trace)
                 }
             }
         } else {
             context?.trace = "Trace spit failed to get a URL for \(fileName)"
-            context?.notifyListener(.trace)
+            context?.dispatch(.trace)
         }
     }
 }

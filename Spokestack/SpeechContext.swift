@@ -17,9 +17,9 @@ import Foundation
     @objc public var confidence: Float = 0.0
     /// Speech recognition active indicator
     @objc public var isActive: Bool = false
-    /// Speech detected indicator. Default to true for non-vad activation
-    @objc public var isSpeech: Bool = true
-    /// A set of `SpeechEventListener`s that are sent `SpeechPipeline` events.
+    /// Speech detected indicator
+    @objc public var isSpeech: Bool = false
+    /// An ordered set of `SpeechEventListener`s that are sent `SpeechPipeline` events.
     private var listeners: [SpeechEventListener] = []
     /// Current error in the pipeline
     internal var error: Error?
@@ -32,13 +32,13 @@ import Foundation
         self.configuration = config
     }
     
-    /// Adds the specified listener instance to the ordered set of listeners. The specified listener will recieve speech pipeline events.
+    /// Adds the specified listener instance to the ordered set of listeners. The specified listener instance may only be added once; duplicates will be ignored. The specified listener will recieve speech pipeline events.
     ///
     /// - Parameter listener: The listener to add.
-    @objc public func setListener(_ listener: SpeechEventListener) {
-        if self.listeners.contains(where: { l in
+    @objc public func addListener(_ listener: SpeechEventListener) {
+        if !self.listeners.contains(where: { l in
             return listener === l ? true : false
-        }) { } else {
+        }) {
             self.listeners.append(listener)
         }
     }
@@ -56,40 +56,58 @@ import Foundation
         self.listeners = []
     }
 
-    @objc internal func notifyListener(_ about: SpeechEvents) {
-        self.listeners.forEach { listener in
-            self.configuration.delegateDispatchQueue.async {
-                switch about {
-                case .initialize:
+    @objc internal func dispatch(_ event: SpeechEvents) {
+        switch event {
+        case .initialize:
+            self.listeners.forEach { listener in
+                self.configuration.delegateDispatchQueue.async {
                     listener.didInit()
-                case .start:
+                }}
+        case .start:
+            self.listeners.forEach { listener in
+                self.configuration.delegateDispatchQueue.async {
                     listener.didStart()
-                case .stop:
+                }}
+        case .stop:
+            self.listeners.forEach { listener in
+                self.configuration.delegateDispatchQueue.async {
                     listener.didStop()
-                case .activate:
+                }}
+        case .activate:
+            self.listeners.forEach { listener in
+                self.configuration.delegateDispatchQueue.async {
                     listener.didActivate()
-                case .deactivate:
+                }}
+        case .deactivate:
+            self.listeners.forEach { listener in
+                self.configuration.delegateDispatchQueue.async {
                     listener.didDeactivate()
-                case .recognize:
+                }}
+        case .recognize:
+            self.listeners.forEach { listener in
+                self.configuration.delegateDispatchQueue.async {
                     listener.didRecognize(self)
-                case .error:
-                    guard let e = self.error else {
-                        listener.failure(speechError: SpeechPipelineError.errorNotSet("A pipeline component attempted to send an error to SpeechContext's listeners without first setting the SpeechContext.error property."))
-                        return
-                    }
+                }}
+        case .error:
+            let e = (self.error != nil) ? self.error! : SpeechPipelineError.errorNotSet("A pipeline component attempted to send an error to SpeechContext's listeners without first setting the SpeechContext.error property.")
+            self.listeners.forEach { listener in
+                self.configuration.delegateDispatchQueue.async {
                     listener.failure(speechError: e)
-                    self.error = .none
-                case .trace:
-                    guard let t = self.trace else {
-                        // swallow this error case because traces aren't important to the client.
-                        return
-                    }
-                    listener.didTrace(t)
-                    self.trace = .none
-                case .timeout:
-                    listener.didTimeout()
-                }
+                }}
+            self.error = .none
+        case .trace:
+            if let t = self.trace {
+                self.listeners.forEach { listener in
+                    self.configuration.delegateDispatchQueue.async {
+                        listener.didTrace(t)
+                    }}
+                self.trace = .none
             }
+        case .timeout:
+            self.listeners.forEach { listener in
+                self.configuration.delegateDispatchQueue.async {
+                    listener.didTimeout()
+                }}
         }
     }
 }
