@@ -155,13 +155,8 @@ class SpeechPipelineBuilderTest: XCTestCase {
             .addListener(delegate)
             .build()
         wait(for: [didInit1Expectation], timeout: 1)
-        let expectedTFStages = [WebRTCVAD.self, TFLiteWakewordRecognizer.self, AppleSpeechRecognizer.self]
-        let expectedTFStagesMatch = p1.configuration.stages.reduce(true, { isSameSoFar, stage in
-            return isSameSoFar && expectedTFStages.reduce(true, { isSame, expectedStage in
-                return isSame || (type(of: stage) == expectedStage)
-            })
-        })
-        XCTAssert(expectedTFStagesMatch)
+        XCTAssert(compare(expected: [WebRTCVAD.self, TFLiteWakewordRecognizer.self, AppleSpeechRecognizer.self], actual: p1.configuration.stages.enumerated()))
+
         
         // appleWW
         delegate.reset()
@@ -171,26 +166,14 @@ class SpeechPipelineBuilderTest: XCTestCase {
             .setProperty("wakeActiveMax", wakeActiveMax.description)
             .build()
         XCTAssertEqual(wakeActiveMax, p2.configuration.wakeActiveMax)
-        let expectedAppleWWStages = [WebRTCVAD.self, AppleWakewordRecognizer.self, AppleSpeechRecognizer.self]
-        let expectedAppleWWStagesMatch = p2.configuration.stages.reduce(true, { isSameSoFar, stage in
-            return isSameSoFar && expectedAppleWWStages.reduce(true, { isSame, expectedStage in
-                return isSame || (type(of: stage) == expectedStage)
-            })
-        })
-        XCTAssert(expectedAppleWWStagesMatch)
-        
+        XCTAssert(compare(expected: [WebRTCVAD.self, AppleWakewordRecognizer.self, AppleSpeechRecognizer.self], actual: p2.configuration.stages.enumerated()))
+
         // vadTrigger
         delegate.reset()
         let p3 = SpeechPipelineBuilder()
             .useProfile(.vadTriggerAppleSpeech)
             .build()
-        let expectedVADTriggerStages = [WebRTCVAD.self, VADTrigger.self, AppleSpeechRecognizer.self]
-        let expectedVADTriggerStagesMatch = p3.configuration.stages.reduce(true, { isSameSoFar, stage in
-            return isSameSoFar && expectedVADTriggerStages.reduce(true, { isSame, expectedStage in
-                return isSame || (type(of: stage) == expectedStage)
-            })
-        })
-        XCTAssert(expectedVADTriggerStagesMatch)
+        XCTAssert(compare(expected: [WebRTCVAD.self, VADTrigger.self, AppleSpeechRecognizer.self], actual: p3.configuration.stages.enumerated()))
         
         // p2t
         delegate.reset()
@@ -200,13 +183,15 @@ class SpeechPipelineBuilderTest: XCTestCase {
             .setDelegateDispatchQueue(queue)
             .build()
         XCTAssert(queue === p4.configuration.delegateDispatchQueue)
-        let expectedP2TStages = [AppleSpeechRecognizer.self]
-        let expectedP2TStagesMatch = p4.configuration.stages.reduce(true, { isSameSoFar, stage in
-            return isSameSoFar && expectedP2TStages.reduce(true, { isSame, expectedStage in
-                return isSame || (type(of: stage) == expectedStage)
-            })
-        })
-        XCTAssert(expectedP2TStagesMatch)
+        XCTAssert(compare(expected: [AppleSpeechRecognizer.self], actual: p4.configuration.stages.enumerated()))
+    }
+    
+    private func compare(expected: [NSObject.Type], actual: EnumeratedSequence<[SpeechProcessor]>) -> Bool {
+        var accumulator: [Bool] = []
+        for (i, s) in actual {
+            accumulator.append(expected[i] == (type(of: s)))
+        }
+        return accumulator.reduce(true, { $0 && $1 })
     }
 }
 
