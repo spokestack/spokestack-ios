@@ -69,17 +69,17 @@ class SpeechContextTest: XCTestCase {
         wait(for: [didStopExpectation], timeout: 1)
         XCTAssert(l.didDidStop)
 
-        // Activate
+        // activate
         l.reset()
-        let didActivateExpectation = expectation(description: "didActivateExpectation fulfills when testNotifyListener calls SpeechContextTestDelegate.Activate.")
+        let didActivateExpectation = expectation(description: "didActivateExpectation fulfills when testNotifyListener calls SpeechContextTestDelegate.activate.")
         l.asyncExpectation = didActivateExpectation
         c.notifyListener(.activate)
         wait(for: [didActivateExpectation], timeout: 1)
         XCTAssert(l.activated)
 
-        // dectivate
+        // deactivate
         l.reset()
-        let didDeactivateExpectation = expectation(description: "didDeactivateExpectation fulfills when testNotifyListener calls SpeechContextTestDelegate.dectivate.")
+        let didDeactivateExpectation = expectation(description: "didDeactivateExpectation fulfills when testNotifyListener calls SpeechContextTestDelegate.deactivate.")
         c.setListener(l)
         l.asyncExpectation = didDeactivateExpectation
         c.notifyListener(.deactivate)
