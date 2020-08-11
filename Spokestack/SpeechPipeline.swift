@@ -53,31 +53,6 @@ import Dispatch
         self.context.dispatch(.initialize)
     }
     
-    internal init(configuration: SpeechConfiguration, listeners: [SpeechEventListener], profile: SpeechPipelineProfiles) {
-        self.configuration = configuration
-        self.context = SpeechContext(configuration)
-        super.init()
-        self.configuration.stages = profile.set.map { stage in
-            switch stage {
-            case .vad:
-                return WebRTCVAD(configuration, context: self.context)
-            case .appleWakeword:
-                return AppleWakewordRecognizer(configuration, context: self.context)
-            case .tfLiteWakeword:
-                return TFLiteWakewordRecognizer(configuration, context: self.context)
-            case .appleSpeech:
-                return AppleSpeechRecognizer(configuration, context: self.context)
-            case .vadTrigger:
-                return VADTrigger(configuration, context: self.context)
-            }
-        }
-        self.stages = configuration.stages
-        AudioController.sharedInstance.configuration = configuration
-        AudioController.sharedInstance.context = self.context
-        listeners.forEach { self.context.addListener($0) }
-        self.context.dispatch(.initialize)
-    }
-    
     /// MARK: Pipeline control
     
     /**

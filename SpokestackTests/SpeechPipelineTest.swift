@@ -118,7 +118,7 @@ class SpeechPipelineTest: XCTestCase {
         XCTAssertFalse(p.context.isActive)
     }
     
-    /// integration test
+    /// stages test
     func testSpeechProcessors() {
         let didStartExpectation = expectation(description: "didStartExpectation fulfills when testSpeechProcessors calls SpeechPipelineTestDelegate as the result of didStart method completion")
         let didStopExpectation = expectation(description: "didStopExpectation fulfills when testSpeechProcessors calls SpeechPipelineTestDelegate as the result of didStop method completion")
@@ -139,6 +139,26 @@ class SpeechPipelineTest: XCTestCase {
         delegate.asyncExpectation = didStopExpectation
         p.stop()
         wait(for: [didStopExpectation], timeout: 1)
+        XCTAssertFalse(p.context.isActive)
+    }
+    
+    /// addStage removeStage test
+    func testAddRemoveStage() {
+        let config = SpeechConfiguration()
+        let context = SpeechContext(config)
+        let p = SpeechPipeline(configuration: config, listeners: [])
+
+        // add stage
+        let processor = TestProcessor(true, config: config, context: context)
+        p.addStage(processor)
+        p.start()
+        XCTAssert(context.isActive)
+        p.stop()
+        XCTAssertFalse(p.context.isActive)
+        
+        // remove stage
+        p.removeStage(processor)
+        p.start()
         XCTAssertFalse(p.context.isActive)
     }
 }

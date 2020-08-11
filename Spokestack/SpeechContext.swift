@@ -94,14 +94,12 @@ import Foundation
                 self.configuration.delegateDispatchQueue.async {
                     listener.failure(speechError: e)
                 }}
-            self.error = .none
         case .trace:
             if let t = self.trace {
                 self.listeners.forEach { listener in
                     self.configuration.delegateDispatchQueue.async {
                         listener.didTrace(t)
                     }}
-                self.trace = .none
             }
         case .timeout:
             self.listeners.forEach { listener in
