@@ -76,7 +76,7 @@ class TFLiteViewController: UIViewController {
         guard let detectPath = Bundle(for: type(of: self)).path(forResource: c.detectModelName, ofType: "lite") else {
             throw WakewordModelError.detect("could not find \(c.detectModelName).lite in bundle \(self.debugDescription)")
         }
-        return SpeechPipelineBuilder()
+        return try! SpeechPipelineBuilder()
             .addListener(self)
             .setDelegateDispatchQueue(DispatchQueue.main)
             .useProfile(.tfLiteWakewordAppleSpeech)

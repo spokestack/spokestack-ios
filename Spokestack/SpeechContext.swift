@@ -57,55 +57,31 @@ import Foundation
     }
 
     @objc internal func dispatch(_ event: SpeechEvents) {
-        switch event {
-        case .initialize:
-            self.listeners.forEach { listener in
-                self.configuration.delegateDispatchQueue.async {
+        self.listeners.forEach { listener in
+            self.configuration.delegateDispatchQueue.async {
+                switch event {
+                case .initialize:
                     listener.didInit()
-                }}
-        case .start:
-            self.listeners.forEach { listener in
-                self.configuration.delegateDispatchQueue.async {
+                case .start:
                     listener.didStart()
-                }}
-        case .stop:
-            self.listeners.forEach { listener in
-                self.configuration.delegateDispatchQueue.async {
+                case .stop:
                     listener.didStop()
-                }}
-        case .activate:
-            self.listeners.forEach { listener in
-                self.configuration.delegateDispatchQueue.async {
+                case .activate:
                     listener.didActivate()
-                }}
-        case .deactivate:
-            self.listeners.forEach { listener in
-                self.configuration.delegateDispatchQueue.async {
+                case .deactivate:
                     listener.didDeactivate()
-                }}
-        case .recognize:
-            self.listeners.forEach { listener in
-                self.configuration.delegateDispatchQueue.async {
+                case .recognize:
                     listener.didRecognize(self)
-                }}
-        case .error:
-            let e = (self.error != nil) ? self.error! : SpeechPipelineError.errorNotSet("A pipeline component attempted to send an error to SpeechContext's listeners without first setting the SpeechContext.error property.")
-            self.listeners.forEach { listener in
-                self.configuration.delegateDispatchQueue.async {
+                case .error:
+                    let e = (self.error != nil) ? self.error! : SpeechPipelineError.errorNotSet("A pipeline component attempted to send an error to SpeechContext's listeners without first setting the SpeechContext.error property.")
                     listener.failure(speechError: e)
-                }}
-        case .trace:
-            if let t = self.trace {
-                self.listeners.forEach { listener in
-                    self.configuration.delegateDispatchQueue.async {
+                case .trace:
+                    let t = (self.trace != nil) ? self.trace! : "a trace event was sent, but no trace message was set"
                         listener.didTrace(t)
-                    }}
-            }
-        case .timeout:
-            self.listeners.forEach { listener in
-                self.configuration.delegateDispatchQueue.async {
+                case .timeout:
                     listener.didTimeout()
-                }}
+                }
+            }
         }
     }
 }

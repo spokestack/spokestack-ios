@@ -24,6 +24,8 @@ public enum SpeechPipelineError: Error, Equatable {
     case illegalState(String)
     /// A pipeline component attempted to send an error to SpeechContext's listeners without first setting the SpeechContext.error property.
     case errorNotSet(String)
+    /// The settings provided to the pipeline builder were not sufficient to create a pipeline.
+    case incompleteBuilder(String)
 }
 
 /// Errors thrown by the Voice Activity Detector.

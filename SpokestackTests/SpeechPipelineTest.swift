@@ -170,46 +170,46 @@ class SpeechPipelineBuilderTest: XCTestCase {
 
         // tflite
         delegate.asyncExpectation = didInit1Expectation
-        let p1 = SpeechPipelineBuilder()
+        let p1 = try! SpeechPipelineBuilder()
             .useProfile(.tfLiteWakewordAppleSpeech)
             .addListener(delegate)
             .build()
         wait(for: [didInit1Expectation], timeout: 1)
-        XCTAssert(compare(expected: [WebRTCVAD.self, TFLiteWakewordRecognizer.self, AppleSpeechRecognizer.self], actual: p1.configuration.stages.enumerated()))
+        XCTAssert(compare(expected: [WebRTCVAD.self, TFLiteWakewordRecognizer.self, AppleSpeechRecognizer.self], actual: p1.configuration.stages))
 
         
         // appleWW
         delegate.reset()
         let wakeActiveMax = 10000
-        let p2 = SpeechPipelineBuilder()
+        let p2 = try! SpeechPipelineBuilder()
             .useProfile(.appleWakewordAppleSpeech)
             .setProperty("wakeActiveMax", wakeActiveMax.description)
             .build()
         XCTAssertEqual(wakeActiveMax, p2.configuration.wakeActiveMax)
-        XCTAssert(compare(expected: [WebRTCVAD.self, AppleWakewordRecognizer.self, AppleSpeechRecognizer.self], actual: p2.configuration.stages.enumerated()))
+        XCTAssert(compare(expected: [WebRTCVAD.self, AppleWakewordRecognizer.self, AppleSpeechRecognizer.self], actual: p2.configuration.stages))
 
         // vadTrigger
         delegate.reset()
-        let p3 = SpeechPipelineBuilder()
+        let p3 = try! SpeechPipelineBuilder()
             .useProfile(.vadTriggerAppleSpeech)
             .build()
-        XCTAssert(compare(expected: [WebRTCVAD.self, VADTrigger.self, AppleSpeechRecognizer.self], actual: p3.configuration.stages.enumerated()))
+        XCTAssert(compare(expected: [WebRTCVAD.self, VADTrigger.self, AppleSpeechRecognizer.self], actual: p3.configuration.stages))
         
         // p2t
         delegate.reset()
         let queue = DispatchQueue.main
-        let p4 = SpeechPipelineBuilder()
+        let p4 = try! SpeechPipelineBuilder()
             .useProfile(.pushToTalkAppleSpeech)
             .setDelegateDispatchQueue(queue)
             .build()
         XCTAssert(queue === p4.configuration.delegateDispatchQueue)
-        XCTAssert(compare(expected: [AppleSpeechRecognizer.self], actual: p4.configuration.stages.enumerated()))
+        XCTAssert(compare(expected: [AppleSpeechRecognizer.self], actual: p4.configuration.stages))
     }
     
-    private func compare(expected: [NSObject.Type], actual: EnumeratedSequence<[SpeechProcessor]>) -> Bool {
+    private func compare(expected: [NSObject.Type], actual: [SpeechProcessor]) -> Bool {
         var accumulator: [Bool] = []
-        for (i, s) in actual {
-            accumulator.append(expected[i] == (type(of: s)))
+        for (i, s) in expected.enumerated() {
+            accumulator.append(type(of: actual[i]) ==  s)
         }
         return accumulator.reduce(true, { $0 && $1 })
     }

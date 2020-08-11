@@ -41,7 +41,7 @@ import Dispatch
     }
     
     /// Initializes a new speech pipeline instance.
-    /// - Parameter speechConfiguration: Configuration parameters for the speech pipeline.
+    /// - Parameter configuration: Configuration parameters for the speech pipeline.
     /// - Parameter listeners: Delegate implementations of `SpeechEventListener` that receive speech pipeline events.
     @objc public init(configuration: SpeechConfiguration, listeners: [SpeechEventListener]) {
         self.configuration = configuration
@@ -49,6 +49,36 @@ import Dispatch
         AudioController.sharedInstance.configuration = configuration
         AudioController.sharedInstance.context = self.context
         super.init()
+        listeners.forEach { self.context.addListener($0) }
+        self.context.dispatch(.initialize)
+    }
+    
+    /// For use by `SpeechPipelineBuilder`
+    /// - Parameters:
+    /// - Parameter configuration: Configuration parameters for the speech pipeline.
+    /// - Parameter listeners: Delegate implementations of `SpeechEventListener` that receive speech pipeline events.
+    /// - Parameter profile: The builder profile to use when configuring the pipeline.
+    internal init(configuration: SpeechConfiguration, listeners: [SpeechEventListener], profile: SpeechPipelineProfiles) {
+        self.configuration = configuration
+        self.context = SpeechContext(configuration)
+        super.init()
+        self.configuration.stages = profile.set.map { stage in
+            switch stage {
+            case .vad:
+                return WebRTCVAD(configuration, context: self.context)
+            case .appleWakeword:
+                return AppleWakewordRecognizer(configuration, context: self.context)
+            case .tfLiteWakeword:
+                return TFLiteWakewordRecognizer(configuration, context: self.context)
+            case .appleSpeech:
+                return AppleSpeechRecognizer(configuration, context: self.context)
+            case .vadTrigger:
+                return VADTrigger(configuration, context: self.context)
+            }
+        }
+        self.stages = configuration.stages
+        AudioController.sharedInstance.configuration = configuration
+        AudioController.sharedInstance.context = self.context
         listeners.forEach { self.context.addListener($0) }
         self.context.dispatch(.initialize)
     }
@@ -191,7 +221,10 @@ import Dispatch
     
     /// Build this configuration into a `SpeechPipeline` instance.
     /// - Returns: A `SpeechPipeline` instance.
-    @objc public func build() -> SpeechPipeline {
-        return SpeechPipeline(configuration: self.config, listeners: self.listeners)
+    @objc public func build() throws -> SpeechPipeline {
+        guard let p = self.profile else {
+            throw SpeechPipelineError.incompleteBuilder("Please specify a profile to use before calling build().")
+        }
+        return SpeechPipeline(configuration: self.config, listeners: self.listeners, profile: p)
     }
 }
