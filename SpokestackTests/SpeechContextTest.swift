@@ -40,7 +40,7 @@ class SpeechContextTest: XCTestCase {
         wait(for: [didNotStartExpectation], timeout: 1)
     }
     
-    func testdispatch() {
+    func testDispatch() {
         let config = SpeechConfiguration()
         let c = SpeechContext(config)
         let l = SpeechContextTestDelegate()
@@ -116,13 +116,12 @@ class SpeechContextTest: XCTestCase {
         
         // trace
         l.reset()
-        let didNotTraceExpectation = expectation(description: "didNotTraceExpectation never fulfills when testdispatch calls SpeechContextTestDelegate.trace.")
-        didNotTraceExpectation.isInverted = true
-        l.asyncExpectation = didNotTraceExpectation
-        // no trace property set means no trace event
+        let traceNotSetExpectation = expectation(description: "traceNotSetExpectation fulfills when testdispatch calls SpeechContextTestDelegate.trace.")
+        l.asyncExpectation = traceNotSetExpectation
+        // no trace property set gets a trace event
         c.dispatch(.trace)
-        wait(for: [didNotTraceExpectation], timeout: 1)
-        // traceproperty set means trace event
+        wait(for: [traceNotSetExpectation], timeout: 1)
+        // trace property set means trace event
         let didTraceExpectation = expectation(description: "didTraceExpectation  fulfills when testdispatch calls SpeechContextTestDelegate.trace.")
         l.asyncExpectation = didTraceExpectation
         c.trace = "hi"

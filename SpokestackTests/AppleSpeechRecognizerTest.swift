@@ -27,8 +27,8 @@ class AppleSpeechRecognizerTest: XCTestCase {
         XCTAssert(context.isActive)
         XCTAssertFalse(delegate.didError)
         asr.stopStreaming()
-        // stopStreaming sets isActive
-        XCTAssertFalse(context.isActive)
+        // stopStreaming does not set isActive
+        XCTAssert(context.isActive)
         XCTAssertFalse(delegate.didError)
     }
     

@@ -40,7 +40,9 @@ import Dispatch
         self.stages = []
     }
     
-    /// Initializes a new speech pipeline instance.
+    /// Initializes a new speech pipeline instance. For use by clients wishing to pass 3rd-party stages to the spokestack pipeline.
+    /// - Important: Most clients should use `SpeechPipelineBuilder` to initialize a new speech pipeline instance, not this initializer.
+    /// - SeeAlso: SpeechPipelineBuilder
     /// - Parameter configuration: Configuration parameters for the speech pipeline.
     /// - Parameter listeners: Delegate implementations of `SpeechEventListener` that receive speech pipeline events.
     @objc public init(configuration: SpeechConfiguration, listeners: [SpeechEventListener]) {
