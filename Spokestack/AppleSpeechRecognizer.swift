@@ -140,8 +140,8 @@ import Speech
                             a.confidence <= b.confidence }).first?.confidence ?? 0.0
                     strongSelf.context.transcript = r.bestTranscription.formattedString
                     strongSelf.context.confidence = confidence
-                    strongSelf.context.dispatch(.recognize)
                     strongSelf.vadFallWorker = DispatchWorkItem {[weak self] in
+                        self?.context.dispatch(.recognize)
                         self?.deactivate()
                     }
                     DispatchQueue.global(qos: .userInitiated).asyncAfter(deadline: .now() + .milliseconds(strongSelf.configuration.vadFallDelay), execute: strongSelf.vadFallWorker!)
