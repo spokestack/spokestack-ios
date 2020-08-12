@@ -48,6 +48,7 @@ import Dispatch
         self.context = SpeechContext(configuration)
         AudioController.sharedInstance.configuration = configuration
         AudioController.sharedInstance.context = self.context
+        AudioController.sharedInstance.stages = configuration.stages
         super.init()
         listeners.forEach { self.context.addListener($0) }
         self.context.dispatch(.initialize)
@@ -77,6 +78,7 @@ import Dispatch
             }
         }
         self.stages = configuration.stages
+        AudioController.sharedInstance.stages = configuration.stages
         AudioController.sharedInstance.configuration = configuration
         AudioController.sharedInstance.context = self.context
         listeners.forEach { self.context.addListener($0) }

@@ -123,7 +123,6 @@ extension TFLiteViewController: SpeechEventListener {
     
     func didActivate() {
         print("didActivate")
-        pipeline?.deactivate()
     }
     
     func didDeactivate() {
@@ -144,7 +143,7 @@ extension TFLiteViewController: SpeechEventListener {
     }
     
     func didStop() {
-        print("didStart")
+        print("didStop")
         self.toggleStartStop()
     }
     

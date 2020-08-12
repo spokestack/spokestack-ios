@@ -132,6 +132,7 @@ class SpeechPipelineTest: XCTestCase {
         let processor = TestProcessor(true, config: config, context: context)
         config.stages = [processor]
         let p = SpeechPipeline(configuration: config, listeners: [])
+        XCTAssert(type(of: AudioController.sharedInstance.stages.first!) == type(of: config.stages.first!))
         p.context.addListener(delegate)
         delegate.asyncExpectation = didStartExpectation
         p.start()
@@ -185,8 +186,11 @@ class SpeechPipelineBuilderTest: XCTestCase {
             .useProfile(.appleWakewordAppleSpeech)
             .setProperty("wakeActiveMax", wakeActiveMax.description)
             .build()
+        let expected = [WebRTCVAD.self, AppleWakewordRecognizer.self, AppleSpeechRecognizer.self]
         XCTAssertEqual(wakeActiveMax, p2.configuration.wakeActiveMax)
-        XCTAssert(compare(expected: [WebRTCVAD.self, AppleWakewordRecognizer.self, AppleSpeechRecognizer.self], actual: p2.configuration.stages))
+        XCTAssert(compare(expected: expected, actual: p2.configuration.stages))
+        XCTAssert(compare(expected: expected, actual: AudioController.sharedInstance.stages))
+
 
         // vadTrigger
         delegate.reset()

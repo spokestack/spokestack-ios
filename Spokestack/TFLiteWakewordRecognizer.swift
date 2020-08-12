@@ -456,9 +456,9 @@ extension TFLiteWakewordRecognizer : SpeechProcessor {
                         let activate = try strongSelf.detect()
                         if activate {
                             strongSelf.context.isActive = true
+                            strongSelf.context.dispatch(.activate)
                             strongSelf.reset()
                             strongSelf.stopStreaming()
-                            strongSelf.context.dispatch(.activate)
                         }
                     } catch let error {
                         strongSelf.context.error = error

@@ -14,7 +14,7 @@ import Speech
  
  Once speech pipeline coordination via `startStreaming` is received, the recognizer begins streaming buffered frames to the Apple ASR API for recognition. Once speech pipeline coordination via `stopStreaming` is received, or when the Apple ASR API indicates a completed speech event, the recognizer completes the API request and calls the `SpeechEventListener` delegate's `didRecognize` event with the updated global speech context (including the audio transcript and confidence).
  */
-@objc public class AppleSpeechRecognizer: NSObject, SpeechProcessor {
+@objc public class AppleSpeechRecognizer: NSObject {
     
     // MARK: Public properties
     
@@ -45,57 +45,9 @@ import Speech
         super.init()
     }
     
-    // MARK: SpeechProcessor implementation
-    
-    /// Triggered by the speech pipeline, instructing the recognizer to begin streaming and processing audio.
-    @objc public func startStreaming() {
-        self.activate()
-    }
-    
-    /// Triggered by the speech pipeline, instructing the recognizer to stop streaming audio and complete processing.
-    @objc public func stopStreaming() {
-        self.deactivate()
-        self.recognitionTask?.cancel()
-        self.recognitionTask = nil
-        self.recognitionRequest?.endAudio()
-        self.recognitionRequest = nil
-        self.audioEngine.stop()
-        self.audioEngine.inputNode.removeTap(onBus: 0)
-    }
-    
-    @objc public func process(_ frame: Data) {
-        if self.context.isActive {
-            if !self.active {
-                self.activate()
-            }
-        } else if self.active {
-            self.deactivate()
-        }
-    }
-    
     // MARK: Private functions
     
-    private func activate() {
-        do {
-            self.active = true
-            self.recognitionRequest = SFSpeechAudioBufferRecognitionRequest()
-            self.recognitionRequest?.shouldReportPartialResults = true
-            self.prepareAudioEngine()
-            self.audioEngine.prepare()
-            try self.audioEngine.start()
-            try self.createRecognitionTask()
-            self.wakeActiveMaxWorker = DispatchWorkItem {[weak self] in
-                self?.context.dispatch(.deactivate)
-                self?.deactivate()
-            }
-            DispatchQueue.global(qos: .userInitiated).asyncAfter(deadline: .now() + .milliseconds(self.configuration.wakeActiveMax), execute: self.wakeActiveMaxWorker!)
-        } catch let error {
-            self.context.error = error
-            self.context.dispatch(.error)
-        }
-    }
-    
-    private func prepareAudioEngine() {
+    private func prepare() {
         let bufferSize: Int = (self.configuration.sampleRate / 1000) * self.configuration.frameWidth
         self.audioEngine.inputNode.removeTap(onBus: 0) // a belt-and-suspenders approach to fixing https://github.com/wenkesj/react-native-voice/issues/46
         self.audioEngine.inputNode.installTap(
@@ -108,14 +60,37 @@ import Speech
             }
             strongSelf.recognitionRequest?.append(buffer)
         }
+        self.audioEngine.prepare()
+        self.wakeActiveMaxWorker = DispatchWorkItem {[weak self] in
+            self?.deactivate()
+        }
+    }
+    
+    private func activate() {
+        do {
+            try self.audioEngine.start()
+            self.recognitionRequest = SFSpeechAudioBufferRecognitionRequest()
+            self.recognitionRequest?.shouldReportPartialResults = true
+            try self.createRecognitionTask()
+            self.active = true
+            
+            // Automatically end recognition task if it goes over the activiation max
+            DispatchQueue.global(qos: .userInitiated).asyncAfter(deadline: .now() + .milliseconds(self.configuration.wakeActiveMax), execute: self.wakeActiveMaxWorker!)
+        } catch let error {
+            self.context.error = error
+            self.context.dispatch(.error)
+        }
     }
     
     private func deactivate() {
         self.active = false
         self.context.isActive = false
         self.recognitionTask?.finish()
+        self.recognitionTask = nil
         self.recognitionRequest?.endAudio()
+        self.recognitionRequest = nil
         self.wakeActiveMaxWorker?.cancel()
+        self.audioEngine.pause()
         self.context.dispatch(.deactivate)
     }
     
@@ -173,5 +148,35 @@ import Speech
                 }
             }
         )
+    }
+}
+
+extension AppleSpeechRecognizer: SpeechProcessor {
+    /// Triggered by the speech pipeline, instructing the recognizer to begin streaming and processing audio.
+    @objc public func startStreaming() {
+        self.prepare()
+    }
+    
+    /// Triggered by the speech pipeline, instructing the recognizer to stop streaming audio and complete processing.
+    @objc public func stopStreaming() {
+        if self.active {
+            self.deactivate()
+            self.recognitionTask?.cancel()
+            self.recognitionTask = nil
+            self.recognitionRequest?.endAudio()
+            self.recognitionRequest = nil
+            self.audioEngine.stop()
+            self.audioEngine.inputNode.removeTap(onBus: 0)
+        }
+    }
+    
+    @objc public func process(_ frame: Data) {
+        if self.context.isActive {
+            if !self.active {
+                self.activate()
+            }
+        } else if self.active {
+            self.deactivate()
+        }
     }
 }

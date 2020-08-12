@@ -57,7 +57,7 @@ This pipeline component uses the Apple `SFSpeech` API to stream audio samples fo
     
     // MARK: Private functions
     
-    private func prepareAudioEngine() {
+    private func prepare() {
         let bufferSize: Int = (self.configuration.sampleRate / 1000) * self.configuration.frameWidth
         self.audioEngine.inputNode.removeTap(onBus: 0) // a belt-and-suspenders approach to fixing https://github.com/wenkesj/react-native-voice/issues/46
         self.audioEngine.inputNode.installTap(
@@ -70,20 +70,22 @@ This pipeline component uses the Apple `SFSpeech` API to stream audio samples fo
             }
             strongSelf.recognitionRequest?.append(buffer)
         }
+        self.audioEngine.prepare()
+        self.dispatchWorker = DispatchWorkItem {[weak self] in
+            self?.stopRecognition()
+            self?.startRecognition()
+        }
     }
     
     private func startRecognition() {
         do {
+            try self.audioEngine.start()
             self.recognitionRequest = SFSpeechAudioBufferRecognitionRequest()
             self.recognitionRequest?.shouldReportPartialResults = true
             try self.createRecognitionTask()
             self.recognitionTaskRunning = true
             
             // Automatically restart wakeword task if it goes over Apple's 1 minute listening limit
-            self.dispatchWorker = DispatchWorkItem {[weak self] in
-                self?.stopRecognition()
-                self?.startRecognition()
-            }
             DispatchQueue.global(qos: .userInitiated).asyncAfter(deadline: .now() + .milliseconds(self.configuration.wakewordRequestTimeout), execute: self.dispatchWorker!)
         } catch let error {
             self.context.error = error
@@ -92,12 +94,13 @@ This pipeline component uses the Apple `SFSpeech` API to stream audio samples fo
     }
     
     private func stopRecognition() {
+        self.recognitionTaskRunning = false
         self.recognitionTask?.cancel()
         self.recognitionTask?.finish()
         self.recognitionTask = nil
-        self.recognitionTaskRunning = false
         self.recognitionRequest?.endAudio()
         self.recognitionRequest = nil
+        self.audioEngine.pause()
     }
     
     private func createRecognitionTask() throws -> Void {
@@ -162,8 +165,7 @@ extension AppleWakewordRecognizer: SpeechProcessor {
     
     /// Triggered by the speech pipeline, instructing the recognizer to begin streaming and processing audio.
     public func startStreaming() {
-        self.prepareAudioEngine()
-        self.audioEngine.prepare()
+        self.prepare()
     }
     
     /// Triggered by the speech pipeline, instructing the recognizer to stop streaming audio and complete processing.
@@ -181,16 +183,9 @@ extension AppleWakewordRecognizer: SpeechProcessor {
     /// - Parameter frame: Frame of audio samples.
     public func process(_ frame: Data) -> Void {
         if !self.recognitionTaskRunning && self.context.isSpeech && !self.context.isActive {
-            do {
-                try self.audioEngine.start()
-                self.startRecognition()
-            } catch let error {
-                self.context.error = error
-                self.context.dispatch(.error)
-            }
+            self.startRecognition()
         } else if context.isActive {
             self.stopRecognition()
-            self.audioEngine.pause()
         }
     }
 }
