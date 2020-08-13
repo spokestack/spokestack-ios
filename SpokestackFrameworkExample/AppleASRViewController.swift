@@ -1,5 +1,5 @@
 //
-//  ViewController.swift
+//  AppleASRViewController.swift
 //  SpokestackFrameworkExample
 //
 //  Created by Cory D. Wiles on 10/8/18.
@@ -44,16 +44,13 @@ class AppleASRViewController: UIViewController {
     }()
     
     lazy private var pipeline: SpeechPipeline = {
-        
-        let config: SpeechConfiguration = SpeechConfiguration()
-        config.tracing = .DEBUG
-        config.delegateDispatchQueue = DispatchQueue.main
-        
-        return SpeechPipeline(SpeechProcessors.appleSpeech.processor,
-                              speechConfiguration: config,
-                              speechDelegate: self,
-                              wakewordService: SpeechProcessors.appleWakeword.processor,
-                              pipelineDelegate: self)
+        return try! SpeechPipelineBuilder()
+            .addListener(self)
+            .useProfile(.vadTriggerAppleSpeech)
+            .setProperty("tracing", ".DEBUG")
+            .setProperty("vadFallDelay", "1600")
+            .setDelegateDispatchQueue(DispatchQueue.main)
+            .build()
     }()
     
     override func loadView() {
@@ -86,7 +83,6 @@ class AppleASRViewController: UIViewController {
     @objc func startRecordingAction(_ sender: Any) {
         print("pipeline started")
         self.pipeline.start()
-        self.pipeline.activate()
     }
     
     @objc func stopRecordingAction(_ sender: Any) {
@@ -99,7 +95,7 @@ class AppleASRViewController: UIViewController {
     }
 }
 
-extension AppleASRViewController: SpeechEventListener, PipelineDelegate {
+extension AppleASRViewController: SpeechEventListener {
     
     func setupFailed(_ error: String) {
         print("setupFailed: " + error)

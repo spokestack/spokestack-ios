@@ -11,8 +11,8 @@ import AVFoundation
 import CryptoKit
 import Combine
 
-private let TTSSpeechQueueName: String = "com.spokestack.ttsspeech.queue"
-private let apiQueue = DispatchQueue(label: TTSSpeechQueueName, qos: .userInitiated, attributes: .concurrent)
+private let TTSQueueName: String = "io.spokestack.tts.queue"
+private let apiQueue = DispatchQueue(label: TTSQueueName, qos: .userInitiated, attributes: .concurrent)
 
 /**
  This is the client entry point for the Spokestack Text to Speech (TTS) system. It provides the capability to synthesize textual input, and speak back the synthesis as audio system output. The synthesis and speech occur on asynchronous blocks so as to not block the client while it performs network and audio system activities.

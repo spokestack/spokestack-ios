@@ -49,13 +49,12 @@ class AppleWakewordViewController: UIViewController {
     }()
     
     lazy public var pipeline: SpeechPipeline = {
-        let c = SpeechConfiguration()
-        c.tracing = Trace.Level.DEBUG
-        return SpeechPipeline(SpeechProcessors.appleSpeech.processor,
-                              speechConfiguration: c,
-                              speechDelegate: self,
-                              wakewordService: SpeechProcessors.appleWakeword.processor,
-                              pipelineDelegate: self)
+        return try! SpeechPipelineBuilder()
+            .addListener(self)
+            .useProfile(.appleWakewordAppleSpeech)
+            .setDelegateDispatchQueue(DispatchQueue.main)
+            .setProperty("tracing", "Trace.Level.DEBUG")
+            .build()
     }()
     
     override func loadView() {
@@ -113,7 +112,7 @@ class AppleWakewordViewController: UIViewController {
     }
 }
 
-extension AppleWakewordViewController: SpeechEventListener, PipelineDelegate {
+extension AppleWakewordViewController: SpeechEventListener {
 
     func didTimeout() {
         print("timeout")
@@ -121,12 +120,10 @@ extension AppleWakewordViewController: SpeechEventListener, PipelineDelegate {
     
     func didActivate() {
         print("didActivate")
-        self.pipeline.activate()
     }
     
     func didDeactivate() {
         print("didDeactivate")
-        self.pipeline.deactivate()
     }
     
     func failure(speechError: Error) {

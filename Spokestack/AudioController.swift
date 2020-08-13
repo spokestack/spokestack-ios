@@ -11,9 +11,9 @@ import AVFoundation
 import Dispatch
 
 /// DispatchQueue for handling Spokestack audio processing
-let audioProcessingQueue: DispatchQueue = DispatchQueue(label: "io.spokestack.audiocontroller", qos: .userInteractive)
+internal let audioProcessingQueue: DispatchQueue = DispatchQueue(label: "io.spokestack.audiocontroller", qos: .userInteractive)
 
-/// Required callback function for AudioUnitSetProperty's AURenderCallbackStruct.
+/// Required callback function for AudioUnitSetProperty's AURenderCallbackStruct. Sends frames of audio to the `stageInstances` in `SpeechContext`.
 ///
 /// - SeeAlso: AURenderCallbackStruct
 func recordingCallback(
@@ -29,37 +29,39 @@ func recordingCallback(
     }
     var status: OSStatus = noErr
     let channelCount: UInt32 = 1
+    let bufferSize = inNumberFrames * 2
     var bufferList = AudioBufferList()
     bufferList.mNumberBuffers = channelCount
-    let buffers = UnsafeMutableBufferPointer<AudioBuffer>(start: &bufferList.mBuffers,
-                                                          count: Int(bufferList.mNumberBuffers))
-    buffers[0].mNumberChannels = 1
-    buffers[0].mDataByteSize = inNumberFrames * 2
-    buffers[0].mData = nil
+    bufferList.mBuffers.mNumberChannels = 1
+    bufferList.mBuffers.mDataByteSize = bufferSize
+    bufferList.mBuffers.mData = nil
     
-    /// get the recorded samples
-    
-    status = AudioUnitRender(remoteIOUnit,
-                             ioActionFlags,
-                             inTimeStamp,
-                             inBusNumber,
-                             inNumberFrames,
-                             UnsafeMutablePointer<AudioBufferList>(&bufferList))
-    if status != noErr {
-        return status
-    }
-        
-    if buffers[0].mData != nil {
-        let data: Data = Data(bytes: buffers[0].mData!, count: Int(buffers[0].mDataByteSize))
-        // NB: errors like
-        // AUBuffer.h:61:GetBufferList: EXCEPTION (-1) [mPtrState == kPtrsInvalid is false]: ""
-        // are irrelevant
-        audioProcessingQueue.sync {
-            AudioController.sharedInstance.delegate?.process(data)
+    return withUnsafeMutablePointer(to: &bufferList) { (buffers) -> OSStatus in
+        // render the recorded samples into the AudioBuffers
+        status = AudioUnitRender(remoteIOUnit,
+                                 ioActionFlags,
+                                 inTimeStamp,
+                                 inBusNumber,
+                                 inNumberFrames,
+                                 buffers)
+        // verify that the rendering did not error
+        if status != noErr {
+            return status
         }
+        // convert the samples into Data and send to the stages
+        if let samples = buffers.pointee.mBuffers.mData {
+            let data: Data = Data(bytes: samples, count: Int(bufferSize))
+            // NB: errors like
+            // AUBuffer.h:61:GetBufferList: EXCEPTION (-1) [mPtrState == kPtrsInvalid is false]: ""
+            // are irrelevant
+            audioProcessingQueue.sync {
+                AudioController.sharedInstance.stages.forEach { stage in
+                    stage.process(data)
+                }
+            }
+        }
+        return noErr
     }
-    
-    return noErr
 }
 
 /// Singleton class for configuring and controlling a stream of audio frames.
@@ -69,14 +71,12 @@ class AudioController {
     
     /// Singleton instance
     public static let sharedInstance: AudioController = AudioController()
-    /// Delegate for receivng the `recordingCallback`'s `process` function.
-    /// - SeeAlso: recordingCallback
-    public weak var delegate: AudioControllerDelegate?
-    /// Delegate for receiving `setupFailure` events in the speech pipeline.
-    public weak var pipelineDelegate: PipelineDelegate?
     /// Configuration for the audio controller.
-    public var configuration: SpeechConfiguration = SpeechConfiguration()
-
+    public var configuration: SpeechConfiguration?
+    public var context: SpeechContext?
+    /// A set of `SpeechProcessor` instances that process audio frames from `AudioController`.
+    public var stages: [SpeechProcessor] = []
+    
     // MARK: Private (properties)
     
     // private var bufferDuration: TimeInterval = TimeInterval((configuration.sampleRate / 1000) * configuration.frameWidth)
@@ -113,36 +113,30 @@ class AudioController {
     
     /// Begin sending audio frames to the AudioControllerDelegate.
     /// - SeeAlso: AudioControllerDelegate
-    /// - Parameter context: Global state for the speech pipeline.
-    func startStreaming(context: SpeechContext) -> Void {
+    func startStreaming() -> Void {
         self.checkAudioSession()
         do {
             try self.start()
         } catch AudioError.audioSessionSetup(let message) {
-            self.configuration.delegateDispatchQueue.async {
-                self.pipelineDelegate?.setupFailed(message)
-            }
+            self.context?.error = AudioError.audioController(message)
+            self.context?.dispatch(.error)
         } catch {
-            self.configuration.delegateDispatchQueue.async {
-                self.pipelineDelegate?.setupFailed("An unknown error occured starting the stream")
-            }
+            self.context?.error = AudioError.audioController("An unknown error occured starting the stream")
+            self.context?.dispatch(.error)
         }
     }
     
     /// Stop sending audio frames to the AudioControllerDelegate.
     /// - SeeAlso: AudioControllerDelegate
-    /// - Parameter context: Global state for the speech pipeline.
-    func stopStreaming(context: SpeechContext) -> Void {
+    func stopStreaming() -> Void {
         do {
             try self.stop()
         } catch AudioError.audioSessionSetup(let message) {
-            self.configuration.delegateDispatchQueue.async {
-                self.pipelineDelegate?.setupFailed(message)
-            }
+            self.context?.error = AudioError.audioController(message)
+            self.context?.dispatch(.error)
         } catch {
-            self.configuration.delegateDispatchQueue.async {
-                self.pipelineDelegate?.setupFailed("An unknown error occured ending the stream")
-            }
+            self.context?.error = AudioError.audioController("An unknown error occured ending the stream")
+            self.context?.dispatch(.error)
         }
     }
     
@@ -183,21 +177,21 @@ class AudioController {
         case AVAudioSession.Category.playAndRecord:
             break
         default:
-            self.configuration.delegateDispatchQueue.async {
-                self.pipelineDelegate?.setupFailed("Incompatible AudioSession category is set.")
-            }
+            self.context?.error = AudioError.audioSessionSetup("Incompatible AudioSession category is set.")
+            self.context?.dispatch(.error)
         }
     }
     
     private func prepareRemoteIOUnit() -> OSStatus {
         var status: OSStatus = noErr
+        guard let config = self.configuration else { return OSStatus(-1) } // TODO: value for OSStatus?
         let remoteIOComponent = AudioComponentFindNext(nil, &audioComponentDescription)
         status = AudioComponentInstanceNew(remoteIOComponent!, &remoteIOUnit)
         if status != noErr {
             return status
         }
         
-        // MARK: Configure the RemoteIO unit for input
+        // Configure the RemoteIO unit for input
         
         let bus1: AudioUnitElement = 1
         var oneFlag: UInt32 = 1
@@ -211,9 +205,9 @@ class AudioController {
             return status
         }
         
-        // MARK: set format for mic input (bus 1) on RemoteIO unit's output scope
+        // set format for mic input (bus 1) on RemoteIO unit's output scope
         var asbd: AudioStreamBasicDescription = AudioStreamBasicDescription()
-        asbd.mSampleRate = Double(self.configuration.sampleRate)
+        asbd.mSampleRate = Double(config.sampleRate)
         asbd.mFormatID = kAudioFormatLinearPCM
         asbd.mFormatFlags = kAudioFormatFlagIsSignedInteger | kAudioFormatFlagIsPacked
         asbd.mBytesPerPacket = 2
@@ -230,9 +224,7 @@ class AudioController {
         if (status != noErr) {
             return status
         }
-        
-        // MARK: Set the recording callback
-        
+                
         var callbackStruct: AURenderCallbackStruct = AURenderCallbackStruct()
         callbackStruct.inputProc = recordingCallback
         callbackStruct.inputProcRefCon = nil
@@ -245,9 +237,7 @@ class AudioController {
         if status != noErr {
             return status
         }
-        
-        // MARK: Initialize the RemoteIO unit
-        
+                
         return AudioUnitInitialize(self.remoteIOUnit!)
     }
     
@@ -256,13 +246,13 @@ class AudioController {
         let sss: String = session.category.rawValue
         let sco: String = session.categoryOptions.rawValue.description
         let sioap: String = session.isOtherAudioPlaying.description
-        Trace.trace(Trace.Level.DEBUG, config: self.configuration, message: "current category: \(sss) +  options: \(sco) isOtherAudioPlaying: \(sioap) bufferduration  \(session.ioBufferDuration.description)", delegate: self.pipelineDelegate, caller: self)
+        Trace.trace(Trace.Level.DEBUG, message: "current category: \(sss) +  options: \(sco) isOtherAudioPlaying: \(sioap) bufferduration  \(session.ioBufferDuration.description)", config: self.configuration, context: self.context, caller: self)
         let route_inputs: String = session.currentRoute.inputs.debugDescription
         let route_outputs: String = session.currentRoute.outputs.debugDescription
         let preferredInput: String = session.preferredInput.debugDescription
         let usb_outputs: String = session.outputDataSources?.debugDescription ?? "none"
         let inputs: String = session.availableInputs?.debugDescription ?? "none"
-        Trace.trace(Trace.Level.DEBUG, config: self.configuration, message: "inputs: \(inputs) preferredinput: \(preferredInput) input: \(route_inputs) output: \(route_outputs) usb_outputs: \(usb_outputs)", delegate: self.pipelineDelegate, caller: self)
+        Trace.trace(Trace.Level.DEBUG, message: "inputs: \(inputs) preferredinput: \(preferredInput) input: \(route_inputs) output: \(route_outputs) usb_outputs: \(usb_outputs)", config: self.configuration, context: self.context, caller: self)
     }
     
     @objc private func audioRouteChanged(_ notification: Notification) {
@@ -271,19 +261,19 @@ class AudioController {
             let reason = AVAudioSession.RouteChangeReason(rawValue:reasonValue) else {
                 return
         }
-        Trace.trace(Trace.Level.DEBUG, config: self.configuration, message: "audioRouteChanged reason: \(reasonValue.description) notification: \(userInfo.debugDescription)", delegate: self.pipelineDelegate, caller: self)
+        Trace.trace(Trace.Level.DEBUG, message: "audioRouteChanged reason: \(reasonValue.description) notification: \(userInfo.debugDescription)", config: self.configuration, context: self.context, caller: self)
         debug()
         let session = AVAudioSession.sharedInstance()
         switch reason {
         case .newDeviceAvailable:
-            Trace.trace(Trace.Level.DEBUG, config: self.configuration, message: "AudioController audioRouteChanged new output:  \(session.currentRoute.outputs.description)", delegate: self.pipelineDelegate, caller: self)
+            Trace.trace(Trace.Level.DEBUG, message: "AudioController audioRouteChanged new output:  \(session.currentRoute.outputs.description)", config: self.configuration, context: self.context, caller: self)
         case .oldDeviceUnavailable:
             if let previousRoute =
                 userInfo[AVAudioSessionRouteChangePreviousRouteKey] as? AVAudioSessionRouteDescription {
-                Trace.trace(Trace.Level.DEBUG, config: self.configuration, message: "AudioController audioRouteChanged old output: \(previousRoute.outputs.description)", delegate: self.pipelineDelegate, caller: self)
+                Trace.trace(Trace.Level.DEBUG, message: "AudioController audioRouteChanged old output: \(previousRoute.outputs.description)", config: self.configuration, context: self.context, caller: self)
             }
         case .categoryChange:
-            Trace.trace(Trace.Level.DEBUG, config: self.configuration, message: "AudioController audioRouteChanged new category: \(session.category.rawValue)", delegate: self.pipelineDelegate, caller: self)
+            Trace.trace(Trace.Level.DEBUG, message: "AudioController audioRouteChanged new category: \(session.category.rawValue)", config: self.configuration, context: self.context, caller: self)
         default: ()
         }
     }

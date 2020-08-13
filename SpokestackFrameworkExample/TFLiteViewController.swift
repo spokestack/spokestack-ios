@@ -70,22 +70,21 @@ class TFLiteViewController: UIViewController {
         guard let filterPath = Bundle(for: type(of: self)).path(forResource: c.filterModelName, ofType: "lite") else {
             throw WakewordModelError.filter("could not find \(c.filterModelName).lite in bundle \(self.debugDescription)")
         }
-        c.filterModelPath = filterPath
         guard let encodePath = Bundle(for: type(of: self)).path(forResource: c.encodeModelName, ofType: "lite") else {
             throw WakewordModelError.encode("could not find \(c.encodeModelName).lite in bundle \(self.debugDescription)")
         }
-        c.encodeModelPath = encodePath
         guard let detectPath = Bundle(for: type(of: self)).path(forResource: c.detectModelName, ofType: "lite") else {
             throw WakewordModelError.detect("could not find \(c.detectModelName).lite in bundle \(self.debugDescription)")
         }
-        c.detectModelPath = detectPath
-        c.tracing = Trace.Level.PERF
-        c.delegateDispatchQueue = DispatchQueue.main
-        return SpeechPipeline(SpeechProcessors.appleSpeech.processor,
-                              speechConfiguration: c,
-                              speechDelegate: self,
-                              wakewordService: SpeechProcessors.tfLiteWakeword.processor,
-                              pipelineDelegate: self)
+        return try! SpeechPipelineBuilder()
+            .addListener(self)
+            .setDelegateDispatchQueue(DispatchQueue.main)
+            .useProfile(.tfLiteWakewordAppleSpeech)
+            .setProperty("tracing", ".PERF")
+            .setProperty("detectModelPath", detectPath)
+            .setProperty("encodeModelPath", encodePath)
+            .setProperty("filterModelPath", filterPath)
+            .build()
     }
     
     @objc func startRecordingAction(_ sender: Any) {
@@ -108,7 +107,7 @@ class TFLiteViewController: UIViewController {
     }
 }
 
-extension TFLiteViewController: SpeechEventListener, PipelineDelegate {
+extension TFLiteViewController: SpeechEventListener {
     
     func setupFailed(_ error: String) {
         print("setupFailed: " + error)
@@ -124,12 +123,10 @@ extension TFLiteViewController: SpeechEventListener, PipelineDelegate {
     
     func didActivate() {
         print("didActivate")
-        self.pipeline?.activate()
     }
     
     func didDeactivate() {
         print("didDeactivate")
-        self.pipeline?.deactivate()
     }
     
     func failure(speechError: Error) {
@@ -146,7 +143,7 @@ extension TFLiteViewController: SpeechEventListener, PipelineDelegate {
     }
     
     func didStop() {
-        print("didStart")
+        print("didStop")
         self.toggleStartStop()
     }
     

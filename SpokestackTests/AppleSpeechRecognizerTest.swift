@@ -15,19 +15,41 @@ class AppleSpeechRecognizerTest: XCTestCase {
 
     /// startStreaming
     func testStartStopStreaming() {
+        let configuration = SpeechConfiguration()
+        let context = SpeechContext(configuration)
+        let asr = AppleSpeechRecognizer(configuration, context: context)
         let delegate = AppleSpeechRecognizerTestDelegate()
-        let asr = AppleSpeechRecognizer.sharedInstance
-        let context = SpeechContext()
-        asr.configuration = SpeechConfiguration()
-        asr.delegate = delegate
-        asr.startStreaming(context: context)
+        context.addListener(delegate)
+        context.isActive = true
+        context.isSpeech = true
+        asr.context = context
+        asr.startStreaming()
         XCTAssert(context.isActive)
-        asr.stopStreaming(context: context)
-        XCTAssert(!context.isActive)
+        XCTAssertFalse(delegate.didError)
+        asr.stopStreaming()
+        // stopStreaming does not set isActive
+        XCTAssert(context.isActive)
+        XCTAssertFalse(delegate.didError)
+    }
+    
+    func testProcess() {
+        let configuration = SpeechConfiguration()
+        let context = SpeechContext(configuration)
+        let asr = AppleSpeechRecognizer(configuration, context: context)
+        let delegate = AppleSpeechRecognizerTestDelegate()
+        context.addListener(delegate)
+        context.isActive = true
+        context.isSpeech = true
+        configuration.stages = [asr]
+        asr.context = context
+        asr.startStreaming()
+        asr.process(Frame.silence(frameWidth: 10, sampleRate: 8000))
+        asr.stopStreaming()
+        XCTAssertFalse(delegate.didError)
     }
 }
 
-class AppleSpeechRecognizerTestDelegate: PipelineDelegate, SpeechEventListener {
+class AppleSpeechRecognizerTestDelegate: SpeechEventListener {
     /// Spy pattern for the system under test.
     /// asyncExpectation lets the caller's test know when the delegate has been called.
     var didError: Bool = false

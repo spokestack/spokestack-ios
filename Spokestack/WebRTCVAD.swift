@@ -30,33 +30,45 @@ private var sampleRate32: Int32 = 16000
 private var frameBuffer: RingBuffer<Int16>!
 
 /// Swift wrapper for WebRTC's voice activity detector.
-public class WebRTCVAD: NSObject {
+@objc public class WebRTCVAD: NSObject, SpeechProcessor {
+
+    public var configuration: SpeechConfiguration
     
-    /// Callback delegate for activation and error events.
-    public var delegate: VADDelegate?
+    public var context: SpeechContext
+    
+    public func startStreaming() {}
+    
+    public func stopStreaming() {}
+    
+    public init(_ configuration: SpeechConfiguration, context: SpeechContext) {
+        self.configuration = configuration
+        self.context = context
+        self.context.isSpeech = false
+        super.init()
+        do {
+            try self.configure()
+        } catch let error {
+            self.context.error = error
+            self.context.dispatch(.error)
+        }
+    }
     
     deinit {
+        vad.deinitialize(count: 1)
         WebRtcVad_Free(vad.pointee)
     }
     
-    ///  Creates and configures a new WebRTC VAD component.
-    /// - Parameter mode: Indicate to the VAD the level of permissiveness to non-speech activation.
-    /// - Parameter delegate: Callback delegate for activation and error events.
-    /// - Parameter frameWidth: Number of samples in an audio frame.
-    /// - Parameter sampleRate: Rate of the samples in an audio frame.
+    /// Creates and configures a new WebRTC VAD component.
     ///
-    /// - Throws: VADError.invalidConfiguration if the frameWidth or sampleRate are not supported.
-    public func create(mode: VADMode, delegate: VADDelegate, frameWidth: Int, sampleRate: Int) throws {
-        
+    ///  - Throws: VADError.invalidConfiguration if the frameWidth or sampleRate are not supported.
+    private func configure() throws {
+        let c = self.configuration
         // validation of configurable parameters
-        try self.validate(frameWidth: frameWidth, sampleRate: sampleRate)
-        
-        /// set public property
-        self.delegate = delegate
-        
+        try self.validate(frameWidth: c.frameWidth, sampleRate: c.sampleRate)
+                
         // set private properties
-        frameBufferStride = frameWidth*(sampleRate/1000) // eg 20*(16000/1000) = 320
-        sampleRate32 = Int32(sampleRate)
+        frameBufferStride = c.frameWidth*(c.sampleRate/1000) // eg 20*(16000/1000) = 320
+        sampleRate32 = Int32(c.sampleRate)
         frameBufferStride32 = Int32(frameBufferStride)
         frameBuffer = RingBuffer(frameBufferStride, repeating: 0)
         
@@ -66,9 +78,9 @@ public class WebRTCVAD: NSObject {
         if errorCode != 0 { throw VADError.initialization("unable to create a WebRTCVAD struct, which returned error code \(errorCode)") }
         errorCode = WebRtcVad_Init(vad.pointee)
         if errorCode != 0 { throw VADError.initialization("unable to initialize WebRTCVAD, which returned error code \(errorCode)") }
-        errorCode = WebRtcVad_set_mode(vad.pointee, Int32(mode.rawValue))
+        errorCode = WebRtcVad_set_mode(vad.pointee, Int32(c.vadMode.rawValue))
         if errorCode != 0 {
-            WebRtcVad_Free(vad.pointee)
+            vad.pointee = nil
             throw VADError.initialization("unable to set WebRTCVAD mode, which returned error code \(errorCode)")
         }
     }
@@ -76,21 +88,24 @@ public class WebRTCVAD: NSObject {
     private func validate(frameWidth: Int, sampleRate: Int) throws {
         switch frameWidth {
         case 10, 20, 30: break
-        default: throw VADError.invalidConfiguration("Invalid frameWidth of \(frameWidth)")
+        default:
+            vad.pointee = nil
+            throw VADError.invalidConfiguration("Invalid frameWidth of \(frameWidth)")
         }
         
         switch sampleRate {
         case 8000, 16000, 32000, 48000: break
-        default: throw VADError.invalidConfiguration("Invalid sampleRate of \(sampleRate)")
+        default:
+            vad.pointee = nil
+            throw VADError.invalidConfiguration("Invalid sampleRate of \(sampleRate)")
         }
     }
     
     /// Processes an audio frame, detecting speech.
     /// - Parameter frame: Audio frame of samples.
-    /// - Parameter isSpeech: Whether speech was detected in the last frame.
     ///
     /// - Throws: RingBufferStateError.illegalState if the frame buffer enters an invalid state
-    public func process(frame: Data, isSpeech: Bool) throws -> Void {
+    public func process(_ frame: Data) -> Void {
         do {
             var detected: Bool = false
             let samples: Array<Int16> = frame.elements()
@@ -107,8 +122,9 @@ public class WebRTCVAD: NSObject {
                                 sampleWindow.append(s)
                             }
                         }
-                        let sampleWindowUBP = Array(UnsafeBufferPointer(start: sampleWindow, count: sampleWindow.count))
-                        let result = WebRtcVad_Process(vad.pointee, sampleRate32, sampleWindowUBP, frameBufferStride32)
+                        let result = sampleWindow.withUnsafeBufferPointer {
+                            return WebRtcVad_Process(vad.pointee, sampleRate32, $0.baseAddress, frameBufferStride32)
+                        }
                         switch result {
                         // if activation state changes, stop the detecting loop but finish writing the samples to the buffer (in the outer for loop)
                         case 1:
@@ -117,23 +133,23 @@ public class WebRTCVAD: NSObject {
                             break detecting
                         default:
                             // WebRtcVad_Process error case
-                            // self.delegate?.deactivate()
                             break
                         }
                     }
                 }
             }
             if detected {
-                if !isSpeech {
-                    self.delegate?.activate(frame: frame)
+                if !self.context.isSpeech {
+                    self.context.isSpeech = detected
                 }
             } else {
-                if isSpeech {
-                    self.delegate?.deactivate()
+                if self.context.isSpeech {
+                    self.context.isSpeech = detected
                 }
             }
         } catch let error {
-            throw VADError.processing("error occurred while vad is processing \(error.localizedDescription)")
+            self.context.error = VADError.processing("error occurred while vad is processing \(error.localizedDescription)")
+            self.context.dispatch(.error)
         }
     }
 }

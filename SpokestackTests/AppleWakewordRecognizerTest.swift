@@ -13,73 +13,58 @@ import AVFoundation
 
 class AppleWakewordRecognizerTest: XCTestCase {
     
-    /// init & deinit & startStreaming & stopStreaming
+    // init & deinit & startStreaming & stopStreaming
     func testStartStreaming() {
-        /// setup
-        let awr = AppleWakewordRecognizer.sharedInstance
-        let context = SpeechContext()
-        let delegate = AppleWakewordRecognizerTestDelegate()
-        
-        /// no delegate & no configuration
-        XCTAssertNoThrow(awr.startStreaming(context: context))
-        
-        /// strong delegate & configuration
-        awr.configuration = SpeechConfiguration()
-        awr.delegate = delegate
-        XCTAssertNoThrow(awr.startStreaming(context: context))
-        XCTAssert(context.isStarted)
-        
-        /// stopStreaming
-        XCTAssertNoThrow(awr.stopStreaming(context: context))
-        XCTAssertFalse(context.isStarted)
+        // setup
+        let configuration = SpeechConfiguration()
+        let context = SpeechContext(configuration)
+        let awr = AppleWakewordRecognizer(configuration, context: context)
+        awr.context = context
+
+        // no delegate & no configuration
+        awr.startStreaming()
+        XCTAssertFalse(context.isActive)
+        awr.stopStreaming()
+        XCTAssertFalse(context.isActive)
     }
     
-    /// process
+    // process
     func testProcess() {
-        // TODO
-    }
-    
-    /// activate & deactivate
-    func testActivatetDeactivate() {
-        /// setup
-        let awr = AppleWakewordRecognizer.sharedInstance
-        let context = SpeechContext()
+        // setup
+        let configuration = SpeechConfiguration()
+        let context = SpeechContext(configuration)
+        let awr = AppleWakewordRecognizer(configuration, context: context)
+        configuration.stages = [awr]
+        awr.context = context
         let delegate = AppleWakewordRecognizerTestDelegate()
-        awr.delegate = delegate
-        awr.configuration = SpeechConfiguration()
+        context.addListener(delegate)
         awr.context = context
         
-        /// activate without startStreaming does not trip AudioEngine assertion
-        awr.activate(frame: Frame.silence(frameWidth: 10, sampleRate: 8000))
-        
-        /// activate while asr is running is a noop
-        context.isActive = true
-        awr.activate(frame: Frame.silence(frameWidth: 10, sampleRate: 8000))
-        
-        /// activate
+        // activate
         context.isActive = false
-        awr.startStreaming(context: context)
-        XCTAssert(context.isStarted)
-        // awr.activate(frame: Frame.silence(frameWidth: 10, sampleRate: 8000))
-        /* TODO: fails the delegate assertion in the resultHandler callback because the callback occurs after the test has completed and thus the testdelegate has been destroyed. Need to refactor SpeechProcessor so that an expectation can be fulfilled for this type of async testing. */
+        context.isSpeech = true
+        awr.startStreaming()
+        XCTAssertFalse(delegate.didError)
+        awr.process(Frame.silence(frameWidth: 10, sampleRate: 8000))
+        XCTAssertFalse(context.isActive)
 
-        /// deactivate while asr is running is a noop
+        // activate while asr is running is a noop
         context.isActive = true
-        awr.context = context
-        awr.deactivate()
-        XCTAssert(context.isStarted)
+        awr.process(Frame.voice(frameWidth: 10, sampleRate: 8000))
+        XCTAssert(context.isActive)
+        XCTAssertFalse(delegate.didError)
 
-        /// deactivate
-        awr.stopStreaming(context: context)
-        awr.deactivate()
-        XCTAssert(!context.isStarted)
+        // stopStreaming does not change active status (that's the job of SpeechPipeline)
+        awr.stopStreaming()
+        XCTAssert(context.isActive)
+        XCTAssertFalse(delegate.didError)
     }
 }
 
-class AppleWakewordRecognizerTestDelegate: PipelineDelegate, SpeechEventListener {
+class AppleWakewordRecognizerTestDelegate: SpeechEventListener {
     
-    /// Spy pattern for the system under test.
-    /// asyncExpectation lets the caller's test know when the delegate has been called.
+    // Spy pattern for the system under test.
+    // asyncExpectation lets the caller's test know when the delegate has been called.
     var didError: Bool = false
     var deactivated: Bool = false
     var asyncExpectation: XCTestExpectation?
