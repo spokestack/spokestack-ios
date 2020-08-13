@@ -66,13 +66,13 @@ let nlu = try! NLUTensorflow(self, configuration: configuration)
 nlu.classify(utterance: "I can't turn that light in the room on for you, Dave", context: [:])
 ```
 
-### Reference
-
-The `SpokestackFrameworkExample` project is a reference implementations for how to use the Spokestack library, along with runnable examples of the VAD, wakeword, ASR, NLU, and TTS components. Each component has a button on the main screen, and can be started, stopped, predicted, or synthesized as appropriate. The component screens have full debug tracing enabled, so the system control logic and debug events will appear in the XCode console.
-
 #### Troubleshooting
 
 A build error similar to `Code Sign error: No unexpired provisioning profiles found that contain any of the keychain's signing certificates` will occur if the bundle identifier is not changed from `io.Spokestack.SpokestackFrameworkExample`, which is tied to the Spokestack organization.
+
+## Reference
+
+The `SpokestackFrameworkExample` project is a reference implementations for how to use the Spokestack library, along with runnable examples of the VAD, wakeword, ASR, NLU, and TTS components. Each component has a button on the main screen, and can be started, stopped, predicted, or synthesized as appropriate. The component screens have full debug tracing enabled, so the system control logic and debug events will appear in the XCode console.
 
 ## Documentation
 
