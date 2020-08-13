@@ -10,6 +10,7 @@ Activity Detection (VAD), wakeword activation, and Automatic Speech Recognition 
 * [Installation](#installation)
 * [Usage](#usage)
 * [Documentation](#Documentation)
+* [Reference](#Reference)
 * [Deployment](#Deployment)
 * [License](#license)
 <!--te-->
@@ -65,13 +66,13 @@ let nlu = try! NLUTensorflow(self, configuration: configuration)
 nlu.classify(utterance: "I can't turn that light in the room on for you, Dave", context: [:])
 ```
 
-### Reference implementation
+### Reference
 
-The `SpokestackFrameworkExample` project contains reference implementations for how to use the Spokestack library, along with runnable examples of the wakeword and ASR components. Each component has a corresponding screen from the main screen, and can be started, stopped, or synthesized, as appropriate. The component screens have full debug tracing enabled, so the system control logic and debug events will appear in the XCode Console.
+            The `SpokestackFrameworkExample` project is a reference implementations for how to use the Spokestack library, along with runnable examples of the VAD, wakeword, ASR, NLU, and TTS components. Each component has a button on the main screen, and can be started, stopped, predicted, or synthesized as appropriate. The component screens have full debug tracing enabled, so the system control logic and debug events will appear in the XCode console.
 
 #### Troubleshooting
 
-A build error similar to `Code Sign error: No unexpired provisioning profiles found that contain any of the keychain's signing certificates` will occur if the bundle identifier is not changed from `io.Spokestack.SpokestackFrameworkExample`, which is tied to the Spokestack organization. 
+A build error similar to `Code Sign error: No unexpired provisioning profiles found that contain any of the keychain's signing certificates` will occur if the bundle identifier is not changed from `io.Spokestack.SpokestackFrameworkExample`, which is tied to the Spokestack organization.
 
 ## Documentation
 
@@ -93,9 +94,9 @@ API reference is [available on Github](https://spokestack.github.io/spokestack-i
 
 ### Process
   1. Increment the `podspec` version in `Spokestack-iOS.podspec`
-  2. `git commit -a -m 'YOUR_COMMIT_MESSAGE' && git tag YOUR_PODSPEC_VERSION && git push --origin`
-  3. `pod spec lint --use-libraries --allow-warnings --use-modular-headers`, which should pass all checks 
-  4. `pod trunk push  --use-libraries --allow-warnings --use-modular-headers`
+  2. `pod lib lint --use-libraries --allow-warnings`, which should pass all checks
+  3. `git commit -a -m 'YOUR_COMMIT_MESSAGE' && git tag YOUR_PODSPEC_VERSION && git push --origin`
+  4. `pod trunk push  --use-libraries --allow-warnings`
 
 ## License
 [![License](https://img.shields.io/badge/License-Apache%202.0-green.svg)](https://opensource.org/licenses/Apache-2.0)
