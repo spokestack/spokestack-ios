@@ -20,7 +20,7 @@ class SpeechPipelineTest: XCTestCase {
         let config = SpeechConfiguration()
 
         // successful init calls didInit
-        let p = SpeechPipeline(configuration: config, listeners: [delegate], stages: [])
+        _ = SpeechPipeline(configuration: config, listeners: [delegate], stages: [])
         wait(for: [didInitExpectation], timeout: 1)
         XCTAssert(delegate.didDidInit)
     }
