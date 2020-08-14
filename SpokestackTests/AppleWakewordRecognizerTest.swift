@@ -34,7 +34,6 @@ class AppleWakewordRecognizerTest: XCTestCase {
         let configuration = SpeechConfiguration()
         let context = SpeechContext(configuration)
         let awr = AppleWakewordRecognizer(configuration, context: context)
-        configuration.stages = [awr]
         awr.context = context
         let delegate = AppleWakewordRecognizerTestDelegate()
         context.addListener(delegate)

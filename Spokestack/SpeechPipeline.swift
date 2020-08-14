@@ -45,12 +45,14 @@ import Dispatch
     /// - SeeAlso: SpeechPipelineBuilder
     /// - Parameter configuration: Configuration parameters for the speech pipeline.
     /// - Parameter listeners: Delegate implementations of `SpeechEventListener` that receive speech pipeline events.
-    @objc public init(configuration: SpeechConfiguration, listeners: [SpeechEventListener]) {
+    /// - Parameter stages: `SpeechProcessor` instances process audio frames from `AudioController`.
+    @objc public init(configuration: SpeechConfiguration, listeners: [SpeechEventListener], stages: [SpeechProcessor]) {
         self.configuration = configuration
         self.context = SpeechContext(configuration)
+        self.stages = stages
         AudioController.sharedInstance.configuration = configuration
         AudioController.sharedInstance.context = self.context
-        AudioController.sharedInstance.stages = configuration.stages
+        AudioController.sharedInstance.stages = stages
         super.init()
         listeners.forEach { self.context.addListener($0) }
         self.context.dispatch(.initialize)
@@ -65,7 +67,7 @@ import Dispatch
         self.configuration = configuration
         self.context = SpeechContext(configuration)
         super.init()
-        self.configuration.stages = profile.set.map { stage in
+        self.stages = profile.set.map { stage in
             switch stage {
             case .vad:
                 return WebRTCVAD(configuration, context: self.context)
@@ -79,8 +81,7 @@ import Dispatch
                 return VADTrigger(configuration, context: self.context)
             }
         }
-        self.stages = configuration.stages
-        AudioController.sharedInstance.stages = configuration.stages
+        AudioController.sharedInstance.stages = self.stages
         AudioController.sharedInstance.configuration = configuration
         AudioController.sharedInstance.context = self.context
         listeners.forEach { self.context.addListener($0) }
@@ -144,20 +145,6 @@ import Dispatch
             AudioController.sharedInstance.stopStreaming()
             self.context.dispatch(.stop)
             self.isStarted = false
-        }
-    }
-    
-    @objc public func addStage(_ stage: SpeechProcessor) {
-        self.stages.append(stage)
-        AudioController.sharedInstance.stages.append(stage)
-    }
-
-    @objc public func removeStage(_ stage: SpeechProcessor) {
-        for (i, s) in self.stages.enumerated() {
-            if stage === s {
-                self.stages.remove(at: i)
-                AudioController.sharedInstance.stages.remove(at: i)
-            }
         }
     }
 }
