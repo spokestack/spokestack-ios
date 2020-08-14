@@ -10,7 +10,7 @@ import Foundation
 import filter_audio
 
 /// Indicate how likely it is that non-speech will activate the VAD.
-public enum VADMode: Int {
+@objc public enum VADMode: Int {
     /// Most permissive of non-speech; most likely to detect speech.
     case HighlyPermissive = 1
     /// Allows more non-speech than higher levels.
@@ -32,15 +32,15 @@ private var frameBuffer: RingBuffer<Int16>!
 /// Swift wrapper for WebRTC's voice activity detector.
 @objc public class WebRTCVAD: NSObject, SpeechProcessor {
 
-    public var configuration: SpeechConfiguration
+    @objc public var configuration: SpeechConfiguration
     
-    public var context: SpeechContext
+    @objc public var context: SpeechContext
     
-    public func startStreaming() {}
+    @objc public func startStreaming() {}
     
-    public func stopStreaming() {}
+    @objc public func stopStreaming() {}
     
-    public init(_ configuration: SpeechConfiguration, context: SpeechContext) {
+    @objc public init(_ configuration: SpeechConfiguration, context: SpeechContext) {
         self.configuration = configuration
         self.context = context
         self.context.isSpeech = false
@@ -104,7 +104,7 @@ private var frameBuffer: RingBuffer<Int16>!
     /// - Parameter frame: Audio frame of samples.
     ///
     /// - Throws: RingBufferStateError.illegalState if the frame buffer enters an invalid state
-    public func process(_ frame: Data) -> Void {
+    @objc public func process(_ frame: Data) -> Void {
         do {
             var detected: Bool = false
             let samples: Array<Int16> = frame.elements()
