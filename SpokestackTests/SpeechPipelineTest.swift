@@ -20,7 +20,7 @@ class SpeechPipelineTest: XCTestCase {
         let config = SpeechConfiguration()
 
         // successful init calls didInit
-        _ = SpeechPipeline(configuration: config, listeners: [delegate], stages: [])
+        let p = SpeechPipeline(configuration: config, listeners: [delegate], stages: [])
         wait(for: [didInitExpectation], timeout: 1)
         XCTAssert(delegate.didDidInit)
     }
@@ -153,7 +153,7 @@ class SpeechPipelineBuilderTest: XCTestCase {
 
         // a profile is requred
         XCTAssertThrowsError(try SpeechPipelineBuilder().addListener(delegate).build())
-        
+
         // tflite
         delegate.asyncExpectation = didInit1Expectation
         let _ = try! SpeechPipelineBuilder()
@@ -164,7 +164,7 @@ class SpeechPipelineBuilderTest: XCTestCase {
         wait(for: [didInit1Expectation], timeout: 1)
         XCTAssert(compare(expected: e1, actual: AudioController.sharedInstance.stages))
 
-        
+
         // appleWW
         delegate.reset()
         let wakeActiveMax = 10000
@@ -172,10 +172,8 @@ class SpeechPipelineBuilderTest: XCTestCase {
             .useProfile(.appleWakewordAppleSpeech)
             .setProperty("wakeActiveMax", wakeActiveMax.description)
             .build()
-        let e2 = [WebRTCVAD.self, AppleWakewordRecognizer.self, AppleSpeechRecognizer.self]
         XCTAssertEqual(wakeActiveMax, p2.configuration.wakeActiveMax)
-        XCTAssert(compare(expected: e2, actual: AudioController.sharedInstance.stages))
-
+        XCTAssert(compare(expected: [WebRTCVAD.self, AppleWakewordRecognizer.self, AppleSpeechRecognizer.self], actual: AudioController.sharedInstance.stages))
 
         // vadTrigger
         delegate.reset()

@@ -55,7 +55,6 @@ private var frameBuffer: RingBuffer<Int16>!
     
     deinit {
         vad.deinitialize(count: 1)
-        WebRtcVad_Free(vad.pointee)
     }
     
     /// Creates and configures a new WebRTC VAD component.

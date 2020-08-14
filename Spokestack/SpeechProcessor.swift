@@ -14,21 +14,21 @@ import Foundation
 @objc public protocol SpeechProcessor: AnyObject {
     
     /// The global configuration for all speech pipeline components.
-    var configuration: SpeechConfiguration { get set }
+    @objc var configuration: SpeechConfiguration { get set }
     
     /// Global speech context.
-    var context: SpeechContext { get set }
+    @objc var context: SpeechContext { get set }
     
     /// Trigger from the speech pipeline for the component to begin processing the audio stream.
     /// - Parameter context: The current speech context.
-    func startStreaming() -> Void
+    @objc func startStreaming() -> Void
     
     /// Trigger from the speech pipeline for the component to stop processing the audio stream.
-    func stopStreaming() -> Void
+    @objc func stopStreaming() -> Void
     
     /// Receives a frame of audio samples for processing. Interface between the `SpeechProcessor` and `AudioController` components.
     /// - Parameter frame: Audio frame of samples.
-    func process(_ frame: Data) -> Void
+    @objc func process(_ frame: Data) -> Void
 }
 
 /// Convenience enum for the singletons of the different implementers of the `SpeechProcessor` protocol.

@@ -29,10 +29,10 @@ import TensorFlowLite
     // MARK: Public (properties)
     
     /// Configuration for the recognizer.
-    public var configuration: SpeechConfiguration
+    @objc public var configuration: SpeechConfiguration
     
     /// Global state for the speech pipeline.
-    public var context: SpeechContext
+    @objc public var context: SpeechContext
     
     // MARK: Private (properties)
     
@@ -94,7 +94,7 @@ import TensorFlowLite
     deinit {
     }
     
-    public init(_ configuration: SpeechConfiguration, context: SpeechContext) {
+    @objc public init(_ configuration: SpeechConfiguration, context: SpeechContext) {
         self.configuration = configuration
         self.context = context
         super.init()
@@ -422,12 +422,12 @@ import TensorFlowLite
 extension TFLiteWakewordRecognizer : SpeechProcessor {
     
     /// Triggered by the speech pipeline, instructing the recognizer to begin streaming and processing audio.
-    public func startStreaming() -> Void {
+    @objc public func startStreaming() -> Void {
         self.active = true
     }
     
     /// Triggered by the speech pipeline, instructing the recognizer to stop streaming audio and complete processing.
-    public func stopStreaming() -> Void {
+    @objc public func stopStreaming() -> Void {
         self.active = false
     }
     
@@ -435,7 +435,7 @@ extension TFLiteWakewordRecognizer : SpeechProcessor {
     ///
     /// Processes audio in an async thread.
     /// - Parameter frame: Frame of audio samples.
-    public func process(_ frame: Data) -> Void {
+    @objc public func process(_ frame: Data) -> Void {
         audioProcessingQueue.async {[weak self] in
             guard let strongSelf = self else { return }
             if !strongSelf.context.isActive {
