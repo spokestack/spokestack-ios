@@ -20,7 +20,7 @@ class SpeechPipelineTest: XCTestCase {
         let config = SpeechConfiguration()
 
         // successful init calls didInit
-        _ = SpeechPipeline(configuration: config, listeners: [delegate])
+        _ = SpeechPipeline(configuration: config, listeners: [delegate], stages: [])
         wait(for: [didInitExpectation], timeout: 1)
         XCTAssert(delegate.didDidInit)
     }
@@ -36,8 +36,7 @@ class SpeechPipelineTest: XCTestCase {
 
         // successful init calls didInit
         let tp = TestProcessor(true, config: config, context: context)
-        config.stages = [tp]
-        let p = SpeechPipeline(configuration: config, listeners: [delegate])
+        let p = SpeechPipeline(configuration: config, listeners: [delegate], stages: [tp])
         wait(for: [didInitExpectation], timeout: 1)
         XCTAssert(delegate.didDidInit)
         
@@ -55,7 +54,7 @@ class SpeechPipelineTest: XCTestCase {
 
         // init the pipeline
         delegate.asyncExpectation = didInitExpectation
-        let p = SpeechPipeline(configuration: config, listeners: [delegate])
+        let p = SpeechPipeline(configuration: config, listeners: [delegate], stages: [])
         wait(for: [didInitExpectation], timeout: 1)
         
         // activate and deactivate the pipeline
@@ -80,8 +79,7 @@ class SpeechPipelineTest: XCTestCase {
 
         // init the pipeline
         let tp = TestProcessor(true, config: config, context: context)
-        config.stages = [tp]
-        let p = SpeechPipeline(configuration: config, listeners: [])
+        let p = SpeechPipeline(configuration: config, listeners: [], stages: [tp])
         p.context.addListener(delegate)
 
         
@@ -103,8 +101,7 @@ class SpeechPipelineTest: XCTestCase {
         // init the pipeline with no stages
         delegate.asyncExpectation = didInitExpectation
         let config = SpeechConfiguration()
-        config.stages = []
-        let p = SpeechPipeline(configuration: config, listeners: [delegate])
+        let p = SpeechPipeline(configuration: config, listeners: [delegate], stages: [])
         wait(for: [didInitExpectation], timeout: 1)
         
         // start and stop the pipeline
@@ -130,36 +127,21 @@ class SpeechPipelineTest: XCTestCase {
         
         // add stages
         let processor = TestProcessor(true, config: config, context: context)
-        config.stages = [processor]
-        let p = SpeechPipeline(configuration: config, listeners: [])
-        XCTAssert(type(of: AudioController.sharedInstance.stages.first!) == type(of: config.stages.first!))
+        let stages = [processor]
+        let p = SpeechPipeline(configuration: config, listeners: [], stages: stages)
+        XCTAssert(type(of: AudioController.sharedInstance.stages.first!) == type(of: stages.first!))
         p.context.addListener(delegate)
         delegate.asyncExpectation = didStartExpectation
+        
+        // start
         p.start()
         wait(for: [didStartExpectation], timeout: 1)
+        XCTAssert(context.isActive)
+        
+        // stop
         delegate.asyncExpectation = didStopExpectation
         p.stop()
         wait(for: [didStopExpectation], timeout: 1)
-        XCTAssertFalse(p.context.isActive)
-    }
-    
-    /// addStage removeStage test
-    func testAddRemoveStage() {
-        let config = SpeechConfiguration()
-        let context = SpeechContext(config)
-        let p = SpeechPipeline(configuration: config, listeners: [])
-
-        // add stage
-        let processor = TestProcessor(true, config: config, context: context)
-        p.addStage(processor)
-        p.start()
-        XCTAssert(context.isActive)
-        p.stop()
-        XCTAssertFalse(p.context.isActive)
-        
-        // remove stage
-        p.removeStage(processor)
-        p.start()
         XCTAssertFalse(p.context.isActive)
     }
 }
@@ -174,12 +156,13 @@ class SpeechPipelineBuilderTest: XCTestCase {
         
         // tflite
         delegate.asyncExpectation = didInit1Expectation
-        let p1 = try! SpeechPipelineBuilder()
+        let _ = try! SpeechPipelineBuilder()
             .useProfile(.tfLiteWakewordAppleSpeech)
             .addListener(delegate)
             .build()
+        let e1 = [WebRTCVAD.self, TFLiteWakewordRecognizer.self, AppleSpeechRecognizer.self]
         wait(for: [didInit1Expectation], timeout: 1)
-        XCTAssert(compare(expected: [WebRTCVAD.self, TFLiteWakewordRecognizer.self, AppleSpeechRecognizer.self], actual: p1.configuration.stages))
+        XCTAssert(compare(expected: e1, actual: AudioController.sharedInstance.stages))
 
         
         // appleWW
@@ -189,18 +172,17 @@ class SpeechPipelineBuilderTest: XCTestCase {
             .useProfile(.appleWakewordAppleSpeech)
             .setProperty("wakeActiveMax", wakeActiveMax.description)
             .build()
-        let expected = [WebRTCVAD.self, AppleWakewordRecognizer.self, AppleSpeechRecognizer.self]
+        let e2 = [WebRTCVAD.self, AppleWakewordRecognizer.self, AppleSpeechRecognizer.self]
         XCTAssertEqual(wakeActiveMax, p2.configuration.wakeActiveMax)
-        XCTAssert(compare(expected: expected, actual: p2.configuration.stages))
-        XCTAssert(compare(expected: expected, actual: AudioController.sharedInstance.stages))
+        XCTAssert(compare(expected: e2, actual: AudioController.sharedInstance.stages))
 
 
         // vadTrigger
         delegate.reset()
-        let p3 = try! SpeechPipelineBuilder()
+        let _ = try! SpeechPipelineBuilder()
             .useProfile(.vadTriggerAppleSpeech)
             .build()
-        XCTAssert(compare(expected: [WebRTCVAD.self, VADTrigger.self, AppleSpeechRecognizer.self], actual: p3.configuration.stages))
+        XCTAssert(compare(expected: [WebRTCVAD.self, VADTrigger.self, AppleSpeechRecognizer.self], actual: AudioController.sharedInstance.stages))
         
         // p2t
         delegate.reset()
@@ -210,7 +192,7 @@ class SpeechPipelineBuilderTest: XCTestCase {
             .setDelegateDispatchQueue(queue)
             .build()
         XCTAssert(queue === p4.configuration.delegateDispatchQueue)
-        XCTAssert(compare(expected: [AppleSpeechRecognizer.self], actual: p4.configuration.stages))
+        XCTAssert(compare(expected: [AppleSpeechRecognizer.self], actual: AudioController.sharedInstance.stages))
     }
     
     private func compare(expected: [NSObject.Type], actual: [SpeechProcessor]) -> Bool {

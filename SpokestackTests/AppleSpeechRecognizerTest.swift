@@ -40,8 +40,6 @@ class AppleSpeechRecognizerTest: XCTestCase {
         context.addListener(delegate)
         context.isActive = true
         context.isSpeech = true
-        configuration.stages = [asr]
-        asr.context = context
         asr.startStreaming()
         asr.process(Frame.silence(frameWidth: 10, sampleRate: 8000))
         asr.stopStreaming()
