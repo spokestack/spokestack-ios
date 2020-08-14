@@ -22,9 +22,9 @@ import Dispatch
     // MARK: Public (properties)
     
     /// Pipeline configuration parameters.
-    public private (set) var configuration: SpeechConfiguration
+    @objc public private (set) var configuration: SpeechConfiguration
     /// Global state for the speech pipeline.
-    public let context: SpeechContext
+    @objc public let context: SpeechContext
     
     
     // MARK: Private (properties)

@@ -9,9 +9,9 @@
 import Foundation
 
 @objc public class VADTrigger: NSObject, SpeechProcessor {
-    public var configuration: SpeechConfiguration
+    @objc public var configuration: SpeechConfiguration
     
-    public var context: SpeechContext
+    @objc public var context: SpeechContext
     
     @objc public init(_ configuration: SpeechConfiguration, context: SpeechContext) {
         self.configuration = configuration
@@ -19,11 +19,11 @@ import Foundation
         super.init()
     }
     
-    public func startStreaming() {}
+    @objc public func startStreaming() {}
     
-    public func stopStreaming() {}
+    @objc public func stopStreaming() {}
     
-    public func process(_ frame: Data) {
+    @objc public func process(_ frame: Data) {
         if self.context.isSpeech && !self.context.isActive {
             self.context.isActive = true
             self.context.dispatch(.activate)

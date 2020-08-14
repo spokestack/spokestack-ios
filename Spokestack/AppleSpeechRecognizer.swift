@@ -39,7 +39,7 @@ import Speech
         speechRecognizer.delegate = nil
     }
     
-    public init(_ configuration: SpeechConfiguration, context: SpeechContext) {
+    @objc public init(_ configuration: SpeechConfiguration, context: SpeechContext) {
         self.configuration = configuration
         self.context = context
         super.init()

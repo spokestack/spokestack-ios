@@ -19,10 +19,10 @@ This pipeline component uses the Apple `SFSpeech` API to stream audio samples fo
     // MARK: Public properties
     
     /// Configuration for the recognizer.
-    public var configuration: SpeechConfiguration
+    @objc public var configuration: SpeechConfiguration
 
     /// Global state for the speech pipeline.
-    public var context: SpeechContext
+    @objc public var context: SpeechContext
     
     // MARK: Private properties
     
@@ -41,7 +41,7 @@ This pipeline component uses the Apple `SFSpeech` API to stream audio samples fo
         self.speechRecognizer.delegate = nil
     }
     
-    public init(_ configuration: SpeechConfiguration, context: SpeechContext) {
+    @objc public init(_ configuration: SpeechConfiguration, context: SpeechContext) {
         self.configuration = configuration
         self.context = context
         super.init()
@@ -164,12 +164,12 @@ This pipeline component uses the Apple `SFSpeech` API to stream audio samples fo
 extension AppleWakewordRecognizer: SpeechProcessor {
     
     /// Triggered by the speech pipeline, instructing the recognizer to begin streaming and processing audio.
-    public func startStreaming() {
+    @objc public func startStreaming() {
         self.prepare()
     }
     
     /// Triggered by the speech pipeline, instructing the recognizer to stop streaming audio and complete processing.
-    public func stopStreaming() {
+    @objc public func stopStreaming() {
         self.stopRecognition()
         self.dispatchWorker?.cancel()
         self.dispatchWorker = nil
@@ -181,7 +181,7 @@ extension AppleWakewordRecognizer: SpeechProcessor {
     ///
     /// Processes audio in an async thread.
     /// - Parameter frame: Frame of audio samples.
-    public func process(_ frame: Data) -> Void {
+    @objc public func process(_ frame: Data) -> Void {
         if !self.recognitionTaskRunning && self.context.isSpeech && !self.context.isActive {
             self.startRecognition()
         } else if context.isActive {
