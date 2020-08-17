@@ -46,9 +46,9 @@ import Dispatch
     /// - Parameter configuration: Configuration parameters for the speech pipeline.
     /// - Parameter listeners: Delegate implementations of `SpeechEventListener` that receive speech pipeline events.
     /// - Parameter stages: `SpeechProcessor` instances process audio frames from `AudioController`.
-    @objc public init(configuration: SpeechConfiguration, listeners: [SpeechEventListener], stages: [SpeechProcessor]) {
+    @objc public init(configuration: SpeechConfiguration, listeners: [SpeechEventListener], stages: [SpeechProcessor], context: SpeechContext) {
         self.configuration = configuration
-        self.context = SpeechContext(configuration)
+        self.context = context
         self.stages = stages
         AudioController.sharedInstance.configuration = configuration
         AudioController.sharedInstance.context = self.context

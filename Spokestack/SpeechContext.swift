@@ -35,7 +35,7 @@ import Foundation
     /// Adds the specified listener instance to the ordered set of listeners. The specified listener instance may only be added once; duplicates will be ignored. The specified listener will recieve speech pipeline events.
     ///
     /// - Parameter listener: The listener to add.
-    @objc public func addListener(_ listener: SpeechEventListener) {
+    @objc internal func addListener(_ listener: SpeechEventListener) {
         if !self.listeners.contains(where: { l in
             return listener === l ? true : false
         }) {
@@ -45,14 +45,14 @@ import Foundation
     
     /// Removes the specified listener by reference. The specified listener will no longer recieve speech pipeline events.
     /// - Parameter listener: The listener to remove.
-    @objc public func removeListener(_ listener: SpeechEventListener) {
+    @objc internal func removeListener(_ listener: SpeechEventListener) {
         for (i, l) in self.listeners.enumerated() {
             _ = listener === l ? self.listeners.remove(at: i) : nil
         }
     }
     
     /// Removes all listeners.
-    @objc public func removeListeners() {
+    @objc internal func removeListeners() {
         self.listeners = []
     }
 
