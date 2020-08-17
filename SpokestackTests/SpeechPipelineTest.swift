@@ -18,9 +18,10 @@ class SpeechPipelineTest: XCTestCase {
         let didInitExpectation = expectation(description: "testInit calls SpeechPipelineTestDelegate as the result of didInit method completion")
         delegate.asyncExpectation = didInitExpectation
         let config = SpeechConfiguration()
+        let context = SpeechContext(config)
 
         // successful init calls didInit
-        _ = SpeechPipeline(configuration: config, listeners: [delegate], stages: [])
+        _ = SpeechPipeline(configuration: config, listeners: [delegate], stages: [], context: context)
         wait(for: [didInitExpectation], timeout: 1)
         XCTAssert(delegate.didDidInit)
     }
@@ -36,7 +37,7 @@ class SpeechPipelineTest: XCTestCase {
 
         // successful init calls didInit
         let tp = TestProcessor(true, config: config, context: context)
-        let p = SpeechPipeline(configuration: config, listeners: [delegate], stages: [tp])
+        let p = SpeechPipeline(configuration: config, listeners: [delegate], stages: [tp], context: context)
         wait(for: [didInitExpectation], timeout: 1)
         XCTAssert(delegate.didDidInit)
         
@@ -51,10 +52,11 @@ class SpeechPipelineTest: XCTestCase {
         let didDeactivateExpectation = expectation(description: "didDeactivateExpectation fulfills when testActivateDeactivate calls SpeechPipelineTestDelegate as the result of deactivate method completion")
         let delegate = SpeechPipelineTestDelegate()
         let config = SpeechConfiguration()
+        let context = SpeechContext(config)
 
         // init the pipeline
         delegate.asyncExpectation = didInitExpectation
-        let p = SpeechPipeline(configuration: config, listeners: [delegate], stages: [])
+        let p = SpeechPipeline(configuration: config, listeners: [delegate], stages: [], context: context)
         wait(for: [didInitExpectation], timeout: 1)
         
         // activate and deactivate the pipeline
@@ -72,6 +74,7 @@ class SpeechPipelineTest: XCTestCase {
     /// start & stop
     func testStartStop() {
         let didStartExpectation = expectation(description: "didStartExpectation fulfills when testStartStop calls SpeechPipelineTestDelegate as the result of didStart method completion")
+        let didDeactivateExpectation = expectation(description: "didDeactivateExpectation fulfills when testStartStop calls SpeechPipelineTestDelegate.deactivate as the result of stopStreaming method completion")
         let didStopExpectation = expectation(description: "didStopExpectation fulfills when testStartStop calls SpeechPipelineTestDelegate as the result of didStop method completion")
         let delegate = SpeechPipelineTestDelegate()
         let config = SpeechConfiguration()
@@ -79,17 +82,18 @@ class SpeechPipelineTest: XCTestCase {
 
         // init the pipeline
         let tp = TestProcessor(true, config: config, context: context)
-        let p = SpeechPipeline(configuration: config, listeners: [], stages: [tp])
+        let p = SpeechPipeline(configuration: config, listeners: [], stages: [tp], context: context)
         p.context.addListener(delegate)
 
         
         /// start and stop the pipeline
         delegate.asyncExpectation = didStartExpectation
+        delegate.deactivateExpectation = didDeactivateExpectation
         p.start()
         wait(for: [didStartExpectation], timeout: 1)
         delegate.asyncExpectation = didStopExpectation
         p.stop()
-        wait(for: [didStopExpectation], timeout: 1)
+        wait(for: [didStopExpectation, didDeactivateExpectation], timeout: 1)
     }
     
     func testEmptyPipeline() {
@@ -101,7 +105,8 @@ class SpeechPipelineTest: XCTestCase {
         // init the pipeline with no stages
         delegate.asyncExpectation = didInitExpectation
         let config = SpeechConfiguration()
-        let p = SpeechPipeline(configuration: config, listeners: [delegate], stages: [])
+        let context = SpeechContext(config)
+        let p = SpeechPipeline(configuration: config, listeners: [delegate], stages: [], context: context)
         wait(for: [didInitExpectation], timeout: 1)
         
         // start and stop the pipeline
@@ -128,7 +133,7 @@ class SpeechPipelineTest: XCTestCase {
         // add stages
         let processor = TestProcessor(true, config: config, context: context)
         let stages = [processor]
-        let p = SpeechPipeline(configuration: config, listeners: [], stages: stages)
+        let p = SpeechPipeline(configuration: config, listeners: [], stages: stages, context: context)
         XCTAssert(type(of: AudioController.sharedInstance.stages.first!) == type(of: stages.first!))
         p.context.addListener(delegate)
         delegate.asyncExpectation = didStartExpectation
@@ -301,5 +306,6 @@ class TestProcessor: SpeechProcessor {
     
     func stopStreaming() {
         context.isActive = isSpeechProcessor ? false: true
+        context.dispatch(.deactivate)
     }
 }
