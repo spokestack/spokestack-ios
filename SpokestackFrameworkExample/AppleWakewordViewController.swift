@@ -53,7 +53,7 @@ class AppleWakewordViewController: UIViewController {
             .addListener(self)
             .useProfile(.appleWakewordAppleSpeech)
             .setDelegateDispatchQueue(DispatchQueue.main)
-            .setProperty("tracing", "Trace.Level.DEBUG")
+            .setProperty("tracing", Trace.Level.DEBUG)
             .build()
     }()
     

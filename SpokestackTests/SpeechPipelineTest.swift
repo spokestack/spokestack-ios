@@ -173,12 +173,15 @@ class SpeechPipelineBuilderTest: XCTestCase {
         // appleWW
         delegate.reset()
         let wakeActiveMax = 10000
+        let level = Trace.Level.PERF
         let p2 = try! SpeechPipelineBuilder()
             .useProfile(.appleWakewordAppleSpeech)
             .setProperty("wakeActiveMax", wakeActiveMax.description)
+            .setProperty("tracing", level)
             .build()
         XCTAssertEqual(wakeActiveMax, p2.configuration.wakeActiveMax)
         XCTAssert(compare(expected: [WebRTCVAD.self, AppleWakewordRecognizer.self, AppleSpeechRecognizer.self], actual: AudioController.sharedInstance.stages))
+        XCTAssertEqual(level, p2.configuration.tracing)
 
         // vadTrigger
         delegate.reset()

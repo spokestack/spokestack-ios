@@ -41,18 +41,18 @@ import TensorFlowLite
         case state
     }
     
-    /// Wakeword Activation Management
+    // Wakeword Activation Management
     internal var activeLength: Int = 0
     private var minActive: Int = 0
     private var maxActive: Int = 0
     private var active: Bool = false
     
-    /// TensorFlowLite models
+    // TensorFlowLite models
     private var filterModel: Interpreter?
     private var encodeModel: Interpreter?
     private var detectModel: Interpreter?
     
-    /// filtering for STFL/MEL
+    // filtering for STFL/MEL
     private var fftFrame: Array<Float> = []
     private var frameWindow: RingBuffer<Float>!
     private var hopLength: Int = 0
@@ -61,14 +61,14 @@ import TensorFlowLite
     private var fftWindow: Array<Float> = []
     private var fft: FFT!
     
-    /// Audio Signal Normalization
+    // Audio Signal Normalization
     private var rmsAlpha: Float = 0.0
     private var rmsTarget: Float = 0.0
     private var rmsValue: Float = 0.0
     private var preEmphasis: Float = 0.0
     private var prevSample: Float = 0.0
     
-    /// attention model buffers
+    // attention model buffers
     private var encodeWidth: Int = 0
     private var encodeLength: Int = 0
     private var stateWidth: Int = 0
@@ -76,10 +76,10 @@ import TensorFlowLite
     private var encodeState: RingBuffer<Float>!
     private var detectWindow: RingBuffer<Float>!
     
-    /// attention model posteriors
+    // attention model posteriors
     private var posteriorThreshold: Float = 0
     
-    /// Tracing
+    // Tracing
     private var traceLevel: Trace.Level = Trace.Level.NONE
     private var sampleCollector: Array<Float>?
     private var fftFrameCollector: String?

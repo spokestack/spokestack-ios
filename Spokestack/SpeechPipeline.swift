@@ -161,7 +161,7 @@ import Dispatch
          .addListener(self)
          .setDelegateDispatchQueue(DispatchQueue.main)
          .useProfile(.tfLiteWakewordAppleSpeech)
-         .setProperty("tracing", ".PERF")
+         .setProperty("tracing", Trace.Level.PERF)
          .setProperty("detectModelPath", detectPath)
          .setProperty("encodeModelPath", encodePath)
          .setProperty("filterModelPath", filterPath)
@@ -186,10 +186,19 @@ import Dispatch
     /// - SeeAlso: `SpeechConfiguration`
     /// - Parameters:
     ///   - key: Configuration property name
-    ///   - value: Configuration property name
+    ///   - value: Configuration property value
+    /// - Note: "tracing" key must have a value of `Trace.Level`, eg `Trace.Level.DEBUG`.
     /// - Returns: An updated instance of `SpeechPipelineBuilder` for call chaining.
-    @objc public func setProperty(_ key: String, _ value: String) -> SpeechPipelineBuilder {
-        self.config.setValue(value, forKey: key)
+    @objc public func setProperty(_ key: String, _ value: Any) -> SpeechPipelineBuilder {
+        switch key {
+        case "tracing":
+            guard let t = value as? Trace.Level else {
+                break
+            }
+            self.config.setValue(t.rawValue, forKey: key)
+        default:
+            self.config.setValue(value, forKey: key)
+        }
         return self
     }
     
