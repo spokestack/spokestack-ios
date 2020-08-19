@@ -222,7 +222,7 @@ import TensorFlowLite
             sample -= self.preEmphasis * self.prevSample
             self.prevSample = currentSample
             
-            if self.traceLevel.rawValue < Trace.Level.PERF.rawValue {
+            if self.traceLevel.rawValue <= Trace.Level.DEBUG.rawValue {
                 self.sampleCollector?.append(sample)
             }
             
@@ -251,7 +251,7 @@ import TensorFlowLite
         // rewind the sample window for another run
         self.sampleWindow.rewind().seek(self.hopLength)
         
-        if self.traceLevel.rawValue < Trace.Level.PERF.rawValue {
+        if self.traceLevel.rawValue <= Trace.Level.DEBUG.rawValue {
             self.fftFrameCollector? += "\(self.fftFrame)\n"
         }
         
@@ -283,7 +283,7 @@ import TensorFlowLite
                 self.frameWindow.rewind().seek(self.melWidth)
                 for r in results {
                     try self.frameWindow.write(r)
-                    if self.traceLevel.rawValue < Trace.Level.PERF.rawValue {
+                    if self.traceLevel.rawValue <= Trace.Level.DEBUG.rawValue {
                         self.filterCollector?.append(r)
                     }
                 }
@@ -330,7 +330,7 @@ import TensorFlowLite
                 self.encodeWindow.rewind().seek(self.encodeWidth)
                 for r in encodeResults {
                     try self.encodeWindow.write(r)
-                    if self.traceLevel.rawValue < Trace.Level.PERF.rawValue {
+                    if self.traceLevel.rawValue <= Trace.Level.DEBUG.rawValue {
                         self.encodeCollector?.append(r)
                     }
                 }
