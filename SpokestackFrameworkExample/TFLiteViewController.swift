@@ -80,7 +80,7 @@ class TFLiteViewController: UIViewController {
             .addListener(self)
             .setDelegateDispatchQueue(DispatchQueue.main)
             .useProfile(.tfLiteWakewordAppleSpeech)
-            .setProperty("tracing", ".PERF")
+            .setProperty("tracing", Trace.Level.PERF)
             .setProperty("detectModelPath", detectPath)
             .setProperty("encodeModelPath", encodePath)
             .setProperty("filterModelPath", filterPath)
