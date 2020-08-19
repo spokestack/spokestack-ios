@@ -83,15 +83,18 @@ import Speech
     }
     
     private func deactivate() {
-        self.active = false
-        self.context.isActive = false
-        self.recognitionTask?.finish()
-        self.recognitionTask = nil
-        self.recognitionRequest?.endAudio()
-        self.recognitionRequest = nil
-        self.wakeActiveMaxWorker?.cancel()
-        self.audioEngine.pause()
-        self.context.dispatch(.deactivate)
+        if self.active {
+            self.active = false
+            self.context.isActive = false
+            self.recognitionTask?.finish()
+            self.recognitionTask = nil
+            self.recognitionRequest?.endAudio()
+            self.recognitionRequest = nil
+            self.vadFallWorker?.cancel()
+            self.wakeActiveMaxWorker?.cancel()
+            self.audioEngine.pause()
+            self.context.dispatch(.deactivate)
+        }
     }
     
     private func createRecognitionTask() throws -> Void {
@@ -103,6 +106,7 @@ import Speech
                     return
                 }
                 strongSelf.vadFallWorker?.cancel()
+                strongSelf.vadFallWorker = nil
                 if let e = error {
                     if let nse: NSError = error as NSError? {
                         if nse.domain == "kAFAssistantErrorDomain" {
