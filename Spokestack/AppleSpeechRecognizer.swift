@@ -62,6 +62,7 @@ import Speech
         }
         self.audioEngine.prepare()
         self.wakeActiveMaxWorker = DispatchWorkItem {[weak self] in
+            self?.context.dispatch(.timeout)
             self?.deactivate()
         }
     }
