@@ -36,6 +36,8 @@ import Speech
     // MARK: NSObject implementation
     
     deinit {
+        self.audioEngine.stop()
+        self.audioEngine.inputNode.removeTap(onBus: 0)
         speechRecognizer.delegate = nil
     }
     
@@ -48,12 +50,11 @@ import Speech
     // MARK: Private functions
     
     private func prepare() {
-        let bufferSize: Int = (self.configuration.sampleRate / 1000) * self.configuration.frameWidth
         self.audioEngine.inputNode.removeTap(onBus: 0) // a belt-and-suspenders approach to fixing https://github.com/wenkesj/react-native-voice/issues/46
         self.audioEngine.inputNode.installTap(
             onBus: 0,
-            bufferSize: AVAudioFrameCount(bufferSize),
-            format: nil)
+            bufferSize: AVAudioFrameCount(self.configuration.audioEngineBufferSize),
+            format: self.audioEngine.inputNode.inputFormat(forBus: 0))
         {[weak self] buffer, when in
             guard let strongSelf = self else {
                 return
@@ -69,6 +70,9 @@ import Speech
     
     private func activate() {
         do {
+            // Accessing debug information is costly and we don't want to do it unnecessarily, so make a duplicate level check beforehand.
+            if self.configuration.tracing.rawValue <= Trace.Level.DEBUG.rawValue {
+                Trace.trace(.DEBUG, message: "inputSampleRate: \(self.audioEngine.inputNode.inputFormat(forBus: 0).sampleRate) inputChannels: \(self.audioEngine.inputNode.inputFormat(forBus: 0).channelCount) bufferSize \(self.configuration.audioEngineBufferSize)", config: self.configuration, context: self.context, caller: self) }
             try self.audioEngine.start()
             self.recognitionRequest = SFSpeechAudioBufferRecognitionRequest()
             self.recognitionRequest?.shouldReportPartialResults = true
@@ -93,7 +97,7 @@ import Speech
             self.recognitionRequest = nil
             self.vadFallWorker?.cancel()
             self.wakeActiveMaxWorker?.cancel()
-            self.audioEngine.pause()
+            self.audioEngine.stop()
             self.context.dispatch(.deactivate)
         }
     }
@@ -159,7 +163,6 @@ import Speech
 extension AppleSpeechRecognizer: SpeechProcessor {
     /// Triggered by the speech pipeline, instructing the recognizer to begin streaming and processing audio.
     @objc public func startStreaming() {
-        self.prepare()
     }
     
     /// Triggered by the speech pipeline, instructing the recognizer to stop streaming audio and complete processing.
@@ -170,14 +173,13 @@ extension AppleSpeechRecognizer: SpeechProcessor {
             self.recognitionTask = nil
             self.recognitionRequest?.endAudio()
             self.recognitionRequest = nil
-            self.audioEngine.stop()
-            self.audioEngine.inputNode.removeTap(onBus: 0)
         }
     }
     
     @objc public func process(_ frame: Data) {
         if self.context.isActive {
             if !self.active {
+                self.prepare()
                 self.activate()
             }
         } else if self.active {

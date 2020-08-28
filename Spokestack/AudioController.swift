@@ -35,6 +35,7 @@ func recordingCallback(
     bufferList.mBuffers.mNumberChannels = 1
     bufferList.mBuffers.mDataByteSize = bufferSize
     bufferList.mBuffers.mData = nil
+    AudioController.sharedInstance.configuration?.audioEngineBufferSize = bufferSize
     
     return withUnsafeMutablePointer(to: &bufferList) { (buffers) -> OSStatus in
         // render the recorded samples into the AudioBuffers

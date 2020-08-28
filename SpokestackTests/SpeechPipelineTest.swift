@@ -123,6 +123,7 @@ class SpeechPipelineTest: XCTestCase {
     /// stages test
     func testSpeechProcessors() {
         let didStartExpectation = expectation(description: "didStartExpectation fulfills when testSpeechProcessors calls SpeechPipelineTestDelegate as the result of didStart method completion")
+        let didDeactivateExpectation = expectation(description: "didDeactivateExpectation fulfills when testSpeechProcessors calls SpeechPipelineTestDelegate.deactivate as the result of stopStreaming method completion")
         let didStopExpectation = expectation(description: "didStopExpectation fulfills when testSpeechProcessors calls SpeechPipelineTestDelegate as the result of didStop method completion")
         let delegate = SpeechPipelineTestDelegate()
         let config = SpeechConfiguration()
@@ -145,8 +146,9 @@ class SpeechPipelineTest: XCTestCase {
         
         // stop
         delegate.asyncExpectation = didStopExpectation
+        delegate.deactivateExpectation = didDeactivateExpectation
         p.stop()
-        wait(for: [didStopExpectation], timeout: 1)
+        wait(for: [didDeactivateExpectation, didStopExpectation], timeout: 1)
         XCTAssertFalse(p.context.isActive)
     }
 }
