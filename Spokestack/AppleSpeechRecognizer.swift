@@ -32,7 +32,6 @@ import Speech
     private var vadFallWorker: DispatchWorkItem?
     private var wakeActiveMaxWorker: DispatchWorkItem?
     private var active = false
-    private var bufferSize: Int
     
     // MARK: NSObject implementation
     
@@ -45,7 +44,6 @@ import Speech
     @objc public init(_ configuration: SpeechConfiguration, context: SpeechContext) {
         self.configuration = configuration
         self.context = context
-        self.bufferSize = 320 //(configuration.sampleRate / 1000) * configuration.frameWidth
         super.init()
     }
     
@@ -55,7 +53,7 @@ import Speech
         self.audioEngine.inputNode.removeTap(onBus: 0) // a belt-and-suspenders approach to fixing https://github.com/wenkesj/react-native-voice/issues/46
         self.audioEngine.inputNode.installTap(
             onBus: 0,
-            bufferSize: AVAudioFrameCount(bufferSize),
+            bufferSize: AVAudioFrameCount(self.configuration.audioEngineBufferSize),
             format: self.audioEngine.inputNode.inputFormat(forBus: 0))
         {[weak self] buffer, when in
             guard let strongSelf = self else {
@@ -72,8 +70,9 @@ import Speech
     
     private func activate() {
         do {
-            self.configuration.tracing.rawValue <= Trace.Level.DEBUG.rawValue  ?
-                Trace.trace(.DEBUG, message: "inputSampleRate: \(self.audioEngine.inputNode.inputFormat(forBus: 0).sampleRate) inputChannels: \(self.audioEngine.inputNode.inputFormat(forBus: 0).channelCount) bufferSize \(bufferSize)", config: self.configuration, context: self.context, caller: self) :
+            // Accessing debug information is costly and we don't want to do it unnecessarily, so make a duplicate level check beforehand.
+            if self.configuration.tracing.rawValue <= Trace.Level.DEBUG.rawValue {
+                Trace.trace(.DEBUG, message: "inputSampleRate: \(self.audioEngine.inputNode.inputFormat(forBus: 0).sampleRate) inputChannels: \(self.audioEngine.inputNode.inputFormat(forBus: 0).channelCount) bufferSize \(self.configuration.audioEngineBufferSize)", config: self.configuration, context: self.context, caller: self) }
             try self.audioEngine.start()
             self.recognitionRequest = SFSpeechAudioBufferRecognitionRequest()
             self.recognitionRequest?.shouldReportPartialResults = true
