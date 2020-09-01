@@ -31,7 +31,7 @@ import Speech
     private let audioEngine: AVAudioEngine = AVAudioEngine()
     private var vadFallWorker: DispatchWorkItem?
     private var wakeActiveMaxWorker: DispatchWorkItem?
-    private var active = false
+    private var isActive = false
     
     // MARK: NSObject implementation
     
@@ -77,7 +77,7 @@ import Speech
             self.recognitionRequest = SFSpeechAudioBufferRecognitionRequest()
             self.recognitionRequest?.shouldReportPartialResults = true
             try self.createRecognitionTask()
-            self.active = true
+            self.isActive = true
             
             // Automatically end recognition task if it goes over the activiation max
             DispatchQueue.global(qos: .userInitiated).asyncAfter(deadline: .now() + .milliseconds(self.configuration.wakeActiveMax), execute: self.wakeActiveMaxWorker!)
@@ -88,15 +88,15 @@ import Speech
     }
     
     private func deactivate() {
-        if self.active {
-            self.active = false
+        if self.isActive {
+            self.isActive = false
             self.context.isActive = false
+            self.vadFallWorker?.cancel()
+            self.wakeActiveMaxWorker?.cancel()
             self.recognitionTask?.finish()
             self.recognitionTask = nil
             self.recognitionRequest?.endAudio()
             self.recognitionRequest = nil
-            self.vadFallWorker?.cancel()
-            self.wakeActiveMaxWorker?.cancel()
             self.audioEngine.stop()
             self.context.dispatch(.deactivate)
         }
@@ -108,6 +108,9 @@ import Speech
             resultHandler: { [weak self] result, error in
                 guard let strongSelf = self else {
                     // the callback has been orphaned by stopStreaming, so just end things here.
+                    return
+                }
+                if !strongSelf.isActive {
                     return
                 }
                 strongSelf.vadFallWorker?.cancel()
@@ -167,7 +170,7 @@ extension AppleSpeechRecognizer: SpeechProcessor {
     
     /// Triggered by the speech pipeline, instructing the recognizer to stop streaming audio and complete processing.
     @objc public func stopStreaming() {
-        if self.active {
+        if self.isActive {
             self.deactivate()
             self.recognitionTask?.cancel()
             self.recognitionTask = nil
@@ -178,11 +181,11 @@ extension AppleSpeechRecognizer: SpeechProcessor {
     
     @objc public func process(_ frame: Data) {
         if self.context.isActive {
-            if !self.active {
+            if !self.isActive {
                 self.prepare()
                 self.activate()
             }
-        } else if self.active {
+        } else if self.isActive {
             self.deactivate()
         }
     }

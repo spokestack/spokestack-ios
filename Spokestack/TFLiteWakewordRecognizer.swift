@@ -180,7 +180,7 @@ import TensorFlowLite
         self.encodeWidth = c.encodeWidth
         self.encodeLength = c.encodeLength * c.sampleRate / 1000 / self.hopLength
         self.stateWidth = c.stateWidth
-        self.encodeWindow = RingBuffer(self.encodeLength * c.encodeWidth, repeating: 0.0)
+        self.encodeWindow = RingBuffer(self.encodeLength * c.encodeWidth, repeating: -1.0)
         self.encodeState = RingBuffer(c.stateWidth, repeating: 0.0)
         self.encodeState.fill(0.0)
         self.detectWindow = RingBuffer(self.encodeLength * c.encodeWidth, repeating: 0.0)
@@ -393,7 +393,7 @@ import TensorFlowLite
         
         // Reset and fill the other buffers, which prevents them from lagging the detection
         self.frameWindow.reset().fill(0)
-        self.encodeWindow.reset().fill(0)
+        self.encodeWindow.reset().fill(-1.0)
         self.encodeState.reset().fill(0)
         self.detectWindow.reset().fill(0)
         
