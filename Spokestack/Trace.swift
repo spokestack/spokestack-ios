@@ -88,8 +88,6 @@ public struct Trace {
                     handle.seekToEndOfFile()
                     handle.write(data)
                     handle.synchronizeFile()
-                    context?.trace = "Trace spit appended \(data.count) to: \(path.path)"
-                    context?.dispatch(.trace)
                 } catch let error {
                     context?.trace = "Trace spit failed to open a handle to \(path.path) because \(error)"
                     context?.dispatch(.trace)

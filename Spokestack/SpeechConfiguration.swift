@@ -24,7 +24,7 @@ import Foundation
     @objc public var rmsTarget: Float = 0.08
     /// The Exponentially Weighted Moving Average (EWMA) update rate for the current  Root Mean Squared (RMS) signal energy (0 for no RMS normalization).
     /// - SeeAlso: `TFLiteWakewordRecognizer`
-    @objc public var rmsAlpha: Float = 0.1
+    @objc public var rmsAlpha: Float = 0.0
     /// The size of the signal window used to calculate the STFT, in number of samples - should be a power of 2 for maximum efficiency.
     /// - SeeAlso: `TFLiteWakewordRecognizer`
     @objc public var fftWindowSize: Int = 512
@@ -49,7 +49,7 @@ import Foundation
     @objc public var encodeLength: Int = 1000
     /// The threshold of the wakeword recognizer classifier's posterior output, above which the wakeword recognizer activates the pipeline, in the range [0, 1].
     /// - SeeAlso: `TFLiteWakewordRecognizer`
-    @objc public var wakeThreshold: Float = 0.9
+    @objc public var wakeThreshold: Float = 0.8
     /// The minimum length of an activation, in milliseconds. Used to ignore a Voice Activity Detector (VAD) deactivation after the wakeword.
     /// - SeeAlso: TFLiteWakewordRecognizer`
     @objc public var wakeActiveMin: Int = 2000

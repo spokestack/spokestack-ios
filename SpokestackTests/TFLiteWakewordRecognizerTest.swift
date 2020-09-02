@@ -95,6 +95,7 @@ class TFLiteWakewordRecognizerTest: XCTestCase {
         // setup
         self.tflwr?.context.addListener(self.delegate)
         self.tflwr?.context.isActive = false
+        self.tflwr?.context.isSpeech = true
         self.tflwr?.startStreaming()
         let activateExpectation = XCTestExpectation(description: "process without failure.")
         let deactivateMaxActiveExpectation = XCTestExpectation(description: "process without failure.")
@@ -115,7 +116,6 @@ class TFLiteWakewordRecognizerTest: XCTestCase {
         self.tflwr?.startStreaming()
         self.tflwr?.context.isSpeech = true
         self.tflwr?.context.isActive = false
-        self.tflwr?.activeLength = 10
         self.delegate.didDeactivateExpectation = deactivateMaxActiveExpectation
         self.delegate.didActivateExpectation = activateExpectation
         for _ in 0...1 {
