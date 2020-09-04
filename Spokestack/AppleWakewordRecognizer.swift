@@ -187,7 +187,7 @@ extension AppleWakewordRecognizer: SpeechProcessor {
     
     /// Receives a frame of audio samples for processing. Interface between the `SpeechProcessor` and `AudioController` components. Processes audio in an async thread.
     /// - Note: Processes audio in an async thread.
-    /// - Remark: The Apple Wakeword Recognizer hooks up directly to it's own audio tap for processing audio frames. When the `AudioController` calls this `process`, it checks to see if the pipeline has detected speech, and if so kicks off it's own VAD and wakeword recgonizer independently of any other components in the speech pipeline.
+    /// - Remark: The Apple Wakeword Recognizer hooks up directly to its own audio tap for processing audio frames. When the `AudioController` calls this `process`, it checks to see if the pipeline has detected speech, and if so kicks off its own VAD and wakeword recognizer independently of any other components in the speech pipeline.
     /// - Parameter frame: Frame of audio samples.
     @objc public func process(_ frame: Data) -> Void {
         if !self.recognitionTaskRunning && self.context.isSpeech && !self.context.isActive {

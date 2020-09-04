@@ -190,7 +190,7 @@ extension AppleSpeechRecognizer: SpeechProcessor {
 
     /// Processes an audio frame, recognizing speech.
     /// - Note: Processes audio in an async thread.
-    /// - Remark: The Apple ASR hooks up directly to it's own audio tap for processing audio frames. When the `AudioController` calls this `process`, it checks to see if the pipeline is activated, and if so kicks off it's own VAD and ASR independently of any other components in the speech pipeline.
+    /// - Remark: The Apple ASR hooks up directly to its own audio tap for processing audio frames. When the `AudioController` calls this `process`, it checks to see if the pipeline is activated, and if so kicks off its own VAD and ASR independently of any other components in the speech pipeline.
     /// - Parameter frame: Audio frame of samples.
     @objc public func process(_ frame: Data) {
         if self.context.isActive {
