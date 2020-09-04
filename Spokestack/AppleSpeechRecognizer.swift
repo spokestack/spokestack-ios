@@ -43,7 +43,7 @@ import Speech
     
     /// Initializes a AppleSpeechRecognizer instance.
     ///
-    /// A recognizer is initialzed by, and recieves `startStreaming` and `stopStreaming` events from, an instance of `SpeechPipeline`.
+    /// A recognizer is initialized by, and receives `startStreaming` and `stopStreaming` events from, an instance of `SpeechPipeline`.
     ///
     /// The AppleSpeechRecognizer receives audio data frames to `process` from a tap into the system `AudioEngine`.
     /// - Parameters:

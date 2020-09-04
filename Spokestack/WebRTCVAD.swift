@@ -32,7 +32,7 @@ private var frameBuffer: RingBuffer<Int16>!
 /// Swift wrapper for WebRTC's voice activity detector.
 @objc public class WebRTCVAD: NSObject, SpeechProcessor {
 
-    /// Configuration for the recognizer.
+    /// Configuration for the detector.
     @objc public var configuration: SpeechConfiguration
     /// Global state for the speech pipeline.
     @objc public var context: SpeechContext
@@ -43,19 +43,19 @@ private var frameBuffer: RingBuffer<Int16>!
     private var maxDetectionLength: Int = 0
     private var isSpeechDetected: Bool = false
 
-    /// Triggered by the speech pipeline, instructing the recognizer to begin streaming and processing audio.
+    /// Triggered by the speech pipeline, instructing the detector to begin streaming and processing audio.
     @objc public func startStreaming() {}
 
-    /// Triggered by the speech pipeline, instructing the recognizer to stop streaming audio and complete processing.
+    /// Triggered by the speech pipeline, instructing the detector to stop streaming audio and complete processing.
     @objc public func stopStreaming() {}
 
     /// Initializes a WebRTCVAD instance.
     ///
-    /// A recognizer is initialzed by, and recieves `startStreaming` and `stopStreaming` events from, an instance of `SpeechPipeline`.
+    /// A recognizer is initialized by, and receives `startStreaming` and `stopStreaming` events from, an instance of `SpeechPipeline`.
     ///
     /// The WebRTCVAD receives audio data frames to `process` from `AudioController`.
     /// - Parameters:
-    ///   - configuration: Configuration for the recognizer.
+    ///   - configuration: Configuration for the detector.
     ///   - context: Global state for the speech pipeline.
     @objc public init(_ configuration: SpeechConfiguration, context: SpeechContext) {
         self.configuration = configuration

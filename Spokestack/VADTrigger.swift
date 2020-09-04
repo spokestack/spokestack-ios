@@ -10,14 +10,14 @@ import Foundation
 
 @objc public class VADTrigger: NSObject, SpeechProcessor {
 
-    /// Configuration for the recognizer.
+    /// Configuration for the trigger.
     @objc public var configuration: SpeechConfiguration
     /// Global state for the speech pipeline.
     @objc public var context: SpeechContext
 
     /// Initializes a VADTrigger instance.
     ///
-    /// A recognizer is initialzed by, and recieves `startStreaming` and `stopStreaming` events from, an instance of `SpeechPipeline`.
+    /// A wakeword trigger is initialized by, and receives `startStreaming` and `stopStreaming` events from, an instance of `SpeechPipeline`.
     ///
     /// The VADTrigger receives audio data frames to `process` from `AudioController`.
     /// - Parameters:
@@ -29,10 +29,10 @@ import Foundation
         super.init()
     }
 
-    /// Triggered by the speech pipeline, instructing the recognizer to begin streaming and processing audio.
+    /// Triggered by the speech pipeline, instructing the trigger to begin streaming and processing audio.
     @objc public func startStreaming() {}
 
-    /// Triggered by the speech pipeline, instructing the recognizer to stop streaming audio and complete processing.
+    /// Triggered by the speech pipeline, instructing the trigger to stop streaming audio and complete processing.
     @objc public func stopStreaming() {}
 
     /// Processes an audio frame, activating the pipeline if speech is detected.

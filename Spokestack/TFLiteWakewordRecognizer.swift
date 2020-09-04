@@ -93,7 +93,7 @@ import TensorFlowLite
     
     /// Initializes a TFLiteWakewordRecognizer instance.
     ///
-    /// A recognizer is initialzed by, and recieves `startStreaming` and `stopStreaming` events from, an instance of `SpeechPipeline`.
+    /// A recognizer is initialized by, and receives `startStreaming` and `stopStreaming` events from, an instance of `SpeechPipeline`.
     ///
     /// The TFLiteWakewordRecognizer receives audio data frames to `process` from `AudioController`.
     /// - Parameters:
