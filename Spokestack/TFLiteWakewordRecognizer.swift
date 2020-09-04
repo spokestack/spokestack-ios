@@ -42,10 +42,7 @@ import TensorFlowLite
     }
     
     // Wakeword Activation Management
-    internal var activeLength: Int = 0
-    private var minActive: Int = 0
-    private var maxActive: Int = 0
-    private var active: Bool = false
+    private var isSpeechDetected: Bool = false
     
     // TensorFlowLite models
     private var filterModel: Interpreter?
@@ -94,6 +91,14 @@ import TensorFlowLite
     deinit {
     }
     
+    /// Initializes a TFLiteWakewordRecognizer instance.
+    ///
+    /// A recognizer is initialized by, and receives `startStreaming` and `stopStreaming` events from, an instance of `SpeechPipeline`.
+    ///
+    /// The TFLiteWakewordRecognizer receives audio data frames to `process` from `AudioController`.
+    /// - Parameters:
+    ///   - configuration: Configuration for the recognizer.
+    ///   - context: Global state for the speech pipeline.
     @objc public init(_ configuration: SpeechConfiguration, context: SpeechContext) {
         self.configuration = configuration
         self.context = context
@@ -188,11 +193,6 @@ import TensorFlowLite
         // attention model posteriors
         self.posteriorThreshold = c.wakeThreshold
         self.posteriorMax = 0
-        
-        // Wakeword activation lengths
-        let frameWidth: Int = c.frameWidth
-        self.minActive = c.wakeActiveMin / frameWidth
-        self.maxActive = c.wakeActiveMax / frameWidth
     }
     
     // MARK: Audio processing
@@ -401,7 +401,7 @@ import TensorFlowLite
         self.posteriorMax = 0
         
         // control flow deactivation
-        self.activeLength = 0
+        self.isSpeechDetected = false
     }
     
     private func debug() -> Void {
@@ -422,13 +422,11 @@ import TensorFlowLite
 extension TFLiteWakewordRecognizer : SpeechProcessor {
     
     /// Triggered by the speech pipeline, instructing the recognizer to begin streaming and processing audio.
-    @objc public func startStreaming() -> Void {
-        self.active = true
-    }
+    @objc public func startStreaming() -> Void {}
     
     /// Triggered by the speech pipeline, instructing the recognizer to stop streaming audio and complete processing.
     @objc public func stopStreaming() -> Void {
-        self.active = false
+        self.isSpeechDetected = false
     }
     
     /// Receives a frame of audio samples for processing. Interface between the `SpeechProcessor` and `AudioController` components.
@@ -439,18 +437,11 @@ extension TFLiteWakewordRecognizer : SpeechProcessor {
         audioProcessingQueue.async {[weak self] in
             guard let strongSelf = self else { return }
             if !strongSelf.context.isActive {
-                if (strongSelf.context.isSpeech &&
-                    // don't exceed max activation length
-                    strongSelf.activeLength <= strongSelf.maxActive)
-                    ||
-                    // don't deactivate if vad previously detected speech and the min activation length hasn't been met
-                    (strongSelf.active &&
-                        strongSelf.activeLength <= strongSelf.minActive) {
+                if strongSelf.context.isSpeech {
                     // Run the current frame through the detector pipeline.
                     // Activate the pipeline if a keyword phrase was detected.
                     do {
-                        strongSelf.active = true
-                        strongSelf.activeLength += 1
+                        strongSelf.isSpeechDetected = true
                         // Decode the FFT outputs into the filter model's input
                         try strongSelf.sample(frame)
                         let activate = try strongSelf.detect()
@@ -464,10 +455,9 @@ extension TFLiteWakewordRecognizer : SpeechProcessor {
                         strongSelf.context.error = error
                         strongSelf.context.dispatch(.error)
                     }
-                // activation edge
-                } else if strongSelf.active {
+                // vad detection edge
+                } else if strongSelf.isSpeechDetected {
                     strongSelf.reset()
-                    strongSelf.active = false
                 }
             }
         }

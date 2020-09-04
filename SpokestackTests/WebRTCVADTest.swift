@@ -85,11 +85,14 @@ class WebRTCVADTest: XCTestCase {
         config.vadMode = .Permissive
         config.frameWidth = 10
         config.sampleRate = 8000
+        config.wakeActiveMin = 1
+        config.wakeActiveMax = 3
         let vad = WebRTCVAD(config, context: context)
         
         /// speech -> no speech
         context.isSpeech = true
-        vad.process(Frame.silence(frameWidth: 10, sampleRate: 8000))
+        vad.process(Frame.silence(frameWidth: config.frameWidth, sampleRate: config.sampleRate))
+        vad.process(Frame.silence(frameWidth: config.frameWidth, sampleRate: config.sampleRate))
         XCTAssertFalse(delegate.failed, "Process should not cause a failure")
         XCTAssertFalse(context.isSpeech, "isSpeech should be false because silence")
         
@@ -106,13 +109,14 @@ class WebRTCVADTest: XCTestCase {
         /// no speech -> speech
         context.isSpeech = false
         vad.process(Frame.voice(frameWidth: 10, sampleRate: 8000))
+        vad.process(Frame.voice(frameWidth: 10, sampleRate: 8000))
         XCTAssertFalse(delegate.failed, "Process should not cause a failure")
         XCTAssert(context.isSpeech, "isSpeech should be true because voice + isSpeech: false")
         
         /// speech
         delegate.reset()
         context.isSpeech = true
-        for _ in 0...9 {
+        for _ in 0...(config.wakeActiveMax-1) {
             vad.process(Frame.voice(frameWidth: 10, sampleRate: 8000))
         }
         XCTAssertFalse(delegate.failed, "Process should not cause a failure")

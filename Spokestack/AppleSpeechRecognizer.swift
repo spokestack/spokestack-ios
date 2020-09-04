@@ -41,6 +41,14 @@ import Speech
         speechRecognizer.delegate = nil
     }
     
+    /// Initializes a AppleSpeechRecognizer instance.
+    ///
+    /// A recognizer is initialized by, and receives `startStreaming` and `stopStreaming` events from, an instance of `SpeechPipeline`.
+    ///
+    /// The AppleSpeechRecognizer receives audio data frames to `process` from a tap into the system `AudioEngine`.
+    /// - Parameters:
+    ///   - configuration: Configuration for the recognizer.
+    ///   - context: Global state for the speech pipeline.
     @objc public init(_ configuration: SpeechConfiguration, context: SpeechContext) {
         self.configuration = configuration
         self.context = context
@@ -164,10 +172,11 @@ import Speech
 }
 
 extension AppleSpeechRecognizer: SpeechProcessor {
+    
     /// Triggered by the speech pipeline, instructing the recognizer to begin streaming and processing audio.
     @objc public func startStreaming() {
     }
-    
+
     /// Triggered by the speech pipeline, instructing the recognizer to stop streaming audio and complete processing.
     @objc public func stopStreaming() {
         if self.isActive {
@@ -178,7 +187,11 @@ extension AppleSpeechRecognizer: SpeechProcessor {
             self.recognitionRequest = nil
         }
     }
-    
+
+    /// Processes an audio frame, recognizing speech.
+    /// - Note: Processes audio in an async thread.
+    /// - Remark: The Apple ASR hooks up directly to its own audio tap for processing audio frames. When the `AudioController` calls this `process`, it checks to see if the pipeline is activated, and if so kicks off its own VAD and ASR independently of any other components in the speech pipeline.
+    /// - Parameter frame: Audio frame of samples.
     @objc public func process(_ frame: Data) {
         if self.context.isActive {
             if !self.isActive {

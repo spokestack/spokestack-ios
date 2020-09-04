@@ -32,14 +32,31 @@ private var frameBuffer: RingBuffer<Int16>!
 /// Swift wrapper for WebRTC's voice activity detector.
 @objc public class WebRTCVAD: NSObject, SpeechProcessor {
 
+    /// Configuration for the detector.
     @objc public var configuration: SpeechConfiguration
-    
+    /// Global state for the speech pipeline.
     @objc public var context: SpeechContext
-    
+
+    // vad detection length management
+    private var detectionLength: Int = 0
+    private var minDetectionLength: Int = 0
+    private var maxDetectionLength: Int = 0
+    private var isSpeechDetected: Bool = false
+
+    /// Triggered by the speech pipeline, instructing the detector to begin streaming and processing audio.
     @objc public func startStreaming() {}
-    
+
+    /// Triggered by the speech pipeline, instructing the detector to stop streaming audio and complete processing.
     @objc public func stopStreaming() {}
-    
+
+    /// Initializes a WebRTCVAD instance.
+    ///
+    /// A recognizer is initialized by, and receives `startStreaming` and `stopStreaming` events from, an instance of `SpeechPipeline`.
+    ///
+    /// The WebRTCVAD receives audio data frames to `process` from `AudioController`.
+    /// - Parameters:
+    ///   - configuration: Configuration for the detector.
+    ///   - context: Global state for the speech pipeline.
     @objc public init(_ configuration: SpeechConfiguration, context: SpeechContext) {
         self.configuration = configuration
         self.context = context
@@ -70,6 +87,8 @@ private var frameBuffer: RingBuffer<Int16>!
         sampleRate32 = Int32(c.sampleRate)
         frameBufferStride32 = Int32(frameBufferStride)
         frameBuffer = RingBuffer(frameBufferStride, repeating: 0)
+        self.minDetectionLength = c.wakeActiveMin / c.frameWidth
+        self.maxDetectionLength = c.wakeActiveMax / c.frameWidth
         
         // initialize WebRtcVad with provided configuration
         var errorCode:Int32 = 0
@@ -102,8 +121,6 @@ private var frameBuffer: RingBuffer<Int16>!
     
     /// Processes an audio frame, detecting speech.
     /// - Parameter frame: Audio frame of samples.
-    ///
-    /// - Throws: RingBufferStateError.illegalState if the frame buffer enters an invalid state
     @objc public func process(_ frame: Data) -> Void {
         do {
             var detected: Bool = false
@@ -137,14 +154,20 @@ private var frameBuffer: RingBuffer<Int16>!
                     }
                 }
             }
-            if detected {
-                if !self.context.isSpeech {
-                    self.context.isSpeech = detected
-                }
-            } else {
-                if self.context.isSpeech {
-                    self.context.isSpeech = detected
-                }
+            // if speech activity is already detected, continue until the minimum detection length is reached
+            if self.context.isSpeech && self.detectionLength <= self.minDetectionLength {
+                self.detectionLength += 1
+            // if speech activity is detected, continue until the maximum detection length is reached
+            } else if detected && self.detectionLength > 0 && self.detectionLength <= self.maxDetectionLength {
+                self.detectionLength += 1
+            // a new detection
+            } else if detected && !self.context.isSpeech {
+                self.detectionLength += 1
+                self.context.isSpeech = true
+            // speech activity detection edge has been reached
+            } else if !detected && self.detectionLength > 0 {
+                self.detectionLength = 0
+                self.context.isSpeech = false
             }
         } catch let error {
             self.context.error = VADError.processing("error occurred while vad is processing \(error.localizedDescription)")

@@ -41,6 +41,14 @@ This pipeline component uses the Apple `SFSpeech` API to stream audio samples fo
         self.speechRecognizer.delegate = nil
     }
     
+    /// Initializes a AppleWakewordRecognizer instance.
+    ///
+    /// A recognizer is initialized by, and receives `startStreaming` and `stopStreaming` events from, an instance of `SpeechPipeline`.
+    ///
+    /// The AppleWakewordRecognizer receives audio data frames to `process` from a tap into the system `AudioEngine`.
+    /// - Parameters:
+    ///   - configuration: Configuration for the recognizer.
+    ///   - context: Global state for the speech pipeline.
     @objc public init(_ configuration: SpeechConfiguration, context: SpeechContext) {
         self.configuration = configuration
         self.context = context
@@ -177,9 +185,9 @@ extension AppleWakewordRecognizer: SpeechProcessor {
         self.audioEngine.inputNode.removeTap(onBus: 0)
     }
     
-    /// Receives a frame of audio samples for processing. Interface between the `SpeechProcessor` and `AudioController` components.
-    ///
-    /// Processes audio in an async thread.
+    /// Receives a frame of audio samples for processing. Interface between the `SpeechProcessor` and `AudioController` components. Processes audio in an async thread.
+    /// - Note: Processes audio in an async thread.
+    /// - Remark: The Apple Wakeword Recognizer hooks up directly to its own audio tap for processing audio frames. When the `AudioController` calls this `process`, it checks to see if the pipeline has detected speech, and if so kicks off its own VAD and wakeword recognizer independently of any other components in the speech pipeline.
     /// - Parameter frame: Frame of audio samples.
     @objc public func process(_ frame: Data) -> Void {
         if !self.recognitionTaskRunning && self.context.isSpeech && !self.context.isActive {
