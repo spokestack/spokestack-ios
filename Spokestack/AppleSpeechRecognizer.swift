@@ -41,6 +41,14 @@ import Speech
         speechRecognizer.delegate = nil
     }
     
+    /// Initializes a AppleSpeechRecognizer instance.
+    ///
+    /// A recognizer is initialzed by, and recieves `startStreaming` and `stopStreaming` events from, an instance of `SpeechPipeline`.
+    ///
+    /// The AppleSpeechRecognizer receives audio data frames to `process` from a tap into the system `AudioEngine`.
+    /// - Parameters:
+    ///   - configuration: Configuration for the recognizer.
+    ///   - context: Global state for the speech pipeline.
     @objc public init(_ configuration: SpeechConfiguration, context: SpeechContext) {
         self.configuration = configuration
         self.context = context
@@ -164,10 +172,11 @@ import Speech
 }
 
 extension AppleSpeechRecognizer: SpeechProcessor {
+    
     /// Triggered by the speech pipeline, instructing the recognizer to begin streaming and processing audio.
     @objc public func startStreaming() {
     }
-    
+
     /// Triggered by the speech pipeline, instructing the recognizer to stop streaming audio and complete processing.
     @objc public func stopStreaming() {
         if self.isActive {
@@ -178,7 +187,9 @@ extension AppleSpeechRecognizer: SpeechProcessor {
             self.recognitionRequest = nil
         }
     }
-    
+
+    /// Processes an audio frame, detecting speech.
+    /// - Parameter frame: Audio frame of samples.
     @objc public func process(_ frame: Data) {
         if self.context.isActive {
             if !self.isActive {

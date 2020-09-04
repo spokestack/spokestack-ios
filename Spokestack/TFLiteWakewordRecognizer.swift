@@ -91,6 +91,14 @@ import TensorFlowLite
     deinit {
     }
     
+    /// Initializes a TFLiteWakewordRecognizer instance.
+    ///
+    /// A recognizer is initialzed by, and recieves `startStreaming` and `stopStreaming` events from, an instance of `SpeechPipeline`.
+    ///
+    /// The TFLiteWakewordRecognizer receives audio data frames to `process` from `AudioController`.
+    /// - Parameters:
+    ///   - configuration: Configuration for the recognizer.
+    ///   - context: Global state for the speech pipeline.
     @objc public init(_ configuration: SpeechConfiguration, context: SpeechContext) {
         self.configuration = configuration
         self.context = context

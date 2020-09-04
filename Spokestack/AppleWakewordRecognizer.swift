@@ -41,6 +41,14 @@ This pipeline component uses the Apple `SFSpeech` API to stream audio samples fo
         self.speechRecognizer.delegate = nil
     }
     
+    /// Initializes a AppleWakewordRecognizer instance.
+    ///
+    /// A recognizer is initialzed by, and recieves `startStreaming` and `stopStreaming` events from, an instance of `SpeechPipeline`.
+    ///
+    /// The AppleWakewordRecognizer receives audio data frames to `process` from a tap into the system `AudioEngine`.
+    /// - Parameters:
+    ///   - configuration: Configuration for the recognizer.
+    ///   - context: Global state for the speech pipeline.
     @objc public init(_ configuration: SpeechConfiguration, context: SpeechContext) {
         self.configuration = configuration
         self.context = context

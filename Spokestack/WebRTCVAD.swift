@@ -31,29 +31,32 @@ private var frameBuffer: RingBuffer<Int16>!
 
 /// Swift wrapper for WebRTC's voice activity detector.
 @objc public class WebRTCVAD: NSObject, SpeechProcessor {
-    
-    /// <#Description#>
+
+    /// Configuration for the recognizer.
     @objc public var configuration: SpeechConfiguration
-    
-    /// <#Description#>
+    /// Global state for the speech pipeline.
     @objc public var context: SpeechContext
-    
+
     // vad detection length management
     private var detectionLength: Int = 0
     private var minDetectionLength: Int = 0
     private var maxDetectionLength: Int = 0
     private var isSpeechDetected: Bool = false
-    
-    /// <#Description#>
+
+    /// Triggered by the speech pipeline, instructing the recognizer to begin streaming and processing audio.
     @objc public func startStreaming() {}
-    
-    /// <#Description#>
+
+    /// Triggered by the speech pipeline, instructing the recognizer to stop streaming audio and complete processing.
     @objc public func stopStreaming() {}
-    
-    /// <#Description#>
+
+    /// Initializes a WebRTCVAD instance.
+    ///
+    /// A recognizer is initialzed by, and recieves `startStreaming` and `stopStreaming` events from, an instance of `SpeechPipeline`.
+    ///
+    /// The WebRTCVAD receives audio data frames to `process` from `AudioController`.
     /// - Parameters:
-    ///   - configuration: <#configuration description#>
-    ///   - context: <#context description#>
+    ///   - configuration: Configuration for the recognizer.
+    ///   - context: Global state for the speech pipeline.
     @objc public init(_ configuration: SpeechConfiguration, context: SpeechContext) {
         self.configuration = configuration
         self.context = context
@@ -118,8 +121,6 @@ private var frameBuffer: RingBuffer<Int16>!
     
     /// Processes an audio frame, detecting speech.
     /// - Parameter frame: Audio frame of samples.
-    ///
-    /// - Throws: RingBufferStateError.illegalState if the frame buffer enters an invalid state
     @objc public func process(_ frame: Data) -> Void {
         do {
             var detected: Bool = false
