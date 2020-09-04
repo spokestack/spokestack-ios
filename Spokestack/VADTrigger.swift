@@ -15,11 +15,7 @@ import Foundation
     /// Global state for the speech pipeline.
     @objc public var context: SpeechContext
 
-    /// Initializes a VADTrigger instance.
-    ///
-    /// A wakeword trigger is initialized by, and receives `startStreaming` and `stopStreaming` events from, an instance of `SpeechPipeline`.
-    ///
-    /// The VADTrigger receives audio data frames to `process` from `AudioController`.
+    /// Initializes a VADTrigger instance. A wakeword trigger is initialized by, and receives `startStreaming` and `stopStreaming` events from, an instance of `SpeechPipeline`. The VADTrigger receives audio data frames to `process` from `AudioController`.
     /// - Parameters:
     ///   - configuration: Configuration for the recognizer.
     ///   - context: Global state for the speech pipeline.
