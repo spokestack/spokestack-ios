@@ -13,7 +13,7 @@ import Dispatch
 /// DispatchQueue for handling Spokestack audio processing
 internal let audioProcessingQueue: DispatchQueue = DispatchQueue(label: "io.spokestack.audiocontroller", qos: .userInteractive)
 
-/// Required callback function for AudioUnitSetProperty's AURenderCallbackStruct. Sends the `stageInstances` in `SpeechContext`the audio frame samples to process.
+/// Required callback function for AudioUnitSetProperty's AURenderCallbackStruct. Sends frames of audio to the `stageInstances` in `SpeechContext`.
 ///
 /// - SeeAlso: AURenderCallbackStruct
 func recordingCallback(
@@ -23,7 +23,7 @@ func recordingCallback(
     inBusNumber: UInt32,
     inNumberFrames: UInt32,
     ioData: UnsafeMutablePointer<AudioBufferList>?) -> OSStatus {
-    
+
     guard let remoteIOUnit: AudioComponentInstance = AudioController.sharedInstance.remoteIOUnit else {
         return kAudioServicesSystemSoundUnspecifiedError
     }
@@ -35,6 +35,7 @@ func recordingCallback(
     bufferList.mBuffers.mNumberChannels = 1
     bufferList.mBuffers.mDataByteSize = bufferSize
     bufferList.mBuffers.mData = nil
+    AudioController.sharedInstance.configuration?.audioEngineBufferSize = bufferSize
     
     return withUnsafeMutablePointer(to: &bufferList) { (buffers) -> OSStatus in
         // render the recorded samples into the AudioBuffers
@@ -55,7 +56,7 @@ func recordingCallback(
             // AUBuffer.h:61:GetBufferList: EXCEPTION (-1) [mPtrState == kPtrsInvalid is false]: ""
             // are irrelevant
             audioProcessingQueue.sync {
-                AudioController.sharedInstance.context?.stageInstances.forEach { stage in
+                AudioController.sharedInstance.stages.forEach { stage in
                     stage.process(data)
                 }
             }
@@ -74,6 +75,8 @@ class AudioController {
     /// Configuration for the audio controller.
     public var configuration: SpeechConfiguration?
     public var context: SpeechContext?
+    /// A set of `SpeechProcessor` instances that process audio frames from `AudioController`.
+    public var stages: [SpeechProcessor] = []
     
     // MARK: Private (properties)
     
@@ -111,44 +114,30 @@ class AudioController {
     
     /// Begin sending audio frames to the AudioControllerDelegate.
     /// - SeeAlso: AudioControllerDelegate
-    /// - Parameter context: Global state for the speech pipeline.
     func startStreaming() -> Void {
         self.checkAudioSession()
         do {
             try self.start()
         } catch AudioError.audioSessionSetup(let message) {
-            self.configuration?.delegateDispatchQueue.async {
-                self.context?.listeners.forEach({ listener in
-                    listener.failure(speechError: AudioError.audioController(message))
-                })
-            }
+            self.context?.error = AudioError.audioController(message)
+            self.context?.dispatch(.error)
         } catch {
-            self.configuration?.delegateDispatchQueue.async {
-                self.context?.listeners.forEach({ listener in
-                    listener.failure(speechError: AudioError.audioController("An unknown error occured starting the stream"))
-                })
-            }
+            self.context?.error = AudioError.audioController("An unknown error occured starting the stream")
+            self.context?.dispatch(.error)
         }
     }
     
     /// Stop sending audio frames to the AudioControllerDelegate.
     /// - SeeAlso: AudioControllerDelegate
-    /// - Parameter context: Global state for the speech pipeline.
     func stopStreaming() -> Void {
         do {
             try self.stop()
         } catch AudioError.audioSessionSetup(let message) {
-            self.configuration?.delegateDispatchQueue.async {
-                self.context?.listeners.forEach({ listener in
-                    listener.failure(speechError: AudioError.audioController(message))
-                })
-            }
+            self.context?.error = AudioError.audioController(message)
+            self.context?.dispatch(.error)
         } catch {
-            self.configuration?.delegateDispatchQueue.async {
-                self.context?.listeners.forEach({ listener in
-                    listener.failure(speechError: AudioError.audioController("An unknown error occured ending the stream"))
-                })
-            }
+            self.context?.error = AudioError.audioController("An unknown error occured ending the stream")
+            self.context?.dispatch(.error)
         }
     }
     
@@ -189,11 +178,8 @@ class AudioController {
         case AVAudioSession.Category.playAndRecord:
             break
         default:
-            self.configuration?.delegateDispatchQueue.async {
-                self.context?.listeners.forEach({ listener in
-                    listener.failure(speechError: AudioError.audioSessionSetup("Incompatible AudioSession category is set."))
-                })
-            }
+            self.context?.error = AudioError.audioSessionSetup("Incompatible AudioSession category is set.")
+            self.context?.dispatch(.error)
         }
     }
     
@@ -239,9 +225,7 @@ class AudioController {
         if (status != noErr) {
             return status
         }
-        
-        // Set the recording callback
-        
+                
         var callbackStruct: AURenderCallbackStruct = AURenderCallbackStruct()
         callbackStruct.inputProc = recordingCallback
         callbackStruct.inputProcRefCon = nil
@@ -254,9 +238,7 @@ class AudioController {
         if status != noErr {
             return status
         }
-        
-        // Initialize the RemoteIO unit
-        
+                
         return AudioUnitInitialize(self.remoteIOUnit!)
     }
     

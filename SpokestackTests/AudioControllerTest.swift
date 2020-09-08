@@ -15,33 +15,31 @@ class AudioControllerTest: XCTestCase {
     func testStreaming() {
         let controller = AudioController.sharedInstance
         let config = SpeechConfiguration()
-        let context = SpeechContext()
+        let context = SpeechContext(config)
         controller.configuration = config
         controller.context = context
         let delegate = AudioControllerTestDelegate(config, context: context)
-        context.listeners = [delegate]
-        context.stageInstances = [delegate]
+        context.addListener(delegate)
         let setupFailedExpectation = expectation(description: "testStartStreaming calls AudioControllerTestDelegate as the result of failure method completion")
 
-        // Uninititalized delegates do not cause an exception during startStreaming
+        // Uninitialized delegates do not cause an exception during startStreaming
         XCTAssertNoThrow(try AVAudioSession.sharedInstance().setCategory(.playAndRecord))
         controller.startStreaming()
-        XCTAssertFalse(delegate.didSetupFailed)
+        XCTAssertFalse(delegate.didSetupFail)
         
         /// stopStreaming does not cause an exception
         controller.stopStreaming()
-        XCTAssertFalse(delegate.didSetupFailed)
+        XCTAssertFalse(delegate.didSetupFail)
         
         // Incompatible AVAudioSession category fails
         delegate.reset()
-        context.listeners = [delegate]
-        context.stageInstances = [delegate]
+        context.addListener(delegate)
         controller.context = context
         delegate.asyncExpectation = setupFailedExpectation
         XCTAssertNoThrow(try AVAudioSession.sharedInstance().setCategory(.ambient))
         controller.startStreaming()
         wait(for: [setupFailedExpectation], timeout: 1)
-        XCTAssert(delegate.didSetupFailed)
+        XCTAssert(delegate.didSetupFail)
         
         /// stopStreaming does not cause an exception
         controller.stopStreaming()
@@ -50,12 +48,12 @@ class AudioControllerTest: XCTestCase {
     func testProcess() {
         let controller = AudioController.sharedInstance
         let config = SpeechConfiguration()
-        let context = SpeechContext()
+        let context = SpeechContext(config)
         controller.configuration = config
         controller.context = context
         let delegate = AudioControllerTestDelegate(config, context: context)
-        controller.context?.listeners = [delegate]
-        context.stageInstances = [delegate]
+        context.addListener(delegate)
+        controller.stages = [delegate]
         let processFrameExpectation = expectation(description: "testStartStreaming calls AudioControllerTestDelegate as the result of processFrame method completion")
 
         // AudioControllerDelegate processFrame is called
@@ -68,7 +66,7 @@ class AudioControllerTest: XCTestCase {
         
         // stopStreaming works
         controller.stopStreaming()
-        XCTAssertFalse(delegate.didSetupFailed)
+        XCTAssertFalse(delegate.didSetupFail)
     }
 }
 
@@ -78,7 +76,7 @@ class AudioControllerTestDelegate: SpeechProcessor, SpeechEventListener {
     
     var context: SpeechContext
     var didProcessFrame: Bool = false
-    var didSetupFailed: Bool = false
+    var didSetupFail: Bool = false
     /// asyncExpectation lets the caller's test know when the delegate has been called.
     var asyncExpectation: XCTestExpectation?
     
@@ -88,7 +86,7 @@ class AudioControllerTestDelegate: SpeechProcessor, SpeechEventListener {
     }
     
     func reset() {
-        didSetupFailed = false
+        didSetupFail = false
         didProcessFrame = false
         asyncExpectation = .none
     }
@@ -97,7 +95,7 @@ class AudioControllerTestDelegate: SpeechProcessor, SpeechEventListener {
     
     func stopStreaming() {}
     
-    func didActivate() { }
+    func didActivate() {}
     
     func didDeactivate() {}
     
@@ -116,7 +114,7 @@ class AudioControllerTestDelegate: SpeechProcessor, SpeechEventListener {
             XCTFail("AudioControllerTestDelegate was not setup correctly. Missing XCTExpectation reference")
             return
         }
-        self.didSetupFailed = true
+        self.didSetupFail = true
         ae.fulfill()
         self.asyncExpectation = nil
     }

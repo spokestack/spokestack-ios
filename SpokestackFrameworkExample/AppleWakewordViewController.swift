@@ -49,11 +49,11 @@ class AppleWakewordViewController: UIViewController {
     }()
     
     lazy public var pipeline: SpeechPipeline = {
-        return SpeechPipelineBuilder()
-            .setListener(self)
+        return try! SpeechPipelineBuilder()
+            .addListener(self)
             .useProfile(.appleWakewordAppleSpeech)
-            .setProperty("delegateDispatchQueue", "DispatchQueue.main")
-            .setProperty("tracing", "Trace.Level.DEBUG")
+            .setDelegateDispatchQueue(DispatchQueue.main)
+            .setProperty("tracing", Trace.Level.DEBUG)
             .build()
     }()
     

@@ -22,39 +22,73 @@ import Dispatch
     // MARK: Public (properties)
     
     /// Pipeline configuration parameters.
-    public private (set) var configuration: SpeechConfiguration
+    @objc public private (set) var configuration: SpeechConfiguration
     /// Global state for the speech pipeline.
-    public let context: SpeechContext = SpeechContext()
+    @objc public let context: SpeechContext
     
     
     // MARK: Private (properties)
     
-    private var stages: [SpeechProcessors]?
+    /// A list of `SpeechProcessor` instances that process audio frames from `AudioController`.
+    private var stages: [SpeechProcessor] = []
+    private var isStarted = false
     
     // MARK: Initializers
     
     deinit {
-        self.context.listeners = []
-        self.stages = nil
+        self.context.removeListeners()
+        self.stages = []
     }
     
-    /// Initializes a new speech pipeline instance.
-    /// - Parameter speechConfiguration: Configuration parameters for the speech pipeline.
+    /// Initializes a new speech pipeline instance. For use by clients wishing to pass 3rd-party stages to the spokestack pipeline.
+    /// - Important: Most clients should use `SpeechPipelineBuilder` to initialize a new speech pipeline instance, not this initializer.
+    /// - SeeAlso: SpeechPipelineBuilder
+    /// - Parameter configuration: Configuration parameters for the speech pipeline.
     /// - Parameter listeners: Delegate implementations of `SpeechEventListener` that receive speech pipeline events.
-    @objc public init(configuration: SpeechConfiguration, listeners: [SpeechEventListener]) {
+    /// - Parameter stages: `SpeechProcessor` instances process audio frames from `AudioController`.
+    @objc public init(configuration: SpeechConfiguration, listeners: [SpeechEventListener], stages: [SpeechProcessor], context: SpeechContext) {
         self.configuration = configuration
-        self.stages = configuration.stages
-        self.context.listeners = listeners
+        self.context = context
+        self.stages = stages
         AudioController.sharedInstance.configuration = configuration
         AudioController.sharedInstance.context = self.context
+        AudioController.sharedInstance.stages = stages
         super.init()
-        
-        // initialization finished, emit the corresponding event
-        self.configuration.delegateDispatchQueue.async {
-            self.context.listeners.forEach({ listener in
-                listener.didInit()
-            })
+        listeners.forEach { self.context.addListener($0) }
+        self.context.dispatch(.initialize)
+    }
+    
+    /// For use by `SpeechPipelineBuilder`
+    /// - Parameters:
+    /// - Parameter configuration: Configuration parameters for the speech pipeline.
+    /// - Parameter listeners: Delegate implementations of `SpeechEventListener` that receive speech pipeline events.
+    /// - Parameter profile: The builder profile to use when configuring the pipeline.
+    internal init(configuration: SpeechConfiguration, listeners: [SpeechEventListener], profile: SpeechPipelineProfiles) {
+        self.configuration = configuration
+        self.context = SpeechContext(configuration)
+        super.init()
+        self.stages = profile.set.map { stage in
+            switch stage {
+            case .vad:
+                return WebRTCVAD(configuration, context: self.context)
+            case .appleWakeword:
+                return AppleWakewordRecognizer(configuration, context: self.context)
+            case .tfLiteWakeword:
+                return TFLiteWakewordRecognizer(configuration, context: self.context)
+            case .appleSpeech:
+                return AppleSpeechRecognizer(configuration, context: self.context)
+            case .vadTrigger:
+                return VADTrigger(configuration, context: self.context)
+            case .spokestackSpeech:
+                return SpokestackSpeechRecognizer(configuration, context: context)
+            }
         }
+        
+        AudioController.sharedInstance.stages = self.stages
+        AudioController.sharedInstance.configuration = configuration
+        AudioController.sharedInstance.context = self.context
+        listeners.forEach { self.context.addListener($0) }
+        self.context.dispatch(.initialize)
     }
     
     /// MARK: Pipeline control
@@ -67,87 +101,70 @@ import Dispatch
      The wakeword detector can be used in a multi-turn dialogue system. In such an environment, the user is not expected to say the wakeword during each turn. Therefore, an application can manually activate the pipeline by calling `activate` (after a system turn), and the wakeword detector will apply its minimum/maximum activation lengths to control the duration of the activation.
     */
     @objc public func activate() -> Void {
-        self.context.isActive = true
-        self.context.listeners.forEach({ listener in
-            listener.didActivate()
-        })
+        if !self.context.isActive {
+            self.context.isSpeech = true
+            self.context.isActive = true
+            self.context.dispatch(.activate)
+        }
     }
     
     /// Deactivates speech recognition.  The pipeline returns to awaiting either wakeword activation or an explicit `activate` call.
     /// - SeeAlso: `activate`
     @objc public func deactivate() -> Void {
         self.context.isActive = false
-        self.context.listeners.forEach({ listener in
-            listener.didDeactivate()
-        })
+        self.context.isSpeech = false
+        self.context.dispatch(.deactivate)
     }
     
     /// Starts  the speech pipeline.
     ///
-    /// The pipeline starts in a deactivated state, awaiting either a triggered activation  from a wakeword or VAD, or an explicit call to `activate`.
+    /// The pipeline starts in a deactivated state, awaiting either a triggered activation from a wakeword or VAD, or an explicit call to `activate`.
     @objc public func start() -> Void {
-        
-        // initialize stages
-        self.stages?.forEach({ stage in
-            let stageInstance: SpeechProcessor = {
-                switch stage {
-                case .vad:
-                    return WebRTCVAD(self.configuration, context: self.context)
-                case .appleWakeword:
-                    return AppleWakewordRecognizer(self.configuration, context: self.context)
-                case .tfLiteWakeword:
-                    return TFLiteWakewordRecognizer(self.configuration, context: self.context)
-                case .appleSpeech:
-                    return AppleSpeechRecognizer(self.configuration, context: self.context)
-                case .vadTrigger:
-                    return VADTrigger(self.configuration, context: self.context)
-                case .spokestackSpeech:
-                    return SpokestackSpeechRecognizer(self.configuration, context: self.context)
-                }
-            }()
-            self.context.stageInstances.append(stageInstance)
-        })
-        
-        // notify stages to start
-        AudioController.sharedInstance.startStreaming()
-        self.context.stageInstances.forEach { stage in
-            stage.startStreaming()
+        if !self.isStarted {
+            // notify stages to start
+            self.stages.forEach { stage in
+                stage.startStreaming()
+            }
+            
+            // begin streaming audio to the stages via `process`
+            AudioController.sharedInstance.startStreaming()
+            
+            // notify listeners of start
+            self.context.dispatch(.start)
+            
+            // repeated calls to start are idempotent
+            self.isStarted = true
         }
-        
-        // notify listeners of start
-        self.context.listeners.forEach({ listener in
-            listener.didStart()
-        })
     }
     
     /// Stops the speech pipeline.
     ///
     /// All pipeline activity is stopped, and the pipeline cannot be activated until it is `start`ed again.
     @objc public func stop() -> Void {
-        self.context.stageInstances.forEach({ stage in
-            stage.stopStreaming()
-        })
-        AudioController.sharedInstance.stopStreaming()
-        self.context.listeners.forEach({ listener in
-            listener.didStop()
-        })
-        self.context.stageInstances = []
+        if self.isStarted {
+            self.stages.forEach({ stage in
+                stage.stopStreaming()
+            })
+            AudioController.sharedInstance.stopStreaming()
+            self.context.dispatch(.stop)
+            self.isStarted = false
+        }
     }
 }
 
 /**
-    Convenince initializer for building a `SpeechPipeline` instance using a pre-configured profile. A pipeline profile encapsulates a series of configuration values tuned for a specific task.
+    Convenience initializer for building a `SpeechPipeline` instance using a pre-configured profile. A pipeline profile encapsulates a series of configuration values tuned for a specific task.
  
-    Profiles are not authoritative; they act just like calling a series of methods on a {@link SpeechPipeline.Builder}, and any configuration properties they set can be overridden by subsequent calls.
+    Profiles are not authoritative; they act just like calling a series of methods on a `SpeechPipelineBuilder`, and any configuration properties they set can be overridden by subsequent calls.
  
      Example:
      ```
      // assume that self implements the SpeechEventListener protocol
      let pipeline = SpeechPipelineBuilder()
-         .setListener(self)
+         .addListener(self)
          .setDelegateDispatchQueue(DispatchQueue.main)
          .useProfile(.tfLiteWakewordAppleSpeech)
-         .setProperty("tracing", ".PERF")
+         .setProperty("tracing", Trace.Level.PERF)
          .setProperty("detectModelPath", detectPath)
          .setProperty("encodeModelPath", encodePath)
          .setProperty("filterModelPath", filterPath)
@@ -158,12 +175,13 @@ import Dispatch
 @objc public class SpeechPipelineBuilder: NSObject {
     private let config = SpeechConfiguration()
     private var listeners: [SpeechEventListener] = []
+    private var profile: SpeechPipelineProfiles?
     
     /// Applies configuration from `SpeechPipelineProfiles` to the current builder, returning the modified builder.
     /// - Parameter profile: Name of the profile to apply.
-    /// - Returns: An updated instance of `SpeechPipelineBuilder` for instace function  call chaining.
+    /// - Returns: An updated instance of `SpeechPipelineBuilder` for call chaining.
     @objc public func useProfile(_ profile: SpeechPipelineProfiles) -> SpeechPipelineBuilder {
-        self.config.stages = profile.set
+        self.profile = profile
         return self
     }
     
@@ -171,17 +189,26 @@ import Dispatch
     /// - SeeAlso: `SpeechConfiguration`
     /// - Parameters:
     ///   - key: Configuration property name
-    ///   - value: Configuration property name
-    /// - Returns: An updated instance of `SpeechPipelineBuilder` for instace function  call chaining.
-    @objc public func setProperty(_ key: String, _ value: String) -> SpeechPipelineBuilder {
-        self.config.setValue(value, forKey: key)
+    ///   - value: Configuration property value
+    /// - Note: "tracing" key must have a value of `Trace.Level`, eg `Trace.Level.DEBUG`.
+    /// - Returns: An updated instance of `SpeechPipelineBuilder` for call chaining.
+    @objc public func setProperty(_ key: String, _ value: Any) -> SpeechPipelineBuilder {
+        switch key {
+        case "tracing":
+            guard let t = value as? Trace.Level else {
+                break
+            }
+            self.config.setValue(t.rawValue, forKey: key)
+        default:
+            self.config.setValue(value, forKey: key)
+        }
         return self
     }
     
     /// Delegate events will be sent using the specified dispatch queue.
     /// - SeeAlso: `SpeechConfiguration`
     /// - Parameter queue: A `DispatchQueue` instance
-    /// - Returns: An updated instance of `SpeechPipelineBuilder` for instace function  call chaining.
+    /// - Returns: An updated instance of `SpeechPipelineBuilder` for call chaining.
     @objc public func setDelegateDispatchQueue(_ queue: DispatchQueue) -> SpeechPipelineBuilder {
         self.config.delegateDispatchQueue = queue
         return self
@@ -190,14 +217,17 @@ import Dispatch
     /// Delegate events will be sent to the specified listener.
     /// - Parameter listener: A `SpeechEventListener` instance.
     /// - Returns: An updated instance of `SpeechPipelineBuilder` for instace function  call chaining.
-    @objc public func setListener(_ listener: SpeechEventListener) -> SpeechPipelineBuilder {
+    @objc public func addListener(_ listener: SpeechEventListener) -> SpeechPipelineBuilder {
         self.listeners.append(listener)
         return self
     }
     
     /// Build this configuration into a `SpeechPipeline` instance.
     /// - Returns: A `SpeechPipeline` instance.
-    @objc public func build() -> SpeechPipeline {
-        return SpeechPipeline(configuration: self.config, listeners: self.listeners)
+    @objc public func build() throws -> SpeechPipeline {
+        guard let p = self.profile else {
+            throw SpeechPipelineError.incompleteBuilder("Please specify a profile to use before calling build().")
+        }
+        return SpeechPipeline(configuration: self.config, listeners: self.listeners, profile: p)
     }
 }

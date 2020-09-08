@@ -14,7 +14,7 @@ import Speech
  
  Once speech pipeline coordination via `startStreaming` is received, the recognizer begins streaming buffered frames to the Apple ASR API for recognition. Once speech pipeline coordination via `stopStreaming` is received, or when the Apple ASR API indicates a completed speech event, the recognizer completes the API request and calls the `SpeechEventListener` delegate's `didRecognize` event with the updated global speech context (including the audio transcript and confidence).
  */
-@objc public class AppleSpeechRecognizer: NSObject, SpeechProcessor {
+@objc public class AppleSpeechRecognizer: NSObject {
     
     // MARK: Public properties
     
@@ -31,108 +31,82 @@ import Speech
     private let audioEngine: AVAudioEngine = AVAudioEngine()
     private var vadFallWorker: DispatchWorkItem?
     private var wakeActiveMaxWorker: DispatchWorkItem?
-    private var active = false
+    private var isActive = false
     
     // MARK: NSObject implementation
     
     deinit {
+        self.audioEngine.stop()
+        self.audioEngine.inputNode.removeTap(onBus: 0)
         speechRecognizer.delegate = nil
     }
     
-    /// Initializes an instance of AppleSpeechRecognizer.
+    /// Initializes a AppleSpeechRecognizer instance.
+    ///
+    /// A recognizer is initialized by, and receives `startStreaming` and `stopStreaming` events from, an instance of `SpeechPipeline`.
+    ///
+    /// The AppleSpeechRecognizer receives audio data frames to `process` from a tap into the system `AudioEngine`.
     /// - Parameters:
     ///   - configuration: Configuration for the recognizer.
     ///   - context: Global state for the speech pipeline.
-    public init(_ configuration: SpeechConfiguration, context: SpeechContext) {
+    @objc public init(_ configuration: SpeechConfiguration, context: SpeechContext) {
         self.configuration = configuration
         self.context = context
         super.init()
     }
     
-    // MARK: SpeechProcessor implementation
-    
-    /// Triggered by the speech pipeline, instructing the recognizer to begin streaming and processing audio.
-    @objc public func startStreaming() {
-        self.activate()
-    }
-    
-    /// Triggered by the speech pipeline, instructing the recognizer to stop streaming audio and complete processing.
-    @objc public func stopStreaming() {
-        self.deactivate()
-        self.recognitionTask?.cancel()
-        self.recognitionTask = nil
-        self.recognitionRequest?.endAudio()
-        self.recognitionRequest = nil
-        self.audioEngine.stop()
-        self.audioEngine.inputNode.removeTap(onBus: 0)
-    }
-    
-    /// Receives a frame of audio samples for processing. Interface between the `SpeechProcessor` and `AudioController` components.
-    /// - Parameter frame: Frame of audio samples.
-    @objc public func process(_ frame: Data) {
-        if self.context.isActive {
-            if !self.active {
-                self.activate()
-            }
-        } else if self.active {
-            self.deactivate()
-        }
-    }
-    
     // MARK: Private functions
     
-    private func activate() {
-        do {
-            self.active = true
-            self.recognitionRequest = SFSpeechAudioBufferRecognitionRequest()
-            self.recognitionRequest?.shouldReportPartialResults = true
-            self.prepareAudioEngine()
-            self.audioEngine.prepare()
-            try self.audioEngine.start()
-            try self.createRecognitionTask()
-            self.wakeActiveMaxWorker = DispatchWorkItem {[weak self] in
-                self?.configuration.delegateDispatchQueue.async {
-                    self?.context.listeners.forEach { listener in
-                        listener.didTimeout()
-                        self?.deactivate()
-                    }
-                }
-            }
-            DispatchQueue.global(qos: .userInitiated).asyncAfter(deadline: .now() + .milliseconds(self.configuration.wakeActiveMax), execute: self.wakeActiveMaxWorker!)
-        } catch let error {
-            self.configuration.delegateDispatchQueue.async {
-                self.context.listeners.forEach { listener in
-                    listener.failure(speechError: error)
-                }
-            }
-        }
-    }
-    
-    private func prepareAudioEngine() {
-        let bufferSize: Int = (self.configuration.sampleRate / 1000) * self.configuration.frameWidth
+    private func prepare() {
         self.audioEngine.inputNode.removeTap(onBus: 0) // a belt-and-suspenders approach to fixing https://github.com/wenkesj/react-native-voice/issues/46
         self.audioEngine.inputNode.installTap(
             onBus: 0,
-            bufferSize: AVAudioFrameCount(bufferSize),
-            format: nil)
+            bufferSize: AVAudioFrameCount(self.configuration.audioEngineBufferSize),
+            format: self.audioEngine.inputNode.inputFormat(forBus: 0))
         {[weak self] buffer, when in
             guard let strongSelf = self else {
                 return
             }
             strongSelf.recognitionRequest?.append(buffer)
         }
+        self.audioEngine.prepare()
+        self.wakeActiveMaxWorker = DispatchWorkItem {[weak self] in
+            self?.context.dispatch(.timeout)
+            self?.deactivate()
+        }
+    }
+    
+    private func activate() {
+        do {
+            // Accessing debug information is costly and we don't want to do it unnecessarily, so make a duplicate level check beforehand.
+            if self.configuration.tracing.rawValue <= Trace.Level.DEBUG.rawValue {
+                Trace.trace(.DEBUG, message: "inputSampleRate: \(self.audioEngine.inputNode.inputFormat(forBus: 0).sampleRate) inputChannels: \(self.audioEngine.inputNode.inputFormat(forBus: 0).channelCount) bufferSize \(self.configuration.audioEngineBufferSize)", config: self.configuration, context: self.context, caller: self) }
+            try self.audioEngine.start()
+            self.recognitionRequest = SFSpeechAudioBufferRecognitionRequest()
+            self.recognitionRequest?.shouldReportPartialResults = true
+            try self.createRecognitionTask()
+            self.isActive = true
+            
+            // Automatically end recognition task if it goes over the activiation max
+            DispatchQueue.global(qos: .userInitiated).asyncAfter(deadline: .now() + .milliseconds(self.configuration.wakeActiveMax), execute: self.wakeActiveMaxWorker!)
+        } catch let error {
+            self.context.error = error
+            self.context.dispatch(.error)
+        }
     }
     
     private func deactivate() {
-        self.active = false
-        self.context.isActive = false
-        self.recognitionTask?.finish()
-        self.recognitionRequest?.endAudio()
-        self.wakeActiveMaxWorker?.cancel()
-        self.configuration.delegateDispatchQueue.async {
-            self.context.listeners.forEach({ listener in
-                listener.didDeactivate()
-            })
+        if self.isActive {
+            self.isActive = false
+            self.context.isActive = false
+            self.vadFallWorker?.cancel()
+            self.wakeActiveMaxWorker?.cancel()
+            self.recognitionTask?.finish()
+            self.recognitionTask = nil
+            self.recognitionRequest?.endAudio()
+            self.recognitionRequest = nil
+            self.audioEngine.stop()
+            self.context.dispatch(.deactivate)
         }
     }
     
@@ -144,7 +118,11 @@ import Speech
                     // the callback has been orphaned by stopStreaming, so just end things here.
                     return
                 }
+                if !strongSelf.isActive {
+                    return
+                }
                 strongSelf.vadFallWorker?.cancel()
+                strongSelf.vadFallWorker = nil
                 if let e = error {
                     if let nse: NSError = error as NSError? {
                         if nse.domain == "kAFAssistantErrorDomain" {
@@ -165,15 +143,13 @@ import Speech
                             case 300..<603: // Apple retry error: https://developer.nuance.com/public/Help/DragonMobileSDKReference_iOS/Error-codes.html
                                 break
                             default:
-                                strongSelf.context.listeners.forEach({ listener in
-                                    listener.failure(speechError: e)
-                                })
+                                strongSelf.context.error = e
+                                strongSelf.context.dispatch(.error)
                             }
                         }
                     } else {
-                        strongSelf.context.listeners.forEach({ listener in
-                            listener.failure(speechError: e)
-                        })
+                        strongSelf.context.error = e
+                        strongSelf.context.dispatch(.error)
                     }
                 }
                 if let r = result {
@@ -184,17 +160,46 @@ import Speech
                             a.confidence <= b.confidence }).first?.confidence ?? 0.0
                     strongSelf.context.transcript = r.bestTranscription.formattedString
                     strongSelf.context.confidence = confidence
-                    strongSelf.configuration.delegateDispatchQueue.async {
-                        strongSelf.context.listeners.forEach({ listener in
-                            listener.didRecognize(strongSelf.context)
-                        })
-                    }
                     strongSelf.vadFallWorker = DispatchWorkItem {[weak self] in
+                        self?.context.dispatch(.recognize)
                         self?.deactivate()
                     }
-                    DispatchQueue.global(qos: .userInitiated).asyncAfter(deadline: DispatchTime.now() + .milliseconds(strongSelf.configuration.vadFallDelay), execute: strongSelf.vadFallWorker!)
+                    DispatchQueue.global(qos: .userInitiated).asyncAfter(deadline: .now() + .milliseconds(strongSelf.configuration.vadFallDelay), execute: strongSelf.vadFallWorker!)
                 }
             }
         )
+    }
+}
+
+extension AppleSpeechRecognizer: SpeechProcessor {
+    
+    /// Triggered by the speech pipeline, instructing the recognizer to begin streaming and processing audio.
+    @objc public func startStreaming() {
+    }
+
+    /// Triggered by the speech pipeline, instructing the recognizer to stop streaming audio and complete processing.
+    @objc public func stopStreaming() {
+        if self.isActive {
+            self.deactivate()
+            self.recognitionTask?.cancel()
+            self.recognitionTask = nil
+            self.recognitionRequest?.endAudio()
+            self.recognitionRequest = nil
+        }
+    }
+
+    /// Processes an audio frame, recognizing speech.
+    /// - Note: Processes audio in an async thread.
+    /// - Remark: The Apple ASR hooks up directly to its own audio tap for processing audio frames. When the `AudioController` calls this `process`, it checks to see if the pipeline is activated, and if so kicks off its own VAD and ASR independently of any other components in the speech pipeline.
+    /// - Parameter frame: Audio frame of samples.
+    @objc public func process(_ frame: Data) {
+        if self.context.isActive {
+            if !self.isActive {
+                self.prepare()
+                self.activate()
+            }
+        } else if self.isActive {
+            self.deactivate()
+        }
     }
 }

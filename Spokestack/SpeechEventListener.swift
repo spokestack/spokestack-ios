@@ -29,8 +29,8 @@ import Foundation
     /// The pipeline deactivate event. Occurs upon deactivation of speech recognition.  The pipeline remains inactive until activated again by either explicit activation or wakeword activation.
     func didDeactivate() -> Void
     
-    /// The pipeline speech recognition result event. The pipeline was activated and recognized speech.
-    /// - Parameter result: The speech recognition result.
+    /// The pipeline recognized and transcribed speech.
+    /// - Parameter result: The speech pipeline context, which contains the result.
     func didRecognize(_ result: SpeechContext) -> Void
     
     /// The error event. An error occured in the speech pipeline.

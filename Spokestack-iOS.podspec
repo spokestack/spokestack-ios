@@ -1,7 +1,7 @@
 Pod::Spec.new do |s|
   s.name = 'Spokestack-iOS'
   s.module_name = 'Spokestack'
-  s.version = '10.1.1'
+  s.version = '13.1.4'
   s.license = 'Apache'
   s.summary = 'Spokestack provides an extensible speech interface for the iOS platform.'
   s.homepage = 'https://www.spokestack.io'
@@ -13,8 +13,7 @@ Pod::Spec.new do |s|
   s.ios.framework = 'AVFoundation', 'CoreML'
   s.exclude_files = 'SpokestackFrameworkExample/*.*', 'SpokestackTests/*.*', 'Spokestack/Info.plist'
   s.source_files = 'Spokestack/**/*.{swift,h,m,c}'
-  s.pod_target_xcconfig = {'SWIFT_INCLUDE_PATHS' => '$(SRCROOT)/Spokestack/VAD/Wit', 'HEADER_SEARCH_PATHS' => '$(SRCROOT)/Spokestack/VAD/Wit'}
-  s.preserve_paths = 'Spokestack/**/*.modulemap'
+#  s.preserve_paths = 'Spokestack/**/*.modulemap'
   s.public_header_files = 'Spokestack/Spokestack.h'
   s.dependency 'TensorFlowLiteSwift', '~> 1.14.0'
   s.dependency 'filter_audio', '~> 0.5.0'

@@ -9,13 +9,13 @@
 import Foundation
 
 @objc public class VADTrigger: NSObject, SpeechProcessor {
+
     /// Configuration for the trigger.
-    public var configuration: SpeechConfiguration
-    
+    @objc public var configuration: SpeechConfiguration
     /// Global state for the speech pipeline.
-    public var context: SpeechContext
-    
-    /// Initializes an instance of VADTrigger.
+    @objc public var context: SpeechContext
+
+    /// Initializes a VADTrigger instance. A wakeword trigger is initialized by, and receives `startStreaming` and `stopStreaming` events from, an instance of `SpeechPipeline`. The VADTrigger receives audio data frames to `process` from `AudioController`.
     /// - Parameters:
     ///   - configuration: Configuration for the recognizer.
     ///   - context: Global state for the speech pipeline.
@@ -25,24 +25,18 @@ import Foundation
         super.init()
     }
     
-    /// Triggered by the speech pipeline, instructing the recognizer to begin streaming and processing audio.
-    public func startStreaming() {}
-    
-    /// Triggered by the speech pipeline, instructing the recognizer to stop streaming audio and complete processing.
-    public func stopStreaming() {}
-    
-    /// Receives a frame of audio samples for processing. Interface between the `SpeechProcessor` and `AudioController` components.
-    /// - Parameter frame: Frame of audio samples.
-    public func process(_ frame: Data) {
+    /// Triggered by the speech pipeline, instructing the trigger to begin streaming and processing audio.
+    @objc public func startStreaming() {}
+
+    /// Triggered by the speech pipeline, instructing the trigger to stop streaming audio and complete processing.
+    @objc public func stopStreaming() {}
+
+    /// Processes an audio frame, activating the pipeline if speech is detected.
+    /// - Parameter frame: Audio frame of samples.
+    @objc public func process(_ frame: Data) {
         if self.context.isSpeech && !self.context.isActive {
             self.context.isActive = true
-            self.configuration.delegateDispatchQueue.async {
-                self.context.listeners.forEach { listener in
-                    listener.didActivate()
-                }
-            }
-        } else if !self.context.isSpeech && self.context.isActive {
-//            self.context.isActive = false
+            self.context.dispatch(.activate)
         }
     }
 }

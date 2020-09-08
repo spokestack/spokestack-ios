@@ -29,10 +29,10 @@ import TensorFlowLite
     // MARK: Public (properties)
     
     /// Configuration for the recognizer.
-    public var configuration: SpeechConfiguration
+    @objc public var configuration: SpeechConfiguration
     
     /// Global state for the speech pipeline.
-    public var context: SpeechContext
+    @objc public var context: SpeechContext
     
     // MARK: Private (properties)
     
@@ -41,18 +41,15 @@ import TensorFlowLite
         case state
     }
     
-    /// Wakeword Activation Management
-    internal var activeLength: Int = 0
-    private var minActive: Int = 0
-    private var maxActive: Int = 0
-    private var active: Bool = false
+    // Wakeword Activation Management
+    private var isSpeechDetected: Bool = false
     
-    /// TensorFlowLite models
+    // TensorFlowLite models
     private var filterModel: Interpreter?
     private var encodeModel: Interpreter?
     private var detectModel: Interpreter?
     
-    /// filtering for STFL/MEL
+    // filtering for STFL/MEL
     private var fftFrame: Array<Float> = []
     private var frameWindow: RingBuffer<Float>!
     private var hopLength: Int = 0
@@ -61,14 +58,14 @@ import TensorFlowLite
     private var fftWindow: Array<Float> = []
     private var fft: FFT!
     
-    /// Audio Signal Normalization
+    // Audio Signal Normalization
     private var rmsAlpha: Float = 0.0
     private var rmsTarget: Float = 0.0
     private var rmsValue: Float = 0.0
     private var preEmphasis: Float = 0.0
     private var prevSample: Float = 0.0
     
-    /// attention model buffers
+    // attention model buffers
     private var encodeWidth: Int = 0
     private var encodeLength: Int = 0
     private var stateWidth: Int = 0
@@ -76,10 +73,10 @@ import TensorFlowLite
     private var encodeState: RingBuffer<Float>!
     private var detectWindow: RingBuffer<Float>!
     
-    /// attention model posteriors
+    // attention model posteriors
     private var posteriorThreshold: Float = 0
     
-    /// Tracing
+    // Tracing
     private var traceLevel: Trace.Level = Trace.Level.NONE
     private var sampleCollector: Array<Float>?
     private var fftFrameCollector: String?
@@ -94,11 +91,15 @@ import TensorFlowLite
     deinit {
     }
     
-    /// Initializes an instance of TFLiteWakewordRecognizer.
+    /// Initializes a TFLiteWakewordRecognizer instance.
+    ///
+    /// A recognizer is initialized by, and receives `startStreaming` and `stopStreaming` events from, an instance of `SpeechPipeline`.
+    ///
+    /// The TFLiteWakewordRecognizer receives audio data frames to `process` from `AudioController`.
     /// - Parameters:
     ///   - configuration: Configuration for the recognizer.
     ///   - context: Global state for the speech pipeline.
-    public init(_ configuration: SpeechConfiguration, context: SpeechContext) {
+    @objc public init(_ configuration: SpeechConfiguration, context: SpeechContext) {
         self.configuration = configuration
         self.context = context
         super.init()
@@ -144,11 +145,8 @@ import TensorFlowLite
                 throw WakewordModelError.detect("\(c.detectModelPath) could not be initialized")
             }
         } catch let message {
-            self.configuration.delegateDispatchQueue.async {
-                self.context.listeners.forEach({ listener in
-                    listener.failure(speechError: WakewordModelError.model("TFLiteWakewordRecognizer configureAttentionModels \(message)"))
-                })
-            }
+            self.context.error = WakewordModelError.model("TFLiteWakewordRecognizer configureAttentionModels \(message)")
+            self.context.dispatch(.error)
         }
     }
     
@@ -187,7 +185,7 @@ import TensorFlowLite
         self.encodeWidth = c.encodeWidth
         self.encodeLength = c.encodeLength * c.sampleRate / 1000 / self.hopLength
         self.stateWidth = c.stateWidth
-        self.encodeWindow = RingBuffer(self.encodeLength * c.encodeWidth, repeating: 0.0)
+        self.encodeWindow = RingBuffer(self.encodeLength * c.encodeWidth, repeating: -1.0)
         self.encodeState = RingBuffer(c.stateWidth, repeating: 0.0)
         self.encodeState.fill(0.0)
         self.detectWindow = RingBuffer(self.encodeLength * c.encodeWidth, repeating: 0.0)
@@ -195,11 +193,6 @@ import TensorFlowLite
         // attention model posteriors
         self.posteriorThreshold = c.wakeThreshold
         self.posteriorMax = 0
-        
-        // Wakeword activation lengths
-        let frameWidth: Int = c.frameWidth
-        self.minActive = c.wakeActiveMin / frameWidth
-        self.maxActive = c.wakeActiveMax / frameWidth
     }
     
     // MARK: Audio processing
@@ -229,7 +222,7 @@ import TensorFlowLite
             sample -= self.preEmphasis * self.prevSample
             self.prevSample = currentSample
             
-            if self.traceLevel.rawValue < Trace.Level.PERF.rawValue {
+            if self.traceLevel.rawValue <= Trace.Level.DEBUG.rawValue {
                 self.sampleCollector?.append(sample)
             }
             
@@ -258,7 +251,7 @@ import TensorFlowLite
         // rewind the sample window for another run
         self.sampleWindow.rewind().seek(self.hopLength)
         
-        if self.traceLevel.rawValue < Trace.Level.PERF.rawValue {
+        if self.traceLevel.rawValue <= Trace.Level.DEBUG.rawValue {
             self.fftFrameCollector? += "\(self.fftFrame)\n"
         }
         
@@ -290,7 +283,7 @@ import TensorFlowLite
                 self.frameWindow.rewind().seek(self.melWidth)
                 for r in results {
                     try self.frameWindow.write(r)
-                    if self.traceLevel.rawValue < Trace.Level.PERF.rawValue {
+                    if self.traceLevel.rawValue <= Trace.Level.DEBUG.rawValue {
                         self.filterCollector?.append(r)
                     }
                 }
@@ -337,7 +330,7 @@ import TensorFlowLite
                 self.encodeWindow.rewind().seek(self.encodeWidth)
                 for r in encodeResults {
                     try self.encodeWindow.write(r)
-                    if self.traceLevel.rawValue < Trace.Level.PERF.rawValue {
+                    if self.traceLevel.rawValue <= Trace.Level.DEBUG.rawValue {
                         self.encodeCollector?.append(r)
                     }
                 }
@@ -400,7 +393,7 @@ import TensorFlowLite
         
         // Reset and fill the other buffers, which prevents them from lagging the detection
         self.frameWindow.reset().fill(0)
-        self.encodeWindow.reset().fill(0)
+        self.encodeWindow.reset().fill(-1.0)
         self.encodeState.reset().fill(0)
         self.detectWindow.reset().fill(0)
         
@@ -408,7 +401,7 @@ import TensorFlowLite
         self.posteriorMax = 0
         
         // control flow deactivation
-        self.activeLength = 0
+        self.isSpeechDetected = false
     }
     
     private func debug() -> Void {
@@ -429,68 +422,43 @@ import TensorFlowLite
 extension TFLiteWakewordRecognizer : SpeechProcessor {
     
     /// Triggered by the speech pipeline, instructing the recognizer to begin streaming and processing audio.
-    public func startStreaming() -> Void {
-        self.active = true
-    }
+    @objc public func startStreaming() -> Void {}
     
     /// Triggered by the speech pipeline, instructing the recognizer to stop streaming audio and complete processing.
-    public func stopStreaming() -> Void {
-        self.active = false
+    @objc public func stopStreaming() -> Void {
+        self.isSpeechDetected = false
     }
     
     /// Receives a frame of audio samples for processing. Interface between the `SpeechProcessor` and `AudioController` components.
     ///
     /// Processes audio in an async thread.
     /// - Parameter frame: Frame of audio samples.
-    public func process(_ frame: Data) -> Void {
+    @objc public func process(_ frame: Data) -> Void {
         audioProcessingQueue.async {[weak self] in
             guard let strongSelf = self else { return }
             if !strongSelf.context.isActive {
-                if (strongSelf.context.isSpeech &&
-                    // don't exceed max activation length
-                    strongSelf.activeLength <= strongSelf.maxActive)
-                    ||
-                    // don't deactivate if vad previously detected speech and the min activation length hasn't been met
-                    (strongSelf.active &&
-                        strongSelf.activeLength <= strongSelf.minActive) {
+                if strongSelf.context.isSpeech {
                     // Run the current frame through the detector pipeline.
                     // Activate the pipeline if a keyword phrase was detected.
                     do {
-                        strongSelf.active = true
-                        strongSelf.activeLength += 1
+                        strongSelf.isSpeechDetected = true
                         // Decode the FFT outputs into the filter model's input
                         try strongSelf.sample(frame)
                         let activate = try strongSelf.detect()
                         if activate {
                             strongSelf.context.isActive = true
+                            strongSelf.context.dispatch(.activate)
                             strongSelf.reset()
                             strongSelf.stopStreaming()
-                            strongSelf.configuration.delegateDispatchQueue.async {
-                                strongSelf.context.listeners.forEach { listener in
-                                    listener.didActivate()
-                                }
-                            }
                         }
                     } catch let error {
-                        strongSelf.configuration.delegateDispatchQueue.async {
-                            strongSelf.context.listeners.forEach { listener in
-                                listener.failure(speechError: error)
-                            }
-                        }
+                        strongSelf.context.error = error
+                        strongSelf.context.dispatch(.error)
                     }
-                } else {
+                // vad detection edge
+                } else if strongSelf.isSpeechDetected {
                     strongSelf.reset()
-                    strongSelf.active = false
-                    strongSelf.context.isActive = false
-                    strongSelf.configuration.delegateDispatchQueue.async {
-                        strongSelf.context.listeners.forEach { listener in
-                            listener.didDeactivate()
-                        }
-                    }
                 }
-            }
-            if strongSelf.active && strongSelf.context.isActive {
-                strongSelf.debug()
             }
         }
     }

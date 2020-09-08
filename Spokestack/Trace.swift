@@ -29,11 +29,8 @@ public struct Trace {
     /// - Parameter caller: The sender of the debugging trace message.
     public static func trace(_ level: Trace.Level, message: String, config: SpeechConfiguration?, context: SpeechContext?, caller: Any) {
         if level.rawValue >= config?.tracing.rawValue ?? Level.DEBUG.rawValue {
-            config?.delegateDispatchQueue.async {
-                context?.listeners.forEach({ listener in
-                    listener.didTrace("\(level.rawValue) \(String(describing: type(of: caller))) \(message)")
-                })
-            }
+            context?.trace = "\(level.rawValue) \(String(describing: type(of: caller))) \(message)"
+            context?.dispatch(.trace)
         }
     }
     
@@ -74,44 +71,31 @@ public struct Trace {
         let filemgr = FileManager.default
         if let path = filemgr.urls(for: FileManager.SearchPathDirectory.documentDirectory, in: FileManager.SearchPathDomainMask.userDomainMask).last?.appendingPathComponent(fileName) {
             if !filemgr.fileExists(atPath: path.path) {
-                config?.delegateDispatchQueue.async {
-                    filemgr.createFile(atPath: path.path, contents: data, attributes: nil)
-                    context?.listeners.forEach({ listener in
-                        listener.didTrace("Trace spit created \(data.count) fileURL: \(path.path)")
-                    })
-                    do {
-                        let handle = try FileHandle(forWritingTo: path)
-                        handle.write(data)
-                        handle.synchronizeFile()
-                    } catch let error {
-                        context?.listeners.forEach({ listener in
-                            listener.didTrace("Trace spit failed to open a handle to \(path.path) because \(error)")
-                        })
-                    }
+                filemgr.createFile(atPath: path.path, contents: data, attributes: nil)
+                context?.trace = "Trace spit created \(data.count) fileURL: \(path.path)"
+                context?.dispatch(.trace)
+                do {
+                    let handle = try FileHandle(forWritingTo: path)
+                    handle.write(data)
+                    handle.synchronizeFile()
+                } catch let error {
+                    context?.trace = "Trace spit failed to open a handle to \(path.path) because \(error)"
+                    context?.dispatch(.trace)
                 }
             } else {
-                config?.delegateDispatchQueue.async {
-                    do {
-                        let handle = try FileHandle(forWritingTo: path)
-                        handle.seekToEndOfFile()
-                        handle.write(data)
-                        handle.synchronizeFile()
-                        context?.listeners.forEach({ listener in
-                            listener.didTrace("Trace spit appended \(data.count) to: \(path.path)")
-                        })
-                    } catch let error {
-                        context?.listeners.forEach({ listener in
-                            listener.didTrace("Trace spit failed to open a handle to \(path.path) because \(error)")
-                        })
-                    }
+                do {
+                    let handle = try FileHandle(forWritingTo: path)
+                    handle.seekToEndOfFile()
+                    handle.write(data)
+                    handle.synchronizeFile()
+                } catch let error {
+                    context?.trace = "Trace spit failed to open a handle to \(path.path) because \(error)"
+                    context?.dispatch(.trace)
                 }
             }
         } else {
-            config?.delegateDispatchQueue.async {
-                context?.listeners.forEach({ listener in
-                    listener.didTrace("Trace spit failed to get a URL for \(fileName)")
-                })
-            }
+            context?.trace = "Trace spit failed to get a URL for \(fileName)"
+            context?.dispatch(.trace)
         }
     }
 }

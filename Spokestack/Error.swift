@@ -13,7 +13,7 @@ import Foundation
 public enum AudioError: Error, Equatable {
     /// An audio unit system error
     case audioSessionSetup(String)
-    /// An audio controller
+    /// An audio controller error
     case audioController(String)
 }
 
@@ -26,6 +26,10 @@ public enum SpeechPipelineError: Error, Equatable {
     case invalidResponse(String)
     /// The SpeechPipeline encountered a failure in a component.
     case failure(String)
+    /// A pipeline component attempted to send an error to SpeechContext's listeners without first setting the SpeechContext.error property.
+    case errorNotSet(String)
+    /// The settings provided to the pipeline builder were not sufficient to create a pipeline.
+    case incompleteBuilder(String)
 }
 
 /// Errors thrown by the Voice Activity Detector.

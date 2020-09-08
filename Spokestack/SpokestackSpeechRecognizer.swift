@@ -70,38 +70,28 @@ import CryptoKit
         self.task?.resume()
         self.task?.send(URLSessionWebSocketTask.Message.string(message)) { error in
             if let error = error {
-                self.configuration.delegateDispatchQueue.async {
-                    self.context.listeners.forEach { listener in
-                        listener.failure(speechError: error)
-                    }
-                }
+                self.context.error = error
+                self.context.dispatch(.error)
             }
         }
         self.task?.receive() { result in
             self.handle(result, handleResult: { r in
                 if r.status != "ok" {
-                    self.configuration.delegateDispatchQueue.async {
-                        self.context.listeners.forEach { listener in
-                            listener.failure(speechError: SpeechPipelineError.illegalState("Spokestack ASR could not start because its status was \(r.status)."))
-                        }
-                    }
+                    self.context.error = SpeechPipelineError.illegalState("Spokestack ASR could not start because its status was \(r.status).")
+                    self.context.dispatch(.error)
                 }
                 self.activate()
             })
         }
     }
-    
+
     /// Triggered by the speech pipeline, instructing the recognizer to stop streaming audio and complete processing.
     public func stopStreaming() {
         self.deactivate()
         self.task?.cancel()
-        self.configuration.delegateDispatchQueue.async {
-            self.context.listeners.forEach({ listener in
-                listener.didDeactivate()
-            })
-        }
+        self.context.dispatch(.deactivate)
     }
-    
+
     /// Receives a frame of audio samples for processing. Interface between the `SpeechProcessor` and `AudioController` components.
     /// - Parameter frame: Frame of audio samples.
     public func process(_ frame: Data) {
@@ -114,12 +104,12 @@ import CryptoKit
             self.stream(frame)
         }
     }
-    
+
     private func activate() {
         self.activation = 0
         self.active = true
     }
-    
+
     private func deactivate() {
         self.context.isActive = false
         self.active = false
@@ -127,18 +117,15 @@ import CryptoKit
         // send an empty frame to trigger the asr into sending a final response
         self.stream(self.emptyFrame)
     }
-    
+
     private func stream(_ frame: Data) {
         /// - TODO: implement a frame chunking policy to maximize MTU utilization. Should be able to chunk ~50ms of frame data at 16000khz (~1500 bytes).
         self.activation += self.configuration.frameWidth
 
         self.task?.send(URLSessionWebSocketTask.Message.data(frame)) { error in
             if let error = error {
-                self.configuration.delegateDispatchQueue.async {
-                    self.context.listeners.forEach { listener in
-                        listener.failure(speechError: error)
-                    }
-                }
+                self.context.error = error
+                self.context.dispatch(.error)
             }
         }
         self.task?.receive() { result in
@@ -146,24 +133,17 @@ import CryptoKit
                 if let hypothesis = r.hypotheses.last {
                     self.context.confidence = hypothesis.confidence
                     self.context.transcript = hypothesis.transcript
-                    self.configuration.delegateDispatchQueue.async {
-                        self.context.listeners.forEach({ listener in
-                            listener.didRecognize(self.context)
-                        })
-                    }
+                    self.context.dispatch(.recognize)
                 }
             })
         }
     }
-    
+
     private func handle(_ result: Result<URLSessionWebSocketTask.Message, Error>, handleResult: (ASRResult) -> Void) {
         switch result {
         case .failure(let error):
-            self.configuration.delegateDispatchQueue.async {
-                self.context.listeners.forEach { listener in
-                    listener.failure(speechError: error)
-                }
-            }
+            self.context.error = error
+            self.context.dispatch(.error)
         case .success(let message):
             switch message {
             case .string(let json):
@@ -178,17 +158,13 @@ import CryptoKit
                         handleResult(r)
                     }
                 } catch let error {
-                    self.configuration.delegateDispatchQueue.async {
-                        self.context.listeners.forEach { listener in
-                            listener.failure(speechError: error)
-                        }
-                    }
+                    self.context.error = error
+                    self.context.dispatch(.error)
                 }
             case _:
                 self.configuration.delegateDispatchQueue.async {
-                    self.context.listeners.forEach { listener in
-                        listener.failure(speechError: SpeechPipelineError.illegalState("Spokestack ASR response with something unknown: \(message)"))
-                    }
+                    self.context.error = SpeechPipelineError.illegalState("Spokestack ASR response with something unknown: \(message)")
+                    self.context.dispatch(.error)
                 }
             }
         }

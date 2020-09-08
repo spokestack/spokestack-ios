@@ -76,11 +76,11 @@ class TFLiteViewController: UIViewController {
         guard let detectPath = Bundle(for: type(of: self)).path(forResource: c.detectModelName, ofType: "lite") else {
             throw WakewordModelError.detect("could not find \(c.detectModelName).lite in bundle \(self.debugDescription)")
         }
-        return SpeechPipelineBuilder()
-            .setListener(self)
+        return try! SpeechPipelineBuilder()
+            .addListener(self)
             .setDelegateDispatchQueue(DispatchQueue.main)
             .useProfile(.tfLiteWakewordAppleSpeech)
-            .setProperty("tracing", ".PERF")
+            .setProperty("tracing", Trace.Level.PERF)
             .setProperty("detectModelPath", detectPath)
             .setProperty("encodeModelPath", encodePath)
             .setProperty("filterModelPath", filterPath)
@@ -143,7 +143,7 @@ extension TFLiteViewController: SpeechEventListener {
     }
     
     func didStop() {
-        print("didStart")
+        print("didStop")
         self.toggleStartStop()
     }
     

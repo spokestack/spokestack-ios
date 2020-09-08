@@ -10,7 +10,7 @@ import Foundation
 import filter_audio
 
 /// Indicate how likely it is that non-speech will activate the VAD.
-public enum VADMode: Int {
+@objc public enum VADMode: Int {
     /// Most permissive of non-speech; most likely to detect speech.
     case HighlyPermissive = 1
     /// Allows more non-speech than higher levels.
@@ -32,15 +32,32 @@ private var frameBuffer: RingBuffer<Int16>!
 /// Swift wrapper for WebRTC's voice activity detector.
 @objc public class WebRTCVAD: NSObject, SpeechProcessor {
 
-    public var configuration: SpeechConfiguration
-    
-    public var context: SpeechContext
-    
-    public func startStreaming() {}
-    
-    public func stopStreaming() {}
-    
-    public init(_ configuration: SpeechConfiguration, context: SpeechContext) {
+    /// Configuration for the detector.
+    @objc public var configuration: SpeechConfiguration
+    /// Global state for the speech pipeline.
+    @objc public var context: SpeechContext
+
+    // vad detection length management
+    private var detectionLength: Int = 0
+    private var minDetectionLength: Int = 0
+    private var maxDetectionLength: Int = 0
+    private var isSpeechDetected: Bool = false
+
+    /// Triggered by the speech pipeline, instructing the detector to begin streaming and processing audio.
+    @objc public func startStreaming() {}
+
+    /// Triggered by the speech pipeline, instructing the detector to stop streaming audio and complete processing.
+    @objc public func stopStreaming() {}
+
+    /// Initializes a WebRTCVAD instance.
+    ///
+    /// A recognizer is initialized by, and receives `startStreaming` and `stopStreaming` events from, an instance of `SpeechPipeline`.
+    ///
+    /// The WebRTCVAD receives audio data frames to `process` from `AudioController`.
+    /// - Parameters:
+    ///   - configuration: Configuration for the detector.
+    ///   - context: Global state for the speech pipeline.
+    @objc public init(_ configuration: SpeechConfiguration, context: SpeechContext) {
         self.configuration = configuration
         self.context = context
         self.context.isSpeech = false
@@ -48,15 +65,13 @@ private var frameBuffer: RingBuffer<Int16>!
         do {
             try self.configure()
         } catch let error {
-            self.context.listeners.forEach({ listener in
-                listener.failure(speechError: error)
-            })
+            self.context.error = error
+            self.context.dispatch(.error)
         }
     }
     
     deinit {
         vad.deinitialize(count: 1)
-        WebRtcVad_Free(vad.pointee)
     }
     
     /// Creates and configures a new WebRTC VAD component.
@@ -72,6 +87,8 @@ private var frameBuffer: RingBuffer<Int16>!
         sampleRate32 = Int32(c.sampleRate)
         frameBufferStride32 = Int32(frameBufferStride)
         frameBuffer = RingBuffer(frameBufferStride, repeating: 0)
+        self.minDetectionLength = c.wakeActiveMin / c.frameWidth
+        self.maxDetectionLength = c.wakeActiveMax / c.frameWidth
         
         // initialize WebRtcVad with provided configuration
         var errorCode:Int32 = 0
@@ -104,10 +121,7 @@ private var frameBuffer: RingBuffer<Int16>!
     
     /// Processes an audio frame, detecting speech.
     /// - Parameter frame: Audio frame of samples.
-    /// - Parameter isSpeech: Whether speech was detected in the last frame.
-    ///
-    /// - Throws: RingBufferStateError.illegalState if the frame buffer enters an invalid state
-    public func process(_ frame: Data) -> Void {
+    @objc public func process(_ frame: Data) -> Void {
         do {
             var detected: Bool = false
             let samples: Array<Int16> = frame.elements()
@@ -140,19 +154,24 @@ private var frameBuffer: RingBuffer<Int16>!
                     }
                 }
             }
-            if detected {
-                if !self.context.isSpeech {
-                    self.context.isSpeech = detected
-                }
-            } else {
-                if self.context.isSpeech {
-                    self.context.isSpeech = detected
-                }
+            // if speech activity is already detected, continue until the minimum detection length is reached
+            if self.context.isSpeech && self.detectionLength <= self.minDetectionLength {
+                self.detectionLength += 1
+            // if speech activity is detected, continue until the maximum detection length is reached
+            } else if detected && self.detectionLength > 0 && self.detectionLength <= self.maxDetectionLength {
+                self.detectionLength += 1
+            // a new detection
+            } else if detected && !self.context.isSpeech {
+                self.detectionLength += 1
+                self.context.isSpeech = true
+            // speech activity detection edge has been reached
+            } else if !detected && self.detectionLength > 0 {
+                self.detectionLength = 0
+                self.context.isSpeech = false
             }
         } catch let error {
-            self.context.listeners.forEach({ listener in
-                listener.failure(speechError: VADError.processing("error occurred while vad is processing \(error.localizedDescription)"))
-            })
+            self.context.error = VADError.processing("error occurred while vad is processing \(error.localizedDescription)")
+            self.context.dispatch(.error)
         }
     }
 }
