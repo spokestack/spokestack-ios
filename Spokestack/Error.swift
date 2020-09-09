@@ -30,6 +30,8 @@ public enum SpeechPipelineError: Error, Equatable {
     case errorNotSet(String)
     /// The settings provided to the pipeline builder were not sufficient to create a pipeline.
     case incompleteBuilder(String)
+    /// The api key provided is not valid.
+    case apiKey(String)
 }
 
 /// Errors thrown by the Voice Activity Detector.

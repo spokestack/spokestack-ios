@@ -45,8 +45,8 @@ class SpokestackASRViewController: UIViewController {
     }()
     
     lazy private var pipeline: SpeechPipeline = {
-        return SpeechPipelineBuilder()
-            .setListener(self)
+        return try! SpeechPipelineBuilder()
+            .addListener(self)
             .useProfile(.vadTriggeredSpokestackSpeech)
             .setProperty("tracing", ".DEBUG")
             .setProperty("vadFallDelay", "1600")

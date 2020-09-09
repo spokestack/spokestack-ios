@@ -15,9 +15,9 @@ class SpokestackSpeechRecognizerTest: XCTestCase {
     func testStartStopStreaming() {
         /// setup
         let configuration = SpeechConfiguration()
-        let context = SpeechContext()
+        let context = SpeechContext(configuration)
         let delegate = SpokestackSpeechRecognizerTestDelegate()
-        context.listeners = [delegate]
+        context.addListener(delegate)
         let ssr = SpokestackSpeechRecognizer(configuration, context: context)
         context.isActive = true
         context.isSpeech = true
@@ -35,11 +35,10 @@ class SpokestackSpeechRecognizerTest: XCTestCase {
     func testProcess() {
         /// setup
         let configuration = SpeechConfiguration()
-        let context = SpeechContext()
+        let context = SpeechContext(configuration)
         let delegate = SpokestackSpeechRecognizerTestDelegate()
-        context.listeners = [delegate]
+        context.addListener(delegate)
         let ssr = SpokestackSpeechRecognizer(configuration, context: context)
-        context.stageInstances = [ssr]
         context.isSpeech = true
         ssr.startStreaming()
         
