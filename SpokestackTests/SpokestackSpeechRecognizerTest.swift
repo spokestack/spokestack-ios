@@ -28,7 +28,6 @@ class SpokestackSpeechRecognizerTest: XCTestCase {
         XCTAssert(context.isActive)
         XCTAssertFalse(delegate.didError)
         ssr.stopStreaming()
-        XCTAssertFalse(context.isActive)
         XCTAssertFalse(delegate.didError)
     }
     
