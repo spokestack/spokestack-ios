@@ -37,11 +37,10 @@ import CryptoKit
             self.task = URLSession.shared.webSocketTask(with: URL(string: "wss://api.spokestack.io/v1/asr/websocket")!)
             
             // construct auth message
-            /// - TODO: should use self.configuration.sampleRate, not hardcoded 16000hz
             let bodyDoubleEncoded = """
-            "{\\"format\\": \\"PCM16LE\\", \\"rate\\": 16000, \\"language\\": \\"en\\", \\"limit\\": 10}"
+            "{\\"format\\": \\"PCM16LE\\", \\"rate\\": \(configuration.sampleRate.description), \\"language\\": \\"en\\", \\"limit\\": 10}"
             """
-            let body = "{\"format\": \"PCM16LE\", \"rate\": 16000, \"language\": \"en\", \"limit\": 10}"
+            let body = "{\"format\": \"PCM16LE\", \"rate\": \(configuration.sampleRate.description), \"language\": \"en\", \"limit\": 10}"
             let bodySigned = HMAC<SHA256>.authenticationCode(for: body.data(using: .utf8)!, using: self.apiKey!)
             let bodySignature = Data(bodySigned).base64EncodedString()
             self.initalizeStreamMessage = """
