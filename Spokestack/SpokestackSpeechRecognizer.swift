@@ -9,6 +9,9 @@
 import Foundation
 import CryptoKit
 
+/// This pipeline component streams audio frames to Spokestack's cloud-based ASR for speech recognition.
+///
+/// Upon the pipeline being activated, the recognizer sends all audio frames to the Spokeatck ASR via a websocket connection. Once the pipeline is deactivated or the activation max is reached, a final empty audio frame is sent which triggers the final recognition transcript. That is passed to the `SpeechEventListener` delegates via the `didRecognize` event with the updated global speech context (including the final transcript and confidence).
 @available(iOS 13.0, *)
 @objc public class SpokestackSpeechRecognizer: NSObject {
 
@@ -24,6 +27,7 @@ import CryptoKit
     private var activation = 0
     private let emptyFrame = ([] as [Int]).withUnsafeBufferPointer {Data(buffer: $0)}
     private let initalizeStreamMessage: String
+    private let apiURL = "wss://api.spokestack.io/v1/asr/websocket"
 
     /// Initializes an instance of SpokestackSpeechRecognizer.
     /// - Parameters:
@@ -34,11 +38,11 @@ import CryptoKit
         self.context = context
         if let apiSecretEncoded = self.configuration.apiSecret.data(using: .utf8) {
             self.apiKey = SymmetricKey(data: apiSecretEncoded)
-            self.task = URLSession.shared.webSocketTask(with: URL(string: "wss://api.spokestack.io/v1/asr/websocket")!)
+            self.task = URLSession.shared.webSocketTask(with: URL(string: self.apiURL)!)
             
             // construct auth message
             let bodyDoubleEncoded = """
-            "{\\"format\\": \\"PCM16LE\\", \\"rate\\": \(configuration.sampleRate.description), \\"language\\": \\"en\\", \\"limit\\": 10}"
+            "{\\"format\\": \\"PCM16LE\\", \\"rate\\": \(configuration.sampleRate.description), \\"language\\": \\"en\\", \\"limit\\": 1}"
             """
             let body = "{\"format\": \"PCM16LE\", \"rate\": \(configuration.sampleRate.description), \"language\": \"en\", \"limit\": 10}"
             let bodySigned = HMAC<SHA256>.authenticationCode(for: body.data(using: .utf8)!, using: self.apiKey!)
@@ -68,12 +72,10 @@ import CryptoKit
     private func deactivate() {
         // send an empty frame to trigger the asr into sending a final response
         self.stream(self.emptyFrame)
-        //self.task?.suspend()
         self.context.isActive = false
         self.isActive = false
         self.activation = 0
         self.context.dispatch(.deactivate)
-        //self.task?.cancel(with: .normalClosure, reason: nil)
     }
     
     private func startStream() {
@@ -110,7 +112,7 @@ import CryptoKit
     
     private func receive(result: (Result<URLSessionWebSocketTask.Message, Error>)) {
         self.handle(result, handleResult: { r in
-            if let hypothesis = r.hypotheses.last {
+            if let hypothesis = r.hypotheses.first {
                 self.context.confidence = hypothesis.confidence
                 self.context.transcript = hypothesis.transcript
                 if r.final {

@@ -24,7 +24,7 @@ import Foundation
         self.context = context
         super.init()
     }
-    
+
     /// Triggered by the speech pipeline, instructing the trigger to begin streaming and processing audio.
     @objc public func startStreaming() {}
 
