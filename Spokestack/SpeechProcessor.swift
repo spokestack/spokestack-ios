@@ -58,7 +58,7 @@ internal enum SpeechProcessors: Int {
     /// Apple ASR that is manually activated and deactivated
     case pushToTalkAppleSpeech
     /// VAD-triggered Spokestack ASR
-    case vadTriggeredSpokestackSpeech
+    case vadTriggerSpokestackSpeech
     /// VAD-sensitive TFLiteWakeword activates Spokestack ASR
     case tfLiteWakewordSpokestackSpeech
 }

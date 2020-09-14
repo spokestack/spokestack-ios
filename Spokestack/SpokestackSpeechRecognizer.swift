@@ -23,7 +23,7 @@ import CryptoKit
     private var isActive = false
     private var activation = 0
     private let emptyFrame = ([] as [Int]).withUnsafeBufferPointer {Data(buffer: $0)}
-    private let initalizeStreamMessage: String
+    private let initializeStreamMessage: String
 
     /// Initializes an instance of SpokestackSpeechRecognizer.
     /// - Parameters:
@@ -130,7 +130,7 @@ import CryptoKit
             case .string(let json):
                 do {
                     guard let jsonData = json.data(using: .utf8) else {
-                        throw SpeechPipelineError.invalidResponse("Could not desearialize the ASR response.")
+                        throw SpeechPipelineError.invalidResponse("Could not deserialize the ASR response.")
                     }
                     let r = try self.decoder.decode(ASRResult.self, from: jsonData)
                     if let error = r.error {
@@ -144,7 +144,7 @@ import CryptoKit
                 }
             case _:
                 self.configuration.delegateDispatchQueue.async {
-                    self.context.error = SpeechPipelineError.illegalState("Spokestack ASR response with something unknown: \(message)")
+                    self.context.error = SpeechPipelineError.illegalState("unknown response from Spokestack ASR: \(message)")
                     self.context.dispatch(.error)
                 }
             }
@@ -186,7 +186,7 @@ extension SpokestackSpeechRecognizer: SpeechProcessor {
     }
 }
 
-fileprivate struct ASRHypotheses: Codable {
+fileprivate struct ASRHypothesis: Codable {
     let confidence: Float
     let transcript: String
 }
@@ -195,5 +195,5 @@ fileprivate struct ASRResult: Codable {
     let error: String?
     let final: Bool
     let status: String
-    let hypotheses: [ASRHypotheses]
+    let hypotheses: [ASRHypothesis]
 }
