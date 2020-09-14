@@ -20,14 +20,13 @@ import CryptoKit
     /// Global state for the speech pipeline.
     public var context: SpeechContext
 
-    private var task: URLSessionWebSocketTask?
+    private let task = URLSession.shared.webSocketTask(with: URL(string: "wss://api.spokestack.io/v1/asr/websocket")!)
     private var apiKey: SymmetricKey?
     private let decoder = JSONDecoder()
     private var isActive = false
     private var activation = 0
     private let emptyFrame = ([] as [Int]).withUnsafeBufferPointer {Data(buffer: $0)}
-    private let initalizeStreamMessage: String
-    private let apiURL = "wss://api.spokestack.io/v1/asr/websocket"
+    private let initializeStreamMessage: String
 
     /// Initializes an instance of SpokestackSpeechRecognizer.
     /// - Parameters:
@@ -38,16 +37,15 @@ import CryptoKit
         self.context = context
         let apiSecretEncoded = self.configuration.apiSecret.data(using: .utf8)! // since the string is by definition utf8-representable, this is a safe unwrap
         self.apiKey = SymmetricKey(data: apiSecretEncoded)
-        self.task = URLSession.shared.webSocketTask(with: URL(string: self.apiURL)!)
         
         // construct auth message
         let bodyDoubleEncoded = """
         "{\\"format\\": \\"PCM16LE\\", \\"rate\\": \(configuration.sampleRate.description), \\"language\\": \\"en\\", \\"limit\\": 1}"
         """
-        let body = "{\"format\": \"PCM16LE\", \"rate\": \(configuration.sampleRate.description), \"language\": \"en\", \"limit\": 10}"
+        let body = "{\"format\": \"PCM16LE\", \"rate\": \(configuration.sampleRate.description), \"language\": \"en\", \"limit\": 1}"
         let bodySigned = HMAC<SHA256>.authenticationCode(for: body.data(using: .utf8)!, using: self.apiKey!)
         let bodySignature = Data(bodySigned).base64EncodedString()
-        self.initalizeStreamMessage = """
+        self.initializeStreamMessage = """
             {"keyId": "
             """ + self.configuration.apiId + """
             ", "signature": "
@@ -75,14 +73,14 @@ import CryptoKit
     
     private func initializeSocket() {
         // send auth message
-        self.task?.resume()
-        self.task?.send(URLSessionWebSocketTask.Message.string(self.initalizeStreamMessage)) { error in
+        self.task.resume()
+        self.task.send(URLSessionWebSocketTask.Message.string(self.initializeStreamMessage)) { error in
             if let error = error {
                 self.context.error = error
                 self.context.dispatch(.error)
             }
         }
-        self.task?.receive() { result in
+        self.task.receive() { result in
             self.handle(result, handleResult: { r in
                 if r.status != "ok" {
                     self.context.error = SpeechPipelineError.illegalState("Spokestack ASR could not start because its status was \(r.status).")
@@ -96,13 +94,13 @@ import CryptoKit
         /// - TODO: implement a frame chunking policy to maximize MTU utilization. Should be able to chunk ~50ms of frame data at 16000khz. That's ~1500 bytes, but with TLS and websocket overhead the largest buffer without fragmentation is ~1400 bytes. It would probably make more sense to set the buffer size as a multiple of the audio frame size, so something like 1280 bytes.
         self.activation += self.configuration.frameWidth
 
-        self.task?.send(URLSessionWebSocketTask.Message.data(frame)) { error in
+        self.task.send(URLSessionWebSocketTask.Message.data(frame)) { error in
             if let error = error {
                 self.context.error = error
                 self.context.dispatch(.error)
             }
         }
-        self.task?.receive(completionHandler: self.receive)
+        self.task.receive(completionHandler: self.receive)
     }
     
     private func receive(result: (Result<URLSessionWebSocketTask.Message, Error>)) {
