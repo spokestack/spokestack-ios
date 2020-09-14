@@ -36,31 +36,26 @@ import CryptoKit
     @objc public init(_ configuration: SpeechConfiguration, context: SpeechContext) {
         self.configuration = configuration
         self.context = context
-        if let apiSecretEncoded = self.configuration.apiSecret.data(using: .utf8) {
-            self.apiKey = SymmetricKey(data: apiSecretEncoded)
-            self.task = URLSession.shared.webSocketTask(with: URL(string: self.apiURL)!)
-            
-            // construct auth message
-            let bodyDoubleEncoded = """
-            "{\\"format\\": \\"PCM16LE\\", \\"rate\\": \(configuration.sampleRate.description), \\"language\\": \\"en\\", \\"limit\\": 1}"
-            """
-            let body = "{\"format\": \"PCM16LE\", \"rate\": \(configuration.sampleRate.description), \"language\": \"en\", \"limit\": 10}"
-            let bodySigned = HMAC<SHA256>.authenticationCode(for: body.data(using: .utf8)!, using: self.apiKey!)
-            let bodySignature = Data(bodySigned).base64EncodedString()
-            self.initalizeStreamMessage = """
+        let apiSecretEncoded = self.configuration.apiSecret.data(using: .utf8)! // since the string is by definition utf8-representable, this is a safe unwrap
+        self.apiKey = SymmetricKey(data: apiSecretEncoded)
+        self.task = URLSession.shared.webSocketTask(with: URL(string: self.apiURL)!)
+        
+        // construct auth message
+        let bodyDoubleEncoded = """
+        "{\\"format\\": \\"PCM16LE\\", \\"rate\\": \(configuration.sampleRate.description), \\"language\\": \\"en\\", \\"limit\\": 1}"
+        """
+        let body = "{\"format\": \"PCM16LE\", \"rate\": \(configuration.sampleRate.description), \"language\": \"en\", \"limit\": 10}"
+        let bodySigned = HMAC<SHA256>.authenticationCode(for: body.data(using: .utf8)!, using: self.apiKey!)
+        let bodySignature = Data(bodySigned).base64EncodedString()
+        self.initalizeStreamMessage = """
             {"keyId": "
             """ + self.configuration.apiId + """
             ", "signature": "
             """ + bodySignature + """
             ", "body":
             """ + " " + bodyDoubleEncoded + """
-            }
-            """
-        } else {
-            self.initalizeStreamMessage = ""
-            self.context.error = SpeechPipelineError.apiKey("Unable to encode apiSecret.")
-            self.context.dispatch(.error)
         }
+        """
         super.init()
     }
 
@@ -132,7 +127,7 @@ import CryptoKit
             case .string(let json):
                 do {
                     guard let jsonData = json.data(using: .utf8) else {
-                        throw SpeechPipelineError.invalidResponse("Could not desearialize the ASR response.")
+                        throw SpeechPipelineError.invalidResponse("Could not deserialize the ASR response.")
                     }
                     let r = try self.decoder.decode(ASRResult.self, from: jsonData)
                     if let error = r.error {
@@ -146,7 +141,7 @@ import CryptoKit
                 }
             case _:
                 self.configuration.delegateDispatchQueue.async {
-                    self.context.error = SpeechPipelineError.illegalState("Spokestack ASR response with something unknown: \(message)")
+                    self.context.error = SpeechPipelineError.illegalState("unknown response from Spokestack ASR: \(message)")
                     self.context.dispatch(.error)
                 }
             }
@@ -188,7 +183,7 @@ extension SpokestackSpeechRecognizer: SpeechProcessor {
     }
 }
 
-fileprivate struct ASRHypotheses: Codable {
+fileprivate struct ASRHypothesis: Codable {
     let confidence: Float
     let transcript: String
 }
@@ -197,5 +192,5 @@ fileprivate struct ASRResult: Codable {
     let error: String?
     let final: Bool
     let status: String
-    let hypotheses: [ASRHypotheses]
+    let hypotheses: [ASRHypothesis]
 }

@@ -58,7 +58,7 @@ internal enum SpeechProcessors: Int {
     /// Apple ASR that is manually activated and deactivated
     case pushToTalkAppleSpeech
     /// VAD-triggered Spokestack ASR
-    case vadTriggeredSpokestackSpeech
+    case vadTriggerSpokestackSpeech
     /// VAD-sensitive TFLiteWakeword activates Spokestack ASR
     case tfLiteWakewordSpokestackSpeech
 }
@@ -75,7 +75,7 @@ extension SpeechPipelineProfiles {
             return [.vad, .vadTrigger, .appleSpeech]
         case .pushToTalkAppleSpeech:
             return [.appleSpeech]
-        case .vadTriggeredSpokestackSpeech:
+        case .vadTriggerSpokestackSpeech:
             return [.vad, .vadTrigger, .spokestackSpeech]
         case .tfLiteWakewordSpokestackSpeech:
             return [.vad, .tfLiteWakeword, .spokestackSpeech]
