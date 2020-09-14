@@ -13,7 +13,7 @@ import Spokestack
 @available(iOS 13.0, *)
 class SpokestackSpeechRecognizerTest: XCTestCase {
     func testStartStopStreaming() {
-        /// setup
+        // setup
         let configuration = SpeechConfiguration()
         let context = SpeechContext(configuration)
         let delegate = SpokestackSpeechRecognizerTestDelegate()
@@ -24,7 +24,6 @@ class SpokestackSpeechRecognizerTest: XCTestCase {
         
         // start & stop
         ssr.startStreaming()
-        sleep(1)
         XCTAssert(context.isActive)
         XCTAssertFalse(delegate.didError)
         ssr.stopStreaming()
@@ -32,7 +31,7 @@ class SpokestackSpeechRecognizerTest: XCTestCase {
     }
     
     func testProcess() {
-        /// setup
+        // setup
         let configuration = SpeechConfiguration()
         let context = SpeechContext(configuration)
         let delegate = SpokestackSpeechRecognizerTestDelegate()
@@ -46,10 +45,37 @@ class SpokestackSpeechRecognizerTest: XCTestCase {
         ssr.process(Frame.silence(frameWidth: 10, sampleRate: 16000))
         XCTAssertFalse(context.isActive)
         XCTAssertFalse(delegate.didError)
+        // process a voice frame successfully
+        context.isActive = true
         ssr.process(Frame.voice(frameWidth: 10, sampleRate: 16000))
-        sleep(1)
-        XCTAssertFalse(context.isActive)
+        XCTAssert(context.isActive)
         XCTAssertFalse(delegate.didError)
+        // deactivate
+        context.isActive = false
+        context.isSpeech = false
+        ssr.process(Frame.voice(frameWidth: 10, sampleRate: 16000))
+    }
+
+    func testFailure() {
+        // setup
+        let badConfiguration = SpeechConfiguration()
+        let delegate = SpokestackSpeechRecognizerTestDelegate()
+        let context = SpeechContext(badConfiguration)
+        context.addListener(delegate)
+
+        // bad key id
+        let didFailConfigExpectation = expectation(description: "bad config results in a failed request that calls SpokestackSpeechRecognizerTestDelegate.failure")
+        didFailConfigExpectation.assertForOverFulfill = false
+        delegate.asyncExpectation = didFailConfigExpectation
+        badConfiguration.apiId = "BADBADNOTGOOD"
+        context.isSpeech = true
+        context.isActive = true
+        let ssr = SpokestackSpeechRecognizer(badConfiguration, context: context)
+        ssr.startStreaming()
+        ssr.process(Frame.voice(frameWidth: 10, sampleRate: 16000))
+        wait(for: [didFailConfigExpectation], timeout: 1)
+        XCTAssert(delegate.didError)
+        XCTAssertEqual(context.error!.localizedDescription, "Spokestack ASR responded with an error: unauthorized" )
     }
 }
 

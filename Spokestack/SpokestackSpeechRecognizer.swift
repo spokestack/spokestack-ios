@@ -65,7 +65,7 @@ import CryptoKit
     }
 
     private func activate() {
-        self.startStream()
+        self.initializeSocket()
         self.isActive = true
     }
 
@@ -78,7 +78,7 @@ import CryptoKit
         self.context.dispatch(.deactivate)
     }
     
-    private func startStream() {
+    private func initializeSocket() {
         // send auth message
         self.task?.resume()
         self.task?.send(URLSessionWebSocketTask.Message.string(self.initalizeStreamMessage)) { error in
