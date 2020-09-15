@@ -1,4 +1,6 @@
-*.tflite filter=lfs diff=lfs merge=lfs -text
-*.json filter=lfs diff=lfs merge=lfs -text
-*.txt filter=lfs diff=lfs merge=lfs -text
-*.lite filter=lfs diff=lfs merge=lfs -text
+.gitattributes merge=gitattributes
+# the release branch should not include git lfs files so that pod install does not require git lfs
+#*.tflite filter=lfs diff=lfs merge=lfs -text
+#*.json filter=lfs diff=lfs merge=lfs -text
+#*.txt filter=lfs diff=lfs merge=lfs -text
+#*.lite filter=lfs diff=lfs merge=lfs -text
