@@ -138,10 +138,8 @@ import CryptoKit
                     self.context.dispatch(.error)
                 }
             case _:
-                self.configuration.delegateDispatchQueue.async {
                     self.context.error = SpeechPipelineError.illegalState("unknown response from Spokestack ASR: \(message)")
                     self.context.dispatch(.error)
-                }
             }
         }
     }

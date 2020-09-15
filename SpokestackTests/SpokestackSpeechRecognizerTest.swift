@@ -32,10 +32,14 @@ class SpokestackSpeechRecognizerTest: XCTestCase {
     
     func testProcess() {
         // setup
+        let didFailExpectation = expectation(description: "default configuration should not result in a failed request that calls SpokestackSpeechRecognizerTestDelegate.failure")
+        didFailExpectation.isInverted = true
+        didFailExpectation.assertForOverFulfill = false
         let configuration = SpeechConfiguration()
         let context = SpeechContext(configuration)
         let delegate = SpokestackSpeechRecognizerTestDelegate()
         context.addListener(delegate)
+        delegate.asyncExpectation = didFailExpectation
         let ssr = SpokestackSpeechRecognizer(configuration, context: context)
         context.isSpeech = true
         ssr.startStreaming()
@@ -48,6 +52,7 @@ class SpokestackSpeechRecognizerTest: XCTestCase {
         // process a voice frame successfully
         context.isActive = true
         ssr.process(Frame.voice(frameWidth: 10, sampleRate: 16000))
+        wait(for: [didFailExpectation], timeout: 2)
         XCTAssert(context.isActive)
         XCTAssertFalse(delegate.didError)
         // deactivate
@@ -75,7 +80,8 @@ class SpokestackSpeechRecognizerTest: XCTestCase {
         ssr.process(Frame.voice(frameWidth: 10, sampleRate: 16000))
         wait(for: [didFailConfigExpectation], timeout: 1)
         XCTAssert(delegate.didError)
-        XCTAssertEqual(context.error!.localizedDescription, "Spokestack ASR responded with an error: unauthorized" )
+        // can't guarantee order of server responses to an unauthorized request, so have to check for both
+        XCTAssert((context.error!.localizedDescription == "Spokestack ASR responded with an error: unauthorized") || (context.error!.localizedDescription == "Spokestack ASR responded with an error: request_failed"))
     }
 }
 
