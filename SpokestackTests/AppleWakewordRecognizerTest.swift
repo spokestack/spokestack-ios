@@ -51,6 +51,7 @@ class AppleWakewordRecognizerTest: XCTestCase {
         context.isActive = true
         awr.process(Frame.voice(frameWidth: 10, sampleRate: 8000))
         XCTAssert(context.isActive)
+
         XCTAssertFalse(delegate.didError)
 
         // stopStreaming does not change active status (that's the job of SpeechPipeline)

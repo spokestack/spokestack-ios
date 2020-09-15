@@ -39,6 +39,4 @@ import Foundation
             self.context.dispatch(.activate)
         }
     }
-    
-    
 }

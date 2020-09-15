@@ -43,6 +43,8 @@ internal enum SpeechProcessors: Int {
     case vad
     /// VADTrigger
     case vadTrigger
+    /// spokestackSpeech
+    case spokestackSpeech
 }
 
 /// Profiles that may be passed to `SpeechPipelineBuilder` for easy pipeline configuring.
@@ -55,6 +57,10 @@ internal enum SpeechProcessors: Int {
     case vadTriggerAppleSpeech
     /// Apple ASR that is manually activated and deactivated
     case pushToTalkAppleSpeech
+    /// VAD-triggered Spokestack ASR
+    case vadTriggerSpokestackSpeech
+    /// VAD-sensitive TFLiteWakeword activates Spokestack ASR
+    case tfLiteWakewordSpokestackSpeech
 }
 
 extension SpeechPipelineProfiles {
@@ -69,6 +75,10 @@ extension SpeechPipelineProfiles {
             return [.vad, .vadTrigger, .appleSpeech]
         case .pushToTalkAppleSpeech:
             return [.appleSpeech]
+        case .vadTriggerSpokestackSpeech:
+            return [.vad, .vadTrigger, .spokestackSpeech]
+        case .tfLiteWakewordSpokestackSpeech:
+            return [.vad, .tfLiteWakeword, .spokestackSpeech]
         }
     }
 }
