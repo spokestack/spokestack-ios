@@ -89,14 +89,16 @@ API reference is [available on Github](https://spokestack.github.io/spokestack-i
 ### Preconditions
 
   0. Ensure that `git lfs` has been installed: https://git-lfs.github.com/. This is used to manage the storage of the large model and metadata files in `SpokestackFrameworkExample`.
-  1. Ensure that CocoaPods has been installed: `gem install cocoapods` ([not via `brew`](https://github.com/CocoaPods/CocoaPods/issues/8955)).
-  2. Ensure that you are registered in CocoaPods: `pod trunk register YOUR_EMAIL --description='release YOUR_PODSPEC_VERSION'`
+  1. Run `git config merge.gitattributes.driver true` to ensure that the pod does not include a git lfs dependency.
+  2. Ensure that CocoaPods has been installed: `gem install cocoapods` ([not via `brew`](https://github.com/CocoaPods/CocoaPods/issues/8955)).
+  3. Ensure that you are registered in CocoaPods: `pod trunk register YOUR_EMAIL --description='release YOUR_PODSPEC_VERSION'`
 
 ### Process
   1. Increment the `podspec` version in `Spokestack-iOS.podspec`
   2. `pod lib lint --use-libraries --allow-warnings`, which should pass all checks
   3. `git commit -a -m 'YOUR_COMMIT_MESSAGE' && git tag YOUR_PODSPEC_VERSION && git push --origin`
-  4. `pod trunk push  --use-libraries --allow-warnings`
+  4. `git checkout release && git merge master && git push --origin`
+  5. `pod trunk push  --use-libraries --allow-warnings`
 
 ## License
 [![License](https://img.shields.io/badge/License-Apache%202.0-green.svg)](https://opensource.org/licenses/Apache-2.0)
