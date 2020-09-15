@@ -111,6 +111,12 @@ private let apiQueue = DispatchQueue(label: TTSQueueName, qos: .userInitiated, a
         self.synthesize(input: input, success: play)
     }
     
+    /// Stops playback of the current synthesi result.
+    @objc public func stopSpeaking() -> Void {
+        self.player.pause()
+        self.finishPlayback()
+    }
+    
     /// Synthesize speech using the provided input parameters and speech configuration. A successful synthesis will return a URL to the streaming audio container of synthesized speech to the `TextToSpeech`'s `delegate`.
     /// - Note: The URL will be invalidated within 60 seconds of generation.
     /// - Parameter input: Parameters that specify the speech to synthesize.
@@ -324,6 +330,10 @@ private let apiQueue = DispatchQueue(label: TTSQueueName, qos: .userInitiated, a
     @available(*, deprecated, message: "Internal function that must be public for Objective-C compatibility reasons. Client should never call this function.")
     @objc
     func playerDidFinishPlaying(sender: Notification) {
+        self.finishPlayback()
+    }
+    
+    private func finishPlayback() {
         self.configuration.delegateDispatchQueue.async {
             self.delegate?.didFinishSpeaking()
         }
