@@ -59,6 +59,22 @@ class TTSViewController: UIViewController {
         
         return button
     }()
+
+    lazy var stopButton: UIButton = {
+        
+        let button: UIButton = UIButton(frame: .zero)
+        
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.setTitle("Stop", for: .normal)
+        button.addTarget(self,
+                         action: #selector(TTSViewController.stopAction(_:)),
+                         for: .touchUpInside)
+        
+        button.setTitleColor(.purple, for: .normal)
+        
+        
+        return button
+    }()
     
     lazy var testButton: UIButton = {
         
@@ -116,12 +132,14 @@ class TTSViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        self.view.addSubview(ttsInput)
         self.view.addSubview(self.synthesizeButton)
         self.view.addSubview(self.playButton)
         self.view.addSubview(self.speakButton)
+        self.view.addSubview(self.stopButton)
         self.view.addSubview(self.testButton)
         
-        self.synthesizeButton.centerYAnchor.constraint(equalTo: self.view.centerYAnchor).isActive = true
+        self.synthesizeButton.centerYAnchor.constraint(equalTo: self.ttsInput.bottomAnchor, constant: 50.0).isActive = true
         self.synthesizeButton.leftAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.leftAnchor).isActive = true
         self.synthesizeButton.rightAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.rightAnchor).isActive = true
         
@@ -132,13 +150,15 @@ class TTSViewController: UIViewController {
         self.speakButton.topAnchor.constraint(equalTo: self.playButton.bottomAnchor, constant: 50.0).isActive = true
         self.speakButton.leftAnchor.constraint(equalTo: self.playButton.leftAnchor).isActive = true
         self.speakButton.rightAnchor.constraint(equalTo: self.playButton.rightAnchor).isActive = true
+
+        self.stopButton.topAnchor.constraint(equalTo: self.speakButton.bottomAnchor, constant: 50.0).isActive = true
+        self.stopButton.leftAnchor.constraint(equalTo: self.speakButton.leftAnchor).isActive = true
+        self.stopButton.rightAnchor.constraint(equalTo: self.speakButton.rightAnchor).isActive = true
         
-        self.testButton.topAnchor.constraint(equalTo: self.speakButton.bottomAnchor, constant: 50.0).isActive = true
-        self.testButton.leftAnchor.constraint(equalTo: self.speakButton.leftAnchor).isActive = true
-        self.testButton.rightAnchor.constraint(equalTo: self.speakButton.rightAnchor).isActive = true
-        
-        self.view.addSubview(ttsInput)
-        
+        self.testButton.topAnchor.constraint(equalTo: self.stopButton.bottomAnchor, constant: 50.0).isActive = true
+        self.testButton.leftAnchor.constraint(equalTo: self.stopButton.leftAnchor).isActive = true
+        self.testButton.rightAnchor.constraint(equalTo: self.stopButton.rightAnchor).isActive = true
+                
         self.player.automaticallyWaitsToMinimizeStalling = false
         
         self.configuration.tracing = .DEBUG
@@ -178,6 +198,10 @@ class TTSViewController: UIViewController {
         let input = TextToSpeechInput(text)
         input.inputFormat = .markdown
         self.tts?.speak(input)
+    }
+    
+    @objc func stopAction(_ sender: Any) {
+        self.tts?.stopSpeaking()
     }
     
     @objc func testAction(_ sender: Any) {
