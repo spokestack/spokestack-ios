@@ -106,8 +106,13 @@ import CryptoKit
     private func receive(result: (Result<URLSessionWebSocketTask.Message, Error>)) {
         self.handle(result, handleResult: { r in
             if let hypothesis = r.hypotheses.first {
-                self.context.confidence = hypothesis.confidence
-                self.context.transcript = hypothesis.transcript
+                if !hypothesis.transcript.isEmpty {
+                    if hypothesis.transcript != self.context.transcript {
+                        self.context.confidence = hypothesis.confidence
+                        self.context.transcript = hypothesis.transcript
+                        self.context.dispatch(.partiallyRecognize)
+                    }
+                }
                 if r.final {
                     self.context.dispatch(.recognize)
                 }

@@ -72,6 +72,8 @@ import Foundation
                     listener.didDeactivate()
                 case .recognize:
                     listener.didRecognize(self)
+                case .partiallyRecognize:
+                    listener.didPartiallyRecognize?(self)
                 case .error:
                     let e = (self.error != nil) ? self.error! : SpeechPipelineError.errorNotSet("A pipeline component attempted to send an error to SpeechContext's listeners without first setting the SpeechContext.error property.")
                     listener.failure(speechError: e)
