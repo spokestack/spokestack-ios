@@ -111,7 +111,7 @@ private let apiQueue = DispatchQueue(label: TTSQueueName, qos: .userInitiated, a
         self.synthesize(input: input, success: play)
     }
     
-    /// Stops playback of the current synthesi result.
+    /// Stops playback of the current synthesis result.
     @objc public func stopSpeaking() -> Void {
         self.player.pause()
         self.finishPlayback()
