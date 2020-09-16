@@ -33,9 +33,9 @@ import Foundation
     /// - Parameter result: The speech pipeline context, which contains the result.
     @objc func didRecognize(_ result: SpeechContext) -> Void
     
-    /// The  pipeline recognized and transcripted an incomplete portion of the utterance.
+    /// The pipeline recognized and transcribed a portion of an incomplete utterance.
     /// - Parameter result: The speech pipeline context, which contains the partial result.
-    @objc optional func didPartiallyRecognize(_ result: SpeechContext) -> Void
+    @objc optional func didRecognizePartial(_ result: SpeechContext) -> Void
     
     /// The error event. An error occured in the speech pipeline.
     /// - Parameter error: A human-readable error message.

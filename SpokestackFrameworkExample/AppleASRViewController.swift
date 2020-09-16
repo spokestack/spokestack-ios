@@ -133,8 +133,8 @@ extension AppleASRViewController: SpeechEventListener {
         print("didRecognize transcript \(result.transcript)")
     }
     
-    func didPartiallyRecognize(_ result: SpeechContext) {
-        print("didPartiallyRecognize transcript \(result.transcript)")
+    func didRecognizePartial(_ result: SpeechContext) {
+        print("didRecognizePartial transcript \(result.transcript)")
     }
     
     func didStart() {
