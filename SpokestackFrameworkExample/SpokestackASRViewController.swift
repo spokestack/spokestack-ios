@@ -134,6 +134,10 @@ extension SpokestackASRViewController: SpeechEventListener {
         print("didRecognize transcript \(result.transcript)")
     }
     
+    func didPartiallyRecognize(_ result: SpeechContext) {
+        print("didPartiallyRecognize transcript \(result.transcript)")
+    }
+    
     func didStart() {
         print("didStart")
         self.stopRecordingButton.isEnabled.toggle()
