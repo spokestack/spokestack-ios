@@ -72,7 +72,7 @@ class SpokestackSpeechRecognizerTest: XCTestCase {
         let didFailConfigExpectation = expectation(description: "bad config results in a failed request that calls SpokestackSpeechRecognizerTestDelegate.failure")
         didFailConfigExpectation.assertForOverFulfill = false
         delegate.asyncExpectation = didFailConfigExpectation
-        badConfiguration.apiId = "BADBADNOTGOOD"
+        badConfiguration.apiId = UUID.init().description
         context.isSpeech = true
         context.isActive = true
         let ssr = SpokestackSpeechRecognizer(badConfiguration, context: context)

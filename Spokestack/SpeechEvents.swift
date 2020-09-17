@@ -15,6 +15,7 @@ import Foundation
     case activate
     case deactivate
     case recognize
+    case partiallyRecognize
     case error
     case trace
     case timeout
