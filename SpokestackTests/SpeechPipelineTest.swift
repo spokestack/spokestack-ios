@@ -159,7 +159,9 @@ class SpeechPipelineBuilderTest: XCTestCase {
         let didInit1Expectation = expectation(description: "didInitExpectation fulfills when testBuild calls SpeechPipelineTestDelegate as the result of build method completion")
 
         // a profile is requred
-        XCTAssertThrowsError(try SpeechPipelineBuilder().addListener(delegate).build())
+        XCTAssertThrowsError(try SpeechPipelineBuilder().addListener(delegate).build()) {
+            XCTAssert($0.localizedDescription.count > 1)
+        }
 
         // tflite
         delegate.asyncExpectation = didInit1Expectation
