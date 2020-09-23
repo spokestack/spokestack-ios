@@ -36,7 +36,10 @@ class RingBufferTest: XCTestCase {
         // can't read from an empty buffer
         var thrownError: Error?
         let buffer3 = RingBuffer<Int>(3, repeating: 0)
-        XCTAssertThrowsError(try buffer3.read()) { thrownError = $0 }
+        XCTAssertThrowsError(try buffer3.read()) {
+            thrownError = $0
+            XCTAssert($0.localizedDescription.count > 1)
+        }
         XCTAssert(thrownError is RingBufferStateError, "unexpected error type \(type(of: thrownError)) during read()")
         
         // single read/write
@@ -55,7 +58,10 @@ class RingBufferTest: XCTestCase {
         XCTAssert(buffer3.isFull)
         
         // can't write to a full buffer
-        XCTAssertThrowsError(try buffer3.write(0)) { thrownError = $0 }
+        XCTAssertThrowsError(try buffer3.write(0)) {
+            thrownError = $0
+            XCTAssert($0.localizedDescription.count > 1)
+        }
         XCTAssert(thrownError is RingBufferStateError, "unexpected error type \(type(of: thrownError)) during read()")
         
         // read all the way to empty from a full buffer
