@@ -136,7 +136,7 @@ class NLUViewController: UIViewController {
 
 // MARK: NLUDelegate implementation
 
-extension NLUViewController: NLUDelegate {
+extension NLUViewController: SpokestackDelegate {
     func classification(result: NLUResult) {
         print("Classification: \(result)")
     }

@@ -298,7 +298,7 @@ extension TTSViewController {
 
 // MARK: TextToSpeechDelegate implementation
 
-extension TTSViewController: TextToSpeechDelegate {
+extension TTSViewController: SpokestackDelegate {
     
     func didBeginSpeaking() {
         print("didBeginSpeaking")

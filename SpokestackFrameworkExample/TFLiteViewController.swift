@@ -107,7 +107,7 @@ class TFLiteViewController: UIViewController {
     }
 }
 
-extension TFLiteViewController: SpeechEventListener {
+extension TFLiteViewController: SpokestackDelegate {
     
     func setupFailed(_ error: String) {
         print("setupFailed: " + error)

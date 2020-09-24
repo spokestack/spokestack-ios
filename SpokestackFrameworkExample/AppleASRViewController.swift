@@ -95,7 +95,7 @@ class AppleASRViewController: UIViewController {
     }
 }
 
-extension AppleASRViewController: SpeechEventListener {
+extension AppleASRViewController: SpokestackDelegate {
     
     func setupFailed(_ error: String) {
         print("setupFailed: " + error)
