@@ -30,7 +30,7 @@ import TensorFlowLite
     @objc public var configuration: SpeechConfiguration
     
     /// An implementation of NLUDelegate to receive NLU events.
-    @objc public var delegate: NLUDelegate?
+    @objc public var delegates: [SpokestackDelegate] = []
     
     private var interpreter: Interpreter?
     private var tokenizer: BertTokenizer?
@@ -66,8 +66,8 @@ import TensorFlowLite
     /// - Parameters:
     ///   - delegate: Delegate that receives NLU events.
     ///   - configuration: Configuration parameters for the NLU.
-    @objc required public init(_ delegate: NLUDelegate, configuration: SpeechConfiguration) throws {
-        self.delegate = delegate
+    @objc required public init(_ delegates: [SpokestackDelegate], configuration: SpeechConfiguration) throws {
+        self.delegates = delegates
         self.configuration = configuration
         self.terminatorToken = configuration.nluTerminatorTokenIndex
         self.paddingToken = configuration.nluPaddingTokenIndex
@@ -76,7 +76,7 @@ import TensorFlowLite
             try self.configure()
         } catch let error {
             self.configuration.delegateDispatchQueue.async {
-                delegate.failure?(nluError: error)
+                delegates.forEach { $0.failure?(nluError: error) }
             }
         }
     }
@@ -109,6 +109,12 @@ import TensorFlowLite
         }
     }
     
+    private func dispatch(_ handler: @escaping (SpokestackDelegate) -> Void) {
+        self.configuration.delegateDispatchQueue.async {
+            self.delegates.forEach(handler)
+        }
+    }
+
     /// Classifies the provided input. The classification results are sent to the instance's configured NLUDelegate.
     /// - Parameter utterance: The provided utterance to classify.
     /// - Parameter context: Context for NLU operations
@@ -117,13 +123,9 @@ import TensorFlowLite
             let prediction = self.classify(utterance)
             switch prediction {
             case .success(let classification):
-                self.configuration.delegateDispatchQueue.async {
-                    self.delegate?.classification?(result: classification)
-                }
+                self.dispatch { $0.classification?(result: classification) }
             case .failure(let error):
-                self.configuration.delegateDispatchQueue.async {
-                    self.delegate?.failure?(nluError: error)
-                }
+                self.dispatch { $0.failure?(nluError: error) }
             }
         }
     }
@@ -163,7 +165,7 @@ import TensorFlowLite
             encodedTokens
                 += [self.terminatorToken]
                 + Array(repeating: self.paddingToken, count: self.configuration.nluMaxTokenLength - encodedTokens.count - 1)
-            Trace.trace(Trace.Level.DEBUG, config: self.configuration, message: "classify encoded tokens: \(encodedTokens)", delegate: self.delegate, caller: self)
+            Trace.trace(Trace.Level.DEBUG, config: self.configuration, message: "classify encoded tokens: \(encodedTokens)", delegates: self.delegates, caller: self)
             // downcast the (assumed iOS) default Int64 to match the model's expected Int32 size. This is safe because the model vocabulary code indicies are 32-bit.
             let downcastEncodedInput = encodedTokens.map { Int32(truncatingIfNeeded: $0) }
             _ = try downcastEncodedInput
@@ -197,7 +199,7 @@ import TensorFlowLite
         }
         var intent = metadata.model.intents[intentsArgmax.0]
         intent.confidence = intentsArgmax.1
-        Trace.trace(Trace.Level.DEBUG, config: self.configuration, message: "classify intent: \(intent.name)", delegate: self.delegate, caller: self)
+        Trace.trace(Trace.Level.DEBUG, config: self.configuration, message: "classify intent: \(intent.name)", delegates: self.delegates, caller: self)
         return intent
     }
     
@@ -212,10 +214,10 @@ import TensorFlowLite
                                        to: encodedTags.count,
                                        by: metadata.model.tags.count)
             .map { Array(encodedTags[$0..<$0+metadata.model.tags.count]).argmax() }
-        Trace.trace(Trace.Level.DEBUG, config: self.configuration, message: "classify argmaxes: \(encodedTagsArgmax)", delegate: self.delegate, caller: self)
+        Trace.trace(Trace.Level.DEBUG, config: self.configuration, message: "classify argmaxes: \(encodedTagsArgmax)", delegates: self.delegates, caller: self)
         // decode the tags according to the model metadata index
         let tagsByInput = encodedTagsArgmax.map { metadata.model.tags[$0.0] }
-        Trace.trace(Trace.Level.DEBUG, config: self.configuration, message: "classify tags: \(tagsByInput)", delegate: self.delegate, caller: self)
+        Trace.trace(Trace.Level.DEBUG, config: self.configuration, message: "classify tags: \(tagsByInput)", delegates: self.delegates, caller: self)
         // hydrate Slot objects according to the tag
         return try parser.parse(tags: tagsByInput, intent: intent, encoder: tokenizer, encodedTokens: encodedInput)
     }

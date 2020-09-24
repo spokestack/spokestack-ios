@@ -8,9 +8,9 @@
 
 import Foundation
 
-@objc public protocol SpokestackDelegate: SpeechEventListener, TextToSpeechDelegate, NLUDelegate, Tracer {
+@objc public protocol SpokestackDelegate: Tracer {
     
-    // MARK: SpeechEventListener
+    // MARK: SpeechPipeline
     
     /// The speech pipeline has been initialized.
     @objc optional func didInit() -> Void
@@ -43,7 +43,7 @@ import Foundation
     /// The pipeline timeout event. The pipeline experienced a timeout in a component.
     @objc optional func didTimeout() -> Void
     
-    // MARK: TextToSpeechDelegate
+    // MARK: TextToSpeech
     
     /// The TTS synthesis request has resulted in a successful response.
     /// - Note: The URL will be invalidated within 60 seconds of generation.
@@ -60,7 +60,7 @@ import Foundation
     /// The TTS synthesis request has finished playback.
     @objc optional func didFinishSpeaking() -> Void
     
-    // MARK: NLUDelegate
+    // MARK: NLU
     
     /// The NLU classifier has produced a result.
     /// - Parameter result: The result of NLU classification.

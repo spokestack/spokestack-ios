@@ -37,7 +37,7 @@ private let apiQueue = DispatchQueue(label: TTSQueueName, qos: .userInitiated, a
     // MARK: Properties
     
     /// Delegate that receives TTS events.
-    weak public var delegate: TextToSpeechDelegate?
+    public var delegates: [SpokestackDelegate] = []
     
     private var configuration: SpeechConfiguration
     private lazy var player: AVPlayer = AVPlayer()
@@ -65,15 +65,15 @@ private let apiQueue = DispatchQueue(label: TTSQueueName, qos: .userInitiated, a
     /// - Parameter delegate: Delegate that receives text to speech events.
     /// - Requires: `SpeechConfiguration.apiId` and `SpeechConfiguration.apiSecret`.
     /// - Parameter configuration: Speech configuration parameters.
-    @objc public init(_ delegate: TextToSpeechDelegate, configuration: SpeechConfiguration) {
-        self.delegate = delegate
+    @objc public init(_ delegates: [SpokestackDelegate], configuration: SpeechConfiguration) {
+        self.delegates = delegates
         self.configuration = configuration
         // create a symmetric key using the configured api secret key
         if let apiSecretEncoded = self.configuration.apiSecret.data(using: .utf8) {
             self.apiKey = SymmetricKey(data: apiSecretEncoded)
         } else {
             self.configuration.delegateDispatchQueue.async {
-                delegate.failure?(ttsError: TextToSpeechErrors.apiKey("Unable to encode apiSecret."))
+                delegates.forEach { $0.failure?(ttsError: TextToSpeechErrors.apiKey("Unable to encode apiSecret.")) }
             }
         }
         super.init()
@@ -97,9 +97,7 @@ private let apiQueue = DispatchQueue(label: TTSQueueName, qos: .userInitiated, a
         func play(result: TextToSpeechResult) {
             DispatchQueue.global(qos: .userInitiated).async {
                 guard let url = result.url else {
-                    self.configuration.delegateDispatchQueue.async {
-                        self.delegate?.failure?(ttsError: TextToSpeechErrors.speak("Synthesis response is invalid."))
-                    }
+                    self.dispatch { $0.failure?(ttsError:  TextToSpeechErrors.speak("Synthesis response is invalid.")) }
                     return
                 }
                 let playerItem = AVPlayerItem(url: url)
@@ -123,9 +121,7 @@ private let apiQueue = DispatchQueue(label: TTSQueueName, qos: .userInitiated, a
     @objc public func synthesize(_ input: TextToSpeechInput) -> Void {
         self.synthesize(input: input, success: successHandler(result:))
     }
-    
-    // MARK: Public methods
-    
+
     /// Synthesize speech using the provided list of inputs. A successful set of synthesises returns a list of synthesis results.
     /// - Parameter inputs: `Array` of `TextToSpeechInput`
     /// - Returns: `AnyPublisher<[TextToSpeechResult], Error>`
@@ -178,60 +174,52 @@ private let apiQueue = DispatchQueue(label: TTSQueueName, qos: .userInitiated, a
 
     // MARK: Private functions
     
+    private func dispatch(_ handler: @escaping (SpokestackDelegate) -> Void) {
+        self.configuration.delegateDispatchQueue.async {
+            self.delegates.forEach(handler)
+        }
+    }
+    
     private func synthesize(input: TextToSpeechInput, success: ((TextToSpeechResult) -> Void)?) {
         let session = URLSession(configuration: URLSessionConfiguration.default)
         var request: URLRequest
         do {
             request = try createSynthesizeRequest(input)
         } catch TextToSpeechErrors.apiKey(let message) {
-            self.configuration.delegateDispatchQueue.async {
-                self.delegate?.failure?(ttsError: TextToSpeechErrors.apiKey(message))
-            }
+            self.dispatch { $0.failure?(ttsError: TextToSpeechErrors.apiKey(message)) }
             return
         } catch let error {
-            self.configuration.delegateDispatchQueue.async {
-                self.delegate?.failure?(ttsError: error)
-            }
+            self.dispatch { $0.failure?(ttsError: error) }
             return
         }
         
-        Trace.trace(Trace.Level.DEBUG, config: self.configuration, message: "request \(request.debugDescription) \(String(describing: request.allHTTPHeaderFields)) \(String(data: request.httpBody!, encoding: String.Encoding.utf8) ?? "no body")", delegate: self.delegate, caller: self)
+        Trace.trace(Trace.Level.DEBUG, config: self.configuration, message: "request \(request.debugDescription) \(String(describing: request.allHTTPHeaderFields)) \(String(data: request.httpBody!, encoding: String.Encoding.utf8) ?? "no body")", delegates: self.delegates, caller: self)
         
         let task: URLSessionDataTask = session.dataTask(with: request) { (data, response, error) -> Void in
-            Trace.trace(Trace.Level.DEBUG, config: self.configuration, message: "task callback \(String(describing: response)) \(String(describing: String(data: data ?? Data(), encoding: String.Encoding.utf8)))) \(String(describing: error))", delegate: self.delegate, caller: self)
+            Trace.trace(Trace.Level.DEBUG, config: self.configuration, message: "task callback \(String(describing: response)) \(String(describing: String(data: data ?? Data(), encoding: String.Encoding.utf8)))) \(String(describing: error))", delegates: self.delegates, caller: self)
             
             DispatchQueue.global(qos: .userInitiated).async {
                 if let error = error {
-                    self.configuration.delegateDispatchQueue.async {
-                        self.delegate?.failure?(ttsError: error)
-                    }
+                    self.dispatch { $0.failure?(ttsError: error) }
                 } else {
                     // unwrap the matryoshka doll that is the response body, responding with a failure if any layer is awry
                     do {
                         guard let httpResponse = response as? HTTPURLResponse else {
-                            self.configuration.delegateDispatchQueue.async {
-                            self.delegate?.failure?(ttsError: TextToSpeechErrors.deserialization("Response is not a valid HTTPURLResponse"))
-                            }
+                            self.dispatch { $0.failure?(ttsError:   TextToSpeechErrors.deserialization("Response is not a valid HTTPURLResponse")) }
                             return
                         }
                         if httpResponse.statusCode != 200 {
-                            self.configuration.delegateDispatchQueue.async {
-                            self.delegate?.failure?(ttsError: TextToSpeechErrors.httpStatusCode("The HTTP status was \(httpResponse.statusCode); cannot process response."))
-                            }
+                            self.dispatch { $0.failure?(ttsError:  TextToSpeechErrors.httpStatusCode("The HTTP status was \(httpResponse.statusCode); cannot process response.")) }
                             return
                         }
                         guard let d = data else {
-                            self.configuration.delegateDispatchQueue.async {
-                                self.delegate?.failure?(ttsError: TextToSpeechErrors.deserialization("response body has no data"))
-                            }
+                            self.dispatch { $0.failure?(ttsError:  TextToSpeechErrors.deserialization("response body has no data")) }
                             return
                         }
                         let result = try self.createSynthesizeResponse(data: d, response: httpResponse, inputFormat: input.inputFormat)
                         success?(result)
                     } catch let error {
-                        self.configuration.delegateDispatchQueue.async {
-                            self.delegate?.failure?(ttsError: error)
-                        }
+                        self.dispatch { $0.failure?(ttsError: error) }
                     }
                 }
             }
@@ -240,9 +228,7 @@ private let apiQueue = DispatchQueue(label: TTSQueueName, qos: .userInitiated, a
     }
     
     private func successHandler(result: TextToSpeechResult) {
-        self.configuration.delegateDispatchQueue.async {
-            self.delegate?.success?(result: result)
-        }
+        self.dispatch { $0.success?(result: result) }
     }
     
     // MARK: Internal functions
@@ -334,9 +320,7 @@ private let apiQueue = DispatchQueue(label: TTSQueueName, qos: .userInitiated, a
     }
     
     private func finishPlayback() {
-        self.configuration.delegateDispatchQueue.async {
-            self.delegate?.didFinishSpeaking?()
-        }
+        self.dispatch { $0.didFinishSpeaking?() }
         NotificationCenter.default.removeObserver(self, name: .AVPlayerItemDidPlayToEndTime, object: self.player.currentItem)
     }
     
@@ -348,9 +332,7 @@ private let apiQueue = DispatchQueue(label: TTSQueueName, qos: .userInitiated, a
             switch keyPath {
             case #keyPath(AVPlayerItem.isPlaybackBufferEmpty):
                 self.player.play()
-                self.configuration.delegateDispatchQueue.async {
-                    self.delegate?.didBeginSpeaking?()
-                }
+                self.dispatch { $0.didBeginSpeaking?() }
                 break
             default:
                 break

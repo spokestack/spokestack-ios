@@ -20,7 +20,7 @@ import Foundation
     /// Speech detected indicator
     @objc public var isSpeech: Bool = false
     /// An ordered set of `SpeechEventListener`s that are sent `SpeechPipeline` events.
-    private var listeners: [SpeechEventListener] = []
+    private var listeners: [SpokestackDelegate] = []
     /// Current error in the pipeline
     internal var error: Error?
     /// Current trace in the pipeline
@@ -35,7 +35,7 @@ import Foundation
     /// Adds the specified listener instance to the ordered set of listeners. The specified listener instance may only be added once; duplicates will be ignored. The specified listener will recieve speech pipeline events.
     ///
     /// - Parameter listener: The listener to add.
-    @objc internal func addListener(_ listener: SpeechEventListener) {
+    @objc internal func addListener(_ listener: SpokestackDelegate) {
         if !self.listeners.contains(where: { l in
             return listener === l ? true : false
         }) {
@@ -45,7 +45,7 @@ import Foundation
     
     /// Removes the specified listener by reference. The specified listener will no longer recieve speech pipeline events.
     /// - Parameter listener: The listener to remove.
-    @objc internal func removeListener(_ listener: SpeechEventListener) {
+    @objc internal func removeListener(_ listener: SpokestackDelegate) {
         for (i, l) in self.listeners.enumerated() {
             _ = listener === l ? self.listeners.remove(at: i) : nil
         }

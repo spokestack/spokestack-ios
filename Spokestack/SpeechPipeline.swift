@@ -46,7 +46,7 @@ import Dispatch
     /// - Parameter configuration: Configuration parameters for the speech pipeline.
     /// - Parameter listeners: Delegate implementations of `SpeechEventListener` that receive speech pipeline events.
     /// - Parameter stages: `SpeechProcessor` instances process audio frames from `AudioController`.
-    @objc public init(configuration: SpeechConfiguration, listeners: [SpeechEventListener], stages: [SpeechProcessor], context: SpeechContext) {
+    @objc public init(configuration: SpeechConfiguration, listeners: [SpokestackDelegate], stages: [SpeechProcessor], context: SpeechContext) {
         self.configuration = configuration
         self.context = context
         self.stages = stages
@@ -63,7 +63,7 @@ import Dispatch
     /// - Parameter configuration: Configuration parameters for the speech pipeline.
     /// - Parameter listeners: Delegate implementations of `SpeechEventListener` that receive speech pipeline events.
     /// - Parameter profile: The builder profile to use when configuring the pipeline.
-    internal init(configuration: SpeechConfiguration, listeners: [SpeechEventListener], profile: SpeechPipelineProfiles) {
+    internal init(configuration: SpeechConfiguration, listeners: [SpokestackDelegate], profile: SpeechPipelineProfiles) {
         self.configuration = configuration
         self.context = SpeechContext(configuration)
         super.init()
@@ -174,7 +174,7 @@ import Dispatch
  */
 @objc public class SpeechPipelineBuilder: NSObject {
     private let config = SpeechConfiguration()
-    private var listeners: [SpeechEventListener] = []
+    private var listeners: [SpokestackDelegate] = []
     private var profile: SpeechPipelineProfiles?
     
     /// Applies configuration from `SpeechPipelineProfiles` to the current builder, returning the modified builder.
@@ -217,7 +217,7 @@ import Dispatch
     /// Delegate events will be sent to the specified listener.
     /// - Parameter listener: A `SpeechEventListener` instance.
     /// - Returns: An updated instance of `SpeechPipelineBuilder` for instace function  call chaining.
-    @objc public func addListener(_ listener: SpeechEventListener) -> SpeechPipelineBuilder {
+    @objc public func addListener(_ listener: SpokestackDelegate) -> SpeechPipelineBuilder {
         self.listeners.append(listener)
         return self
     }
