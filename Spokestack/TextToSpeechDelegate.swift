@@ -9,7 +9,7 @@
 import Foundation
 
 /// Protocol for receiving the response of a TTS request
-@objc public protocol TextToSpeechDelegate: AnyObject {
+@objc public protocol TextToSpeechDelegate: AnyObject, Tracer {
     
     /// The TTS synthesis request has resulted in a successful response.
     /// - Note: The URL will be invalidated within 60 seconds of generation.
@@ -25,8 +25,4 @@ import Foundation
     
     /// The TTS synthesis request has finished playback.
     @objc optional func didFinishSpeaking() -> Void
-    
-    /// A trace event from the TTS system.
-    /// - Parameter trace: The debugging trace message.
-    @objc optional func didTrace(_ trace: String) -> Void
 }

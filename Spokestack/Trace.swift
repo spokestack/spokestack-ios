@@ -40,21 +40,7 @@ public struct Trace {
     /// - Parameter message: The debugging trace message.
     /// - Parameter delegate: The delegate that should receive the debugging trace message.
     /// - Parameter caller: The sender of the debugging trace message.
-    public static func trace(_ level: Trace.Level, config: SpeechConfiguration, message: String, delegate: TextToSpeechDelegate?, caller: Any) {
-        if level.rawValue >= config.tracing.rawValue {
-            config.delegateDispatchQueue.async {
-                delegate?.didTrace?("\(level.rawValue) \(String(describing: type(of: caller))) \(message)")
-            }
-        }
-    }
-    
-    /// Traces a debugging message.
-    /// - Parameter level: The debugging trace level for this message.
-    /// - Parameter configLevel: The speech pipeline's configured debugging trace level.
-    /// - Parameter message: The debugging trace message.
-    /// - Parameter delegate: The delegate that should receive the debugging trace message.
-    /// - Parameter caller: The sender of the debugging trace message.
-    public static func trace(_ level: Trace.Level, config: SpeechConfiguration, message: String, delegate: NLUDelegate?, caller: Any) {
+    public static func trace(_ level: Trace.Level, config: SpeechConfiguration, message: String, delegate: Tracer?, caller: Any)  {
         if level.rawValue >= config.tracing.rawValue {
             config.delegateDispatchQueue.async {
                 delegate?.didTrace?("\(level.rawValue) \(String(describing: type(of: caller))) \(message)")

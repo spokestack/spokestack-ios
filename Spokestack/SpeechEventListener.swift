@@ -11,7 +11,7 @@ import Foundation
 /// Functions required for components to receive speech pipeline control events.
 ///
 /// Interpretation of how to respond to these control events is the responsibility of the component.
-@objc public protocol SpeechEventListener: AnyObject {
+@objc public protocol SpeechEventListener: AnyObject, Tracer {
     
     /// The speech pipeline has been initialized.
     @objc optional func didInit() -> Void
@@ -40,10 +40,6 @@ import Foundation
     /// The error event. An error occured in the speech pipeline.
     /// - Parameter error: A human-readable error message.
     @objc optional func failure(speechError: Error) -> Void
-    
-    /// The debug trace event.
-    /// - Parameter trace: The debugging trace message.
-    @objc optional func didTrace(_ trace: String) -> Void
     
     /// The pipeline timeout event. The pipeline experienced a timeout in a component.
     @objc optional func didTimeout() -> Void
