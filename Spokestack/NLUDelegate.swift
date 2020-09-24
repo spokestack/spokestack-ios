@@ -13,13 +13,13 @@ import Foundation
     
     /// The NLU classifier has produced a result.
     /// - Parameter result: The result of NLU classification.
-    func classification(result: NLUResult) -> Void
+    @objc optional func classification(result: NLUResult) -> Void
     
     /// A trace event from the NLU system.
     /// - Parameter trace: The debugging trace message.
-    func didTrace(_ trace: String) -> Void
+    @objc optional func didTrace(_ trace: String) -> Void
     
     /// The NLU classification request has resulted in an error response.
     /// - Parameter error: The error representing the NLU response.
-    func failure(nluError: Error) -> Void
+    @objc optional func failure(nluError: Error) -> Void
 }

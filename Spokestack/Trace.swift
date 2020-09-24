@@ -43,7 +43,7 @@ public struct Trace {
     public static func trace(_ level: Trace.Level, config: SpeechConfiguration, message: String, delegate: TextToSpeechDelegate?, caller: Any) {
         if level.rawValue >= config.tracing.rawValue {
             config.delegateDispatchQueue.async {
-                delegate?.didTrace("\(level.rawValue) \(String(describing: type(of: caller))) \(message)")
+                delegate?.didTrace?("\(level.rawValue) \(String(describing: type(of: caller))) \(message)")
             }
         }
     }
@@ -57,7 +57,7 @@ public struct Trace {
     public static func trace(_ level: Trace.Level, config: SpeechConfiguration, message: String, delegate: NLUDelegate?, caller: Any) {
         if level.rawValue >= config.tracing.rawValue {
             config.delegateDispatchQueue.async {
-                delegate?.didTrace("\(level.rawValue) \(String(describing: type(of: caller))) \(message)")
+                delegate?.didTrace?("\(level.rawValue) \(String(describing: type(of: caller))) \(message)")
             }
         }
     }

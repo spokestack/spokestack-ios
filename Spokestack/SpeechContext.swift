@@ -61,27 +61,27 @@ import Foundation
             self.configuration.delegateDispatchQueue.async {
                 switch event {
                 case .initialize:
-                    listener.didInit()
+                    listener.didInit?()
                 case .start:
-                    listener.didStart()
+                    listener.didStart?()
                 case .stop:
-                    listener.didStop()
+                    listener.didStop?()
                 case .activate:
-                    listener.didActivate()
+                    listener.didActivate?()
                 case .deactivate:
-                    listener.didDeactivate()
+                    listener.didDeactivate?()
                 case .recognize:
-                    listener.didRecognize(self)
+                    listener.didRecognize?(self)
                 case .partiallyRecognize:
                     listener.didRecognizePartial?(self)
                 case .error:
                     let e = (self.error != nil) ? self.error! : SpeechPipelineError.errorNotSet("A pipeline component attempted to send an error to SpeechContext's listeners without first setting the SpeechContext.error property.")
-                    listener.failure(speechError: e)
+                    listener.failure?(speechError: e)
                 case .trace:
                     let t = (self.trace != nil) ? self.trace! : "a trace event was sent, but no trace message was set"
-                        listener.didTrace(t)
+                        listener.didTrace?(t)
                 case .timeout:
-                    listener.didTimeout()
+                    listener.didTimeout?()
                 }
             }
         }

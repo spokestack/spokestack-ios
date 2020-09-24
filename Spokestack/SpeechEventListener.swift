@@ -14,24 +14,24 @@ import Foundation
 @objc public protocol SpeechEventListener: AnyObject {
     
     /// The speech pipeline has been initialized.
-    @objc func didInit() -> Void
+    @objc optional func didInit() -> Void
     
     /// The speech pipeline has been started.
-    @objc func didStart() -> Void
+    @objc optional func didStart() -> Void
     
     /// The speech pipeline has been stopped.
-    @objc func didStop() -> Void
+    @objc optional func didStop() -> Void
     
     /// The pipeline activate event. Occurs upon activation of speech recognition.  The pipeline remains active until the user stops talking or the activation timeout is reached.
     /// - SeeAlso:  wakeActiveMin
-    @objc func didActivate() -> Void
+    @objc optional func didActivate() -> Void
     
     /// The pipeline deactivate event. Occurs upon deactivation of speech recognition.  The pipeline remains inactive until activated again by either explicit activation or wakeword activation.
-    @objc func didDeactivate() -> Void
+    @objc optional func didDeactivate() -> Void
     
     /// The pipeline recognized and transcribed speech.
     /// - Parameter result: The speech pipeline context, which contains the result.
-    @objc func didRecognize(_ result: SpeechContext) -> Void
+    @objc optional func didRecognize(_ result: SpeechContext) -> Void
     
     /// The pipeline recognized and transcribed a portion of an incomplete utterance.
     /// - Parameter result: The speech pipeline context, which contains the partial result.
@@ -39,12 +39,12 @@ import Foundation
     
     /// The error event. An error occured in the speech pipeline.
     /// - Parameter error: A human-readable error message.
-    @objc func failure(speechError: Error) -> Void
+    @objc optional func failure(speechError: Error) -> Void
     
     /// The debug trace event.
     /// - Parameter trace: The debugging trace message.
-    @objc func didTrace(_ trace: String) -> Void
+    @objc optional func didTrace(_ trace: String) -> Void
     
     /// The pipeline timeout event. The pipeline experienced a timeout in a component.
-    @objc func didTimeout() -> Void
+    @objc optional func didTimeout() -> Void
 }

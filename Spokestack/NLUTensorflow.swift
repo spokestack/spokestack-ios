@@ -76,7 +76,7 @@ import TensorFlowLite
             try self.configure()
         } catch let error {
             self.configuration.delegateDispatchQueue.async {
-                delegate.failure(nluError: error)
+                delegate.failure?(nluError: error)
             }
         }
     }
@@ -118,11 +118,11 @@ import TensorFlowLite
             switch prediction {
             case .success(let classification):
                 self.configuration.delegateDispatchQueue.async {
-                    self.delegate?.classification(result: classification)
+                    self.delegate?.classification?(result: classification)
                 }
             case .failure(let error):
                 self.configuration.delegateDispatchQueue.async {
-                    self.delegate?.failure(nluError: error)
+                    self.delegate?.failure?(nluError: error)
                 }
             }
         }

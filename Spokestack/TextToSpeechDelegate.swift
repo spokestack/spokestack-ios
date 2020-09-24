@@ -14,19 +14,19 @@ import Foundation
     /// The TTS synthesis request has resulted in a successful response.
     /// - Note: The URL will be invalidated within 60 seconds of generation.
     /// - Parameter url: The url pointing to the TTS media container
-    func success(result: TextToSpeechResult) -> Void
+    @objc optional func success(result: TextToSpeechResult) -> Void
     
     /// The TTS synthesis request has resulted in an error response.
     /// - Parameter error: The error representing the TTS response.
-    func failure(ttsError: Error) -> Void
+    @objc optional func failure(ttsError: Error) -> Void
     
     /// The TTS synthesis request has begun playback over the default audio system.
-    func didBeginSpeaking() -> Void
+    @objc optional func didBeginSpeaking() -> Void
     
     /// The TTS synthesis request has finished playback.
-    func didFinishSpeaking() -> Void
+    @objc optional func didFinishSpeaking() -> Void
     
     /// A trace event from the TTS system.
     /// - Parameter trace: The debugging trace message.
-    func didTrace(_ trace: String) -> Void
+    @objc optional func didTrace(_ trace: String) -> Void
 }
