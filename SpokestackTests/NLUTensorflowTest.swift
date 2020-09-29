@@ -31,7 +31,7 @@ class NLUTensorflowTest: XCTestCase {
         let delegate = TestNLUDelegate()
         let didFailExpectation = expectation(description: "unsuccessful initialization calls TestNLUDelegate.failure")
         delegate.asyncExpectation = didFailExpectation
-        let _ = try! NLUTensorflow(delegate, configuration: config)
+        let _ = try! NLUTensorflow([delegate], configuration: config)
         wait(for: [didFailExpectation], timeout: 5)
         XCTAssert(delegate.didFail)
         delegate.reset()
@@ -49,7 +49,7 @@ class NLUTensorflowTest: XCTestCase {
         config.nluModelMetadataPath = SharedTestMocks.createModelMetadataPath()
         config.nluModelPath = NLUModel.path
         let delegate = TestNLUDelegate()
-        let nlu = try! NLUTensorflow(delegate, configuration: config)
+        let nlu = try! NLUTensorflow([delegate], configuration: config)
         nlu.configuration.nluMaxTokenLength = -1
         let didFailExpectation = expectation(description: "unsuccessful classify calls TestNLUDelegate.failure")
         delegate.asyncExpectation = didFailExpectation
@@ -84,7 +84,7 @@ fileprivate enum NLUModel {
     }()
 }
 
-class TestNLUDelegate: NLUDelegate {
+class TestNLUDelegate: SpokestackDelegate {
     // Spy pattern for the system under test.
     // asyncExpectation lets the caller's test know when the delegate has been called.
     var didClassify: Bool = false
@@ -106,7 +106,7 @@ class TestNLUDelegate: NLUDelegate {
         print(trace)
     }
     
-    func failure(nluError: Error) {
+    func failure(error: Error) {
         asyncExpectation?.fulfill()
         didFail = true
     }

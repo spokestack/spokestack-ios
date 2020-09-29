@@ -76,13 +76,13 @@ import CryptoKit
         self.task.resume()
         self.task.send(URLSessionWebSocketTask.Message.string(self.initializeStreamMessage)) { error in
             if let error = error {
-                self.context.dispatch { $0.failure?(speechError: error) }
+                self.context.dispatch { $0.failure?(error: error) }
             }
         }
         self.task.receive() { result in
             self.handle(result, handleResult: { r in
                 if r.status != "ok" {
-                    self.context.dispatch { $0.failure?(speechError: SpeechPipelineError.illegalState("Spokestack ASR could not start because its status was \(r.status).")) }
+                    self.context.dispatch { $0.failure?(error: SpeechPipelineError.illegalState("Spokestack ASR could not start because its status was \(r.status).")) }
                 }
             })
         }
@@ -94,7 +94,7 @@ import CryptoKit
 
         self.task.send(URLSessionWebSocketTask.Message.data(frame)) { error in
             if let error = error {
-                self.context.dispatch { $0.failure?(speechError: error) }
+                self.context.dispatch { $0.failure?(error: error) }
             }
         }
         self.task.receive(completionHandler: self.receive)
@@ -120,7 +120,7 @@ import CryptoKit
     private func handle(_ result: Result<URLSessionWebSocketTask.Message, Error>, handleResult: (ASRResult) -> Void) {
         switch result {
         case .failure(let error):
-            self.context.dispatch { $0.failure?(speechError: error) }
+            self.context.dispatch { $0.failure?(error: error) }
         case .success(let message):
             switch message {
             case .string(let json):
@@ -135,10 +135,10 @@ import CryptoKit
                         handleResult(r)
                     }
                 } catch let error {
-                    self.context.dispatch { $0.failure?(speechError: error) }
+                    self.context.dispatch { $0.failure?(error: error) }
                 }
             case _:
-                self.context.dispatch { $0.failure?(speechError:  SpeechPipelineError.illegalState("unknown response from Spokestack ASR: \(message)")) }
+                self.context.dispatch { $0.failure?(error:  SpeechPipelineError.illegalState("unknown response from Spokestack ASR: \(message)")) }
             }
         }
     }

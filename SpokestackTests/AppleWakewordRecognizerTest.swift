@@ -61,7 +61,7 @@ class AppleWakewordRecognizerTest: XCTestCase {
     }
 }
 
-class AppleWakewordRecognizerTestDelegate: SpeechEventListener {
+class AppleWakewordRecognizerTestDelegate: SpokestackDelegate {
     
     // Spy pattern for the system under test.
     // asyncExpectation lets the caller's test know when the delegate has been called.

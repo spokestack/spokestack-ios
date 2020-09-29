@@ -21,7 +21,7 @@ class SpeechPipelineTest: XCTestCase {
         let context = SpeechContext(config)
 
         // successful init calls didInit
-        _ = SpeechPipeline(configuration: config, listeners: [delegate], stages: [], context: context)
+        let p = SpeechPipeline(configuration: config, listeners: [delegate], stages: [], context: context)
         wait(for: [didInitExpectation], timeout: 1)
         XCTAssert(delegate.didDidInit)
     }
@@ -165,14 +165,15 @@ class SpeechPipelineBuilderTest: XCTestCase {
 
         // tflite
         delegate.asyncExpectation = didInit1Expectation
-        let _ = try! SpeechPipelineBuilder()
+        let p1 = try! SpeechPipelineBuilder()
             .useProfile(.tfLiteWakewordAppleSpeech)
             .addListener(delegate)
+            .setProperty("tracing", -1)
             .build()
+        XCTAssertEqual(p1.configuration.tracing, .NONE)
         let e1 = [WebRTCVAD.self, TFLiteWakewordRecognizer.self, AppleSpeechRecognizer.self]
         wait(for: [didInit1Expectation], timeout: 1)
         XCTAssert(compare(expected: e1, actual: AudioController.sharedInstance.stages))
-
 
         // appleWW
         delegate.reset()
@@ -203,6 +204,20 @@ class SpeechPipelineBuilderTest: XCTestCase {
             .build()
         XCTAssert(queue === p4.configuration.delegateDispatchQueue)
         XCTAssert(compare(expected: [AppleSpeechRecognizer.self], actual: AudioController.sharedInstance.stages))
+        
+        // spokestack + tflite
+        delegate.reset()
+        let _ = try! SpeechPipelineBuilder()
+            .useProfile(.tfLiteWakewordSpokestackSpeech)
+            .build()
+        XCTAssert(compare(expected: [WebRTCVAD.self, TFLiteWakewordRecognizer.self, SpokestackSpeechRecognizer.self], actual: AudioController.sharedInstance.stages))
+        
+        // spokestack + vad
+        delegate.reset()
+        let _ = try! SpeechPipelineBuilder()
+            .useProfile(.vadTriggerSpokestackSpeech)
+            .build()
+        XCTAssert(compare(expected: [WebRTCVAD.self, VADTrigger.self, SpokestackSpeechRecognizer.self], actual: AudioController.sharedInstance.stages))
     }
     
     private func compare(expected: [NSObject.Type], actual: [SpeechProcessor]) -> Bool {
@@ -214,7 +229,7 @@ class SpeechPipelineBuilderTest: XCTestCase {
     }
 }
 
-class SpeechPipelineTestDelegate: SpeechEventListener {
+class SpeechPipelineTestDelegate: SpokestackDelegate {
     /// Spy pattern for the system under test.
     /// asyncExpectation lets the caller's test know when the delegate has been called.
     var didDidInit: Bool = false
@@ -297,7 +312,7 @@ class TestProcessor: SpeechProcessor {
     func process(_ frame: Data) { }
     
     var configuration: SpeechConfiguration
-    var delegate: SpeechEventListener?
+    var delegates: [SpokestackDelegate] = []
     var context: SpeechContext
     var isSpeechProcessor: Bool = false
     
@@ -313,6 +328,6 @@ class TestProcessor: SpeechProcessor {
     
     func stopStreaming() {
         context.isActive = isSpeechProcessor ? false: true
-        context.dispatch(.deactivate)
+        context.dispatch { $0.didDeactivate?() }
     }
 }

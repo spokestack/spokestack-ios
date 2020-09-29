@@ -36,7 +36,7 @@ class SpeechContextTest: XCTestCase {
         didNotStartExpectation.isInverted = true
         l1.asyncExpectation = didNotStartExpectation
         // no trace property set means no trace event
-        c.dispatch(.start)
+        c.dispatch { $0.didStart?() }
         wait(for: [didNotStartExpectation], timeout: 1)
     }
     
@@ -49,7 +49,7 @@ class SpeechContextTest: XCTestCase {
         // init
         let didInitExpectation = expectation(description: "didInitExpectation fulfills when testdispatch calls SpeechContextTestDelegate.didInit.")
         l.asyncExpectation = didInitExpectation
-        c.dispatch(.initialize)
+        c.dispatch { $0.didInit?() }
         wait(for: [didInitExpectation], timeout: 1)
         XCTAssert(l.didDidInit)
         
@@ -57,7 +57,7 @@ class SpeechContextTest: XCTestCase {
         l.reset()
         let didStartExpectation = expectation(description: "didStartExpectation fulfills when testdispatch calls SpeechContextTestDelegate.didStart.")
         l.asyncExpectation = didStartExpectation
-        c.dispatch(.start)
+        c.dispatch { $0.didStart?() }
         wait(for: [didStartExpectation], timeout: 1)
         XCTAssert(l.didDidStart)
 
@@ -65,7 +65,7 @@ class SpeechContextTest: XCTestCase {
         l.reset()
         let didStopExpectation = expectation(description: "didStopExpectation fulfills when testdispatch calls SpeechContextTestDelegate.didStop.")
         l.asyncExpectation = didStopExpectation
-        c.dispatch(.stop)
+        c.dispatch { $0.didStop?() }
         wait(for: [didStopExpectation], timeout: 1)
         XCTAssert(l.didDidStop)
 
@@ -73,7 +73,7 @@ class SpeechContextTest: XCTestCase {
         l.reset()
         let didActivateExpectation = expectation(description: "didActivateExpectation fulfills when testNotifyListener calls SpeechContextTestDelegate.activate.")
         l.asyncExpectation = didActivateExpectation
-        c.dispatch(.activate)
+        c.dispatch { $0.didActivate?() }
         wait(for: [didActivateExpectation], timeout: 1)
         XCTAssert(l.activated)
 
@@ -82,7 +82,7 @@ class SpeechContextTest: XCTestCase {
         let didDeactivateExpectation = expectation(description: "didDeactivateExpectation fulfills when testNotifyListener calls SpeechContextTestDelegate.deactivate.")
         c.addListener(l)
         l.asyncExpectation = didDeactivateExpectation
-        c.dispatch(.deactivate)
+        c.dispatch { $0.didDeactivate?() }
         wait(for: [didDeactivateExpectation], timeout: 1)
         XCTAssert(l.deactivated)
         
@@ -90,47 +90,32 @@ class SpeechContextTest: XCTestCase {
         l.reset()
         let didRecognizeExpectation = expectation(description: "didRecognizeExpectation fulfills when testdispatch calls SpeechContextTestDelegate.recognize.")
         l.asyncExpectation = didRecognizeExpectation
-        c.dispatch(.recognize)
+        c.dispatch { $0.didRecognize?(c) }
         wait(for: [didRecognizeExpectation], timeout: 1)
         
         // timeout
         l.reset()
         let didTimeoutExpectation = expectation(description: "didTimeoutExpectation fulfills when testdispatch calls SpeechContextTestDelegate.timeout.")
         l.asyncExpectation = didTimeoutExpectation
-        c.dispatch(.timeout)
+        c.dispatch { $0.didTimeout?() }
         wait(for: [didTimeoutExpectation], timeout: 1)
 
-        // error
-        l.reset()
-        // no error set still sends the event
-        let didErrorErrorExpectation = expectation(description: "didErrorErrorExpectation fulfills when testdispatch calls SpeechContextTestDelegate.error.")
-        l.asyncExpectation = didErrorErrorExpectation
-        c.dispatch(.error)
-        wait(for: [didErrorErrorExpectation], timeout: 1)
         // error set sends event
+        l.reset()
         let didErrorExpectation = expectation(description: "didErrorExpectation fulfills when testdispatch calls SpeechContextTestDelegate.error.")
         l.asyncExpectation = didErrorExpectation
-        c.error = SpeechPipelineError.illegalState("Life. Don't talk to me about life.")
-        c.dispatch(.error)
+        c.dispatch { $0.failure?(error: SpeechPipelineError.illegalState("Life. Don't talk to me about life.")) }
         wait(for: [didErrorExpectation], timeout: 1)
         
         // trace
-        l.reset()
-        let traceNotSetExpectation = expectation(description: "traceNotSetExpectation fulfills when testdispatch calls SpeechContextTestDelegate.trace.")
-        l.asyncExpectation = traceNotSetExpectation
-        // no trace property set gets a trace event
-        c.dispatch(.trace)
-        wait(for: [traceNotSetExpectation], timeout: 1)
-        // trace property set means trace event
         let didTraceExpectation = expectation(description: "didTraceExpectation  fulfills when testdispatch calls SpeechContextTestDelegate.trace.")
         l.asyncExpectation = didTraceExpectation
-        c.trace = "hi"
-        c.dispatch(.trace)
+        c.dispatch { $0.didTrace?("hi") }
         wait(for: [didTraceExpectation], timeout: 1)
     }
 }
 
-class SpeechContextTestDelegate: SpeechEventListener {
+class SpeechContextTestDelegate: SpokestackDelegate {
     /// Spy pattern for the system under test.
     /// asyncExpectation lets the caller's test know when the delegate has been called.
     var didDidInit: Bool = false
@@ -164,7 +149,7 @@ class SpeechContextTestDelegate: SpeechEventListener {
         self.asyncExpectation = nil
     }
     
-    func failure(speechError: Error) {
+    func failure(error: Error) {
         guard let _ = asyncExpectation else {
             XCTFail("SpeechPipelineTestDelegate was not setup correctly. Missing XCTExpectation reference")
             return

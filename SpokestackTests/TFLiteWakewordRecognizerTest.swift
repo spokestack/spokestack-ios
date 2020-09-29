@@ -162,7 +162,7 @@ fileprivate enum MockWakewordModels {
     }()
 }
 
-class TFLiteWakewordRecognizerTestDelegate: SpeechEventListener {
+class TFLiteWakewordRecognizerTestDelegate: SpokestackDelegate {
     // Spy pattern for the system under test.
     // asyncExpectation lets the caller's test know when the delegate has been called.
     var didError: Bool = false

@@ -21,10 +21,6 @@ import Foundation
     @objc public var isSpeech: Bool = false
     /// An ordered set of `SpeechEventListener`s that are sent `SpeechPipeline` events.
     private var listeners: [SpokestackDelegate] = []
-    /// Current error in the pipeline
-    internal var error: Error?
-    /// Current trace in the pipeline
-    internal var trace: String?
     
     /// Initializes a speech context instance using the specified speech pipeline configuration.
     /// - Parameter config: The speech pipeline configuration used by the speech context instance.

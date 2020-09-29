@@ -101,7 +101,7 @@ class NLUViewController: UIViewController {
         }
         self.configuration.nluModelMetadataPath = metadataPath
 
-        self.nlu = try! NLUTensorflow(self, configuration: configuration)
+        self.nlu = try! NLUTensorflow([self], configuration: configuration)
     }
     
     @objc func dismissViewController(_ sender: Any?) -> Void {

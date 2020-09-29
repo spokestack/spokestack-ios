@@ -90,7 +90,7 @@ import Speech
             // Automatically end recognition task if it goes over the activiation max
             DispatchQueue.global(qos: .userInitiated).asyncAfter(deadline: .now() + .milliseconds(self.configuration.wakeActiveMax), execute: self.wakeActiveMaxWorker!)
         } catch let error {
-            self.context.dispatch { $0.failure?(speechError: error) }
+            self.context.dispatch { $0.failure?(error: error) }
         }
     }
     
@@ -142,11 +142,11 @@ import Speech
                             case 300..<603: // Apple retry error: https://developer.nuance.com/public/Help/DragonMobileSDKReference_iOS/Error-codes.html
                                 break
                             default:
-                                strongSelf.context.dispatch { $0.failure?(speechError: e) }
+                                strongSelf.context.dispatch { $0.failure?(error: e) }
                             }
                         }
                     } else {
-                        strongSelf.context.dispatch { $0.failure?(speechError: e) }
+                        strongSelf.context.dispatch { $0.failure?(error: e) }
                     }
                 }
                 if let r = result {

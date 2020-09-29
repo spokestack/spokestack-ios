@@ -119,9 +119,9 @@ class AudioController {
         do {
             try self.start()
         } catch AudioError.audioSessionSetup(let message) {
-            self.context?.dispatch { $0.failure?(speechError: AudioError.audioController(message)) }
+            self.context?.dispatch { $0.failure?(error: AudioError.audioController(message)) }
         } catch {
-            self.context?.dispatch { $0.failure?(speechError: AudioError.audioController("An unknown error occured starting the stream")) }
+            self.context?.dispatch { $0.failure?(error: AudioError.audioController("An unknown error occured starting the stream")) }
         }
     }
     
@@ -131,9 +131,9 @@ class AudioController {
         do {
             try self.stop()
         } catch AudioError.audioSessionSetup(let message) {
-            self.context?.dispatch { $0.failure?(speechError: AudioError.audioController(message)) }
+            self.context?.dispatch { $0.failure?(error: AudioError.audioController(message)) }
         } catch {
-            self.context?.dispatch { $0.failure?(speechError: AudioError.audioController("An unknown error occured ending the stream")) }
+            self.context?.dispatch { $0.failure?(error: AudioError.audioController("An unknown error occured ending the stream")) }
         }
     }
     
@@ -174,7 +174,7 @@ class AudioController {
         case AVAudioSession.Category.playAndRecord:
             break
         default:
-            self.context?.dispatch { $0.failure?(speechError: AudioError.audioSessionSetup("Incompatible AudioSession category is set.")) }
+            self.context?.dispatch { $0.failure?(error: AudioError.audioSessionSetup("Incompatible AudioSession category is set.")) }
         }
     }
     

@@ -73,7 +73,7 @@ private let apiQueue = DispatchQueue(label: TTSQueueName, qos: .userInitiated, a
             self.apiKey = SymmetricKey(data: apiSecretEncoded)
         } else {
             self.configuration.delegateDispatchQueue.async {
-                delegates.forEach { $0.failure?(ttsError: TextToSpeechErrors.apiKey("Unable to encode apiSecret.")) }
+                delegates.forEach { $0.failure?(error: TextToSpeechErrors.apiKey("Unable to encode apiSecret.")) }
             }
         }
         super.init()
@@ -97,7 +97,7 @@ private let apiQueue = DispatchQueue(label: TTSQueueName, qos: .userInitiated, a
         func play(result: TextToSpeechResult) {
             DispatchQueue.global(qos: .userInitiated).async {
                 guard let url = result.url else {
-                    self.dispatch { $0.failure?(ttsError:  TextToSpeechErrors.speak("Synthesis response is invalid.")) }
+                    self.dispatch { $0.failure?(error:  TextToSpeechErrors.speak("Synthesis response is invalid.")) }
                     return
                 }
                 let playerItem = AVPlayerItem(url: url)
@@ -186,40 +186,40 @@ private let apiQueue = DispatchQueue(label: TTSQueueName, qos: .userInitiated, a
         do {
             request = try createSynthesizeRequest(input)
         } catch TextToSpeechErrors.apiKey(let message) {
-            self.dispatch { $0.failure?(ttsError: TextToSpeechErrors.apiKey(message)) }
+            self.dispatch { $0.failure?(error: TextToSpeechErrors.apiKey(message)) }
             return
         } catch let error {
-            self.dispatch { $0.failure?(ttsError: error) }
+            self.dispatch { $0.failure?(error: error) }
             return
         }
         
-        Trace.trace(Trace.Level.DEBUG, config: self.configuration, message: "request \(request.debugDescription) \(String(describing: request.allHTTPHeaderFields)) \(String(data: request.httpBody!, encoding: String.Encoding.utf8) ?? "no body")", delegates: self.delegates, caller: self)
+        Trace.trace(Trace.Level.DEBUG, message: "request \(request.debugDescription) \(String(describing: request.allHTTPHeaderFields)) \(String(data: request.httpBody!, encoding: String.Encoding.utf8) ?? "no body")", config: self.configuration, delegates: self.delegates, caller: self)
         
         let task: URLSessionDataTask = session.dataTask(with: request) { (data, response, error) -> Void in
-            Trace.trace(Trace.Level.DEBUG, config: self.configuration, message: "task callback \(String(describing: response)) \(String(describing: String(data: data ?? Data(), encoding: String.Encoding.utf8)))) \(String(describing: error))", delegates: self.delegates, caller: self)
+            Trace.trace(Trace.Level.DEBUG, message: "task callback \(String(describing: response)) \(String(describing: String(data: data ?? Data(), encoding: String.Encoding.utf8)))) \(String(describing: error))", config: self.configuration, delegates: self.delegates, caller: self)
             
             DispatchQueue.global(qos: .userInitiated).async {
                 if let error = error {
-                    self.dispatch { $0.failure?(ttsError: error) }
+                    self.dispatch { $0.failure?(error: error) }
                 } else {
                     // unwrap the matryoshka doll that is the response body, responding with a failure if any layer is awry
                     do {
                         guard let httpResponse = response as? HTTPURLResponse else {
-                            self.dispatch { $0.failure?(ttsError:   TextToSpeechErrors.deserialization("Response is not a valid HTTPURLResponse")) }
+                            self.dispatch { $0.failure?(error:   TextToSpeechErrors.deserialization("Response is not a valid HTTPURLResponse")) }
                             return
                         }
                         if httpResponse.statusCode != 200 {
-                            self.dispatch { $0.failure?(ttsError:  TextToSpeechErrors.httpStatusCode("The HTTP status was \(httpResponse.statusCode); cannot process response.")) }
+                            self.dispatch { $0.failure?(error:  TextToSpeechErrors.httpStatusCode("The HTTP status was \(httpResponse.statusCode); cannot process response.")) }
                             return
                         }
                         guard let d = data else {
-                            self.dispatch { $0.failure?(ttsError:  TextToSpeechErrors.deserialization("response body has no data")) }
+                            self.dispatch { $0.failure?(error:  TextToSpeechErrors.deserialization("response body has no data")) }
                             return
                         }
                         let result = try self.createSynthesizeResponse(data: d, response: httpResponse, inputFormat: input.inputFormat)
                         success?(result)
                     } catch let error {
-                        self.dispatch { $0.failure?(ttsError: error) }
+                        self.dispatch { $0.failure?(error: error) }
                     }
                 }
             }

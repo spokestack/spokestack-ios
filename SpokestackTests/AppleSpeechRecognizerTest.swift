@@ -47,7 +47,7 @@ class AppleSpeechRecognizerTest: XCTestCase {
     }
 }
 
-class AppleSpeechRecognizerTestDelegate: SpeechEventListener {
+class AppleSpeechRecognizerTestDelegate: SpokestackDelegate {
     /// Spy pattern for the system under test.
     /// asyncExpectation lets the caller's test know when the delegate has been called.
     var didError: Bool = false

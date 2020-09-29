@@ -163,7 +163,7 @@ class TTSViewController: UIViewController {
         
         self.configuration.tracing = .DEBUG
         
-        self.tts = TextToSpeech(self, configuration: configuration)
+        self.tts = TextToSpeech([self], configuration: configuration)
     }
     
     @objc func dismissViewController(_ sender: Any?) -> Void {
@@ -205,7 +205,7 @@ class TTSViewController: UIViewController {
     }
     
     @objc func testAction(_ sender: Any) {
-        Trace.trace(Trace.Level.PERF, config: self.configuration, message: "test: current media time \(CACurrentMediaTime())", delegate: self, caller: self)
+        Trace.trace(Trace.Level.PERF, message: "test: current media time \(CACurrentMediaTime())", config: self.configuration, delegates: [self], caller: self)
         let text = NumberFormatter.localizedString(from: NSNumber(value: CACurrentMediaTime()), number:  NumberFormatter.Style.spellOut) + ". "
         let repeatingText = String(repeating: text, count: 5)
         //        Trace.trace(Trace.Level.DEBUG, configLevel: self.configuration.tracing, message: "test input text \(repeatingText)", delegate: self, caller: self)
@@ -262,16 +262,16 @@ extension TTSViewController {
         switch keyPath {
         case #keyPath(AVPlayerItem.duration):
             self.playerItemBeginLoading()
-            Trace.trace(Trace.Level.DEBUG, config: self.configuration, message: "test item duration time change \(change!)", delegate: self, caller: self) //\(current.status.rawValue)")
+            Trace.trace(Trace.Level.DEBUG, message: "test item duration time change \(change!)", config: self.configuration, delegates: [self], caller: self) //\(current.status.rawValue)")
             break
         case #keyPath(AVPlayerItem.status):
             self.playerItemStatusChange()
-            Trace.trace(Trace.Level.DEBUG, config: self.configuration, message: "test item status time change \(change!)", delegate: self, caller: self) //\(current.status.rawValue)")
+            Trace.trace(Trace.Level.DEBUG, message: "test item status time change \(change!)", config: self.configuration, delegates: [self], caller: self) //\(current.status.rawValue)")
             break
         case #keyPath(AVPlayerItem.isPlaybackBufferEmpty):
             self.playerItemBeginPlaying()
             self.player.play()
-            Trace.trace(Trace.Level.DEBUG, config: self.configuration, message: "test item buffer empty time change \(current.isPlaybackBufferEmpty)", delegate: self, caller: self)
+            Trace.trace(Trace.Level.DEBUG, message: "test item buffer empty time change \(current.isPlaybackBufferEmpty)", config: self.configuration, delegates: [self], caller: self)
             break
         default:
             break
@@ -326,7 +326,7 @@ extension TTSViewController: SpokestackDelegate {
         let urlData = NSData(contentsOf: url)
         urlData!.write(to: destinationUrl, atomically: false)
         TOCK() // download timer
-        Trace.trace(Trace.Level.DEBUG, config: self.configuration, message: "test downloaded to \(destinationUrl)", delegate: self, caller: self)
+        Trace.trace(Trace.Level.DEBUG, message: "test downloaded to \(destinationUrl)", config: self.configuration, delegates: [self], caller: self)
     }
     
     func failure(ttsError: Error) {

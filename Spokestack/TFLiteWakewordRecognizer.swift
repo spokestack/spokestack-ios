@@ -145,7 +145,7 @@ import TensorFlowLite
                 throw WakewordModelError.detect("\(c.detectModelPath) could not be initialized")
             }
         } catch let message {
-            self.context.dispatch { $0.failure?(speechError: WakewordModelError.model("TFLiteWakewordRecognizer configureAttentionModels \(message)")) }
+            self.context.dispatch { $0.failure?(error: WakewordModelError.model("TFLiteWakewordRecognizer configureAttentionModels \(message)")) }
         }
     }
     
@@ -451,7 +451,7 @@ extension TFLiteWakewordRecognizer : SpeechProcessor {
                             strongSelf.stopStreaming()
                         }
                     } catch let error {
-                        strongSelf.context.dispatch { $0.failure?(speechError: error) }
+                        strongSelf.context.dispatch { $0.failure?(error: error) }
                     }
                 // vad detection edge
                 } else if strongSelf.isSpeechDetected {

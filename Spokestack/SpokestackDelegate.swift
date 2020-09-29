@@ -36,10 +36,6 @@ import Foundation
     /// - Parameter result: The speech pipeline context, which contains the partial result.
     @objc optional func didRecognizePartial(_ result: SpeechContext) -> Void
     
-    /// The error event. An error occured in the speech pipeline.
-    /// - Parameter error: A human-readable error message.
-    @objc optional func failure(speechError: Error) -> Void
-    
     /// The pipeline timeout event. The pipeline experienced a timeout in a component.
     @objc optional func didTimeout() -> Void
     
@@ -49,10 +45,6 @@ import Foundation
     /// - Note: The URL will be invalidated within 60 seconds of generation.
     /// - Parameter url: The url pointing to the TTS media container
     @objc optional func success(result: TextToSpeechResult) -> Void
-    
-    /// The TTS synthesis request has resulted in an error response.
-    /// - Parameter error: The error representing the TTS response.
-    @objc optional func failure(ttsError: Error) -> Void
     
     /// The TTS synthesis request has begun playback over the default audio system.
     @objc optional func didBeginSpeaking() -> Void
@@ -66,13 +58,15 @@ import Foundation
     /// - Parameter result: The result of NLU classification.
     @objc optional func classification(result: NLUResult) -> Void
     
-    /// The NLU classification request has resulted in an error response.
-    /// - Parameter error: The error representing the NLU response.
-    @objc optional func failure(nluError: Error) -> Void
-    
     // MARK: Tracer
     
     /// The debug trace event.
     /// - Parameter trace: The debugging trace message.
     @objc optional func didTrace(_ trace: String) -> Void
+    
+    // MARK: Error
+
+    /// The error event. An error occured in a Spokestack module.
+    /// - Parameter error: A human-readable error message.
+    @objc optional func failure(error: Error) -> Void
 }

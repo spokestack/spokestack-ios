@@ -96,7 +96,7 @@ This pipeline component uses the Apple `SFSpeech` API to stream audio samples fo
             // Automatically restart wakeword task if it goes over Apple's 1 minute listening limit
             DispatchQueue.global(qos: .userInitiated).asyncAfter(deadline: .now() + .milliseconds(self.configuration.wakewordRequestTimeout), execute: self.dispatchWorker!)
         } catch let error {
-            self.context.dispatch { $0.failure?(speechError: error) }
+            self.context.dispatch { $0.failure?(error: error) }
         }
     }
     
@@ -137,12 +137,12 @@ This pipeline component uses the Apple `SFSpeech` API to stream audio samples fo
                                 Trace.trace(Trace.Level.INFO, message: "resultHandler error \(nse.code.description)", config: strongSelf.configuration, context: strongSelf.context, caller: strongSelf)
                                 break
                             default:
-                                strongSelf.context.dispatch { $0.failure?(speechError: e) }
+                                strongSelf.context.dispatch { $0.failure?(error: e) }
 
                             }
                         }
                     } else {
-                        strongSelf.context.dispatch { $0.failure?(speechError: e) }
+                        strongSelf.context.dispatch { $0.failure?(error: e) }
                     }
                 }
                 if let r = result {
