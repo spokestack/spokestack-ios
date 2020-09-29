@@ -71,7 +71,7 @@ import Speech
         }
         self.audioEngine.prepare()
         self.wakeActiveMaxWorker = DispatchWorkItem {[weak self] in
-            self?.context.dispatch(.timeout)
+            self?.context.dispatch { $0.didTimeout?() }
             self?.deactivate()
         }
     }
@@ -90,8 +90,7 @@ import Speech
             // Automatically end recognition task if it goes over the activiation max
             DispatchQueue.global(qos: .userInitiated).asyncAfter(deadline: .now() + .milliseconds(self.configuration.wakeActiveMax), execute: self.wakeActiveMaxWorker!)
         } catch let error {
-            self.context.error = error
-            self.context.dispatch(.error)
+            self.context.dispatch { $0.failure?(speechError: error) }
         }
     }
     
@@ -106,7 +105,7 @@ import Speech
             self.recognitionRequest?.endAudio()
             self.recognitionRequest = nil
             self.audioEngine.stop()
-            self.context.dispatch(.deactivate)
+            self.context.dispatch { $0.didDeactivate?() }
         }
     }
     
@@ -143,13 +142,11 @@ import Speech
                             case 300..<603: // Apple retry error: https://developer.nuance.com/public/Help/DragonMobileSDKReference_iOS/Error-codes.html
                                 break
                             default:
-                                strongSelf.context.error = e
-                                strongSelf.context.dispatch(.error)
+                                strongSelf.context.dispatch { $0.failure?(speechError: e) }
                             }
                         }
                     } else {
-                        strongSelf.context.error = e
-                        strongSelf.context.dispatch(.error)
+                        strongSelf.context.dispatch { $0.failure?(speechError: e) }
                     }
                 }
                 if let r = result {
@@ -160,9 +157,9 @@ import Speech
                             a.confidence <= b.confidence }).first?.confidence ?? 0.0
                     strongSelf.context.transcript = r.bestTranscription.formattedString
                     strongSelf.context.confidence = confidence
-                    strongSelf.context.dispatch(.partiallyRecognize)
+                    strongSelf.context.dispatch { $0.didRecognizePartial?(strongSelf.context)}
                     strongSelf.vadFallWorker = DispatchWorkItem {[weak self] in
-                        self?.context.dispatch(.recognize)
+                        self?.context.dispatch { $0.didRecognize?(strongSelf.context) }
                         self?.deactivate()
                     }
                     DispatchQueue.global(qos: .userInitiated).asyncAfter(deadline: .now() + .milliseconds(strongSelf.configuration.vadFallDelay), execute: strongSelf.vadFallWorker!)

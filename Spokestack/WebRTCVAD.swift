@@ -65,8 +65,7 @@ private var frameBuffer: RingBuffer<Int16>!
         do {
             try self.configure()
         } catch let error {
-            self.context.error = error
-            self.context.dispatch(.error)
+            self.context.dispatch { $0.failure?(speechError: error) }
         }
     }
     
@@ -170,8 +169,7 @@ private var frameBuffer: RingBuffer<Int16>!
                 self.context.isSpeech = false
             }
         } catch let error {
-            self.context.error = VADError.processing("error occurred while vad is processing \(error.localizedDescription)")
-            self.context.dispatch(.error)
+            self.context.dispatch { $0.failure?(speechError: VADError.processing("error occurred while vad is processing \(error.localizedDescription)")) }
         }
     }
 }

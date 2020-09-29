@@ -55,7 +55,7 @@ import Dispatch
         AudioController.sharedInstance.stages = stages
         super.init()
         listeners.forEach { self.context.addListener($0) }
-        self.context.dispatch(.initialize)
+        self.context.dispatch { $0.didInit?() }
     }
     
     /// For use by `SpeechPipelineBuilder`
@@ -88,7 +88,7 @@ import Dispatch
         AudioController.sharedInstance.configuration = configuration
         AudioController.sharedInstance.context = self.context
         listeners.forEach { self.context.addListener($0) }
-        self.context.dispatch(.initialize)
+        self.context.dispatch { $0.didInit?() }
     }
     
     /// MARK: Pipeline control
@@ -104,7 +104,7 @@ import Dispatch
         if !self.context.isActive {
             self.context.isSpeech = true
             self.context.isActive = true
-            self.context.dispatch(.activate)
+            self.context.dispatch { $0.didActivate?() }
         }
     }
     
@@ -113,7 +113,7 @@ import Dispatch
     @objc public func deactivate() -> Void {
         self.context.isActive = false
         self.context.isSpeech = false
-        self.context.dispatch(.deactivate)
+        self.context.dispatch { $0.didDeactivate?() }
     }
     
     /// Starts  the speech pipeline.
@@ -130,7 +130,7 @@ import Dispatch
             AudioController.sharedInstance.startStreaming()
             
             // notify listeners of start
-            self.context.dispatch(.start)
+            self.context.dispatch { $0.didStart?() }
             
             // repeated calls to start are idempotent
             self.isStarted = true
@@ -146,7 +146,7 @@ import Dispatch
                 stage.stopStreaming()
             })
             AudioController.sharedInstance.stopStreaming()
-            self.context.dispatch(.stop)
+            self.context.dispatch { $0.didStop?() }
             self.isStarted = false
         }
     }

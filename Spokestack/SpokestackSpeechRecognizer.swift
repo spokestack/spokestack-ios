@@ -68,7 +68,7 @@ import CryptoKit
         self.context.isActive = false
         self.isActive = false
         self.activation = 0
-        self.context.dispatch(.deactivate)
+        self.context.dispatch { $0.didDeactivate?() }
     }
     
     private func initializeSocket() {
@@ -76,15 +76,13 @@ import CryptoKit
         self.task.resume()
         self.task.send(URLSessionWebSocketTask.Message.string(self.initializeStreamMessage)) { error in
             if let error = error {
-                self.context.error = error
-                self.context.dispatch(.error)
+                self.context.dispatch { $0.failure?(speechError: error) }
             }
         }
         self.task.receive() { result in
             self.handle(result, handleResult: { r in
                 if r.status != "ok" {
-                    self.context.error = SpeechPipelineError.illegalState("Spokestack ASR could not start because its status was \(r.status).")
-                    self.context.dispatch(.error)
+                    self.context.dispatch { $0.failure?(speechError: SpeechPipelineError.illegalState("Spokestack ASR could not start because its status was \(r.status).")) }
                 }
             })
         }
@@ -96,8 +94,7 @@ import CryptoKit
 
         self.task.send(URLSessionWebSocketTask.Message.data(frame)) { error in
             if let error = error {
-                self.context.error = error
-                self.context.dispatch(.error)
+                self.context.dispatch { $0.failure?(speechError: error) }
             }
         }
         self.task.receive(completionHandler: self.receive)
@@ -110,11 +107,11 @@ import CryptoKit
                     if hypothesis.transcript != self.context.transcript {
                         self.context.confidence = hypothesis.confidence
                         self.context.transcript = hypothesis.transcript
-                        self.context.dispatch(.partiallyRecognize)
+                        self.context.dispatch { $0.didRecognizePartial?(self.context) }
                     }
                 }
                 if r.final {
-                    self.context.dispatch(.recognize)
+                    self.context.dispatch { $0.didRecognize?(self.context) }
                 }
             }
         })
@@ -123,8 +120,7 @@ import CryptoKit
     private func handle(_ result: Result<URLSessionWebSocketTask.Message, Error>, handleResult: (ASRResult) -> Void) {
         switch result {
         case .failure(let error):
-            self.context.error = error
-            self.context.dispatch(.error)
+            self.context.dispatch { $0.failure?(speechError: error) }
         case .success(let message):
             switch message {
             case .string(let json):
@@ -139,12 +135,10 @@ import CryptoKit
                         handleResult(r)
                     }
                 } catch let error {
-                    self.context.error = error
-                    self.context.dispatch(.error)
+                    self.context.dispatch { $0.failure?(speechError: error) }
                 }
             case _:
-                    self.context.error = SpeechPipelineError.illegalState("unknown response from Spokestack ASR: \(message)")
-                    self.context.dispatch(.error)
+                self.context.dispatch { $0.failure?(speechError:  SpeechPipelineError.illegalState("unknown response from Spokestack ASR: \(message)")) }
             }
         }
     }

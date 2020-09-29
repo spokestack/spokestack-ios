@@ -29,8 +29,7 @@ public struct Trace {
     /// - Parameter caller: The sender of the debugging trace message.
     public static func trace(_ level: Trace.Level, message: String, config: SpeechConfiguration?, context: SpeechContext?, caller: Any) {
         if level.rawValue >= config?.tracing.rawValue ?? Level.DEBUG.rawValue {
-            context?.trace = "\(level.rawValue) \(String(describing: type(of: caller))) \(message)"
-            context?.dispatch(.trace)
+            context?.dispatch { $0.didTrace?("\(level.rawValue) \(String(describing: type(of: caller))) \(message)") }
         }
     }
     
@@ -60,15 +59,13 @@ public struct Trace {
         if let path = filemgr.urls(for: FileManager.SearchPathDirectory.documentDirectory, in: FileManager.SearchPathDomainMask.userDomainMask).last?.appendingPathComponent(fileName) {
             if !filemgr.fileExists(atPath: path.path) {
                 filemgr.createFile(atPath: path.path, contents: data, attributes: nil)
-                context?.trace = "Trace spit created \(data.count) fileURL: \(path.path)"
-                context?.dispatch(.trace)
+                context?.dispatch { $0.didTrace?("Trace spit created \(data.count) fileURL: \(path.path)") }
                 do {
                     let handle = try FileHandle(forWritingTo: path)
                     handle.write(data)
                     handle.synchronizeFile()
                 } catch let error {
-                    context?.trace = "Trace spit failed to open a handle to \(path.path) because \(error)"
-                    context?.dispatch(.trace)
+                    context?.dispatch { $0.didTrace?("Trace spit failed to open a handle to \(path.path) because \(error)") }
                 }
             } else {
                 do {
@@ -77,13 +74,11 @@ public struct Trace {
                     handle.write(data)
                     handle.synchronizeFile()
                 } catch let error {
-                    context?.trace = "Trace spit failed to open a handle to \(path.path) because \(error)"
-                    context?.dispatch(.trace)
+                    context?.dispatch { $0.didTrace?("Trace spit failed to open a handle to \(path.path) because \(error)") }
                 }
             }
         } else {
-            context?.trace = "Trace spit failed to get a URL for \(fileName)"
-            context?.dispatch(.trace)
+            context?.dispatch { $0.didTrace?("Trace spit failed to get a URL for \(fileName)") }
         }
     }
 }
