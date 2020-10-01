@@ -173,7 +173,7 @@ import Dispatch
      ```
  */
 @objc public class SpeechPipelineBuilder: NSObject {
-    private let config = SpeechConfiguration()
+    private var config = SpeechConfiguration()
     private var listeners: [SpokestackDelegate] = []
     private var profile: SpeechPipelineProfiles?
     
@@ -202,6 +202,15 @@ import Dispatch
         default:
             self.config.setValue(value, forKey: key)
         }
+        return self
+    }
+    
+    /// Replaces the default speech configuration with the specified configuration.
+    ///
+    /// - Warning: All preceeding `setProperty` calls will be erased by setting the configuration explicitly.
+    /// - Parameter config: An instance of SpeechConfiguration that the pipeline will use.
+    @objc public func setConfiguration(_ config: SpeechConfiguration) -> SpeechPipelineBuilder {
+        self.config = config
         return self
     }
     

@@ -126,9 +126,9 @@ extension AppleWakewordViewController: SpokestackDelegate {
         print("didDeactivate")
     }
     
-    func failure(speechError: Error) {
-        if !speechError.localizedDescription.starts(with: "The operation couldn’t be completed. (kAFAssistantErrorDomain error 216.)") {
-            print("didError: " + speechError.localizedDescription)
+    func failure(error: Error) {
+        if !error.localizedDescription.starts(with: "The operation couldn’t be completed. (kAFAssistantErrorDomain error 216.)") {
+            print("didError: " + error.localizedDescription)
         }
     }
     

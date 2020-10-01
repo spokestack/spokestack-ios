@@ -44,13 +44,14 @@ class AppleASRViewController: UIViewController {
     }()
     
     lazy private var pipeline: SpeechPipeline = {
-        return try! SpeechPipelineBuilder()
-            .addListener(self)
-            .useProfile(.vadTriggerAppleSpeech)
+        let spokestack = try! SpokestackBuilder()
+            .addDelegate(self)
+            .usePipelineProfile(.vadTriggerAppleSpeech)
             .setProperty("tracing", Trace.Level.DEBUG)
             .setProperty("vadFallDelay", "1600")
             .setDelegateDispatchQueue(DispatchQueue.main)
             .build()
+        return spokestack.pipeline!
     }()
     
     override func loadView() {
@@ -125,8 +126,8 @@ extension AppleASRViewController: SpokestackDelegate {
         self.startRecordingButton.isEnabled.toggle()
     }
     
-    func failure(speechError: Error) {
-        print("failure \(String(describing: speechError))")
+    func failure(error: Error) {
+        print("failure \(String(describing: error))")
     }
     
     func didRecognize(_ result: SpeechContext) {

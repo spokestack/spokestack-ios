@@ -68,5 +68,5 @@ import Foundation
 
     /// The error event. An error occured in a Spokestack module.
     /// - Parameter error: A human-readable error message.
-    @objc optional func failure(error: Error) -> Void
+    @objc func failure(error: Error) -> Void
 }

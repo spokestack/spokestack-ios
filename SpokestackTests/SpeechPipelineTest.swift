@@ -171,9 +171,9 @@ class SpeechPipelineBuilderTest: XCTestCase {
             .setProperty("tracing", -1)
             .build()
         XCTAssertEqual(p1.configuration.tracing, .NONE)
-        let e1 = [WebRTCVAD.self, TFLiteWakewordRecognizer.self, AppleSpeechRecognizer.self]
         wait(for: [didInit1Expectation], timeout: 1)
-        XCTAssert(compare(expected: e1, actual: AudioController.sharedInstance.stages))
+        
+        XCTAssert([WebRTCVAD.self, TFLiteWakewordRecognizer.self, AppleSpeechRecognizer.self].areSameOrderedType(other:  AudioController.sharedInstance.stages))
 
         // appleWW
         delegate.reset()
@@ -185,7 +185,7 @@ class SpeechPipelineBuilderTest: XCTestCase {
             .setProperty("tracing", level)
             .build()
         XCTAssertEqual(wakeActiveMax, p2.configuration.wakeActiveMax)
-        XCTAssert(compare(expected: [WebRTCVAD.self, AppleWakewordRecognizer.self, AppleSpeechRecognizer.self], actual: AudioController.sharedInstance.stages))
+        XCTAssert([WebRTCVAD.self, AppleWakewordRecognizer.self, AppleSpeechRecognizer.self].areSameOrderedType(other:  AudioController.sharedInstance.stages))
         XCTAssertEqual(level, p2.configuration.tracing)
 
         // vadTrigger
@@ -193,7 +193,7 @@ class SpeechPipelineBuilderTest: XCTestCase {
         let _ = try! SpeechPipelineBuilder()
             .useProfile(.vadTriggerAppleSpeech)
             .build()
-        XCTAssert(compare(expected: [WebRTCVAD.self, VADTrigger.self, AppleSpeechRecognizer.self], actual: AudioController.sharedInstance.stages))
+        XCTAssert([WebRTCVAD.self, VADTrigger.self, AppleSpeechRecognizer.self].areSameOrderedType(other:  AudioController.sharedInstance.stages))
         
         // p2t
         delegate.reset()
@@ -203,29 +203,21 @@ class SpeechPipelineBuilderTest: XCTestCase {
             .setDelegateDispatchQueue(queue)
             .build()
         XCTAssert(queue === p4.configuration.delegateDispatchQueue)
-        XCTAssert(compare(expected: [AppleSpeechRecognizer.self], actual: AudioController.sharedInstance.stages))
+        XCTAssert([AppleSpeechRecognizer.self].areSameOrderedType(other:  AudioController.sharedInstance.stages))
         
         // spokestack + tflite
         delegate.reset()
         let _ = try! SpeechPipelineBuilder()
             .useProfile(.tfLiteWakewordSpokestackSpeech)
             .build()
-        XCTAssert(compare(expected: [WebRTCVAD.self, TFLiteWakewordRecognizer.self, SpokestackSpeechRecognizer.self], actual: AudioController.sharedInstance.stages))
+        XCTAssert([WebRTCVAD.self, TFLiteWakewordRecognizer.self, SpokestackSpeechRecognizer.self].areSameOrderedType(other:  AudioController.sharedInstance.stages))
         
         // spokestack + vad
         delegate.reset()
         let _ = try! SpeechPipelineBuilder()
             .useProfile(.vadTriggerSpokestackSpeech)
             .build()
-        XCTAssert(compare(expected: [WebRTCVAD.self, VADTrigger.self, SpokestackSpeechRecognizer.self], actual: AudioController.sharedInstance.stages))
-    }
-    
-    private func compare(expected: [NSObject.Type], actual: [SpeechProcessor]) -> Bool {
-        var accumulator: [Bool] = []
-        for (i, s) in expected.enumerated() {
-            accumulator.append(type(of: actual[i]) ==  s)
-        }
-        return accumulator.reduce(true, { $0 && $1 })
+        XCTAssert([WebRTCVAD.self, VADTrigger.self, SpokestackSpeechRecognizer.self].areSameOrderedType(other:  AudioController.sharedInstance.stages))
     }
 }
 
@@ -282,10 +274,6 @@ class SpeechPipelineTestDelegate: SpokestackDelegate {
     }
     
     func didStart() {
-        guard let _ = asyncExpectation else {
-            XCTFail("SpeechPipelineTestDelegate was not setup correctly. Missing XCTExpectation reference")
-            return
-        }
         self.didDidStart = true
         self.asyncExpectation?.fulfill()
         self.asyncExpectation = nil

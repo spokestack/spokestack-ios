@@ -129,8 +129,8 @@ extension TFLiteViewController: SpokestackDelegate {
         print("didDeactivate")
     }
     
-    func failure(speechError: Error) {
-        print("failure \(String(describing: speechError))")
+    func failure(error: Error) {
+        print("failure \(String(describing: error))")
     }
     
     func didRecognize(_ result: SpeechContext) {

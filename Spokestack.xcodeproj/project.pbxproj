@@ -24,6 +24,7 @@
 		01D31F6F216BAFD90055FD45 /* SpeechContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01D31F6D216BAFD90055FD45 /* SpeechContext.swift */; };
 		01D31F70216BAFD90055FD45 /* SpeechContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01D31F6D216BAFD90055FD45 /* SpeechContext.swift */; };
 		01D972BC23C592A00002FF79 /* TextToSpeechResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01D972BB23C592A00002FF79 /* TextToSpeechResult.swift */; };
+		59175D8D2523E19400A8991F /* SpokestackBuilderTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59175D8C2523E19400A8991F /* SpokestackBuilderTest.swift */; };
 		5917AC4F2405C86300CB4900 /* NLUTensorflowSlotParserTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5917AC4E2405C86300CB4900 /* NLUTensorflowSlotParserTest.swift */; };
 		5917AC512405C89A00CB4900 /* SharedTestMocks.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5917AC502405C89A00CB4900 /* SharedTestMocks.swift */; };
 		591BCDA323D26077009681D6 /* NLUTensorflow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 591BCDA223D26077009681D6 /* NLUTensorflow.swift */; };
@@ -168,6 +169,7 @@
 		0983B0EE40DA914769988A20 /* Pods-SpokestackTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SpokestackTests.release.xcconfig"; path = "Target Support Files/Pods-SpokestackTests/Pods-SpokestackTests.release.xcconfig"; sourceTree = "<group>"; };
 		5123AD317B8D6242E1F19C0E /* Pods-Spokestack.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Spokestack.release.xcconfig"; path = "Target Support Files/Pods-Spokestack/Pods-Spokestack.release.xcconfig"; sourceTree = "<group>"; };
 		59062F0922A5AA8400613AD8 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		59175D8C2523E19400A8991F /* SpokestackBuilderTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpokestackBuilderTest.swift; sourceTree = "<group>"; };
 		5917AC4E2405C86300CB4900 /* NLUTensorflowSlotParserTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NLUTensorflowSlotParserTest.swift; sourceTree = "<group>"; };
 		5917AC502405C89A00CB4900 /* SharedTestMocks.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedTestMocks.swift; sourceTree = "<group>"; };
 		591BCDA223D26077009681D6 /* NLUTensorflow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NLUTensorflow.swift; sourceTree = "<group>"; };
@@ -338,6 +340,7 @@
 				5917AC502405C89A00CB4900 /* SharedTestMocks.swift */,
 				59A3F15424DCB4DF00182674 /* SpeechContextTest.swift */,
 				59D78F602322EAE000728A98 /* SpeechPipelineTest.swift */,
+				59175D8C2523E19400A8991F /* SpokestackBuilderTest.swift */,
 				59E3E71424C1088200F12CC4 /* SpokestackSpeechRecognizerTest.swift */,
 				59A8DBF82384ABF000F97700 /* TextToSpeechTest.swift */,
 				59AB0B0624786B69007B7582 /* TFLiteWakewordRecognizerTest.swift */,
@@ -793,6 +796,7 @@
 				59C2AFE82319CF3900E47AC5 /* FFT.swift in Sources */,
 				01D31F63216BAFA40055FD45 /* AudioController.swift in Sources */,
 				59B1C13F251BAD130062B291 /* VADTriggerTest.swift in Sources */,
+				59175D8D2523E19400A8991F /* SpokestackBuilderTest.swift in Sources */,
 				59EF51C123328D57006BA0BD /* AppleWakewordRecognizerTest.swift in Sources */,
 				59E3E71324C0E83000F12CC4 /* SpokestackSpeechRecognizer.swift in Sources */,
 				59C2AFEE231ED07100E47AC5 /* WebRTCVADTest.swift in Sources */,

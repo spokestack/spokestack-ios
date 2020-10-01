@@ -76,7 +76,7 @@ import TensorFlowLite
             try self.configure()
         } catch let error {
             self.configuration.delegateDispatchQueue.async {
-                delegates.forEach { $0.failure?(error: error) }
+                delegates.forEach { $0.failure(error: error) }
             }
         }
     }
@@ -125,7 +125,7 @@ import TensorFlowLite
             case .success(let classification):
                 self.dispatch { $0.classification?(result: classification) }
             case .failure(let error):
-                self.dispatch { $0.failure?(error: error) }
+                self.dispatch { $0.failure(error: error) }
             }
         }
     }

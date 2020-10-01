@@ -19,3 +19,18 @@ extension Array where Element == Float {
         return (Int(maxIndex), maxValue)
     }
 }
+
+extension Array where Element == Foundation.NSObject.Type {
+    
+    /// Assert that each element, in order, of this array and the other array are the same type
+    /// - Parameter other: The array of instances to check types against
+    /// - Returns: True if both arrays contain elements of the same type, in order.
+    public func areSameOrderedType(other: [Any]) -> Bool {
+        var accumulator: [Bool] = []
+        for (i, o) in other.enumerated() {
+            let f = self[i] == type(of: o).self
+            accumulator.append(f)
+        }
+        return accumulator.reduce(true, { $0 && $1 })
+    }
+}

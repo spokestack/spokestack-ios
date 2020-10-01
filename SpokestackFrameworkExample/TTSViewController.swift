@@ -163,7 +163,11 @@ class TTSViewController: UIViewController {
         
         self.configuration.tracing = .DEBUG
         
-        self.tts = TextToSpeech([self], configuration: configuration)
+        let spokestack = try! SpokestackBuilder()
+            .addDelegate(self)
+            .setConfiguration(self.configuration)
+            .build()
+        self.tts = spokestack.tts! //TextToSpeech([self], configuration: configuration)
     }
     
     @objc func dismissViewController(_ sender: Any?) -> Void {
@@ -329,8 +333,8 @@ extension TTSViewController: SpokestackDelegate {
         Trace.trace(Trace.Level.DEBUG, message: "test downloaded to \(destinationUrl)", config: self.configuration, delegates: [self], caller: self)
     }
     
-    func failure(ttsError: Error) {
-        print(ttsError)
+    func failure(error: Error) {
+        print(error)
     }
     
     func didTrace(_ trace: String) {

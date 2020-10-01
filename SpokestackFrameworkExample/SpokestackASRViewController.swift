@@ -126,8 +126,8 @@ extension SpokestackASRViewController: SpokestackDelegate {
         self.startRecordingButton.isEnabled.toggle()
     }
     
-    func failure(speechError: Error) {
-        print("failure \(String(describing: speechError))")
+    func failure(error: Error) {
+        print("failure \(String(describing: error))")
     }
     
     func didRecognize(_ result: SpeechContext) {

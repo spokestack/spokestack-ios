@@ -104,7 +104,7 @@ class SpeechContextTest: XCTestCase {
         l.reset()
         let didErrorExpectation = expectation(description: "didErrorExpectation fulfills when testdispatch calls SpeechContextTestDelegate.error.")
         l.asyncExpectation = didErrorExpectation
-        c.dispatch { $0.failure?(error: SpeechPipelineError.illegalState("Life. Don't talk to me about life.")) }
+        c.dispatch { $0.failure(error: SpeechPipelineError.illegalState("Life. Don't talk to me about life.")) }
         wait(for: [didErrorExpectation], timeout: 1)
         
         // trace
