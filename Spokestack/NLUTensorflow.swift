@@ -10,12 +10,8 @@ import Foundation
 import Combine
 import TensorFlowLite
 
-/** A BERT NLU implementation.
- 
-    This class provides a classification interface for deriving intents and slots from a natural language utterance.
- 
-    When inititalized, the TTS system communicates with the client either via a delegate that receive events, or via a publisher-subscriber pattern.
- 
+/** This is the client entry point for the Spokestack BERT NLU implementation. This class provides a classification interface for deriving intents and slots from a natural language utterance. When inititalized, the TTS system communicates with the client either via a delegate that receive events, or via a publisher-subscriber pattern.
+
  ```
  // assume that self implements the NLUDelegate protocol
  let nlu = try! NLUTensorflow(self, configuration: configuration)

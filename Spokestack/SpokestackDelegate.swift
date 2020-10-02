@@ -8,6 +8,7 @@
 
 import Foundation
 
+/// Protocol for receiving events from Spokestack modules for speech, nlu, and tts.
 @objc public protocol SpokestackDelegate: Tracer {
     
     // MARK: SpeechPipeline

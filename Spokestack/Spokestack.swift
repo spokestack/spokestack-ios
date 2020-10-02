@@ -8,33 +8,42 @@
 
 import Foundation
 
-/// <#Description#>
+/// This class combines all Spokestack modules into a single component to provide a unified interface to the library's ASR, NLU, and TTS features. Like the individual modules, it is configurable using a fluent builder pattern, but it provides a default configuration; only a few parameters are required from the calling application, and those only for specific features noted in the documentation for the builder's methods.
+///
+/// The default configuration of this class assumes that the client application wants to use all of Spokestack's features, regardless of their implied dependencies or required configuration. If a prerequisite is missing at build time, the individual module may throw an error when called.
+///
+/// This class will run in the context of the caller. The subsystems themselves may use the configured dispatch queues where appropriate to perform intensive tasks.
+///
+/// - SeeAlso:
+/// `SpeechPipeline`, `NLUTensorflow`, `TextToSpeech`
+///
 @objc public class Spokestack: NSObject {
-    /// <#Description#>
+    /// This is the client entry point to the Spokestack voice input system.
     @objc public var pipeline: SpeechPipeline?
-    /// <#Description#>
+    /// This is the client entry point for the Spokestack Text to Speech (TTS) system.
     @objc public var tts: TextToSpeech?
-    /// <#Description#>
+    /// This is the client entry point for the Spokestack BERT NLU implementation.
     @objc public var nlu: NLUTensorflow?
-    /// <#Description#>
+    /// Maintains global state for the speech pipeline.
     @objc public var context: SpeechContext?
-    /// <#Description#>
+    /// Configuration properties for Spokestack modules.
     @objc public var configuration: SpeechConfiguration
     
     private var delegates: [SpokestackDelegate]
     
-    /// <#Description#>
+    /// This constructor is intended for use only by the `SpokestackBuilder`.
     /// - Parameters:
-    ///   - delegates: <#delegates description#>
-    ///   - configuration: <#configuration description#>
-    @objc public init(delegates: [SpokestackDelegate], configuration: SpeechConfiguration) {
+    ///   - delegates: Delegate implementations of `SpokestackDelegate` that receive Spokesatck module events.
+    ///   - configuration: Configuration properties for Spokestack modules.
+    @objc internal init(delegates: [SpokestackDelegate], configuration: SpeechConfiguration) {
         self.delegates = delegates
         self.configuration = configuration
         super.init()
     }
 }
 
-/// <#Description#>
+/// Fluent builder interface for configuring Spokestack.
+/// - SeeAlso: `Spokestack`
 @objc public class SpokestackBuilder: NSObject {
     private var pipeline: SpeechPipeline?
     private var tts: TextToSpeech?
@@ -44,7 +53,7 @@ import Foundation
     private var context: SpeechContext
     private var pipelineProfile: SpeechPipelineProfiles = .tfLiteWakewordAppleSpeech
     
-    /// <#Description#>
+    /// Create a Spokestack builder with a default configuration.
     @objc public override init() {
         self.context = SpeechContext(self.config)
         super.init()

@@ -61,7 +61,7 @@ import Dispatch
     /// For use by `SpeechPipelineBuilder`
     /// - Parameters:
     /// - Parameter configuration: Configuration parameters for the speech pipeline.
-    /// - Parameter listeners: Delegate implementations of `SpeechEventListener` that receive speech pipeline events.
+    /// - Parameter listeners: Delegate implementations of `SpokestackDelegate` that receive speech pipeline events.
     /// - Parameter profile: The builder profile to use when configuring the pipeline.
     internal init(configuration: SpeechConfiguration, listeners: [SpokestackDelegate], profile: SpeechPipelineProfiles) {
         self.configuration = configuration

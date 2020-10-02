@@ -8,7 +8,7 @@
 
 import Foundation
 
-/// Configuration properties for the pipeline abstraction to pass down to implementations.
+/// Configuration properties for Spokestack modules.
 @objc public class SpeechConfiguration: NSObject {
     /// A comma-separated list of wakeword keywords
     /// - Remark: ex: "up,dog"
