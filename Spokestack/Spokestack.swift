@@ -59,9 +59,9 @@ import Foundation
         super.init()
     }
     
-    /// Applies configuration from `SpeechPipelineProfiles` to the current builder, returning the modified builder.
-    /// - Parameter profile: Name of the profile to apply.
-    /// - Returns: An updated instance of `SpeechPipelineBuilder` for call chaining.
+    /// Delegate events will be sent to the specified listener.
+    /// - Parameter listener: A `SpokestackDelegate` instance.
+    /// - Returns: An updated instance of `SpokestackBuilder`
     @objc public func addDelegate(_ delegate: SpokestackDelegate) -> SpokestackBuilder {
         self.delegates.append(delegate)
         return self

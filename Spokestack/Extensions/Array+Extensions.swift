@@ -26,11 +26,9 @@ extension Array where Element == Foundation.NSObject.Type {
     /// - Parameter other: The array of instances to check types against
     /// - Returns: True if both arrays contain elements of the same type, in order.
     public func areSameOrderedType(other: [Any]) -> Bool {
-        var accumulator: [Bool] = []
         for (i, o) in other.enumerated() {
-            let f = self[i] == type(of: o).self
-            accumulator.append(f)
+            if !(self[i] == type(of: o).self) { return false }
         }
-        return accumulator.reduce(true, { $0 && $1 })
+        return true
     }
 }

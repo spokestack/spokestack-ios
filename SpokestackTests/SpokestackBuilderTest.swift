@@ -10,10 +10,6 @@ import Foundation
 import XCTest
 import Spokestack
 
-class SpokestackTest: XCTestCase {
-    
-}
-
 class SpokestackBuilderTest: XCTestCase {
     
     func testBuild() {

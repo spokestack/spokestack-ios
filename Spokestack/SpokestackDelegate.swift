@@ -61,8 +61,8 @@ import Foundation
     
     // MARK: Tracer
     
-    /// The debug trace event.
-    /// - Parameter trace: The debugging trace message.
+    /// The trace event.
+    /// - Parameter trace: The trace message from a Spokestack module.
     @objc optional func didTrace(_ trace: String) -> Void
     
     // MARK: Error
