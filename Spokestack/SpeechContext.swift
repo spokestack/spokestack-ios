@@ -19,7 +19,7 @@ import Foundation
     @objc public var isActive: Bool = false
     /// Speech detected indicator
     @objc public var isSpeech: Bool = false
-    /// An ordered set of `SpeechEventListener`s that are sent `SpeechPipeline` events.
+    /// An ordered set of `SpokestackDelegate`s that are sent events from Spokestack subsystems.
     private var listeners: [SpokestackDelegate] = []
     
     /// Initializes a speech context instance using the specified speech pipeline configuration.

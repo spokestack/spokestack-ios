@@ -44,7 +44,7 @@ import Dispatch
     /// - Important: Most clients should use `SpeechPipelineBuilder` to initialize a new speech pipeline instance, not this initializer.
     /// - SeeAlso: SpeechPipelineBuilder
     /// - Parameter configuration: Configuration parameters for the speech pipeline.
-    /// - Parameter listeners: Delegate implementations of `SpeechEventListener` that receive speech pipeline events.
+    /// - Parameter listeners: Delegate implementations of `SpokestackDelegate` that receive speech pipeline events.
     /// - Parameter stages: `SpeechProcessor` instances process audio frames from `AudioController`.
     @objc public init(configuration: SpeechConfiguration, listeners: [SpokestackDelegate], stages: [SpeechProcessor], context: SpeechContext) {
         self.configuration = configuration

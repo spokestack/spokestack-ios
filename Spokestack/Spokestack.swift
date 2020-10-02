@@ -33,7 +33,7 @@ import Foundation
     
     /// This constructor is intended for use only by the `SpokestackBuilder`.
     /// - Parameters:
-    ///   - delegates: Delegate implementations of `SpokestackDelegate` that receive Spokesatck module events.
+    ///   - delegates: Delegate implementations of `SpokestackDelegate` that receive Spokestack module events.
     ///   - configuration: Configuration properties for Spokestack modules.
     @objc internal init(delegates: [SpokestackDelegate], configuration: SpeechConfiguration) {
         self.delegates = delegates

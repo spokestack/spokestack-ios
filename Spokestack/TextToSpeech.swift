@@ -97,7 +97,7 @@ private let apiQueue = DispatchQueue(label: TTSQueueName, qos: .userInitiated, a
         func play(result: TextToSpeechResult) {
             DispatchQueue.global(qos: .userInitiated).async {
                 guard let url = result.url else {
-                    self.dispatch { $0.failure(error:  TextToSpeechErrors.speak("Synthesis response is invalid.")) }
+                    self.dispatch { $0.failure(error: TextToSpeechErrors.speak("Synthesis response is invalid.")) }
                     return
                 }
                 let playerItem = AVPlayerItem(url: url)
