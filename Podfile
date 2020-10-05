@@ -1,3 +1,6 @@
+# use cocoapods cdn for faster builds. if you're on cocoapods 1.7 or earlier, time to upgrade!
+source 'https://cdn.cocoapods.org/'
+
 # Uncomment the next line to define a global platform for your project
 platform :ios, '11.0'
 
