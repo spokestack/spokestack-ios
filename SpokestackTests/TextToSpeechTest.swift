@@ -12,7 +12,7 @@ import Spokestack
 
 @available(iOS 13, *)
 class TextToSpeechTest: XCTestCase {
-    
+
     /// MARK: Synthesize
     func testSynthesize() {
         let delegate = TestTextToSpeechDelegate()
@@ -113,10 +113,10 @@ class TextToSpeechTest: XCTestCase {
         XCTAssertNotNil(publisher)
         wait(for: [didCompleteExpectation], timeout: 5)
     }
-    
-    /// MARK:  Speak
+}
+
+class TextToSpeechSynthesizeTest: XCTestCase {
     func testSpeak() {
-        
         // speak() calls didBeginSpeaking and didFinishSpeaking
         let didBeginExpectation = expectation(description: "successful request calls TestTextToSpeechDelegate.didBeginSpeaking")
         let didFinishExpectation = expectation(description: "successful request calls TestTextToSpeechDelegate.didFinishSpeaking")
