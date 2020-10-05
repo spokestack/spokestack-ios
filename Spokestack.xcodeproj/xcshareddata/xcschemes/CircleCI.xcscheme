@@ -37,6 +37,20 @@
                BlueprintName = "SpokestackTests"
                ReferencedContainer = "container:Spokestack.xcodeproj">
             </BuildableReference>
+            <SkippedTests>
+               <Test
+                  Identifier = "AppleSpeechRecognizerTest/testProcess()">
+               </Test>
+               <Test
+                  Identifier = "AppleWakewordRecognizerTest/testProcess()">
+               </Test>
+               <Test
+                  Identifier = "AudioControllerTest">
+               </Test>
+               <Test
+                  Identifier = "TextToSpeechSynthesizeTest">
+               </Test>
+            </SkippedTests>
          </TestableReference>
       </Testables>
    </TestAction>
