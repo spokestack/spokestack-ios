@@ -18,6 +18,7 @@ default_platform(:ios)
 platform :ios do
   desc "Run XCode tests"
   lane :test do
-    scan(workspace: "Spokestack.xcworkspace", scheme: "CircleCI", output_types: "")
+    scan(workspace: "Spokestack.xcworkspace", scheme: "CircleCI", output_types: "html")
+    slack(message: "Yet another successful build of Spokestack-iOS")
   end
 end
