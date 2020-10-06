@@ -21,11 +21,12 @@ public struct Trace {
         case DEBUG = 10
     }
     
-    /// Traces a  debugging message.
+    /// Traces a  message  from a Spokestack module.
     /// - Parameter level: The debugging trace level for this message.
-    /// - Parameter configLevel: The speech pipeline's configured debugging trace level.
+    /// - Parameter config: The Spokestack configuration.
     /// - Parameter message: The debugging trace message.
     /// - Parameter delegate: The delegate that should receive the debugging trace message.
+    /// - Parameter context: The context of the speech pipeline.
     /// - Parameter caller: The sender of the debugging trace message.
     public static func trace(_ level: Trace.Level, message: String, config: SpeechConfiguration?, context: SpeechContext?, caller: Any) {
         if level.rawValue >= config?.tracing.rawValue ?? Level.DEBUG.rawValue {
@@ -35,7 +36,7 @@ public struct Trace {
     
     /// Traces a message from a Spokestack module.
     /// - Parameter level: The trace level for this message.
-    /// - Parameter configLevel: The speech pipeline's configured trace level.
+    /// - Parameter config: The Spokestack configuration.
     /// - Parameter message: The debugging trace message.
     /// - Parameter delegates: The delegates that should receive the trace message.
     /// - Parameter caller: The sender of the trace message.
@@ -53,6 +54,8 @@ public struct Trace {
     /// - Parameter data: The data to write to the file.
     /// - Parameter fileName: The name of the file that will be created/appended with the data.
     /// - Parameter delegate: The delegate that should receive the debugging trace message with the spit results.
+    /// - Parameter context: The context of the speech pipeline.
+    /// - Parameter config: The Spokestack configuration.
     /// - Note: https://clojuredocs.org/clojure.core/spit
     public static func spit(data: Data, fileName: String, context: SpeechContext?, config: SpeechConfiguration?) {
         let filemgr = FileManager.default
