@@ -79,10 +79,6 @@ class AppleWakewordRecognizerTestDelegate: SpeechEventListener {
     
     func failure(speechError: Error) {
         print(speechError)
-        guard let _ = asyncExpectation else {
-            XCTFail("AppleWakewordRecognizerTestDelegate was not setup correctly. Missing XCTExpectation reference")
-            return
-        }
         self.didError = true
         self.asyncExpectation?.fulfill()
     }
