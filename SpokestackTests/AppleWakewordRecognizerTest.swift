@@ -61,7 +61,7 @@ class AppleWakewordRecognizerTest: XCTestCase {
     }
 }
 
-class AppleWakewordRecognizerTestDelegate: SpeechEventListener {
+class AppleWakewordRecognizerTestDelegate: SpokestackDelegate {
     
     // Spy pattern for the system under test.
     // asyncExpectation lets the caller's test know when the delegate has been called.
@@ -77,8 +77,8 @@ class AppleWakewordRecognizerTestDelegate: SpeechEventListener {
     
     func didRecognize(_ result: SpeechContext) {}
     
-    func failure(speechError: Error) {
-        print(speechError)
+    func failure(error: Error) {
+        print(error)
         self.didError = true
         self.asyncExpectation?.fulfill()
     }

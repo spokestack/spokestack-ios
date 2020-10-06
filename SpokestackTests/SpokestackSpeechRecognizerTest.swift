@@ -81,17 +81,18 @@ class SpokestackSpeechRecognizerTest: XCTestCase {
         wait(for: [didFailConfigExpectation], timeout: 1)
         XCTAssert(delegate.didError)
         // can't guarantee order of server responses to an unauthorized request, so have to check for both
-        XCTAssert((context.error!.localizedDescription == "Spokestack ASR responded with an error: unauthorized") || (context.error!.localizedDescription == "Spokestack ASR responded with an error: request_failed"))
+        XCTAssert((delegate.error == "Spokestack ASR responded with an error: unauthorized") || (delegate.error == "Spokestack ASR responded with an error: request_failed"))
     }
 }
 
-class SpokestackSpeechRecognizerTestDelegate: SpeechEventListener {
+class SpokestackSpeechRecognizerTestDelegate: SpokestackDelegate {
     /// Spy pattern for the system under test.
     /// asyncExpectation lets the caller's test know when the delegate has been called.
     var didError: Bool = false
     var didDidTimeout: Bool = false
     var deactivated: Bool = false
     var didRecognize: Bool = false
+    var error: String = ""
     var asyncExpectation: XCTestExpectation?
     
     func reset() {
@@ -100,6 +101,7 @@ class SpokestackSpeechRecognizerTestDelegate: SpeechEventListener {
         self.deactivated = false
         self.didRecognize = false
         self.didRecognize = false
+        self.error = ""
         asyncExpectation = .none
     }
     
@@ -108,8 +110,9 @@ class SpokestackSpeechRecognizerTestDelegate: SpeechEventListener {
         self.didRecognize = true
     }
     
-    func failure(speechError: Error) {
-        print(speechError)
+    func failure(error: Error) {
+        print(error)
+        self.error = error.localizedDescription
         guard let _ = asyncExpectation else {
             XCTFail("SpokestackSpeechRecognizerTestDelegate was not setup correctly. Missing XCTExpectation reference")
             return

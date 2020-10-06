@@ -36,7 +36,7 @@ import Foundation
     @objc public func process(_ frame: Data) {
         if self.context.isSpeech && !self.context.isActive {
             self.context.isActive = true
-            self.context.dispatch(.activate)
+            self.context.dispatch { $0.didActivate?() }
         }
     }
 }

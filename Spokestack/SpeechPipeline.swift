@@ -44,9 +44,9 @@ import Dispatch
     /// - Important: Most clients should use `SpeechPipelineBuilder` to initialize a new speech pipeline instance, not this initializer.
     /// - SeeAlso: SpeechPipelineBuilder
     /// - Parameter configuration: Configuration parameters for the speech pipeline.
-    /// - Parameter listeners: Delegate implementations of `SpeechEventListener` that receive speech pipeline events.
+    /// - Parameter listeners: Delegate implementations of `SpokestackDelegate` that receive speech pipeline events.
     /// - Parameter stages: `SpeechProcessor` instances process audio frames from `AudioController`.
-    @objc public init(configuration: SpeechConfiguration, listeners: [SpeechEventListener], stages: [SpeechProcessor], context: SpeechContext) {
+    @objc public init(configuration: SpeechConfiguration, listeners: [SpokestackDelegate], stages: [SpeechProcessor], context: SpeechContext) {
         self.configuration = configuration
         self.context = context
         self.stages = stages
@@ -55,15 +55,15 @@ import Dispatch
         AudioController.sharedInstance.stages = stages
         super.init()
         listeners.forEach { self.context.addListener($0) }
-        self.context.dispatch(.initialize)
+        self.context.dispatch { $0.didInit?() }
     }
     
     /// For use by `SpeechPipelineBuilder`
     /// - Parameters:
     /// - Parameter configuration: Configuration parameters for the speech pipeline.
-    /// - Parameter listeners: Delegate implementations of `SpeechEventListener` that receive speech pipeline events.
+    /// - Parameter listeners: Delegate implementations of `SpokestackDelegate` that receive speech pipeline events.
     /// - Parameter profile: The builder profile to use when configuring the pipeline.
-    internal init(configuration: SpeechConfiguration, listeners: [SpeechEventListener], profile: SpeechPipelineProfiles) {
+    internal init(configuration: SpeechConfiguration, listeners: [SpokestackDelegate], profile: SpeechPipelineProfiles) {
         self.configuration = configuration
         self.context = SpeechContext(configuration)
         super.init()
@@ -88,7 +88,7 @@ import Dispatch
         AudioController.sharedInstance.configuration = configuration
         AudioController.sharedInstance.context = self.context
         listeners.forEach { self.context.addListener($0) }
-        self.context.dispatch(.initialize)
+        self.context.dispatch { $0.didInit?() }
     }
     
     /// MARK: Pipeline control
@@ -104,7 +104,7 @@ import Dispatch
         if !self.context.isActive {
             self.context.isSpeech = true
             self.context.isActive = true
-            self.context.dispatch(.activate)
+            self.context.dispatch { $0.didActivate?() }
         }
     }
     
@@ -113,7 +113,7 @@ import Dispatch
     @objc public func deactivate() -> Void {
         self.context.isActive = false
         self.context.isSpeech = false
-        self.context.dispatch(.deactivate)
+        self.context.dispatch { $0.didDeactivate?() }
     }
     
     /// Starts  the speech pipeline.
@@ -130,7 +130,7 @@ import Dispatch
             AudioController.sharedInstance.startStreaming()
             
             // notify listeners of start
-            self.context.dispatch(.start)
+            self.context.dispatch { $0.didStart?() }
             
             // repeated calls to start are idempotent
             self.isStarted = true
@@ -146,7 +146,7 @@ import Dispatch
                 stage.stopStreaming()
             })
             AudioController.sharedInstance.stopStreaming()
-            self.context.dispatch(.stop)
+            self.context.dispatch { $0.didStop?() }
             self.isStarted = false
         }
     }
@@ -173,8 +173,8 @@ import Dispatch
      ```
  */
 @objc public class SpeechPipelineBuilder: NSObject {
-    private let config = SpeechConfiguration()
-    private var listeners: [SpeechEventListener] = []
+    private var config = SpeechConfiguration()
+    private var listeners: [SpokestackDelegate] = []
     private var profile: SpeechPipelineProfiles?
     
     /// Applies configuration from `SpeechPipelineProfiles` to the current builder, returning the modified builder.
@@ -205,6 +205,15 @@ import Dispatch
         return self
     }
     
+    /// Replaces the default speech configuration with the specified configuration.
+    ///
+    /// - Warning: All preceeding `setProperty` calls will be erased by setting the configuration explicitly.
+    /// - Parameter config: An instance of SpeechConfiguration that the pipeline will use.
+    @objc public func setConfiguration(_ config: SpeechConfiguration) -> SpeechPipelineBuilder {
+        self.config = config
+        return self
+    }
+    
     /// Delegate events will be sent using the specified dispatch queue.
     /// - SeeAlso: `SpeechConfiguration`
     /// - Parameter queue: A `DispatchQueue` instance
@@ -217,7 +226,7 @@ import Dispatch
     /// Delegate events will be sent to the specified listener.
     /// - Parameter listener: A `SpeechEventListener` instance.
     /// - Returns: An updated instance of `SpeechPipelineBuilder` for instace function  call chaining.
-    @objc public func addListener(_ listener: SpeechEventListener) -> SpeechPipelineBuilder {
+    @objc public func addListener(_ listener: SpokestackDelegate) -> SpeechPipelineBuilder {
         self.listeners.append(listener)
         return self
     }

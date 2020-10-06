@@ -71,7 +71,7 @@ class AudioControllerTest: XCTestCase {
 }
 
 /// Spy pattern for the system under test.
-class AudioControllerTestDelegate: SpeechProcessor, SpeechEventListener {
+class AudioControllerTestDelegate: SpeechProcessor, SpokestackDelegate {
     var configuration: SpeechConfiguration
     
     var context: SpeechContext
@@ -109,7 +109,7 @@ class AudioControllerTestDelegate: SpeechProcessor, SpeechEventListener {
     
     func didStop() {}
 
-    func failure(speechError: Error) {
+    func failure(error: Error) {
         self.didSetupFail = true
         self.asyncExpectation!.fulfill()
         self.asyncExpectation = nil

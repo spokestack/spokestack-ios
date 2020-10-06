@@ -124,7 +124,7 @@ class WebRTCVADTest: XCTestCase {
     }
 }
 
-class WebRTCVADTestDelegate: SpeechEventListener {
+class WebRTCVADTestDelegate: SpokestackDelegate {
     
     /// Spy pattern for the system under test.
     /// asyncExpectation lets the caller's test know when the delegate has been called.
@@ -174,9 +174,9 @@ class WebRTCVADTestDelegate: SpeechEventListener {
         Trace.trace(.DEBUG, message: "didRecognize", config: config, context: context, caller: self)
     }
     
-    func failure(speechError: Error) {
+    func failure(error: Error) {
         self.failed = true
-        self.error = speechError
+        self.error = error
         Trace.trace(.DEBUG, message: "failure", config: config, context: context, caller: self)
         self.failureExpectation?.fulfill()
     }
