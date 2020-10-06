@@ -183,8 +183,8 @@ class TFLiteWakewordRecognizerTestDelegate: SpokestackDelegate {
     
     func didRecognize(_ result: SpeechContext) {}
     
-    func failure(speechError: Error) {
-        print(speechError)
+    func failure(error: Error) {
+        print(error)
         guard let _ = asyncExpectation else {
             XCTFail("TFLiteWakewordRecognizerTestDelegate was not setup correctly. Missing XCTExpectation reference")
             return

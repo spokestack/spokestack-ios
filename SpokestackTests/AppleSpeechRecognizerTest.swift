@@ -70,8 +70,8 @@ class AppleSpeechRecognizerTestDelegate: SpokestackDelegate {
         self.didRecognize = true
     }
     
-    func failure(speechError: Error) {
-        print(speechError)
+    func failure(error: Error) {
+        print(error)
         guard let _ = asyncExpectation else {
             XCTFail("AppleSpeechRecognizerTestDelegate was not setup correctly. Missing XCTExpectation reference")
             return

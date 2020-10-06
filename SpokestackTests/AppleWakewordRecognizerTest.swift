@@ -77,8 +77,8 @@ class AppleWakewordRecognizerTestDelegate: SpokestackDelegate {
     
     func didRecognize(_ result: SpeechContext) {}
     
-    func failure(speechError: Error) {
-        print(speechError)
+    func failure(error: Error) {
+        print(error)
         self.didError = true
         self.asyncExpectation?.fulfill()
     }

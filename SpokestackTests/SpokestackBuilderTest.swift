@@ -48,6 +48,7 @@ class SpokestackBuilderTest: XCTestCase {
 }
 
 class SpokestackTestDelegate: SpokestackDelegate {
+    
     /// Spy pattern for the system under test.
     /// asyncExpectation lets the caller's test know when the delegate has been called.
     var didDidInit: Bool = false
@@ -62,4 +63,6 @@ class SpokestackTestDelegate: SpokestackDelegate {
         asyncExpectation = .none
         deactivateExpectation = .none
     }
+    
+    func failure(error: Error) { }
 }

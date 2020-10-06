@@ -249,7 +249,7 @@ class SpeechPipelineTestDelegate: SpokestackDelegate {
         self.deactivateExpectation = nil
     }
     
-    func failure(speechError: Error) {}
+    func failure(error: Error) {}
     
     func didTimeout() {}
     
