@@ -110,12 +110,8 @@ class AudioControllerTestDelegate: SpeechProcessor, SpokestackDelegate {
     func didStop() {}
 
     func failure(error: Error) {
-        guard let ae = self.asyncExpectation else {
-            XCTFail("AudioControllerTestDelegate was not setup correctly. Missing XCTExpectation reference")
-            return
-        }
         self.didSetupFail = true
-        ae.fulfill()
+        self.asyncExpectation!.fulfill()
         self.asyncExpectation = nil
     }
     

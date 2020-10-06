@@ -22,3 +22,6 @@ FrameworkBuild/
 UserInterfaceState.xcuserstate
 # Jazzy
 build/
+# Fastlane
+fastlane/report.xml
+fastlane/test_output/
