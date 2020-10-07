@@ -51,7 +51,7 @@ class AppleASRViewController: UIViewController {
             .setProperty("vadFallDelay", "1600")
             .setDelegateDispatchQueue(DispatchQueue.main)
             .build()
-        return spokestack.pipeline!
+        return spokestack.pipeline
     }()
     
     override func loadView() {

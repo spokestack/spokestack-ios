@@ -167,7 +167,7 @@ class TTSViewController: UIViewController {
             .addDelegate(self)
             .setConfiguration(self.configuration)
             .build()
-        self.tts = spokestack.tts! //TextToSpeech([self], configuration: configuration)
+        self.tts = spokestack.tts
     }
     
     @objc func dismissViewController(_ sender: Any?) -> Void {

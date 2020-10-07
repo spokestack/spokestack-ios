@@ -105,7 +105,7 @@ class NLUViewController: UIViewController {
             .setConfiguration(self.configuration)
             .addDelegate(self)
             .build()
-        self.nlu = spokestack.nlu! // try! NLUTensorflow([self], configuration: configuration)
+        self.nlu = spokestack.nlu
 //
     }
     
