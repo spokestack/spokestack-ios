@@ -19,13 +19,13 @@ import Foundation
 ///
 @objc public class Spokestack: NSObject {
     /// This is the client entry point to the Spokestack voice input system.
-    @objc public var pipeline: SpeechPipeline?
+    @objc public var pipeline: SpeechPipeline
     /// This is the client entry point for the Spokestack Text to Speech (TTS) system.
-    @objc public var tts: TextToSpeech?
+    @objc public var tts: TextToSpeech
     /// This is the client entry point for the Spokestack BERT NLU implementation.
-    @objc public var nlu: NLUTensorflow?
+    @objc public var nlu: NLUTensorflow
     /// Maintains global state for the speech pipeline.
-    @objc public var context: SpeechContext?
+    @objc public var context: SpeechContext
     /// Configuration properties for Spokestack modules.
     @objc public var configuration: SpeechConfiguration
     
@@ -35,19 +35,34 @@ import Foundation
     /// - Parameters:
     ///   - delegates: Delegate implementations of `SpokestackDelegate` that receive Spokestack module events.
     ///   - configuration: Configuration properties for Spokestack modules.
-    @objc internal init(delegates: [SpokestackDelegate], configuration: SpeechConfiguration) {
+    ///   - pipeline: An initialized SpeechPipeline for the client to access.
+    ///   - nlu: An initialized NLUTensorflow for the client to access.
+    ///   - tts: An initialized TextToSpeech for the client to access.
+    @objc internal init(delegates: [SpokestackDelegate], configuration: SpeechConfiguration, pipeline: SpeechPipeline, nlu: NLUTensorflow, tts: TextToSpeech) {
         self.delegates = delegates
         self.configuration = configuration
+        self.pipeline = pipeline
+        self.context = SpeechContext(configuration)
+        self.nlu = nlu
+        self.tts = tts
         super.init()
     }
 }
 
 /// Fluent builder interface for configuring Spokestack.
+/// - Example: *using all the builder functions*
+/// ```
+/// let spokestack = try! SpokestackBuilder()
+///   .addDelegate(self)
+///   .usePipelineProfile(.vadTriggerAppleSpeech)
+///   .setConfiguration(SpeechConfiguration)
+///   .setProperty("tracing", Trace.Level.DEBUG)
+///   .setDelegateDispatchQueue(DispatchQueue.main)
+///   .build()
+///```
+///
 /// - SeeAlso: `Spokestack`
 @objc public class SpokestackBuilder: NSObject {
-    private var pipeline: SpeechPipeline?
-    private var tts: TextToSpeech?
-    private var nlu: NLUTensorflow?
     private var delegates: [SpokestackDelegate] = []
     private var config = SpeechConfiguration()
     private var context: SpeechContext
@@ -119,16 +134,13 @@ import Foundation
     @objc public func build() throws -> Spokestack {
         let pipelineBuilder = SpeechPipelineBuilder.init()
         self.delegates.forEach { let _ = pipelineBuilder.addListener($0) }
-        self.pipeline = try pipelineBuilder
+        let pipeline = try pipelineBuilder
             .useProfile(self.pipelineProfile)
             .setConfiguration(self.config)
             .build()
-        self.tts = TextToSpeech(self.delegates, configuration: self.config)
-        self.nlu = try NLUTensorflow(self.delegates, configuration: self.config)
-        let spokestack = Spokestack(delegates: self.delegates, configuration: self.config)
-        spokestack.pipeline = self.pipeline
-        spokestack.nlu = self.nlu
-        spokestack.tts = self.tts
+        let tts = TextToSpeech(self.delegates, configuration: self.config)
+        let nlu = try NLUTensorflow(self.delegates, configuration: self.config)
+        let spokestack = Spokestack(delegates: self.delegates, configuration: self.config, pipeline: pipeline, nlu: nlu, tts: tts)
         return spokestack
     }
 }

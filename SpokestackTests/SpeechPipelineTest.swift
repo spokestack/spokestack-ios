@@ -21,7 +21,7 @@ class SpeechPipelineTest: XCTestCase {
         let context = SpeechContext(config)
 
         // successful init calls didInit
-        let p = SpeechPipeline(configuration: config, listeners: [delegate], stages: [], context: context)
+        let _ = SpeechPipeline(configuration: config, listeners: [delegate], stages: [], context: context)
         wait(for: [didInitExpectation], timeout: 1)
         XCTAssert(delegate.didDidInit)
     }

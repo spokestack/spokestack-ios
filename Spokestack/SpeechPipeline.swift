@@ -157,7 +157,7 @@ import Dispatch
  
     Profiles are not authoritative; they act just like calling a series of methods on a `SpeechPipelineBuilder`, and any configuration properties they set can be overridden by subsequent calls.
  
-     Example:
+    - Example:
      ```
      // assume that self implements the SpeechEventListener protocol
      let pipeline = SpeechPipelineBuilder()

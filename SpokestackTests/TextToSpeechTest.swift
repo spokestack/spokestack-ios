@@ -156,7 +156,7 @@ class TestTextToSpeechDelegate: SpokestackDelegate {
         didSucceed = true
     }
     
-    func failure(error error: Error) {
+    func failure(error: Error) {
         asyncExpectation?.fulfill()
         didFail = true
     }
