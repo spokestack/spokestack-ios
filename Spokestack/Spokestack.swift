@@ -30,7 +30,8 @@ import Foundation
     @objc public var configuration: SpeechConfiguration
     
     private var delegates: [SpokestackDelegate]
-    
+    private var editor: TranscriptEditor?
+
     /// This constructor is intended for use only by the `SpokestackBuilder`.
     /// - Parameters:
     ///   - delegates: Delegate implementations of `SpokestackDelegate` that receive Spokestack module events.
@@ -38,14 +39,29 @@ import Foundation
     ///   - pipeline: An initialized SpeechPipeline for the client to access.
     ///   - nlu: An initialized NLUTensorflow for the client to access.
     ///   - tts: An initialized TextToSpeech for the client to access.
-    @objc internal init(delegates: [SpokestackDelegate], configuration: SpeechConfiguration, pipeline: SpeechPipeline, nlu: NLUTensorflow, tts: TextToSpeech) {
+    @objc internal init(delegates: [SpokestackDelegate], configuration: SpeechConfiguration, pipeline: SpeechPipeline, nlu: NLUTensorflow, tts: TextToSpeech, editor: TranscriptEditor?) {
         self.delegates = delegates
         self.configuration = configuration
         self.pipeline = pipeline
-        self.context = SpeechContext(configuration)
+        self.context = pipeline.context
         self.nlu = nlu
         self.tts = tts
+        self.editor = editor
         super.init()
+    }
+}
+
+extension Spokestack: SpokestackDelegate {
+    
+    /// A required function for `SpokestackDelegate` implementors
+    /// - Parameter error: An error sent from a Spokestack module.
+    public func failure(error: Error) {}
+    
+    /// An event receiver used to fulfill automatic classification configuration.
+    /// - Parameter result: Global state for the speech pipeline.
+    public func didRecognize(_ result: SpeechContext) {
+        self.configuration.automaticallyClassifyTranscript ?
+            self.nlu.classify(utterance: self.editor?.editTranscript(transcript: result.transcript) ?? result.transcript) : nil
     }
 }
 
@@ -67,7 +83,8 @@ import Foundation
     private var config = SpeechConfiguration()
     private var context: SpeechContext
     private var pipelineProfile: SpeechPipelineProfiles = .tfLiteWakewordAppleSpeech
-    
+    private var editor: TranscriptEditor?
+
     /// Create a Spokestack builder with a default configuration.
     @objc public override init() {
         self.context = SpeechContext(self.config)
@@ -128,6 +145,19 @@ import Foundation
         return self
     }
     
+    /// Sets a transcript editor used to alter ASR transcripts before they are classified by the NLU subsystem.
+    ///
+    /// If a transcript editor is set, registered listeners will still receive the `didRecognize` event from the speech pipeline with the unedited transcripts, but the editor will automatically run on those transcripts before the NLU module, operates on them. Thus, the `utterance` inside the `NLUResult` returned by classification will reflect the edited version of the transcript.
+    ///
+    /// This can be used to alter ASR results that frequently contain a spelling for a homophone that's incorrect for the domain; for example, an app used to summon a genie whose ASR transcripts tend to contain "Jen" instead of "djinn".
+    /// - Note: Transcript editors are _not_ run automatically on inputs to the `classify(string:)` convenience method.
+    /// - Parameter editor:  A transcript editor used to alter ASR results before NLU classification.
+    /// - Returns: An updated instance of `SpeechPipelineBuilder` for call chaining.
+    @objc public func setTranscriptEditor(_ editor: TranscriptEditor) -> SpokestackBuilder {
+        self.editor = editor
+        return self
+    }
+    
     /// Build this configuration into a `Spokestack` instance.
     /// - Throws: An `NLUError` if the NLU module was unable to build.
     /// - Returns: An instance of `Spokestack`.
@@ -140,7 +170,10 @@ import Foundation
             .build()
         let tts = TextToSpeech(self.delegates, configuration: self.config)
         let nlu = try NLUTensorflow(self.delegates, configuration: self.config)
-        let spokestack = Spokestack(delegates: self.delegates, configuration: self.config, pipeline: pipeline, nlu: nlu, tts: tts)
+        let spokestack = Spokestack(delegates: self.delegates, configuration: self.config, pipeline: pipeline, nlu: nlu, tts: tts, editor: self.editor)
+        if self.config.automaticallyClassifyTranscript {
+            pipeline.context.addListener(spokestack)
+        }
         return spokestack
     }
 }
