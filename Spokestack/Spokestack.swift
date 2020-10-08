@@ -147,7 +147,7 @@ extension Spokestack: SpokestackDelegate {
     
     /// Sets a transcript editor used to alter ASR transcripts before they are classified by the NLU subsystem.
     ///
-    /// If a transcript editor is set, registered listeners will still receive the `didRecognize` event from the speech pipeline with the unedited transcripts, but the editor will automatically run on those transcripts before the NLU module, operates on them. Thus, the `utterance` inside the `NLUResult` returned by classification will reflect the edited version of the transcript.
+    /// If a transcript editor is set, registered listeners will still receive the `didRecognize` event from the speech pipeline with the unedited transcript, but the editor will automatically run on that transcript before the NLU module operates on it. Thus, the `utterance` inside the `NLUResult` returned by classification will reflect the edited version of the transcript.
     ///
     /// This can be used to alter ASR results that frequently contain a spelling for a homophone that's incorrect for the domain; for example, an app used to summon a genie whose ASR transcripts tend to contain "Jen" instead of "djinn".
     /// - Note: Transcript editors are _not_ run automatically on inputs to the `classify(string:)` convenience method.
