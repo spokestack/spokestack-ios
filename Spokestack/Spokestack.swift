@@ -60,8 +60,10 @@ extension Spokestack: SpokestackDelegate {
     /// An event receiver used to fulfill automatic classification configuration.
     /// - Parameter result: Global state for the speech pipeline.
     public func didRecognize(_ result: SpeechContext) {
-        self.configuration.automaticallyClassifyTranscript ?
-            self.nlu.classify(utterance: self.editor?.editTranscript(transcript: result.transcript) ?? result.transcript) : nil
+        if self.configuration.automaticallyClassifyTranscript {
+            let t = self.editor?.editTranscript(transcript: result.transcript) ?? result.transcript
+            self.nlu.classify(utterance: t)
+        }
     }
 }
 
