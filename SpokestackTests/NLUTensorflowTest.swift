@@ -57,10 +57,10 @@ class NLUTensorflowTest: XCTestCase {
         wait(for: [didFailExpectation], timeout: 5)
         XCTAssertFalse(delegate.didClassify)
         XCTAssert(delegate.didFail)
-        nlu.configuration.nluMaxTokenLength = 128
-        delegate.reset()
         
         // successful classification calls delegate.classify
+        nlu.configuration.nluMaxTokenLength = 128
+        delegate.reset()
         let didSucceedExpectation = expectation(description: "successful classification calls TestNLUDelegate.classify")
         delegate.asyncExpectation = didSucceedExpectation
         nlu.classify(utterance: "")
@@ -68,20 +68,6 @@ class NLUTensorflowTest: XCTestCase {
         XCTAssert(delegate.didClassify)
         XCTAssertFalse(delegate.didFail)
     }
-}
-
-fileprivate enum NLUModel {
-    static let info = (name: "mock_nlu", extension: "tflite")
-    static let input = [Int32](Array(repeating: 0, count: 128)).withUnsafeBufferPointer(Data.init)
-    static let validIndex = 0
-    static let shape: TensorShape = [2]
-    static let inputData = [Int32]([Int32(1), Int32(3)]).withUnsafeBufferPointer(Data.init)
-    static let outputData = [Int32]([0, 0, 0, 0, 0, 0, 0, 0]).withUnsafeBufferPointer(Data.init)
-    static var path: String = {
-        let bundle = Bundle(for: NLUTensorflowTest.self)
-        let p = bundle.path(forResource: info.name, ofType: info.extension)
-        return p!
-    }()
 }
 
 class TestNLUDelegate: SpokestackDelegate {

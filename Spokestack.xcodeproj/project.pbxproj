@@ -69,6 +69,8 @@
 		59B1C175251D3D460062B291 /* Tracer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59B1C174251D3D460062B291 /* Tracer.swift */; };
 		59B1C176251D3D460062B291 /* Tracer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59B1C174251D3D460062B291 /* Tracer.swift */; };
 		59C15D53234D322A00B091F4 /* WebRTCVAD.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59C15D52234D322A00B091F4 /* WebRTCVAD.swift */; };
+		59C1A438252E71F700CE2B69 /* TranscriptEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59C1A437252E71F700CE2B69 /* TranscriptEditor.swift */; };
+		59C1A439252E71F700CE2B69 /* TranscriptEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59C1A437252E71F700CE2B69 /* TranscriptEditor.swift */; };
 		59C2AFDA2319CB7100E47AC5 /* RingBufferTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59C2AFD92319CB7100E47AC5 /* RingBufferTest.swift */; };
 		59C2AFDB2319CE5800E47AC5 /* SpeechConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59A0D5C52204E8E4003709C3 /* SpeechConfiguration.swift */; };
 		59C2AFDF2319CE8000E47AC5 /* SpeechProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5936594B2209EA1800C0365F /* SpeechProcessor.swift */; };
@@ -173,7 +175,7 @@
 		5917AC4E2405C86300CB4900 /* NLUTensorflowSlotParserTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NLUTensorflowSlotParserTest.swift; sourceTree = "<group>"; };
 		5917AC502405C89A00CB4900 /* SharedTestMocks.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedTestMocks.swift; sourceTree = "<group>"; };
 		591BCDA223D26077009681D6 /* NLUTensorflow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NLUTensorflow.swift; sourceTree = "<group>"; };
-		592C0B7A2385B5E800308CCD /* TTSViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = TTSViewController.swift; path = "TTSViewController.swift"; sourceTree = "<group>"; };
+		592C0B7A2385B5E800308CCD /* TTSViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TTSViewController.swift; sourceTree = "<group>"; };
 		59365947220889EE00C0365F /* AppleWakewordRecognizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppleWakewordRecognizer.swift; sourceTree = "<group>"; };
 		5936594B2209EA1800C0365F /* SpeechProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeechProcessor.swift; sourceTree = "<group>"; };
 		594154B722F8AD2200E3624E /* TFLiteWakewordRecognizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TFLiteWakewordRecognizer.swift; sourceTree = "<group>"; };
@@ -201,6 +203,7 @@
 		59B1C16F251CF36E0062B291 /* SpokestackDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpokestackDelegate.swift; sourceTree = "<group>"; };
 		59B1C174251D3D460062B291 /* Tracer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tracer.swift; sourceTree = "<group>"; };
 		59C15D52234D322A00B091F4 /* WebRTCVAD.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = WebRTCVAD.swift; path = Spokestack/WebRTCVAD.swift; sourceTree = SOURCE_ROOT; };
+		59C1A437252E71F700CE2B69 /* TranscriptEditor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TranscriptEditor.swift; sourceTree = "<group>"; };
 		59C2AFD92319CB7100E47AC5 /* RingBufferTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RingBufferTest.swift; sourceTree = "<group>"; };
 		59C2AFED231ED07100E47AC5 /* WebRTCVADTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebRTCVADTest.swift; sourceTree = "<group>"; };
 		59D78F5E2322D13700728A98 /* AudioControllerTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioControllerTest.swift; sourceTree = "<group>"; };
@@ -408,6 +411,7 @@
 				5936594B2209EA1800C0365F /* SpeechProcessor.swift */,
 				59B1C16F251CF36E0062B291 /* SpokestackDelegate.swift */,
 				59B1C174251D3D460062B291 /* Tracer.swift */,
+				59C1A437252E71F700CE2B69 /* TranscriptEditor.swift */,
 			);
 			name = Protocols;
 			sourceTree = "<group>";
@@ -733,6 +737,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				59C1A438252E71F700CE2B69 /* TranscriptEditor.swift in Sources */,
 				59365948220889EE00C0365F /* AppleWakewordRecognizer.swift in Sources */,
 				59B1C170251CF36E0062B291 /* SpokestackDelegate.swift in Sources */,
 				596B82482384A097004BAEF4 /* TextToSpeech.swift in Sources */,
@@ -772,6 +777,7 @@
 			files = (
 				59C2AFE02319CEA100E47AC5 /* AppleWakewordRecognizer.swift in Sources */,
 				59B1C145251BC2B80062B291 /* Spokestack.swift in Sources */,
+				59C1A439252E71F700CE2B69 /* TranscriptEditor.swift in Sources */,
 				59D78F612322EAE000728A98 /* SpeechPipelineTest.swift in Sources */,
 				5917AC512405C89A00CB4900 /* SharedTestMocks.swift in Sources */,
 				59C2AFEA2319CF8A00E47AC5 /* Data+Extensions.swift in Sources */,
