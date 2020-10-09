@@ -111,7 +111,11 @@ import CryptoKit
                     }
                 }
                 if r.final {
-                    self.context.dispatch { $0.didRecognize?(self.context) }
+                    if self.context.transcript.isEmpty {
+                        self.context.dispatch { $0.didTimeout?() }
+                    } else {
+                        self.context.dispatch { $0.didRecognize?(self.context) }
+                    }
                 }
             }
         })
