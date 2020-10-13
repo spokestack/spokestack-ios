@@ -18,7 +18,7 @@ Pod::Spec.new do |s|
   s.dependency 'filter_audio', '~> 0.5.0'
   s.static_framework = true
   # Exclude Apple Silicon simulator architecture from build list, but still build for Apple Silicon physical.
-  s.pod_target_xcconfig = { 'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'arm64' }
-  s.user_target_xcconfig = { 'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'arm64' }
+  s.pod_target_xcconfig = { 'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'arm64', 'EXCLUDED_ARCHS[sdk=watchsimulator*]' => 'arm64', 'EXCLUDED_ARCHS[sdk=appletvsimulator*]' => 'arm64'}
+  s.user_target_xcconfig = { 'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'arm64', 'EXCLUDED_ARCHS[sdk=watchsimulator*]' => 'arm64', 'EXCLUDED_ARCHS[sdk=appletvsimulator*]' => 'arm64'}
 
 end
