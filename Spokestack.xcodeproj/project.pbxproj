@@ -24,6 +24,7 @@
 		01D31F6F216BAFD90055FD45 /* SpeechContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01D31F6D216BAFD90055FD45 /* SpeechContext.swift */; };
 		01D31F70216BAFD90055FD45 /* SpeechContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01D31F6D216BAFD90055FD45 /* SpeechContext.swift */; };
 		01D972BC23C592A00002FF79 /* TextToSpeechResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01D972BB23C592A00002FF79 /* TextToSpeechResult.swift */; };
+		18F77E8F83157961C7B8A875 /* Pods_SpokestackTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8AF5D54B4D2482619C28AE68 /* Pods_SpokestackTests.framework */; };
 		59175D8D2523E19400A8991F /* SpokestackBuilderTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59175D8C2523E19400A8991F /* SpokestackBuilderTest.swift */; };
 		5917AC4F2405C86300CB4900 /* NLUTensorflowSlotParserTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5917AC4E2405C86300CB4900 /* NLUTensorflowSlotParserTest.swift */; };
 		5917AC512405C89A00CB4900 /* SharedTestMocks.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5917AC502405C89A00CB4900 /* SharedTestMocks.swift */; };
@@ -111,6 +112,8 @@
 		59FE4A912480580900976825 /* mock_encoder.tflite in Resources */ = {isa = PBXBuildFile; fileRef = 59FE4A8D2480580900976825 /* mock_encoder.tflite */; };
 		59FE4A9324805EA300976825 /* mock_filter.tflite in Resources */ = {isa = PBXBuildFile; fileRef = 59FE4A9224805EA300976825 /* mock_filter.tflite */; };
 		59FE4A9724805F5F00976825 /* mock_detector.tflite in Resources */ = {isa = PBXBuildFile; fileRef = 59FE4A9624805F5F00976825 /* mock_detector.tflite */; };
+		5B5D9400E47ACF3832D4B16A /* Pods_SpokestackFrameworkExample.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ACF762CFB286D801EE035052 /* Pods_SpokestackFrameworkExample.framework */; };
+		B706D0A4D0FCFF12A3A88BD4 /* Pods_Spokestack.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B2DB6D0F910BC9EE1984225B /* Pods_Spokestack.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -232,7 +235,10 @@
 		59FE4A9224805EA300976825 /* mock_filter.tflite */ = {isa = PBXFileReference; lastKnownFileType = file; path = mock_filter.tflite; sourceTree = "<group>"; };
 		59FE4A9624805F5F00976825 /* mock_detector.tflite */ = {isa = PBXFileReference; lastKnownFileType = file; path = mock_detector.tflite; sourceTree = "<group>"; };
 		87E00C354EAE6F97CE48B5AE /* Pods-SpokestackFrameworkExample.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SpokestackFrameworkExample.release.xcconfig"; path = "Target Support Files/Pods-SpokestackFrameworkExample/Pods-SpokestackFrameworkExample.release.xcconfig"; sourceTree = "<group>"; };
+		8AF5D54B4D2482619C28AE68 /* Pods_SpokestackTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SpokestackTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		9046EDB03884D7895DE41621 /* Pods-SpokestackFrameworkExample.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SpokestackFrameworkExample.debug.xcconfig"; path = "Target Support Files/Pods-SpokestackFrameworkExample/Pods-SpokestackFrameworkExample.debug.xcconfig"; sourceTree = "<group>"; };
+		ACF762CFB286D801EE035052 /* Pods_SpokestackFrameworkExample.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SpokestackFrameworkExample.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B2DB6D0F910BC9EE1984225B /* Pods_Spokestack.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Spokestack.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		C4C6D917748DF75FB3939507 /* Pods-Spokestack.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Spokestack.debug.xcconfig"; path = "Target Support Files/Pods-Spokestack/Pods-Spokestack.debug.xcconfig"; sourceTree = "<group>"; };
 		D0A001F2408B9072FCD54E38 /* Pods-SpokestackTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SpokestackTests.debug.xcconfig"; path = "Target Support Files/Pods-SpokestackTests/Pods-SpokestackTests.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -243,6 +249,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				01B2B42721ADC32A00289890 /* Spokestack.framework in Frameworks */,
+				5B5D9400E47ACF3832D4B16A /* Pods_SpokestackFrameworkExample.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -250,6 +257,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B706D0A4D0FCFF12A3A88BD4 /* Pods_Spokestack.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -258,6 +266,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				01D31F45216BAF260055FD45 /* Spokestack.framework in Frameworks */,
+				18F77E8F83157961C7B8A875 /* Pods_SpokestackTests.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -433,6 +442,9 @@
 			isa = PBXGroup;
 			children = (
 				59062F0922A5AA8400613AD8 /* Foundation.framework */,
+				B2DB6D0F910BC9EE1984225B /* Pods_Spokestack.framework */,
+				ACF762CFB286D801EE035052 /* Pods_SpokestackFrameworkExample.framework */,
+				8AF5D54B4D2482619C28AE68 /* Pods_SpokestackTests.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -956,6 +968,7 @@
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
+				EXCLUDED_ARCHS = "";
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -1023,6 +1036,7 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				EXCLUDED_ARCHS = "";
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -1034,6 +1048,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = NO;
 				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_INCLUDE_PATHS = "${SRCROOT}/Spokestack/filter_audio/**";

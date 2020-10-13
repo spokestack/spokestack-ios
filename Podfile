@@ -9,7 +9,7 @@ target 'Spokestack' do
   use_frameworks!
 
   # Pods for Spokestack
-  pod 'TensorFlowLiteSwift', '~> 1.14.0'
+  pod 'TensorFlowLiteSwift', '~> 2.3.0'
   pod 'filter_audio', '~> 0.4.3', :modular_headers => true
 
   target 'SpokestackTests' do
