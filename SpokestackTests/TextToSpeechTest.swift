@@ -12,7 +12,7 @@ import Spokestack
 
 @available(iOS 13, *)
 class TextToSpeechTest: XCTestCase {
-    
+
     /// MARK: Synthesize
     func testSynthesize() {
         let delegate = TestTextToSpeechDelegate()
@@ -22,7 +22,7 @@ class TextToSpeechTest: XCTestCase {
         let badConfig = SpeechConfiguration()
         let didFailConfigExpectation = expectation(description: "bad config results in a failed request that calls TestTextToSpeechDelegate.failure")
         badConfig.apiId = "BADBADNOTGOOD"
-        let badTTS = TextToSpeech(delegate, configuration: badConfig)
+        let badTTS = TextToSpeech([delegate], configuration: badConfig)
         delegate.asyncExpectation = didFailConfigExpectation
         badTTS.synthesize(input)
         wait(for: [didFailConfigExpectation], timeout: 5)
@@ -30,7 +30,7 @@ class TextToSpeechTest: XCTestCase {
         XCTAssertFalse(delegate.didSucceed)
         
         let config = SpeechConfiguration()
-        let tts = TextToSpeech(delegate, configuration: config)
+        let tts = TextToSpeech([delegate], configuration: config)
         
         // bad input results in a failed request that calls failure
         delegate.reset()
@@ -56,7 +56,7 @@ class TextToSpeechTest: XCTestCase {
     func testSynthesizeSSML() {
         let delegate = TestTextToSpeechDelegate()
         let config = SpeechConfiguration()
-        let tts = TextToSpeech(delegate, configuration: config)
+        let tts = TextToSpeech([delegate], configuration: config)
         
         // successful request with ssml formatting
         let didSucceedExpectation2 = expectation(description: "successful request calls TestTextToSpeechDelegate.success")
@@ -71,7 +71,7 @@ class TextToSpeechTest: XCTestCase {
     func testSynthesizeMarkdown() {
         let delegate = TestTextToSpeechDelegate()
         let config = SpeechConfiguration()
-        let tts = TextToSpeech(delegate, configuration: config)
+        let tts = TextToSpeech([delegate], configuration: config)
         
         // successful request with markdown formatting
         delegate.reset()
@@ -113,10 +113,10 @@ class TextToSpeechTest: XCTestCase {
         XCTAssertNotNil(publisher)
         wait(for: [didCompleteExpectation], timeout: 5)
     }
-    
-    /// MARK:  Speak
+}
+
+class TextToSpeechSynthesizeTest: XCTestCase {
     func testSpeak() {
-        
         // speak() calls didBeginSpeaking and didFinishSpeaking
         let didBeginExpectation = expectation(description: "successful request calls TestTextToSpeechDelegate.didBeginSpeaking")
         let didFinishExpectation = expectation(description: "successful request calls TestTextToSpeechDelegate.didFinishSpeaking")
@@ -125,7 +125,7 @@ class TextToSpeechTest: XCTestCase {
         delegate.didFinishExpectation = didFinishExpectation
         let input = TextToSpeechInput()
         let config = SpeechConfiguration()
-        let tts = TextToSpeech(delegate, configuration: config)
+        let tts = TextToSpeech([delegate], configuration: config)
         tts.speak(input)
         wait(for: [didBeginExpectation, didFinishExpectation], timeout: 10)
         XCTAssert(delegate.didBegin)
@@ -133,7 +133,7 @@ class TextToSpeechTest: XCTestCase {
     }
 }
 
-class TestTextToSpeechDelegate: TextToSpeechDelegate {
+class TestTextToSpeechDelegate: SpokestackDelegate {
     /// Spy pattern for the system under test.
     /// asyncExpectation lets the caller's test know when the delegate has been called.
     var didSucceed: Bool = false
@@ -156,7 +156,7 @@ class TestTextToSpeechDelegate: TextToSpeechDelegate {
         didSucceed = true
     }
     
-    func failure(ttsError error: Error) {
+    func failure(error: Error) {
         asyncExpectation?.fulfill()
         didFail = true
     }

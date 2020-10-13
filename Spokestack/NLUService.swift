@@ -15,13 +15,13 @@ import Foundation
     @objc var configuration: SpeechConfiguration {get set}
     
     /// Delegate that receives NLU service events.
-    @objc var delegate: NLUDelegate? {get set}
+    @objc var delegates: [SpokestackDelegate] {get set}
     
     /// The initializer for the NLU service.
     /// - Parameters:
     ///   - delegate: Delegate that receives NLU service events.
     ///   - configuration: The global configuration for all speech pipeline components.
-    @objc init(_ delegate: NLUDelegate, configuration: SpeechConfiguration) throws
+    @objc init(_ delegates: [SpokestackDelegate], configuration: SpeechConfiguration) throws
     
     /// Classifies a user utterance into an intent, sending the result to the NLUDelegate.
     /// - Parameters:

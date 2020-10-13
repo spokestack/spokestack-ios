@@ -7,6 +7,21 @@
 //
 
 import Foundation
+import TensorFlowLite
+
+internal enum NLUModel {
+    static let info = (name: "mock_nlu", extension: "tflite")
+    static let input = [Int32](Array(repeating: 0, count: 128)).withUnsafeBufferPointer(Data.init)
+    static let validIndex = 0
+    static let shape: TensorShape = [2]
+    static let inputData = [Int32]([Int32(1), Int32(3)]).withUnsafeBufferPointer(Data.init)
+    static let outputData = [Int32]([0, 0, 0, 0, 0, 0, 0, 0]).withUnsafeBufferPointer(Data.init)
+    static var path: String = {
+        let bundle = Bundle(for: NLUTensorflowTest.self)
+        let p = bundle.path(forResource: info.name, ofType: info.extension)
+        return p!
+    }()
+}
 
 internal struct SharedTestMocks {
     static func createEncodingsDictionary(_ path: String) throws ->  [String: Int] {

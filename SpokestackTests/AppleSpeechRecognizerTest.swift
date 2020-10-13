@@ -47,7 +47,7 @@ class AppleSpeechRecognizerTest: XCTestCase {
     }
 }
 
-class AppleSpeechRecognizerTestDelegate: SpeechEventListener {
+class AppleSpeechRecognizerTestDelegate: SpokestackDelegate {
     /// Spy pattern for the system under test.
     /// asyncExpectation lets the caller's test know when the delegate has been called.
     var didError: Bool = false
@@ -70,8 +70,8 @@ class AppleSpeechRecognizerTestDelegate: SpeechEventListener {
         self.didRecognize = true
     }
     
-    func failure(speechError: Error) {
-        print(speechError)
+    func failure(error: Error) {
+        print(error)
         guard let _ = asyncExpectation else {
             XCTFail("AppleSpeechRecognizerTestDelegate was not setup correctly. Missing XCTExpectation reference")
             return

@@ -101,7 +101,12 @@ class NLUViewController: UIViewController {
         }
         self.configuration.nluModelMetadataPath = metadataPath
 
-        self.nlu = try! NLUTensorflow(self, configuration: configuration)
+        let spokestack = try! SpokestackBuilder()
+            .setConfiguration(self.configuration)
+            .addDelegate(self)
+            .build()
+        self.nlu = spokestack.nlu
+//
     }
     
     @objc func dismissViewController(_ sender: Any?) -> Void {
@@ -113,7 +118,7 @@ class NLUViewController: UIViewController {
     @objc func predictAction(_ sender: Any) {
         // I give this app a ten
         // Call 1234567890
-        self.nlu?.classify(utterance: self.nluInput.text ?? "turn the lights on in the kitchen")
+        self.nlu?.classify(utterance: self.nluInput.text ?? "Turn on the lights in the kitchen.")
     }
     
     @objc func predictActions(_ sender: Any) {
@@ -136,7 +141,7 @@ class NLUViewController: UIViewController {
 
 // MARK: NLUDelegate implementation
 
-extension NLUViewController: NLUDelegate {
+extension NLUViewController: SpokestackDelegate {
     func classification(result: NLUResult) {
         print("Classification: \(result)")
     }
@@ -145,8 +150,8 @@ extension NLUViewController: NLUDelegate {
         print("Trace: \(trace)")
     }
     
-    func failure(nluError: Error) {
-        print("Failure: \(nluError)")
+    func failure(error: Error) {
+        print("Failure: \(error)")
     }
     
 }

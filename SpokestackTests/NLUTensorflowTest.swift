@@ -31,7 +31,7 @@ class NLUTensorflowTest: XCTestCase {
         let delegate = TestNLUDelegate()
         let didFailExpectation = expectation(description: "unsuccessful initialization calls TestNLUDelegate.failure")
         delegate.asyncExpectation = didFailExpectation
-        let _ = try! NLUTensorflow(delegate, configuration: config)
+        let _ = try! NLUTensorflow([delegate], configuration: config)
         wait(for: [didFailExpectation], timeout: 5)
         XCTAssert(delegate.didFail)
         delegate.reset()
@@ -49,7 +49,7 @@ class NLUTensorflowTest: XCTestCase {
         config.nluModelMetadataPath = SharedTestMocks.createModelMetadataPath()
         config.nluModelPath = NLUModel.path
         let delegate = TestNLUDelegate()
-        let nlu = try! NLUTensorflow(delegate, configuration: config)
+        let nlu = try! NLUTensorflow([delegate], configuration: config)
         nlu.configuration.nluMaxTokenLength = -1
         let didFailExpectation = expectation(description: "unsuccessful classify calls TestNLUDelegate.failure")
         delegate.asyncExpectation = didFailExpectation
@@ -57,10 +57,10 @@ class NLUTensorflowTest: XCTestCase {
         wait(for: [didFailExpectation], timeout: 5)
         XCTAssertFalse(delegate.didClassify)
         XCTAssert(delegate.didFail)
-        nlu.configuration.nluMaxTokenLength = 128
-        delegate.reset()
         
         // successful classification calls delegate.classify
+        nlu.configuration.nluMaxTokenLength = 128
+        delegate.reset()
         let didSucceedExpectation = expectation(description: "successful classification calls TestNLUDelegate.classify")
         delegate.asyncExpectation = didSucceedExpectation
         nlu.classify(utterance: "")
@@ -70,21 +70,7 @@ class NLUTensorflowTest: XCTestCase {
     }
 }
 
-fileprivate enum NLUModel {
-    static let info = (name: "mock_nlu", extension: "tflite")
-    static let input = [Int32](Array(repeating: 0, count: 128)).withUnsafeBufferPointer(Data.init)
-    static let validIndex = 0
-    static let shape: TensorShape = [2]
-    static let inputData = [Int32]([Int32(1), Int32(3)]).withUnsafeBufferPointer(Data.init)
-    static let outputData = [Int32]([0, 0, 0, 0, 0, 0, 0, 0]).withUnsafeBufferPointer(Data.init)
-    static var path: String = {
-        let bundle = Bundle(for: NLUTensorflowTest.self)
-        let p = bundle.path(forResource: info.name, ofType: info.extension)
-        return p!
-    }()
-}
-
-class TestNLUDelegate: NLUDelegate {
+class TestNLUDelegate: SpokestackDelegate {
     // Spy pattern for the system under test.
     // asyncExpectation lets the caller's test know when the delegate has been called.
     var didClassify: Bool = false
@@ -106,7 +92,7 @@ class TestNLUDelegate: NLUDelegate {
         print(trace)
     }
     
-    func failure(nluError: Error) {
+    func failure(error: Error) {
         asyncExpectation?.fulfill()
         didFail = true
     }

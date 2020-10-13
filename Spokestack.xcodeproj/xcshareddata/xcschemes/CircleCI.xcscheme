@@ -14,9 +14,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "011C191C216BCA3200DB36FD"
-               BuildableName = "SpokestackFrameworkExample.app"
-               BlueprintName = "SpokestackFrameworkExample"
+               BlueprintIdentifier = "01D31F3A216BAF260055FD45"
+               BuildableName = "Spokestack.framework"
+               BlueprintName = "Spokestack"
                ReferencedContainer = "container:Spokestack.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -28,6 +28,30 @@
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       shouldUseLaunchSchemeArgsEnv = "YES">
       <Testables>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "01D31F43216BAF260055FD45"
+               BuildableName = "SpokestackTests.xctest"
+               BlueprintName = "SpokestackTests"
+               ReferencedContainer = "container:Spokestack.xcodeproj">
+            </BuildableReference>
+            <SkippedTests>
+               <Test
+                  Identifier = "AppleSpeechRecognizerTest/testProcess()">
+               </Test>
+               <Test
+                  Identifier = "AppleWakewordRecognizerTest/testProcess()">
+               </Test>
+               <Test
+                  Identifier = "AudioControllerTest">
+               </Test>
+               <Test
+                  Identifier = "TextToSpeechSynthesizeTest">
+               </Test>
+            </SkippedTests>
+         </TestableReference>
       </Testables>
    </TestAction>
    <LaunchAction
@@ -40,16 +64,6 @@
       debugDocumentVersioning = "YES"
       debugServiceExtension = "internal"
       allowLocationSimulation = "YES">
-      <BuildableProductRunnable
-         runnableDebuggingMode = "0">
-         <BuildableReference
-            BuildableIdentifier = "primary"
-            BlueprintIdentifier = "011C191C216BCA3200DB36FD"
-            BuildableName = "SpokestackFrameworkExample.app"
-            BlueprintName = "SpokestackFrameworkExample"
-            ReferencedContainer = "container:Spokestack.xcodeproj">
-         </BuildableReference>
-      </BuildableProductRunnable>
    </LaunchAction>
    <ProfileAction
       buildConfiguration = "Release"
@@ -57,16 +71,15 @@
       savedToolIdentifier = ""
       useCustomWorkingDirectory = "NO"
       debugDocumentVersioning = "YES">
-      <BuildableProductRunnable
-         runnableDebuggingMode = "0">
+      <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "011C191C216BCA3200DB36FD"
-            BuildableName = "SpokestackFrameworkExample.app"
-            BlueprintName = "SpokestackFrameworkExample"
+            BlueprintIdentifier = "01D31F3A216BAF260055FD45"
+            BuildableName = "Spokestack.framework"
+            BlueprintName = "Spokestack"
             ReferencedContainer = "container:Spokestack.xcodeproj">
          </BuildableReference>
-      </BuildableProductRunnable>
+      </MacroExpansion>
    </ProfileAction>
    <AnalyzeAction
       buildConfiguration = "Debug">

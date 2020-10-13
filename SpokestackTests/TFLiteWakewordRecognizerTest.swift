@@ -162,7 +162,7 @@ fileprivate enum MockWakewordModels {
     }()
 }
 
-class TFLiteWakewordRecognizerTestDelegate: SpeechEventListener {
+class TFLiteWakewordRecognizerTestDelegate: SpokestackDelegate {
     // Spy pattern for the system under test.
     // asyncExpectation lets the caller's test know when the delegate has been called.
     var didError: Bool = false
@@ -183,8 +183,8 @@ class TFLiteWakewordRecognizerTestDelegate: SpeechEventListener {
     
     func didRecognize(_ result: SpeechContext) {}
     
-    func failure(speechError: Error) {
-        print(speechError)
+    func failure(error: Error) {
+        print(error)
         guard let _ = asyncExpectation else {
             XCTFail("TFLiteWakewordRecognizerTestDelegate was not setup correctly. Missing XCTExpectation reference")
             return

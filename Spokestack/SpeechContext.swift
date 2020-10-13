@@ -19,12 +19,8 @@ import Foundation
     @objc public var isActive: Bool = false
     /// Speech detected indicator
     @objc public var isSpeech: Bool = false
-    /// An ordered set of `SpeechEventListener`s that are sent `SpeechPipeline` events.
-    private var listeners: [SpeechEventListener] = []
-    /// Current error in the pipeline
-    internal var error: Error?
-    /// Current trace in the pipeline
-    internal var trace: String?
+    /// An ordered set of `SpokestackDelegate`s that are sent events from Spokestack subsystems.
+    private var listeners: [SpokestackDelegate] = []
     
     /// Initializes a speech context instance using the specified speech pipeline configuration.
     /// - Parameter config: The speech pipeline configuration used by the speech context instance.
@@ -35,7 +31,7 @@ import Foundation
     /// Adds the specified listener instance to the ordered set of listeners. The specified listener instance may only be added once; duplicates will be ignored. The specified listener will recieve speech pipeline events.
     ///
     /// - Parameter listener: The listener to add.
-    @objc internal func addListener(_ listener: SpeechEventListener) {
+    internal func addListener(_ listener: SpokestackDelegate) {
         if !self.listeners.contains(where: { l in
             return listener === l ? true : false
         }) {
@@ -45,7 +41,7 @@ import Foundation
     
     /// Removes the specified listener by reference. The specified listener will no longer recieve speech pipeline events.
     /// - Parameter listener: The listener to remove.
-    @objc internal func removeListener(_ listener: SpeechEventListener) {
+    internal func removeListener(_ listener: SpokestackDelegate) {
         for (i, l) in self.listeners.enumerated() {
             _ = listener === l ? self.listeners.remove(at: i) : nil
         }
@@ -55,35 +51,10 @@ import Foundation
     @objc internal func removeListeners() {
         self.listeners = []
     }
-
-    @objc internal func dispatch(_ event: SpeechEvents) {
-        self.listeners.forEach { listener in
-            self.configuration.delegateDispatchQueue.async {
-                switch event {
-                case .initialize:
-                    listener.didInit()
-                case .start:
-                    listener.didStart()
-                case .stop:
-                    listener.didStop()
-                case .activate:
-                    listener.didActivate()
-                case .deactivate:
-                    listener.didDeactivate()
-                case .recognize:
-                    listener.didRecognize(self)
-                case .partiallyRecognize:
-                    listener.didRecognizePartial?(self)
-                case .error:
-                    let e = (self.error != nil) ? self.error! : SpeechPipelineError.errorNotSet("A pipeline component attempted to send an error to SpeechContext's listeners without first setting the SpeechContext.error property.")
-                    listener.failure(speechError: e)
-                case .trace:
-                    let t = (self.trace != nil) ? self.trace! : "a trace event was sent, but no trace message was set"
-                        listener.didTrace(t)
-                case .timeout:
-                    listener.didTimeout()
-                }
-            }
+    
+    internal func dispatch(_ handler: @escaping (SpokestackDelegate) -> Void) {
+        self.configuration.delegateDispatchQueue.async {
+            self.listeners.forEach(handler)
         }
     }
 }

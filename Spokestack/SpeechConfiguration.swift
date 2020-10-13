@@ -8,7 +8,7 @@
 
 import Foundation
 
-/// Configuration properties for the pipeline abstraction to pass down to implementations.
+/// Configuration properties for Spokestack modules.
 @objc public class SpeechConfiguration: NSObject {
     /// A comma-separated list of wakeword keywords
     /// - Remark: ex: "up,dog"
@@ -127,4 +127,8 @@ import Foundation
     @objc public var delegateDispatchQueue: DispatchQueue = DispatchQueue.global(qos: .userInitiated)
     /// The dynamic size of the buffer in use by the `AudioEngine`.
     internal var audioEngineBufferSize: UInt32 = 320
+    /// Automatically run Spokestack's NLU classification on ASR transcripts for clients that use the `Spokestack` facade.
+    /// - Note: Requires  `NLUTensorflow` to be correctly configured, notably with `nluModelPath`, `nluModelMetadataPath`, and `nluVocabularyPath`.
+    /// - SeeAlso: `Spokestack`, `NLUTensorflow`, `nluModelPath`, `nluModelMetadataPath`, and `nluVocabularyPath`
+    @objc public var automaticallyClassifyTranscript = true
 }
