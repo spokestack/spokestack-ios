@@ -136,7 +136,7 @@ fileprivate enum MockWakewordModels {
     static let encodeInput = [Int32](Array(repeating: 0, count: 40)).withUnsafeBufferPointer(Data.init)
     static let detectInput = [Int32](Array(repeating: 0, count: 12800)).withUnsafeBufferPointer(Data.init)
     static let validIndex = 0
-    static let shape: TensorShape = [2]
+    static let shape: Tensor.Shape = [2]
     static let output = [Int32](Array(repeating: 0, count: 40))
     static let outputData = output.withUnsafeBufferPointer(Data.init)
     static let filterOutput = [Int32](Array(repeating: 0, count: 40))
