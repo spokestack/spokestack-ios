@@ -61,14 +61,15 @@ internal enum SpeechProcessors: Int {
     case vadTriggerSpokestackSpeech
     /// VAD-sensitive TFLiteWakeword activates Spokestack ASR
     case tfLiteWakewordSpokestackSpeech
+    /// Spokestack ASR that is manually activated and deactivated
+    case pushToTalkSpokestackSpeech
 }
 
 extension SpeechPipelineProfiles {
     /// Convenience property for getting a profile for use by `SpeechPipelineBuilder`.
+    /// - Warning: Order is fixed for interop with React Native Spokestack. New profiles should be appended to end.
     internal var set: [SpeechProcessors]  {
         switch self {
-        case .appleWakewordAppleSpeech:
-            return [.vad, .appleWakeword, .appleSpeech]
         case .tfLiteWakewordAppleSpeech:
             return [.vad, .tfLiteWakeword, .appleSpeech]
         case .vadTriggerAppleSpeech:
@@ -77,8 +78,12 @@ extension SpeechPipelineProfiles {
             return [.appleSpeech]
         case .vadTriggerSpokestackSpeech:
             return [.vad, .vadTrigger, .spokestackSpeech]
+        case .pushToTalkSpokestackSpeech:
+            return [.spokestackSpeech]
         case .tfLiteWakewordSpokestackSpeech:
             return [.vad, .tfLiteWakeword, .spokestackSpeech]
+        case .appleWakewordAppleSpeech:
+            return [.vad, .appleWakeword, .appleSpeech]
         }
     }
 }
