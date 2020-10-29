@@ -94,7 +94,7 @@ This pipeline component uses the Apple `SFSpeech` API to stream audio samples fo
             self.recognitionTaskRunning = true
             
             // Automatically restart wakeword task if it goes over Apple's 1 minute listening limit
-            DispatchQueue.global(qos: .userInitiated).asyncAfter(deadline: .now() + .milliseconds(self.configuration.wakewordRequestTimeout), execute: self.dispatchWorker!)
+            DispatchQueue.global(qos: .userInitiated).asyncAfter(deadline: .now() + .milliseconds(self.configuration.wakewordRequestTimeout), execute: { if let timeoutWorker = self.dispatchWorker { timeoutWorker.perform() }})
         } catch let error {
             self.context.dispatch { $0.failure(error: error) }
         }
@@ -177,10 +177,10 @@ extension AppleWakewordRecognizer: SpeechProcessor {
     /// Triggered by the speech pipeline, instructing the recognizer to stop streaming audio and complete processing.
     @objc public func stopStreaming() {
         self.stopRecognition()
-        self.dispatchWorker?.cancel()
-        self.dispatchWorker = nil
         self.audioEngine.stop()
         self.audioEngine.inputNode.removeTap(onBus: 0)
+        self.dispatchWorker?.cancel()
+        self.dispatchWorker = nil
     }
     
     /// Receives a frame of audio samples for processing. Interface between the `SpeechProcessor` and `AudioController` components. Processes audio in an async thread.
