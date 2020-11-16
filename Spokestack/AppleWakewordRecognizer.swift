@@ -102,7 +102,6 @@ This pipeline component uses the Apple `SFSpeech` API to stream audio samples fo
     
     private func stopRecognition() {
         self.recognitionTaskRunning = false
-        self.recognitionTask?.cancel()
         self.recognitionTask?.finish()
         self.recognitionTask = nil
         self.recognitionRequest?.endAudio()
@@ -111,8 +110,11 @@ This pipeline component uses the Apple `SFSpeech` API to stream audio samples fo
     }
     
     private func createRecognitionTask() throws -> Void {
+        guard let rr = self.recognitionRequest else {
+            throw SpeechPipelineError.failure("Apple Wakeword's recognition request does not exist.")
+        }
         self.recognitionTask = self.speechRecognizer.recognitionTask(
-            with: recognitionRequest!,
+            with: rr,
             resultHandler: {[weak self] result, error in
                 guard let strongSelf = self else {
                     // the callback has been orphaned by stopStreaming, so just end things here.
