@@ -81,10 +81,11 @@ final class RingBuffer <T> {
     func read() throws -> T {
         if self.isEmpty {
             throw RingBufferStateError.illegalState(message: "ring buffer is empty")
+        } else {
+            let value: T = self.data[self.rpos]
+            self.rpos = self.pos(self.rpos + 1)
+            return value
         }
-        let value: T = self.data[self.rpos]
-        self.rpos = self.pos(self.rpos + 1)
-        return value
     }
     
     /// Writes the next value to the buffer.

@@ -84,6 +84,12 @@
 		59C2AFE92319CF4100E47AC5 /* SignalProcessing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59E0E13422FE2C2B0060F012 /* SignalProcessing.swift */; };
 		59C2AFEA2319CF8A00E47AC5 /* Data+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59FB0C8A22AEE4F100FB9662 /* Data+Extensions.swift */; };
 		59C2AFEE231ED07100E47AC5 /* WebRTCVADTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59C2AFED231ED07100E47AC5 /* WebRTCVADTest.swift */; };
+		59C789832582C5640087881D /* TFLiteKeywordViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59C789822582C5640087881D /* TFLiteKeywordViewController.swift */; };
+		59C789912582CD690087881D /* KeywordDetect.tflite in Resources */ = {isa = PBXBuildFile; fileRef = 59C7898E2582CD690087881D /* KeywordDetect.tflite */; };
+		59C789922582CD690087881D /* KeywordEncode.tflite in Resources */ = {isa = PBXBuildFile; fileRef = 59C7898F2582CD690087881D /* KeywordEncode.tflite */; };
+		59C789932582CD690087881D /* KeywordFilter.tflite in Resources */ = {isa = PBXBuildFile; fileRef = 59C789902582CD690087881D /* KeywordFilter.tflite */; };
+		59D68CA9257EB346001E2587 /* TFLiteKeywordRecognizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59D68CA8257EB346001E2587 /* TFLiteKeywordRecognizer.swift */; };
+		59D68CAA257EB346001E2587 /* TFLiteKeywordRecognizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59D68CA8257EB346001E2587 /* TFLiteKeywordRecognizer.swift */; };
 		59D78F5F2322D13700728A98 /* AudioControllerTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59D78F5E2322D13700728A98 /* AudioControllerTest.swift */; };
 		59D78F612322EAE000728A98 /* SpeechPipelineTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59D78F602322EAE000728A98 /* SpeechPipelineTest.swift */; };
 		59E0E13522FE2C2B0060F012 /* SignalProcessing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59E0E13422FE2C2B0060F012 /* SignalProcessing.swift */; };
@@ -209,6 +215,11 @@
 		59C1A437252E71F700CE2B69 /* TranscriptEditor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TranscriptEditor.swift; sourceTree = "<group>"; };
 		59C2AFD92319CB7100E47AC5 /* RingBufferTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RingBufferTest.swift; sourceTree = "<group>"; };
 		59C2AFED231ED07100E47AC5 /* WebRTCVADTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebRTCVADTest.swift; sourceTree = "<group>"; };
+		59C789822582C5640087881D /* TFLiteKeywordViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TFLiteKeywordViewController.swift; sourceTree = "<group>"; };
+		59C7898E2582CD690087881D /* KeywordDetect.tflite */ = {isa = PBXFileReference; lastKnownFileType = file; path = KeywordDetect.tflite; sourceTree = "<group>"; };
+		59C7898F2582CD690087881D /* KeywordEncode.tflite */ = {isa = PBXFileReference; lastKnownFileType = file; path = KeywordEncode.tflite; sourceTree = "<group>"; };
+		59C789902582CD690087881D /* KeywordFilter.tflite */ = {isa = PBXFileReference; lastKnownFileType = file; path = KeywordFilter.tflite; sourceTree = "<group>"; };
+		59D68CA8257EB346001E2587 /* TFLiteKeywordRecognizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TFLiteKeywordRecognizer.swift; sourceTree = "<group>"; };
 		59D78F5E2322D13700728A98 /* AudioControllerTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioControllerTest.swift; sourceTree = "<group>"; };
 		59D78F602322EAE000728A98 /* SpeechPipelineTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeechPipelineTest.swift; sourceTree = "<group>"; };
 		59E0E13422FE2C2B0060F012 /* SignalProcessing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignalProcessing.swift; sourceTree = "<group>"; };
@@ -276,6 +287,9 @@
 		011C191E216BCA3200DB36FD /* SpokestackFrameworkExample */ = {
 			isa = PBXGroup;
 			children = (
+				59C7898E2582CD690087881D /* KeywordDetect.tflite */,
+				59C7898F2582CD690087881D /* KeywordEncode.tflite */,
+				59C789902582CD690087881D /* KeywordFilter.tflite */,
 				597D0CA723F5B28F00018D71 /* nlu.tflite */,
 				597D0CA423F5B24A00018D71 /* nlu.json */,
 				59E895A023E0B45800C424D3 /* vocab.txt */,
@@ -288,6 +302,7 @@
 				59A0D5BF2204E786003709C3 /* AppleWakewordViewController.swift */,
 				59E8959E23E0AE5C00C424D3 /* NLUViewController.swift */,
 				594FEEEC24C685FA00BB4910 /* SpokestackASRViewController.swift */,
+				59C789822582C5640087881D /* TFLiteKeywordViewController.swift */,
 				59E0E1382301FB920060F012 /* TFLiteViewController.swift */,
 				592C0B7A2385B5E800308CCD /* TTSViewController.swift */,
 				011C1921216BCA3200DB36FD /* ViewController.swift */,
@@ -434,6 +449,7 @@
 				594154B722F8AD2200E3624E /* TFLiteWakewordRecognizer.swift */,
 				59416CCC24B5359F009B9304 /* VADTrigger.swift */,
 				59C15D52234D322A00B091F4 /* WebRTCVAD.swift */,
+				59D68CA8257EB346001E2587 /* TFLiteKeywordRecognizer.swift */,
 			);
 			name = Recognizers;
 			sourceTree = "<group>";
@@ -629,7 +645,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				59E0E13E230DEB7C0060F012 /* Detect.lite in Resources */,
+				59C789932582CD690087881D /* KeywordFilter.tflite in Resources */,
+				59C789922582CD690087881D /* KeywordEncode.tflite in Resources */,
 				59E0E140230DEB7C0060F012 /* Filter.lite in Resources */,
+				59C789912582CD690087881D /* KeywordDetect.tflite in Resources */,
 				597D0CA623F5B24A00018D71 /* nlu.json in Resources */,
 				59E895A123E0B45900C424D3 /* vocab.txt in Resources */,
 				011C192A216BCA3200DB36FD /* LaunchScreen.storyboard in Resources */,
@@ -737,6 +756,7 @@
 				011C1922216BCA3200DB36FD /* ViewController.swift in Sources */,
 				011C1920216BCA3200DB36FD /* AppDelegate.swift in Sources */,
 				59E8959F23E0AE5C00C424D3 /* NLUViewController.swift in Sources */,
+				59C789832582C5640087881D /* TFLiteKeywordViewController.swift in Sources */,
 				594FEEED24C685FA00BB4910 /* SpokestackASRViewController.swift in Sources */,
 				59E0E1392301FB920060F012 /* TFLiteViewController.swift in Sources */,
 				592C0B7B2385B5E800308CCD /* TTSViewController.swift in Sources */,
@@ -776,6 +796,7 @@
 				594154B822F8AD2200E3624E /* TFLiteWakewordRecognizer.swift in Sources */,
 				59FB0C8B22AEE4F100FB9662 /* Data+Extensions.swift in Sources */,
 				01D31F62216BAFA40055FD45 /* AudioController.swift in Sources */,
+				59D68CA9257EB346001E2587 /* TFLiteKeywordRecognizer.swift in Sources */,
 				59C15D53234D322A00B091F4 /* WebRTCVAD.swift in Sources */,
 				597D0CAD23F716AF00018D71 /* NLUService.swift in Sources */,
 				597D0CE12405C2BA00018D71 /* NLUTensorflowSlotParsers.swift in Sources */,
@@ -808,6 +829,7 @@
 				597D0CBA23FB2F5000018D71 /* NLUTensorflow.swift in Sources */,
 				5917AC4F2405C86300CB4900 /* NLUTensorflowSlotParserTest.swift in Sources */,
 				59ECA8C823C939AA003CDB57 /* TextToSpeechResult.swift in Sources */,
+				59D68CAA257EB346001E2587 /* TFLiteKeywordRecognizer.swift in Sources */,
 				597D0CAE23F716AF00018D71 /* NLUService.swift in Sources */,
 				59AA893D2472EE5500197D7A /* NLUTensorflowTest.swift in Sources */,
 				59A8DBF92384ABF000F97700 /* TextToSpeechTest.swift in Sources */,

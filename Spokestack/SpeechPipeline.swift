@@ -80,7 +80,9 @@ import Dispatch
             case .vadTrigger:
                 return VADTrigger(configuration, context: self.context)
             case .spokestackSpeech:
-                return SpokestackSpeechRecognizer(configuration, context: context)
+                return SpokestackSpeechRecognizer(configuration, context: self.context)
+            case .tfLiteKeywordRecognizer:
+                return TFLiteKeywordRecognizer(configuration, context: self.context)
             }
         }
         

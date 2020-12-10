@@ -44,7 +44,6 @@ class TFLiteWakewordRecognizerTest: XCTestCase {
         self.context = SpeechContext(config)
 
         self.tflwr = TFLiteWakewordRecognizer(config, context: self.context!)
-        self.tflwr?.context = context!
         //let filterHexString = filter.map { String(format: "%02hhx", $0) }.joined()
         //let filterData = hexStringToData(hexString: MockWakewordModels.filterString)
         //let _ = FileManager.default.createFile(atPath: MockWakewordModels.filterPath, contents: filterData, attributes: .none)
@@ -97,8 +96,10 @@ class TFLiteWakewordRecognizerTest: XCTestCase {
         self.tflwr?.context.isActive = false
         self.tflwr?.context.isSpeech = true
         self.tflwr?.startStreaming()
+        let failureExpectation = XCTestExpectation(description: "process without failure.")
         let activateExpectation = XCTestExpectation(description: "process without failure.")
         let deactivateMaxActiveExpectation = XCTestExpectation(description: "process without failure.")
+        self.delegate.asyncExpectation = failureExpectation
         self.delegate.didActivateExpectation = activateExpectation
         
         // activate

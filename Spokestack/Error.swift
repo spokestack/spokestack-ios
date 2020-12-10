@@ -69,16 +69,16 @@ public enum VADError: Error, Equatable, LocalizedError {
 }
 
 /// Errors thrown by implementors of the WakewordRecognizer protocol.
-public enum WakewordModelError: Error, Equatable, LocalizedError {
-    /// The WakewordRecognizer was unable to configure the recognizer model(s).
+public enum CommandModelError: Error, Equatable, LocalizedError {
+    /// The command recognizer was unable to configure the recognizer model(s).
     case model(String)
-    /// The WakewordRecognizer encountered an error during the processing of the audio frame.
+    /// The rcommand ecognizer encountered an error during the processing of the audio frame.
     case process(String)
-    /// The WakewordRecognizer encountered an error during the configuration or running of the filter model.
+    /// The command recognizer encountered an error during the configuration or running of the filter model.
     case filter(String)
-    /// The WakewordRecognizer encountered an error during the configuration or running of the encode model.
+    /// The command recognizer encountered an error during the configuration or running of the encode model.
     case encode(String)
-    /// The WakewordRecognizer encountered an error during the configuration or running of the detect model.
+    /// The command recognizer encountered an error during the configuration or running of the detect model.
     case detect(String)
     
     /// `LocalizedError` implementation so that `localizedDescription` isn't an enum index.
