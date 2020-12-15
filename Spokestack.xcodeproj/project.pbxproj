@@ -88,6 +88,7 @@
 		59C789912582CD690087881D /* KeywordDetect.tflite in Resources */ = {isa = PBXBuildFile; fileRef = 59C7898E2582CD690087881D /* KeywordDetect.tflite */; };
 		59C789922582CD690087881D /* KeywordEncode.tflite in Resources */ = {isa = PBXBuildFile; fileRef = 59C7898F2582CD690087881D /* KeywordEncode.tflite */; };
 		59C789932582CD690087881D /* KeywordFilter.tflite in Resources */ = {isa = PBXBuildFile; fileRef = 59C789902582CD690087881D /* KeywordFilter.tflite */; };
+		59C789972587C3180087881D /* TFLiteKeywordRecognizerTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59C789962587C3180087881D /* TFLiteKeywordRecognizerTest.swift */; };
 		59D68CA9257EB346001E2587 /* TFLiteKeywordRecognizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59D68CA8257EB346001E2587 /* TFLiteKeywordRecognizer.swift */; };
 		59D68CAA257EB346001E2587 /* TFLiteKeywordRecognizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59D68CA8257EB346001E2587 /* TFLiteKeywordRecognizer.swift */; };
 		59D78F5F2322D13700728A98 /* AudioControllerTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59D78F5E2322D13700728A98 /* AudioControllerTest.swift */; };
@@ -111,6 +112,9 @@
 		59EF51BF233013A9006BA0BD /* AppleSpeechRecognizerTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59EF51BE233013A9006BA0BD /* AppleSpeechRecognizerTest.swift */; };
 		59EF51C123328D57006BA0BD /* AppleWakewordRecognizerTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59EF51C023328D57006BA0BD /* AppleWakewordRecognizerTest.swift */; };
 		59EF51C32332E57B006BA0BD /* Frame.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59EF51C22332E57B006BA0BD /* Frame.swift */; };
+		59F492CA2588364700F98986 /* mock_kw_detect.tflite in Resources */ = {isa = PBXBuildFile; fileRef = 59F492C72588364700F98986 /* mock_kw_detect.tflite */; };
+		59F492CB2588364700F98986 /* mock_kw_filter.tflite in Resources */ = {isa = PBXBuildFile; fileRef = 59F492C82588364700F98986 /* mock_kw_filter.tflite */; };
+		59F492CC2588364700F98986 /* mock_kw_encode.tflite in Resources */ = {isa = PBXBuildFile; fileRef = 59F492C92588364700F98986 /* mock_kw_encode.tflite */; };
 		59FB0C8B22AEE4F100FB9662 /* Data+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59FB0C8A22AEE4F100FB9662 /* Data+Extensions.swift */; };
 		59FB0C8D22B0640700FB9662 /* RingBuffer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59FB0C8C22B0640700FB9662 /* RingBuffer.swift */; };
 		59FB0C8F22B0682900FB9662 /* FFT.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59FB0C8E22B0682900FB9662 /* FFT.swift */; };
@@ -219,6 +223,7 @@
 		59C7898E2582CD690087881D /* KeywordDetect.tflite */ = {isa = PBXFileReference; lastKnownFileType = file; path = KeywordDetect.tflite; sourceTree = "<group>"; };
 		59C7898F2582CD690087881D /* KeywordEncode.tflite */ = {isa = PBXFileReference; lastKnownFileType = file; path = KeywordEncode.tflite; sourceTree = "<group>"; };
 		59C789902582CD690087881D /* KeywordFilter.tflite */ = {isa = PBXFileReference; lastKnownFileType = file; path = KeywordFilter.tflite; sourceTree = "<group>"; };
+		59C789962587C3180087881D /* TFLiteKeywordRecognizerTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TFLiteKeywordRecognizerTest.swift; sourceTree = "<group>"; };
 		59D68CA8257EB346001E2587 /* TFLiteKeywordRecognizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TFLiteKeywordRecognizer.swift; sourceTree = "<group>"; };
 		59D78F5E2322D13700728A98 /* AudioControllerTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioControllerTest.swift; sourceTree = "<group>"; };
 		59D78F602322EAE000728A98 /* SpeechPipelineTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeechPipelineTest.swift; sourceTree = "<group>"; };
@@ -238,6 +243,9 @@
 		59EF51BE233013A9006BA0BD /* AppleSpeechRecognizerTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppleSpeechRecognizerTest.swift; sourceTree = "<group>"; };
 		59EF51C023328D57006BA0BD /* AppleWakewordRecognizerTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppleWakewordRecognizerTest.swift; sourceTree = "<group>"; };
 		59EF51C22332E57B006BA0BD /* Frame.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Frame.swift; sourceTree = "<group>"; };
+		59F492C72588364700F98986 /* mock_kw_detect.tflite */ = {isa = PBXFileReference; lastKnownFileType = file; path = mock_kw_detect.tflite; sourceTree = "<group>"; };
+		59F492C82588364700F98986 /* mock_kw_filter.tflite */ = {isa = PBXFileReference; lastKnownFileType = file; path = mock_kw_filter.tflite; sourceTree = "<group>"; };
+		59F492C92588364700F98986 /* mock_kw_encode.tflite */ = {isa = PBXFileReference; lastKnownFileType = file; path = mock_kw_encode.tflite; sourceTree = "<group>"; };
 		59FB0C8A22AEE4F100FB9662 /* Data+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Data+Extensions.swift"; sourceTree = "<group>"; };
 		59FB0C8C22B0640700FB9662 /* RingBuffer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RingBuffer.swift; sourceTree = "<group>"; };
 		59FB0C8E22B0682900FB9662 /* FFT.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFT.swift; sourceTree = "<group>"; };
@@ -356,6 +364,9 @@
 		01D31F48216BAF260055FD45 /* SpokestackTests */ = {
 			isa = PBXGroup;
 			children = (
+				59F492C72588364700F98986 /* mock_kw_detect.tflite */,
+				59F492C92588364700F98986 /* mock_kw_encode.tflite */,
+				59F492C82588364700F98986 /* mock_kw_filter.tflite */,
 				59D78F5E2322D13700728A98 /* AudioControllerTest.swift */,
 				59EF51BE233013A9006BA0BD /* AppleSpeechRecognizerTest.swift */,
 				59EF51C023328D57006BA0BD /* AppleWakewordRecognizerTest.swift */,
@@ -371,6 +382,7 @@
 				59E3E71424C1088200F12CC4 /* SpokestackSpeechRecognizerTest.swift */,
 				59A8DBF82384ABF000F97700 /* TextToSpeechTest.swift */,
 				59AB0B0624786B69007B7582 /* TFLiteWakewordRecognizerTest.swift */,
+				59C789962587C3180087881D /* TFLiteKeywordRecognizerTest.swift */,
 				59C2AFED231ED07100E47AC5 /* WebRTCVADTest.swift */,
 				01D31F4B216BAF260055FD45 /* Info.plist */,
 				59FE4A9624805F5F00976825 /* mock_detector.tflite */,
@@ -446,10 +458,10 @@
 				5967108D21F7AE6B00CBFC88 /* AppleSpeechRecognizer.swift */,
 				59365947220889EE00C0365F /* AppleWakewordRecognizer.swift */,
 				59E3E71124C0E83000F12CC4 /* SpokestackSpeechRecognizer.swift */,
+				59D68CA8257EB346001E2587 /* TFLiteKeywordRecognizer.swift */,
 				594154B722F8AD2200E3624E /* TFLiteWakewordRecognizer.swift */,
 				59416CCC24B5359F009B9304 /* VADTrigger.swift */,
 				59C15D52234D322A00B091F4 /* WebRTCVAD.swift */,
-				59D68CA8257EB346001E2587 /* TFLiteKeywordRecognizer.swift */,
 			);
 			name = Recognizers;
 			sourceTree = "<group>";
@@ -671,9 +683,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				59FE4A912480580900976825 /* mock_encoder.tflite in Resources */,
+				59F492CA2588364700F98986 /* mock_kw_detect.tflite in Resources */,
 				59FE4A9724805F5F00976825 /* mock_detector.tflite in Resources */,
 				59FE4A902480580900976825 /* mock_nlu.tflite in Resources */,
 				59FE4A9324805EA300976825 /* mock_filter.tflite in Resources */,
+				59F492CB2588364700F98986 /* mock_kw_filter.tflite in Resources */,
+				59F492CC2588364700F98986 /* mock_kw_encode.tflite in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -817,6 +832,7 @@
 				59C2AFE22319CEAE00E47AC5 /* TFLiteWakewordRecognizer.swift in Sources */,
 				59E895A423E0F44900C424D3 /* Array+Extensions.swift in Sources */,
 				59E3E71524C1088200F12CC4 /* SpokestackSpeechRecognizerTest.swift in Sources */,
+				59C789972587C3180087881D /* TFLiteKeywordRecognizerTest.swift in Sources */,
 				59C2AFE62319CEEF00E47AC5 /* RingBuffer.swift in Sources */,
 				01D31F70216BAFD90055FD45 /* SpeechContext.swift in Sources */,
 				59A8DBFA2384AC0100F97700 /* TextToSpeech.swift in Sources */,
