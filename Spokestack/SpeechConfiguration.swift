@@ -94,9 +94,6 @@ import Foundation
     /// The filesystem path to the machine learning model for the detect step.
     /// - SeeAlso: `TFLiteWakewordRecognizer`
     @objc public var detectModelPath: String = "Detect.lite"
-    /// Text To Speech API authorization key
-    @available(*, deprecated, message: "Authorization key is no longer supported for Text To Speech service, use apiId + apiKey instead.")
-    @objc public var authorization: String = "Key f854fbf30a5f40c189ecb1b38bc78059"
     /// Text To Speech API client identifier key.
     /// - SeeAlso: `TextToSpeech`
     @objc public var apiId: String = "f0bc990c-e9db-4a0c-a2b1-6a6395a3d97e"
