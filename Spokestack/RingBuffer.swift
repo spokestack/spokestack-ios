@@ -10,7 +10,7 @@ import Foundation
 
 /// A simple circular buffer of values.
 final class RingBuffer <T> {
-
+    
     // MARK: Public (properties)
     
     /// The number of empty spaces remaining in the RingBuffer until it's full.
