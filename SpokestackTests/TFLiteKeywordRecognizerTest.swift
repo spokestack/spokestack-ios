@@ -23,11 +23,7 @@ class TFLiteKeywordRecognizerTest: XCTestCase {
         self.config.keywordFilterModelPath = MockKeywordModels.filterPath
         self.config.keywordDetectModelPath = MockKeywordModels.detectPath
         self.context = SpeechContext(config)
-        //self.config.wakeActiveMin = 20
-        //self.config.wakeActiveMax = 100
-        //self.config.keywordMelFrameWidth = 1
         self.config.keywordMelFrameLength = 16
-        //self.config.keywordEncodeLength = 1
         self.recognizer = TFLiteKeywordRecognizer(config, context: self.context!)
     }
     
@@ -156,7 +152,7 @@ class TFLiteKeywordecognizerTestDelegate: SpokestackDelegate {
     func failure(error: Error) {
         print(error)
         guard let _ = asyncExpectation else {
-            XCTFail("TFLiteKeywordecognizerTestDelegate was not setup correctly. Missing XCTExpectation reference")
+            XCTFail("TFLiteKeywordRecognizerTestDelegate was not setup correctly. Missing XCTExpectation reference")
             return
         }
         self.didError = true

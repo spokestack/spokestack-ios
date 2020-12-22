@@ -44,15 +44,7 @@ class TFLiteKeywordViewController: UIViewController {
         return button
     }()
     
-    lazy private var pipeline: SpeechPipeline = {
-        return try! SpeechPipelineBuilder()
-            .addListener(self)
-            .useProfile(.vadTriggerSpokestackSpeech)
-            .setProperty("tracing", ".DEBUG")
-            .setProperty("vadFallDelay", "1600")
-            .setDelegateDispatchQueue(DispatchQueue.main)
-            .build()
-    }()
+    private var pipeline: SpeechPipeline?
     
     override func loadView() {
         
@@ -104,6 +96,7 @@ class TFLiteKeywordViewController: UIViewController {
             .useProfile(.vadTriggerKeyword)
             .setProperty("tracing", Trace.Level.PERF)
             .setProperty("keywordDetectModelPath", detectPath)
+            .setProperty("keywords", "bed,bird,cat,dog,down,eight,five,four,go,happy,house,left,marvin,nine,no,off,on,one,right,seven,sheila,six,stop,three,tree,two,up,wow,yes,zero")
             .setProperty("keywordEncodeModelPath", encodePath)
             .setProperty("keywordFilterModelPath", filterPath)
             .build()
@@ -111,12 +104,12 @@ class TFLiteKeywordViewController: UIViewController {
     
     @objc func startRecordingAction(_ sender: Any) {
         print("pipeline started")
-        self.pipeline.start()
+        self.pipeline?.start()
     }
     
     @objc func stopRecordingAction(_ sender: Any) {
         print("pipeline finished")
-        self.pipeline.stop()
+        self.pipeline?.stop()
     }
     
     @objc func dismissViewController(_ sender: Any?) -> Void {
