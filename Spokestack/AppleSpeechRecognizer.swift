@@ -12,7 +12,7 @@ import Speech
 /**
  This pipeline component uses the Apple `SFSpeech` API to stream audio samples for speech recognition.
  
- Once speech pipeline coordination via `startStreaming` is received, the recognizer begins streaming buffered frames to the Apple ASR API for recognition. Once speech pipeline coordination via `stopStreaming` is received, or when the Apple ASR API indicates a completed speech event, the recognizer completes the API request and calls the `SpeechEventListener` delegate's `didRecognize` event with the updated global speech context (including the audio transcript and confidence).
+ Once speech pipeline coordination via `startStreaming` is received, the recognizer begins streaming buffered frames to the Apple ASR API for recognition. Once speech pipeline coordination via `stopStreaming` is received, or when the Apple ASR API indicates a completed speech event, the recognizer completes the API request and either sends a `timeout` or `didRecognize` event with the updated global speech context (including the speech transcript and confidence).
  */
 @objc public class AppleSpeechRecognizer: NSObject {
     
@@ -22,6 +22,9 @@ import Speech
     @objc public var configuration: SpeechConfiguration
     /// Global state for the speech pipeline.
     @objc public var context: SpeechContext
+    
+    /// Streaming start and stop involve the retention and releasing of external resources, which creates potential race conditions if done rapidly or during a dleay from the external resources. This semaphore allows for operations to complete (or timeout) before attempting to retain/release.
+    internal let recognizingSemaphore = DispatchSemaphore(value: 1)
     
     // MARK: Private properties
     
@@ -36,6 +39,10 @@ import Speech
     // MARK: NSObject implementation
     
     deinit {
+        if recognizingSemaphore.wait(timeout: .now() + self.configuration.semaphoreTimeout) == .timedOut {
+            self.context.dispatch { $0.failure(error: SpeechPipelineError.illegalState("Could not start recognizer, timed out waiting on another thread.")) }
+        }
+        defer { recognizingSemaphore.signal() }
         self.audioEngine.stop()
         self.audioEngine.inputNode.removeTap(onBus: 0)
         speechRecognizer.delegate = nil
@@ -58,6 +65,11 @@ import Speech
     // MARK: Private functions
     
     private func prepare() {
+        if recognizingSemaphore.wait(timeout: .now() + self.configuration.semaphoreTimeout) == .timedOut {
+            self.context.dispatch { $0.failure(error: SpeechPipelineError.illegalState("Could not start recognizer, timed out waiting on another thread.")) }
+            return
+        }
+        defer { recognizingSemaphore.signal() }
         self.audioEngine.inputNode.removeTap(onBus: 0) // a belt-and-suspenders approach to fixing https://github.com/wenkesj/react-native-voice/issues/46
         self.audioEngine.inputNode.installTap(
             onBus: 0,
@@ -77,6 +89,11 @@ import Speech
     }
     
     private func activate() {
+        if recognizingSemaphore.wait(timeout: .now() + self.configuration.semaphoreTimeout) == .timedOut {
+            self.context.dispatch { $0.failure(error: SpeechPipelineError.illegalState("Could not start recognizer, timed out waiting on another thread.")) }
+            return
+        }
+        defer { recognizingSemaphore.signal() }
         do {
             // Accessing debug information is costly and we don't want to do it unnecessarily, so make a duplicate level check beforehand.
             if self.configuration.tracing.rawValue <= Trace.Level.DEBUG.rawValue {
@@ -95,6 +112,11 @@ import Speech
     }
     
     private func deactivate() {
+        if recognizingSemaphore.wait(timeout: .now() + self.configuration.semaphoreTimeout) == .timedOut {
+            self.context.dispatch { $0.failure(error: SpeechPipelineError.illegalState("Could not start recognizer, timed out waiting on another thread.")) }
+            return
+        }
+        defer { recognizingSemaphore.signal() }
         if self.isActive {
             self.isActive = false
             self.context.isActive = false

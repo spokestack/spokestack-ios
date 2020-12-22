@@ -181,4 +181,8 @@ import Foundation
     /// The length of the sliding window of encoder output used as an input to the wakeword recognizer classifier, in milliseconds.
     /// - SeeAlso: `TFLiteWakewordRecognizer`
     @objc public var keywordEncodeLength: Int = 920
+    /// Timeout in seconds used for semaphore waits in the speech pipeline
+    /// - Warning: There is not normally a need to change this value.
+    /// - SeeAlso: `AudioController`, `AppleWakewordRecognizer`, `AppleSpeechRecognizer`
+    @objc public var semaphoreTimeout: Double = 1
 }

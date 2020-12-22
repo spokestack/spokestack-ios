@@ -23,21 +23,28 @@ This pipeline component uses the Apple `SFSpeech` API to stream audio samples fo
 
     /// Global state for the speech pipeline.
     @objc public var context: SpeechContext
+
+    /// Streaming start and stop involve the retention and releasing of external resources, which creates potential race conditions if done rapidly or during a dleay from the external resources. This semaphore allows for operations to complete (or timeout) before attempting to retain/release.
+    internal let recognizingSemaphore = DispatchSemaphore(value: 1)
     
     // MARK: Private properties
     
-    private var phrases: Array<String> = []
+    private var phrases: Array<String>
+    private var traceLevel: Trace.Level
     private let speechRecognizer: SFSpeechRecognizer = SFSpeechRecognizer(locale: NSLocale.current)!
     private var recognitionRequest: SFSpeechAudioBufferRecognitionRequest?
     private var recognitionTask: SFSpeechRecognitionTask?
     private let audioEngine: AVAudioEngine = AVAudioEngine()
     private var dispatchWorker: DispatchWorkItem?
     private var recognitionTaskRunning: Bool = false
-    private var traceLevel: Trace.Level = Trace.Level.NONE
     
     // MARK: NSObject methods
     
     deinit {
+        if recognizingSemaphore.wait(timeout: .now() + self.configuration.semaphoreTimeout) == .timedOut {
+            self.context.dispatch { $0.failure(error: SpeechPipelineError.illegalState("Could not start recognizer, timed out waiting on another thread.")) }
+        }
+        defer { recognizingSemaphore.signal() }
         self.speechRecognizer.delegate = nil
     }
     
@@ -52,20 +59,19 @@ This pipeline component uses the Apple `SFSpeech` API to stream audio samples fo
     @objc public init(_ configuration: SpeechConfiguration, context: SpeechContext) {
         self.configuration = configuration
         self.context = context
-        super.init()
-        self.configure()
-    }
-    
-    private func configure() {
-        // wakeword
         phrases = self.configuration.wakewords.components(separatedBy: ",")
-        // Tracing
         self.traceLevel = self.configuration.tracing
-    }
+        super.init()
+     }
     
     // MARK: Private functions
     
     private func prepare() {
+        if recognizingSemaphore.wait(timeout: .now() + self.configuration.semaphoreTimeout) == .timedOut {
+            self.context.dispatch { $0.failure(error: SpeechPipelineError.illegalState("Could not start recognizer, timed out waiting on another thread.")) }
+            return
+        }
+        defer { recognizingSemaphore.signal() }
         let bufferSize: Int = (self.configuration.sampleRate / 1000) * self.configuration.frameWidth
         self.audioEngine.inputNode.removeTap(onBus: 0) // a belt-and-suspenders approach to fixing https://github.com/wenkesj/react-native-voice/issues/46
         self.audioEngine.inputNode.installTap(
@@ -86,6 +92,11 @@ This pipeline component uses the Apple `SFSpeech` API to stream audio samples fo
     }
     
     private func startRecognition() {
+        if recognizingSemaphore.wait(timeout: .now() + self.configuration.semaphoreTimeout) == .timedOut {
+            self.context.dispatch { $0.failure(error: SpeechPipelineError.illegalState("Could not start recognizer, timed out waiting on another thread.")) }
+            return
+        }
+        defer { recognizingSemaphore.signal() }
         do {
             try self.audioEngine.start()
             self.recognitionRequest = SFSpeechAudioBufferRecognitionRequest()
@@ -93,7 +104,7 @@ This pipeline component uses the Apple `SFSpeech` API to stream audio samples fo
             try self.createRecognitionTask()
             self.recognitionTaskRunning = true
             
-            // Automatically restart wakeword task if it goes over Apple's 1 minute listening limit
+            // Automatically restart wakeword task before it goes over Apple's ~1 minute listening limit
             DispatchQueue.global(qos: .userInitiated).asyncAfter(deadline: .now() + .milliseconds(self.configuration.wakewordRequestTimeout), execute: { if let timeoutWorker = self.dispatchWorker { timeoutWorker.perform() }})
         } catch let error {
             self.context.dispatch { $0.failure(error: error) }
@@ -101,6 +112,11 @@ This pipeline component uses the Apple `SFSpeech` API to stream audio samples fo
     }
     
     private func stopRecognition() {
+        if recognizingSemaphore.wait(timeout: .now() + self.configuration.semaphoreTimeout) == .timedOut {
+            self.context.dispatch { $0.failure(error: SpeechPipelineError.illegalState("Could not stop recognizer, timed out waiting on another thread.")) }
+            return
+        }
+        defer { recognizingSemaphore.signal() }
         self.recognitionTaskRunning = false
         self.recognitionTask?.finish()
         self.recognitionTask = nil
@@ -173,6 +189,7 @@ extension AppleWakewordRecognizer: SpeechProcessor {
     
     /// Triggered by the speech pipeline, instructing the recognizer to begin streaming and processing audio.
     @objc public func startStreaming() {
+        
         self.prepare()
     }
     

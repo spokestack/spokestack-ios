@@ -13,6 +13,9 @@ import Dispatch
 /// DispatchQueue for handling Spokestack audio processing
 internal let audioProcessingQueue: DispatchQueue = DispatchQueue(label: "io.spokestack.audiocontroller", qos: .userInteractive)
 
+/// Streaming start and stop involve the retention and releasing of external resources, which creates potential race conditions if done rapidly or during a dleay from the external resources. This semaphore allows for operations to complete (or timeout) before attempting to retain/release.
+internal let streamingSemaphore = DispatchSemaphore(value: 1)
+
 /// Required callback function for AudioUnitSetProperty's AURenderCallbackStruct. Sends frames of audio to the `stageInstances` in `SpeechContext`.
 ///
 /// - SeeAlso: AURenderCallbackStruct
@@ -76,6 +79,7 @@ class AudioController {
     public static let sharedInstance: AudioController = AudioController()
     /// Configuration for the audio controller.
     public var configuration: SpeechConfiguration?
+    /// Global state for the speech pipeline.
     public var context: SpeechContext?
     /// A set of `SpeechProcessor` instances that process audio frames from `AudioController`.
     public var stages: [SpeechProcessor] = []
@@ -117,6 +121,11 @@ class AudioController {
     /// Begin sending audio frames to the AudioControllerDelegate.
     /// - SeeAlso: AudioControllerDelegate
     func startStreaming() -> Void {
+        if streamingSemaphore.wait(timeout: .now() + (self.configuration?.semaphoreTimeout ?? 1.0)) == .timedOut {
+            self.context?.dispatch { $0.failure(error: AudioError.audioController("Could not start AudioController, timed out waiting on another thread.")) }
+            return
+        }
+        defer { streamingSemaphore.signal() }
         self.checkAudioSession()
         do {
             try self.start()
@@ -130,6 +139,11 @@ class AudioController {
     /// Stop sending audio frames to the AudioControllerDelegate.
     /// - SeeAlso: AudioControllerDelegate
     func stopStreaming() -> Void {
+        if streamingSemaphore.wait(timeout: .now() + (self.configuration?.semaphoreTimeout ?? 1.0)) == .timedOut {
+            self.context?.dispatch { $0.failure(error: AudioError.audioController("Could not stop AudioController, timed out waiting on another thread.")) }
+            return
+        }
+        defer { streamingSemaphore.signal() }
         do {
             try self.stop()
         } catch AudioError.audioSessionSetup(let message) {
