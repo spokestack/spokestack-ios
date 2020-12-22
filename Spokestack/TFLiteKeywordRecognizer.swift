@@ -10,17 +10,16 @@ import Foundation
 import TensorFlowLite
 
 @objc public class TFLiteKeywordRecognizer: NSObject {
-    
+
     /// Configuration for the recognizer.
     @objc public var configuration: SpeechConfiguration
-    
+
     /// Global state for the speech pipeline.
     @objc public var context: SpeechContext
-    
+
     private var isActive: Bool = false
     private var activation = 0
 
-    private var rmsValue: Float = 0.0
     private var prevSample: Float = 0.0
     private var sampleWindow: RingBuffer<Float>!
     private var fftFrame: Array<Float> = []
@@ -31,7 +30,7 @@ import TensorFlowLite
     private var encodeState: RingBuffer<Float>!
     private var encodeWindow: RingBuffer<Float>!
     private var classes: [String] = []
-    
+
     // TensorFlowLite models
     private var filterModel: Interpreter?
     private var encodeModel: Interpreter?
@@ -40,14 +39,12 @@ import TensorFlowLite
         case encode
         case state
     }
-    
-    
+
     private var sampleCollector: Array<Float>?
     private var fftFrameCollector: String?
     private var filterCollector: Array<Float>?
     private var encodeCollector: Array<Float>?
-    
-    
+
     /// Initializes a TFLiteKeywordRecognizer instance.
     ///
     /// A recognizer is initialized by, and receives `startStreaming` and `stopStreaming` events from, an instance of `SpeechPipeline`.
@@ -64,7 +61,6 @@ import TensorFlowLite
     }
     
     private func initialize(_ c: SpeechConfiguration) {
-        self.rmsValue = c.keywordRMSTarget
         self.sampleWindow = RingBuffer(c.keywordFFTWindowSize, repeating: 0.0)
         self.fftFrame = Array(repeating: 0.0, count: c.keywordFFTWindowSize)
         self.fftWindow = SignalProcessing.fftWindowDispatch(windowType: c.keywordFFTWindowType, windowLength: c.keywordFFTWindowSize)
@@ -98,7 +94,7 @@ import TensorFlowLite
             self.encodeModel = try Interpreter(modelPath: c.keywordEncodeModelPath)
             if let model = self.encodeModel {
                 try model.allocateTensors()
-                if (model.inputTensorCount != Tensors.allCases.count) {
+                if model.inputTensorCount != Tensors.allCases.count {
                     throw CommandModelError.encode("Keyword encode model input dimension is \(model.inputTensorCount) which does not matched expected dimension \(Tensors.allCases.count)")
                 }
             } else {
@@ -108,6 +104,9 @@ import TensorFlowLite
             self.detectModel = try Interpreter(modelPath: c.keywordDetectModelPath)
             if let model = self.detectModel {
                 try model.allocateTensors()
+                if model.outputTensorCount != self.classes.count {
+                    throw CommandModelError.detect("The number of keywords defined by SpeechConfiguration.keywords does not match the number of keywords detected by SpeechConfiguration.keywordDetectModelPath.")
+                }
             } else {
                 throw CommandModelError.detect("\(c.keywordDetectModelPath) could not be initialized")
             }
@@ -117,20 +116,13 @@ import TensorFlowLite
     }
     
     private func sample(_ frame: Data) throws {
-        // Preallocate an array of data elements in the frame for use in RMS and sampling
+        // Preallocate an array of data elements in the frame for use in sampling
         let elements: Array<Int16> = frame.elements()
-        
-        // Update the rms normalization factors
-        // Maintain an ewma of the rms signal energy for speech samples
-        if self.configuration.keywordRMSAlpha > 0 {
-            self.rmsValue = self.configuration.keywordRMSAlpha * SignalProcessing.rms(frame, elements) + (1 - self.configuration.keywordRMSAlpha) * self.rmsValue
-        }
         
         // Process all samples in the frame
         for e in elements {
-            // Normalize and clip the 16-bit sample to the target rms energy
+            // Normalize and clip the 16-bit sample
             var sample: Float = Float(e) / Float(Int16.max)
-            sample = sample * (self.configuration.keywordRMSTarget / self.rmsValue)
             sample = max(-1.0, min(sample, 1.0))
             
             // Run a pre-emphasis filter to balance high frequencies and eliminate any dc energy
@@ -148,7 +140,11 @@ import TensorFlowLite
             // - advance the sample sliding window
             try self.sampleWindow.write(sample)
             if self.sampleWindow.isFull {
-                try self.analyze()
+                if self.isActive {
+                    try self.analyze()
+                }
+                // rewind the sample window for another run
+                self.sampleWindow.rewind().seek(self.hopLength)
             }
         }
     }
@@ -163,14 +159,10 @@ import TensorFlowLite
         // Compute the stft spectrogram
         self.fft.forward(&self.fftFrame)
         
-        // rewind the sample window for another run
-        self.sampleWindow.rewind().seek(self.hopLength)
-        
         if self.configuration.tracing.rawValue <= Trace.Level.DEBUG.rawValue {
             self.fftFrameCollector? += "\(self.fftFrame)\n"
         }
         
-        // filter() will utilize the stft spectrogram as input for the filter model
         try self.filter()
     }
     
@@ -324,34 +316,30 @@ extension TFLiteKeywordRecognizer : SpeechProcessor {
     public func process(_ frame: Data) {
         audioProcessingQueue.async {[weak self] in
             guard let strongSelf = self else { return }
-            if strongSelf.context.isActive {
-                do {
+            do {
+                if strongSelf.context.isActive {
+                    // sample every frame while active
                     try strongSelf.sample(frame)
-                } catch let error {
-                    strongSelf.context.dispatch { $0.failure(error: error) }
-                }
-                // sample every frame while active
-                if !strongSelf.isActive {
-                    strongSelf.isActive = true
-                } else if
-                    (strongSelf.isActive
-                        && strongSelf.activation <= strongSelf.configuration.wakeActiveMax)
-                        ||
-                        strongSelf.activation <= strongSelf.configuration.wakeActiveMin {
-                    // already sampled, but in the midst of activation, so don't deactiavte yet
-                    strongSelf.activation += strongSelf.configuration.frameWidth
-                } else {
+                    if !strongSelf.isActive {
+                        strongSelf.isActive = true
+                    } else if
+                        (strongSelf.isActive
+                            && strongSelf.activation <= strongSelf.configuration.wakeActiveMax)
+                            ||
+                            strongSelf.activation <= strongSelf.configuration.wakeActiveMin {
+                        // already sampled, but in the midst of activation, so don't deactiavte yet
+                        strongSelf.activation += strongSelf.configuration.frameWidth
+                    } else {
+                        strongSelf.run()
+                        strongSelf.deactivate()
+                    }
+                } else if strongSelf.isActive {
+                    try strongSelf.sample(frame)
                     strongSelf.run()
                     strongSelf.deactivate()
                 }
-            } else if strongSelf.isActive {
-                do {
-                    try strongSelf.sample(frame)
-                } catch let error {
-                    strongSelf.context.dispatch { $0.failure(error: error) }
-                }
-                strongSelf.run()
-                strongSelf.deactivate()
+            } catch let error {
+                strongSelf.context.dispatch { $0.failure(error: error) }
             }
         }
     }

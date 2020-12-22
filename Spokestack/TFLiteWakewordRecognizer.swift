@@ -59,9 +59,6 @@ import TensorFlowLite
     private var fft: FFT!
     
     // Audio Signal Normalization
-    private var rmsAlpha: Float = 0.0
-    private var rmsTarget: Float = 0.0
-    private var rmsValue: Float = 0.0
     private var preEmphasis: Float = 0.0
     private var prevSample: Float = 0.0
     
@@ -164,9 +161,6 @@ import TensorFlowLite
         }
         
         // Signal normalization
-        self.rmsAlpha = c.rmsAlpha
-        self.rmsTarget = c.rmsTarget
-        self.rmsValue = self.rmsTarget
         self.preEmphasis = c.preEmphasis
         
         // Sliding window buffers
@@ -195,21 +189,14 @@ import TensorFlowLite
     
     private func sample(_ data: Data) throws -> Void {
         
-        // Preallocate an array of data elements in the frame for use in RMS and sampling
+        // Preallocate an array of data elements in the frame for use in sampling
         let dataElements: Array<Int16> = data.elements()
-        
-        // Update the rms normalization factors
-        // Maintain an ewma of the rms signal energy for speech samples
-        if self.rmsAlpha > 0 {
-            self.rmsValue = self.rmsAlpha * SignalProcessing.rms(data, dataElements) + (1 - self.rmsAlpha) * self.rmsValue
-        }
         
         // Process all samples in the frame
         for d in dataElements {
             
-            // Normalize and clip the 16-bit sample to the target rms energy
+            // Normalize and clip the 16-bit sample
             var sample: Float = Float(d) / Float(Int16.max)
-            sample = sample * (self.rmsTarget / self.rmsValue)
             sample = max(-1.0, min(sample, 1.0))
             
             // Run a pre-emphasis filter to balance high frequencies and eliminate any dc energy
@@ -227,7 +214,11 @@ import TensorFlowLite
             // - advance the sample sliding window
             try self.sampleWindow.write(sample)
             if self.sampleWindow.isFull {
-                try self.analyze()
+                if self.isSpeechDetected {
+                    try self.analyze()
+                }
+                // rewind the sample window for another run
+                self.sampleWindow.rewind().seek(self.hopLength)
             }
         }
     }
@@ -242,9 +233,6 @@ import TensorFlowLite
         
         // Compute the stft spectrogram
         self.fft.forward(&self.fftFrame)
-        
-        // rewind the sample window for another run
-        self.sampleWindow.rewind().seek(self.hopLength)
         
         if self.traceLevel.rawValue <= Trace.Level.DEBUG.rawValue {
             self.fftFrameCollector? += "\(self.fftFrame)\n"

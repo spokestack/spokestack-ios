@@ -10,7 +10,7 @@ import Foundation
 
 /// A simple circular buffer of values.
 final class RingBuffer <T> {
-
+    
     // MARK: Public (properties)
     
     /// The number of empty spaces remaining in the RingBuffer until it's full.
@@ -81,11 +81,10 @@ final class RingBuffer <T> {
     func read() throws -> T {
         if self.isEmpty {
             throw RingBufferStateError.illegalState(message: "ring buffer is empty")
-        } else {
-            let value: T = self.data[self.rpos]
-            self.rpos = self.pos(self.rpos + 1)
-            return value
         }
+        let value: T = self.data[self.rpos]
+        self.rpos = self.pos(self.rpos + 1)
+        return value
     }
     
     /// Writes the next value to the buffer.

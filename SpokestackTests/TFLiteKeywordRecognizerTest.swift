@@ -23,11 +23,7 @@ class TFLiteKeywordRecognizerTest: XCTestCase {
         self.config.keywordFilterModelPath = MockKeywordModels.filterPath
         self.config.keywordDetectModelPath = MockKeywordModels.detectPath
         self.context = SpeechContext(config)
-        //self.config.wakeActiveMin = 20
-        //self.config.wakeActiveMax = 100
-        //self.config.keywordMelFrameWidth = 1
         self.config.keywordMelFrameLength = 16
-        //self.config.keywordEncodeLength = 1
         self.recognizer = TFLiteKeywordRecognizer(config, context: self.context!)
     }
     

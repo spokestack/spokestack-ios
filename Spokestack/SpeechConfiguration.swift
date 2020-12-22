@@ -21,9 +21,11 @@ import Foundation
     public var fftWindowType: SignalProcessing.FFTWindowType = .hann
     /// The desired linear Root Mean Squared (RMS) signal energy, which is used for signal normalization and should be tuned to the RMS target used during wakeword model training.
     /// - SeeAlso: `TFLiteWakewordRecognizer`
+    @available(*, deprecated, message: "RMS normalization is no longer used during wakeword recognition.")
     @objc public var rmsTarget: Float = 0.08
     /// The Exponentially Weighted Moving Average (EWMA) update rate for the current  Root Mean Squared (RMS) signal energy (0 for no RMS normalization).
     /// - SeeAlso: `TFLiteWakewordRecognizer`
+    @available(*, deprecated, message: "RMS normalization is no longer used during wakeword recognition.")
     @objc public var rmsAlpha: Float = 0.0
     /// The size of the signal window used to calculate the STFT, in number of samples - should be a power of 2 for maximum efficiency.
     /// - SeeAlso: `TFLiteWakewordRecognizer`
@@ -159,17 +161,11 @@ import Foundation
     /// - Remark: ex: "yes,no"
     /// - Warning: cannot contain spaces
     /// - SeeAlso: `TFLiteKeywordRecognizer`
-    @objc public var keywords: String = "bed,bird,cat,dog,down,eight,five,four,go,happy,house,left,marvin,nine,no,off,on,one,right,seven,sheila,six,stop,three,tree,two,up,wow,yes,zero"
+    @objc public var keywords: String = ""
     /// The name of the window function to apply to each audio frame before calculating the STFT.
     /// - Remark: Currently the "hann" window is supported.
     /// - SeeAlso: `TFLiteWakewordRecognizer`
     public var keywordFFTWindowType: SignalProcessing.FFTWindowType = .hann
-    /// The desired linear Root Mean Squared (RMS) signal energy, which is used for signal normalization and should be tuned to the RMS target used during wakeword model training.
-    /// - SeeAlso: `TFLiteWakewordRecognizer`
-    @objc public var keywordRMSTarget: Float = 0.08
-    /// The Exponentially Weighted Moving Average (EWMA) update rate for the current  Root Mean Squared (RMS) signal energy (0 for no RMS normalization).
-    /// - SeeAlso: `TFLiteWakewordRecognizer`
-    @objc public var keywordRMSAlpha: Float = 0.0
     /// The size of the signal window used to calculate the STFT, in number of samples - should be a power of 2 for maximum efficiency.
     /// - SeeAlso: `TFLiteWakewordRecognizer`
     @objc public var keywordFFTWindowSize: Int = 512
@@ -188,5 +184,4 @@ import Foundation
     /// The length of the sliding window of encoder output used as an input to the wakeword recognizer classifier, in milliseconds.
     /// - SeeAlso: `TFLiteWakewordRecognizer`
     @objc public var keywordEncodeLength: Int = 920
-    /// The threshold of the wakeword recognizer classifier's posterior output, above which the wakeword recognizer activates the pipeline, in the range [0, 1].
 }
