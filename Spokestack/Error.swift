@@ -68,7 +68,8 @@ public enum VADError: Error, Equatable, LocalizedError {
     }
 }
 
-/// Errors thrown by implementors of the WakewordRecognizer protocol.
+/// Errors thrown by  command models.
+/// - SeeAlso: `TFLiteWakewordRecognizer`, `TFLiteKeywordRecognizer`
 public enum CommandModelError: Error, Equatable, LocalizedError {
     /// The command recognizer was unable to configure the recognizer model(s).
     case model(String)
