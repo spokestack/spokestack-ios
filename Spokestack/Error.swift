@@ -73,7 +73,7 @@ public enum VADError: Error, Equatable, LocalizedError {
 public enum CommandModelError: Error, Equatable, LocalizedError {
     /// The command recognizer was unable to configure the recognizer model(s).
     case model(String)
-    /// The rcommand ecognizer encountered an error during the processing of the audio frame.
+    /// The command recognizer encountered an error during the processing of the audio frame.
     case process(String)
     /// The command recognizer encountered an error during the configuration or running of the filter model.
     case filter(String)

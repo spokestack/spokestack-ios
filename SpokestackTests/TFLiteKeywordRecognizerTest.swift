@@ -152,7 +152,7 @@ class TFLiteKeywordecognizerTestDelegate: SpokestackDelegate {
     func failure(error: Error) {
         print(error)
         guard let _ = asyncExpectation else {
-            XCTFail("TFLiteKeywordecognizerTestDelegate was not setup correctly. Missing XCTExpectation reference")
+            XCTFail("TFLiteKeywordRecognizerTestDelegate was not setup correctly. Missing XCTExpectation reference")
             return
         }
         self.didError = true

@@ -438,7 +438,7 @@ extension TFLiteWakewordRecognizer : SpeechProcessor {
                     } catch let error {
                         strongSelf.context.dispatch { $0.failure(error: error) }
                     }
-                    // vad detection edge
+                // vad detection edge
                 } else if strongSelf.isSpeechDetected {
                     strongSelf.reset()
                 }
