@@ -23,45 +23,47 @@ func recordingCallback(
     inBusNumber: UInt32,
     inNumberFrames: UInt32,
     ioData: UnsafeMutablePointer<AudioBufferList>?) -> OSStatus {
-
-    guard let remoteIOUnit: AudioComponentInstance = AudioController.sharedInstance.remoteIOUnit else {
-        return kAudioServicesSystemSoundUnspecifiedError
-    }
-    var status: OSStatus = noErr
-    let channelCount: UInt32 = 1
-    let bufferSize = inNumberFrames * 2
-    var bufferList = AudioBufferList()
-    bufferList.mNumberBuffers = channelCount
-    bufferList.mBuffers.mNumberChannels = 1
-    bufferList.mBuffers.mDataByteSize = bufferSize
-    bufferList.mBuffers.mData = nil
-    AudioController.sharedInstance.configuration?.audioEngineBufferSize = bufferSize
     
-    return withUnsafeMutablePointer(to: &bufferList) { (buffers) -> OSStatus in
-        // render the recorded samples into the AudioBuffers
-        status = AudioUnitRender(remoteIOUnit,
-                                 ioActionFlags,
-                                 inTimeStamp,
-                                 inBusNumber,
-                                 inNumberFrames,
-                                 buffers)
-        // verify that the rendering did not error
-        if status != noErr {
-            return status
+    autoreleasepool {
+        guard let remoteIOUnit: AudioComponentInstance = AudioController.sharedInstance.remoteIOUnit else {
+            return kAudioServicesSystemSoundUnspecifiedError
         }
-        // convert the samples into Data and send to the stages
-        if let samples = buffers.pointee.mBuffers.mData {
-            let data: Data = Data(bytes: samples, count: Int(bufferSize))
-            // NB: errors like
-            // AUBuffer.h:61:GetBufferList: EXCEPTION (-1) [mPtrState == kPtrsInvalid is false]: ""
-            // are irrelevant
-            audioProcessingQueue.sync {
-                AudioController.sharedInstance.stages.forEach { stage in
-                    stage.process(data)
+        var status: OSStatus = noErr
+        let channelCount: UInt32 = 1
+        let bufferSize = inNumberFrames * 2
+        var bufferList = AudioBufferList()
+        bufferList.mNumberBuffers = channelCount
+        bufferList.mBuffers.mNumberChannels = 1
+        bufferList.mBuffers.mDataByteSize = bufferSize
+        bufferList.mBuffers.mData = nil
+        AudioController.sharedInstance.configuration?.audioEngineBufferSize = bufferSize
+        
+        return withUnsafeMutablePointer(to: &bufferList) { (buffers) -> OSStatus in
+            // render the recorded samples into the AudioBuffers
+            status = AudioUnitRender(remoteIOUnit,
+                                     ioActionFlags,
+                                     inTimeStamp,
+                                     inBusNumber,
+                                     inNumberFrames,
+                                     buffers)
+            // verify that the rendering did not error
+            if status != noErr {
+                return status
+            }
+            // convert the samples into Data and send to the stages
+            if let samples = buffers.pointee.mBuffers.mData {
+                let data: Data = Data(bytes: samples, count: Int(bufferSize))
+                // NB: errors like
+                // AUBuffer.h:61:GetBufferList: EXCEPTION (-1) [mPtrState == kPtrsInvalid is false]: ""
+                // are irrelevant
+                audioProcessingQueue.sync {
+                    AudioController.sharedInstance.stages.forEach { stage in
+                        stage.process(data)
+                    }
                 }
             }
+            return noErr
         }
-        return noErr
     }
 }
 
@@ -220,7 +222,7 @@ class AudioController {
         if (status != noErr) {
             return status
         }
-                
+        
         var callbackStruct: AURenderCallbackStruct = AURenderCallbackStruct()
         callbackStruct.inputProc = recordingCallback
         callbackStruct.inputProcRefCon = nil
@@ -233,7 +235,7 @@ class AudioController {
         if status != noErr {
             return status
         }
-                
+        
         return AudioUnitInitialize(self.remoteIOUnit!)
     }
     
@@ -253,9 +255,9 @@ class AudioController {
     
     @objc private func audioRouteChanged(_ notification: Notification) {
         guard let userInfo = notification.userInfo,
-            let reasonValue = userInfo[AVAudioSessionRouteChangeReasonKey] as? UInt,
-            let reason = AVAudioSession.RouteChangeReason(rawValue:reasonValue) else {
-                return
+              let reasonValue = userInfo[AVAudioSessionRouteChangeReasonKey] as? UInt,
+              let reason = AVAudioSession.RouteChangeReason(rawValue:reasonValue) else {
+            return
         }
         Trace.trace(Trace.Level.DEBUG, message: "audioRouteChanged reason: \(reasonValue.description) notification: \(userInfo.debugDescription)", config: self.configuration, context: self.context, caller: self)
         debug()
