@@ -96,9 +96,6 @@ import Foundation
     /// The filesystem path to the machine learning model for the detect step.
     /// - SeeAlso: `TFLiteWakewordRecognizer`
     @objc public var detectModelPath: String = "Detect.lite"
-    /// Text To Speech API authorization key
-    @available(*, deprecated, message: "Authorization key is no longer supported for Text To Speech service, use apiId + apiKey instead.")
-    @objc public var authorization: String = "Key f854fbf30a5f40c189ecb1b38bc78059"
     /// Text To Speech API client identifier key.
     /// - SeeAlso: `TextToSpeech`
     @objc public var apiId: String = "f0bc990c-e9db-4a0c-a2b1-6a6395a3d97e"
@@ -184,4 +181,8 @@ import Foundation
     /// The length of the sliding window of encoder output used as an input to the wakeword recognizer classifier, in milliseconds.
     /// - SeeAlso: `TFLiteWakewordRecognizer`
     @objc public var keywordEncodeLength: Int = 920
+    /// Timeout in seconds used for semaphore waits in the speech pipeline
+    /// - Warning: There is not normally a need to change this value.
+    /// - SeeAlso: `AudioController`, `AppleWakewordRecognizer`, `AppleSpeechRecognizer`
+    @objc public var semaphoreTimeout: Double = 1
 }

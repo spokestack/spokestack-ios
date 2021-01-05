@@ -227,7 +227,7 @@ extension TTSViewController {
     private func TICK() { startTime = CACurrentMediaTime() }
     private func TOCK(function: String = #function, file: String = #file, line: Int = #line, level: Trace.Level = .PERF){
         if self.configuration.tracing.rawValue <= Trace.Level.PERF.rawValue {
-            print("\(function) Time: \(CACurrentMediaTime()-startTime)\nLine:\(line) File: \(file)")
+            print("\(self) \(function) Time: \(CACurrentMediaTime()-startTime)\nLine:\(line) File: \(file)")
         }
     }
     
@@ -317,6 +317,7 @@ extension TTSViewController: SpokestackDelegate {
         guard let url = result.url else {
             return
         }
+        print("success \(url)")
         self.streamingFile = url
         if (self.amTesting) {
             self.playTest()
@@ -334,12 +335,10 @@ extension TTSViewController: SpokestackDelegate {
     }
     
     func failure(error: Error) {
-        print(error)
+        print("error \(error)")
     }
     
     func didTrace(_ trace: String) {
-        print(trace)
+        print("trace \(trace)")
     }
-    
-    
 }
