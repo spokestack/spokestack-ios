@@ -171,7 +171,7 @@ import Foundation
     @objc public var keywordFFTHopLength: Int = 10
     /// The length of a frame in the mel spectrogram used as an input to the wakeword recognizer encoder, in milliseconds.
     /// - SeeAlso: `TFLiteWakewordRecognizer`
-    @objc public var keywordMelFrameLength: Int = 1090
+    @objc public var keywordMelFrameLength: Int = 110
     /// The number of filterbank components in each mel spectrogram frame sent to the wakeword recognizer.
     /// - SeeAlso: `TFLiteWakewordRecognizer`
     @objc public var keywordMelFrameWidth: Int = 40
@@ -180,7 +180,7 @@ import Foundation
     @objc public var keywordEncodeWidth: Int = 128
     /// The length of the sliding window of encoder output used as an input to the wakeword recognizer classifier, in milliseconds.
     /// - SeeAlso: `TFLiteWakewordRecognizer`
-    @objc public var keywordEncodeLength: Int = 920
+    @objc public var keywordEncodeLength: Int = 1000
     /// Timeout in seconds used for semaphore waits in the speech pipeline
     /// - Warning: There is not normally a need to change this value.
     /// - SeeAlso: `AudioController`, `AppleWakewordRecognizer`, `AppleSpeechRecognizer`
