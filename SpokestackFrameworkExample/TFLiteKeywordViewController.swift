@@ -96,7 +96,7 @@ class TFLiteKeywordViewController: UIViewController {
             .useProfile(.vadTriggerKeyword)
             .setProperty("tracing", Trace.Level.PERF)
             .setProperty("keywordDetectModelPath", detectPath)
-                .setProperty("keywords", "bed,bird,cat,dog,down,eight,five,four,go,happy,house,left,marvin,nine,no,off,on,one,right,seven,sheila,six,stop,three,tree,two,up,wow,yes,zero")
+            .setProperty("keywords", "bed,bird,cat,dog,down,eight,five,four,go,happy,house,left,marvin,nine,no,off,on,one,right,seven,sheila,six,stop,three,tree,two,up,wow,yes,zero")
             .setProperty("keywordEncodeModelPath", encodePath)
             .setProperty("keywordFilterModelPath", filterPath)
             .build()
