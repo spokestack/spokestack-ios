@@ -104,8 +104,9 @@ import TensorFlowLite
             self.detectModel = try Interpreter(modelPath: c.keywordDetectModelPath)
             if let model = self.detectModel {
                 try model.allocateTensors()
-                if model.outputTensorCount != self.classes.count {
-                    throw CommandModelError.detect("The number of keywords defined by SpeechConfiguration.keywords does not match the number of keywords detected by SpeechConfiguration.keywordDetectModelPath.")
+                let rank: Int = try model.output(at: 0).shape.dimensions[1]
+                if rank != self.classes.count {
+                    throw CommandModelError.detect("The \(self.classes.count) keywords defined by SpeechConfiguration.keywords does not match the \(rank) expected by the model at SpeechConfiguration.keywordDetectModelPath.")
                 }
             } else {
                 throw CommandModelError.detect("\(c.keywordDetectModelPath) could not be initialized")
