@@ -72,7 +72,16 @@ import TensorFlowLite
         self.encodeState.fill(0.0) // fill now because the encoded state is used to feed-forward
         let encodeLength = c.keywordEncodeLength * c.sampleRate / 1000 / self.hopLength
         self.encodeWindow = RingBuffer(encodeLength * c.keywordEncodeWidth, repeating: -1.0)
-        self.classes = self.configuration.keywords.components(separatedBy: ",")
+        do {
+            let keywords = try CommandModelMeta(configuration)
+            self.classes = keywords.model.classes.flatMap({ c in
+                return c.utterances.map({ u in
+                    return u.text
+                })
+            })
+        } catch {
+            self.classes = self.configuration.keywords.components(separatedBy: ",")
+        }
         
         // Tracing
         if c.tracing.rawValue <= Trace.Level.DEBUG.rawValue {

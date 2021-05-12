@@ -90,6 +90,9 @@ class TFLiteKeywordViewController: UIViewController {
         guard let detectPath = Bundle(for: type(of: self)).path(forResource: c.keywordDetectModelName, ofType: "tflite") else {
             throw CommandModelError.detect("could not find \(c.keywordDetectModelName).tflite in bundle \(self.debugDescription)")
         }
+        guard let metadataPath = Bundle(for: type(of: self)).path(forResource: c.keywordMetadataName, ofType: "json") else {
+            throw CommandModelError.detect("could not find \(c.keywordMetadataName).json in bundle \(self.debugDescription)")
+        }
         return try! SpeechPipelineBuilder()
             .addListener(self)
             .setDelegateDispatchQueue(DispatchQueue.main)
@@ -99,6 +102,7 @@ class TFLiteKeywordViewController: UIViewController {
             .setProperty("keywords", "bed,bird,cat,dog,down,eight,five,four,go,happy,house,left,marvin,nine,no,off,on,one,right,seven,sheila,six,stop,three,tree,two,up,wow,yes,zero")
             .setProperty("keywordEncodeModelPath", encodePath)
             .setProperty("keywordFilterModelPath", filterPath)
+            .setProperty("keywordMetadataPath", "foo")
             .build()
     }
     

@@ -142,6 +142,10 @@ import Foundation
     /// - Remarks: Both the file name and the file path are configurable to allow for flexibility in constructing the path that the recognizer will attempt to load the model from.
     /// - SeeAlso: `TFLiteKeywordRecognizer`
     @objc public var keywordDetectModelName: String = "KeywordDetect"
+    /// The filename of the model metadata for keyword recognition
+    /// - Remarks: Both the file name and the file path are configurable to allow for flexibility in constructing the path that the recognizer will attempt to load the model from.
+    /// - SeeAlso: `TFLiteKeywordRecognizer`
+    @objc public var keywordMetadataName: String = "KeywordMetadata"
     /// The filesystem path to the machine learning model for the filtering step of the keyword recognizer.
     /// - SeeAlso: `TFLiteKeywordRecognizer`
     @objc public var keywordFilterModelPath: String = "KeywordFilter.tflite"
@@ -154,9 +158,12 @@ import Foundation
     /// The threshold of the keyword recognizer's posterior output, above which the keyword recognizer emits a recognition event for the most probable keyword.
     /// - SeeAlso: `TFLiteKeywordRecognizer`
     @objc public var keywordThreshold: Float = 0.5
+    /// The filesystem path to the model metadata for keyword recognition
+    /// - SeeAlso: `TFLiteKeywordRecognizer`
+    @objc public var keywordMetadataPath: String = "metadata.json"
     /// A comma-separated list of keywords to recognize.
     /// - Remark: ex: "yes,no"
-    /// - Warning: cannot contain spaces
+    /// - Warning: Cannot contain spaces. Will be ignored in favor of `keywordMetadataPath` if available.
     /// - SeeAlso: `TFLiteKeywordRecognizer`
     @objc public var keywords: String = ""
     /// The name of the window function to apply to each audio frame before calculating the STFT.
