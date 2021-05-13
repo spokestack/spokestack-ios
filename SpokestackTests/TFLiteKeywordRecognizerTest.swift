@@ -22,6 +22,7 @@ class TFLiteKeywordRecognizerTest: XCTestCase {
         self.config.keywordEncodeModelPath = MockKeywordModels.encodePath
         self.config.keywordFilterModelPath = MockKeywordModels.filterPath
         self.config.keywordDetectModelPath = MockKeywordModels.detectPath
+        self.config.keywordMetadataPath = MockKeywordModels.metadataPath
         self.context = SpeechContext(config)
         self.config.keywordMelFrameLength = 16
         self.config.keywordEncodeLength = 920
@@ -29,6 +30,7 @@ class TFLiteKeywordRecognizerTest: XCTestCase {
     }
     
     func testInvoke() {
+        XCTAssertEqual(1, self.recognizer!.classes.count)
         // filter
         let filter = try! Interpreter(modelPath: MockKeywordModels.filterPath)
         try! filter.allocateTensors()
@@ -111,6 +113,7 @@ fileprivate enum MockKeywordModels {
     static let filterInfo = (name: "mock_kw_filter", extension: "tflite")
     static let encodeInfo = (name: "mock_kw_encode", extension: "tflite")
     static let detectInfo = (name: "mock_kw_detect", extension: "tflite")
+    static let metadataInfo = (name: "mock_kw_metadata", extension: "json")
     static var filterPath: String = {
         let bundle = Bundle(for: TFLiteKeywordRecognizerTest.self)
         let p = bundle.path(forResource: filterInfo.name, ofType: filterInfo.extension)
@@ -124,6 +127,11 @@ fileprivate enum MockKeywordModels {
     static var detectPath: String = {
         let bundle = Bundle(for: TFLiteKeywordRecognizerTest.self)
         let p = bundle.path(forResource: detectInfo.name, ofType: detectInfo.extension)
+        return p!
+    }()
+    static var metadataPath: String = {
+        let bundle = Bundle(for: TFLiteKeywordRecognizerTest.self)
+        let p = bundle.path(forResource: metadataInfo.name, ofType: metadataInfo.extension)
         return p!
     }()
     static let input = [Int32](Array(repeating: 0, count: 128)).withUnsafeBufferPointer(Data.init)

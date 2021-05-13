@@ -102,6 +102,10 @@
 		59E3E71224C0E83000F12CC4 /* SpokestackSpeechRecognizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59E3E71124C0E83000F12CC4 /* SpokestackSpeechRecognizer.swift */; };
 		59E3E71324C0E83000F12CC4 /* SpokestackSpeechRecognizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59E3E71124C0E83000F12CC4 /* SpokestackSpeechRecognizer.swift */; };
 		59E3E71524C1088200F12CC4 /* SpokestackSpeechRecognizerTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59E3E71424C1088200F12CC4 /* SpokestackSpeechRecognizerTest.swift */; };
+		59E86BB0264B35500070FE17 /* CommandModelMetadata.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59E86BAF264B35500070FE17 /* CommandModelMetadata.swift */; };
+		59E86BB1264B35500070FE17 /* CommandModelMetadata.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59E86BAF264B35500070FE17 /* CommandModelMetadata.swift */; };
+		59E86BB3264C27D70070FE17 /* KeywordMetadata.json in Resources */ = {isa = PBXBuildFile; fileRef = 59E86BB2264C27D70070FE17 /* KeywordMetadata.json */; };
+		59E86BB5264C5C160070FE17 /* mock_kw_metadata.json in Resources */ = {isa = PBXBuildFile; fileRef = 59E86BB4264C5C160070FE17 /* mock_kw_metadata.json */; };
 		59E8959B23DB7A0B00C424D3 /* NLUTensorflowTokenizerTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59E8959A23DB7A0B00C424D3 /* NLUTensorflowTokenizerTest.swift */; };
 		59E8959F23E0AE5C00C424D3 /* NLUViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59E8959E23E0AE5C00C424D3 /* NLUViewController.swift */; };
 		59E895A123E0B45900C424D3 /* vocab.txt in Resources */ = {isa = PBXBuildFile; fileRef = 59E895A023E0B45800C424D3 /* vocab.txt */; };
@@ -235,6 +239,9 @@
 		59E0E13D230DEB7C0060F012 /* Filter.lite */ = {isa = PBXFileReference; lastKnownFileType = file; path = Filter.lite; sourceTree = "<group>"; };
 		59E3E71124C0E83000F12CC4 /* SpokestackSpeechRecognizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpokestackSpeechRecognizer.swift; sourceTree = "<group>"; };
 		59E3E71424C1088200F12CC4 /* SpokestackSpeechRecognizerTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpokestackSpeechRecognizerTest.swift; sourceTree = "<group>"; };
+		59E86BAF264B35500070FE17 /* CommandModelMetadata.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommandModelMetadata.swift; sourceTree = "<group>"; };
+		59E86BB2264C27D70070FE17 /* KeywordMetadata.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = KeywordMetadata.json; sourceTree = "<group>"; };
+		59E86BB4264C5C160070FE17 /* mock_kw_metadata.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = mock_kw_metadata.json; sourceTree = "<group>"; };
 		59E8959A23DB7A0B00C424D3 /* NLUTensorflowTokenizerTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NLUTensorflowTokenizerTest.swift; sourceTree = "<group>"; };
 		59E8959E23E0AE5C00C424D3 /* NLUViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NLUViewController.swift; sourceTree = "<group>"; };
 		59E895A023E0B45800C424D3 /* vocab.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = vocab.txt; sourceTree = "<group>"; };
@@ -298,6 +305,7 @@
 				59C7898E2582CD690087881D /* KeywordDetect.tflite */,
 				59C7898F2582CD690087881D /* KeywordEncode.tflite */,
 				59C789902582CD690087881D /* KeywordFilter.tflite */,
+				59E86BB2264C27D70070FE17 /* KeywordMetadata.json */,
 				597D0CA723F5B28F00018D71 /* nlu.tflite */,
 				597D0CA423F5B24A00018D71 /* nlu.json */,
 				59E895A023E0B45800C424D3 /* vocab.txt */,
@@ -365,6 +373,7 @@
 			isa = PBXGroup;
 			children = (
 				59F492C72588364700F98986 /* mock_kw_detect.tflite */,
+				59E86BB4264C5C160070FE17 /* mock_kw_metadata.json */,
 				59F492C92588364700F98986 /* mock_kw_encode.tflite */,
 				59F492C82588364700F98986 /* mock_kw_filter.tflite */,
 				59D78F5E2322D13700728A98 /* AudioControllerTest.swift */,
@@ -436,6 +445,7 @@
 				59E0E13422FE2C2B0060F012 /* SignalProcessing.swift */,
 				59A0D5C52204E8E4003709C3 /* SpeechConfiguration.swift */,
 				59E0E1362301F0A80060F012 /* Trace.swift */,
+				59E86BAF264B35500070FE17 /* CommandModelMetadata.swift */,
 			);
 			name = Models;
 			sourceTree = "<group>";
@@ -656,6 +666,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				59E86BB3264C27D70070FE17 /* KeywordMetadata.json in Resources */,
 				59E0E13E230DEB7C0060F012 /* Detect.lite in Resources */,
 				59C789932582CD690087881D /* KeywordFilter.tflite in Resources */,
 				59C789922582CD690087881D /* KeywordEncode.tflite in Resources */,
@@ -682,6 +693,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				59E86BB5264C5C160070FE17 /* mock_kw_metadata.json in Resources */,
 				59FE4A912480580900976825 /* mock_encoder.tflite in Resources */,
 				59F492CA2588364700F98986 /* mock_kw_detect.tflite in Resources */,
 				59FE4A9724805F5F00976825 /* mock_detector.tflite in Resources */,
@@ -809,6 +821,7 @@
 				59B1C175251D3D460062B291 /* Tracer.swift in Sources */,
 				5936594C2209EA1800C0365F /* SpeechProcessor.swift in Sources */,
 				594154B822F8AD2200E3624E /* TFLiteWakewordRecognizer.swift in Sources */,
+				59E86BB0264B35500070FE17 /* CommandModelMetadata.swift in Sources */,
 				59FB0C8B22AEE4F100FB9662 /* Data+Extensions.swift in Sources */,
 				01D31F62216BAFA40055FD45 /* AudioController.swift in Sources */,
 				59D68CA9257EB346001E2587 /* TFLiteKeywordRecognizer.swift in Sources */,
@@ -854,6 +867,7 @@
 				59B1C13F251BAD130062B291 /* VADTriggerTest.swift in Sources */,
 				59175D8D2523E19400A8991F /* SpokestackBuilderTest.swift in Sources */,
 				59EF51C123328D57006BA0BD /* AppleWakewordRecognizerTest.swift in Sources */,
+				59E86BB1264B35500070FE17 /* CommandModelMetadata.swift in Sources */,
 				59E3E71324C0E83000F12CC4 /* SpokestackSpeechRecognizer.swift in Sources */,
 				59C2AFEE231ED07100E47AC5 /* WebRTCVADTest.swift in Sources */,
 				59C2AFE92319CF4100E47AC5 /* SignalProcessing.swift in Sources */,
