@@ -25,7 +25,7 @@ internal struct CommandModelMetadata: Codable {
     let classes: [CommandModelMetadataUtterances]
     let name: String
     let type: String
-    let revision: String
+    let revision: String?
 }
 
 internal struct CommandModelMetadataUtterances: Codable {

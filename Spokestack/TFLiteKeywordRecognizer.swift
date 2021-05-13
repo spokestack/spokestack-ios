@@ -29,7 +29,7 @@ import TensorFlowLite
     private var frameWindow: RingBuffer<Float>!
     private var encodeState: RingBuffer<Float>!
     private var encodeWindow: RingBuffer<Float>!
-    private var classes: [String] = []
+    internal var classes: [String] = []
 
     // TensorFlowLite models
     private var filterModel: Interpreter?
@@ -74,11 +74,7 @@ import TensorFlowLite
         self.encodeWindow = RingBuffer(encodeLength * c.keywordEncodeWidth, repeating: -1.0)
         do {
             let keywords = try CommandModelMeta(configuration)
-            self.classes = keywords.model.classes.flatMap({ c in
-                return c.utterances.map({ u in
-                    return u.text
-                })
-            })
+            self.classes = keywords.model.classes.map { $0.name }
         } catch {
             self.classes = self.configuration.keywords.components(separatedBy: ",")
         }

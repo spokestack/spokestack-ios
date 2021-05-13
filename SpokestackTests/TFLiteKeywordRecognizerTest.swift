@@ -30,6 +30,7 @@ class TFLiteKeywordRecognizerTest: XCTestCase {
     }
     
     func testInvoke() {
+        XCTAssertEqual(1, self.recognizer!.classes.count)
         // filter
         let filter = try! Interpreter(modelPath: MockKeywordModels.filterPath)
         try! filter.allocateTensors()
