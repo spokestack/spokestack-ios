@@ -21,9 +21,11 @@ import Foundation
     public var fftWindowType: SignalProcessing.FFTWindowType = .hann
     /// The desired linear Root Mean Squared (RMS) signal energy, which is used for signal normalization and should be tuned to the RMS target used during wakeword model training.
     /// - SeeAlso: `TFLiteWakewordRecognizer`
+    @available(*, deprecated, message: "RMS normalization is no longer used during wakeword recognition.")
     @objc public var rmsTarget: Float = 0.08
     /// The Exponentially Weighted Moving Average (EWMA) update rate for the current  Root Mean Squared (RMS) signal energy (0 for no RMS normalization).
     /// - SeeAlso: `TFLiteWakewordRecognizer`
+    @available(*, deprecated, message: "RMS normalization is no longer used during wakeword recognition.")
     @objc public var rmsAlpha: Float = 0.0
     /// The size of the signal window used to calculate the STFT, in number of samples - should be a power of 2 for maximum efficiency.
     /// - SeeAlso: `TFLiteWakewordRecognizer`
@@ -94,9 +96,6 @@ import Foundation
     /// The filesystem path to the machine learning model for the detect step.
     /// - SeeAlso: `TFLiteWakewordRecognizer`
     @objc public var detectModelPath: String = "Detect.lite"
-    /// Text To Speech API authorization key
-    @available(*, deprecated, message: "Authorization key is no longer supported for Text To Speech service, use apiId + apiKey instead.")
-    @objc public var authorization: String = "Key f854fbf30a5f40c189ecb1b38bc78059"
     /// Text To Speech API client identifier key.
     /// - SeeAlso: `TextToSpeech`
     @objc public var apiId: String = "f0bc990c-e9db-4a0c-a2b1-6a6395a3d97e"
@@ -131,4 +130,66 @@ import Foundation
     /// - Note: Requires  `NLUTensorflow` to be correctly configured, notably with `nluModelPath`, `nluModelMetadataPath`, and `nluVocabularyPath`.
     /// - SeeAlso: `Spokestack`, `NLUTensorflow`, `nluModelPath`, `nluModelMetadataPath`, and `nluVocabularyPath`
     @objc public var automaticallyClassifyTranscript = true
+    /// The filename of the machine learning model used for the filtering step of the keyword recognizer.
+    /// - Remarks: Both the file name and the file path are configurable to allow for flexibility in constructing the path that the recognizer will attempt to load the model from.
+    /// - SeeAlso: `TFLiteKeywordRecognizer`
+    @objc public var keywordFilterModelName: String = "KeywordFilter"
+    /// The filename of the machine learning model used for the encoding step of the keyword recognizer.
+    /// - Remarks: Both the file name and the file path are configurable to allow for flexibility in constructing the path that the recognizer will attempt to load the model from.
+    /// - SeeAlso: `TFLiteKeywordRecognizer`
+    @objc public var keywordEncodeModelName: String = "KeywordEncode"
+    /// The filename of the machine learning model used for the detect step of the keyword recognizer.
+    /// - Remarks: Both the file name and the file path are configurable to allow for flexibility in constructing the path that the recognizer will attempt to load the model from.
+    /// - SeeAlso: `TFLiteKeywordRecognizer`
+    @objc public var keywordDetectModelName: String = "KeywordDetect"
+    /// The filename of the model metadata for keyword recognition
+    /// - Remarks: Both the file name and the file path are configurable to allow for flexibility in constructing the path that the recognizer will attempt to load the model from.
+    /// - SeeAlso: `TFLiteKeywordRecognizer`
+    @objc public var keywordMetadataName: String = "KeywordMetadata"
+    /// The filesystem path to the machine learning model for the filtering step of the keyword recognizer.
+    /// - SeeAlso: `TFLiteKeywordRecognizer`
+    @objc public var keywordFilterModelPath: String = "KeywordFilter.tflite"
+    /// The filesystem path to the machine learning model for the encoding step of the keyword recognizer.
+    /// - SeeAlso: `TFLiteKeywordRecognizer`
+    @objc public var keywordEncodeModelPath: String = "KeywordEncode.tflite"
+    /// The filesystem path to the machine learning model for the detect step of the keyword recognizer.
+    /// - SeeAlso: `TFLiteKeywordRecognizer`
+    @objc public var keywordDetectModelPath: String = "KeywordDetect.tflite"
+    /// The threshold of the keyword recognizer's posterior output, above which the keyword recognizer emits a recognition event for the most probable keyword.
+    /// - SeeAlso: `TFLiteKeywordRecognizer`
+    @objc public var keywordThreshold: Float = 0.5
+    /// The filesystem path to the model metadata for keyword recognition
+    /// - SeeAlso: `TFLiteKeywordRecognizer`
+    @objc public var keywordMetadataPath: String = "metadata.json"
+    /// A comma-separated list of keywords to recognize.
+    /// - Remark: ex: "yes,no"
+    /// - Warning: Cannot contain spaces. Will be ignored in favor of `keywordMetadataPath` if available.
+    /// - SeeAlso: `TFLiteKeywordRecognizer`
+    @objc public var keywords: String = ""
+    /// The name of the window function to apply to each audio frame before calculating the STFT.
+    /// - Remark: Currently the "hann" window is supported.
+    /// - SeeAlso: `TFLiteWakewordRecognizer`
+    public var keywordFFTWindowType: SignalProcessing.FFTWindowType = .hann
+    /// The size of the signal window used to calculate the STFT, in number of samples - should be a power of 2 for maximum efficiency.
+    /// - SeeAlso: `TFLiteWakewordRecognizer`
+    @objc public var keywordFFTWindowSize: Int = 512
+    /// The length of time to skip each time the overlapping STFT is calculated, in milliseconds.
+    /// - SeeAlso: `TFLiteWakewordRecognizer`
+    @objc public var keywordFFTHopLength: Int = 10
+    /// The length of a frame in the mel spectrogram used as an input to the wakeword recognizer encoder, in milliseconds.
+    /// - SeeAlso: `TFLiteWakewordRecognizer`
+    @objc public var keywordMelFrameLength: Int = 110
+    /// The number of filterbank components in each mel spectrogram frame sent to the wakeword recognizer.
+    /// - SeeAlso: `TFLiteWakewordRecognizer`
+    @objc public var keywordMelFrameWidth: Int = 40
+    /// The size of the wakeword recognizer's encoder window output.
+    /// - SeeAlso: `TFLiteWakewordRecognizer`
+    @objc public var keywordEncodeWidth: Int = 128
+    /// The length of the sliding window of encoder output used as an input to the wakeword recognizer classifier, in milliseconds.
+    /// - SeeAlso: `TFLiteWakewordRecognizer`
+    @objc public var keywordEncodeLength: Int = 1000
+    /// Timeout in seconds used for semaphore waits in the speech pipeline
+    /// - Warning: There is not normally a need to change this value.
+    /// - SeeAlso: `AudioController`, `AppleWakewordRecognizer`, `AppleSpeechRecognizer`
+    @objc public var semaphoreTimeout: Double = 1
 }

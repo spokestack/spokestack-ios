@@ -40,6 +40,7 @@ class RingBufferTest: XCTestCase {
             thrownError = $0
             XCTAssert($0.localizedDescription.count > 1)
         }
+        XCTAssertTrue(buffer3.isEmpty)
         XCTAssert(thrownError is RingBufferStateError, "unexpected error type \(type(of: thrownError)) during read()")
         
         // single read/write

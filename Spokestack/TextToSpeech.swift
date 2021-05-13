@@ -119,7 +119,7 @@ private let apiQueue = DispatchQueue(label: TTSQueueName, qos: .userInitiated, a
     /// - Note: The URL will be invalidated within 60 seconds of generation.
     /// - Parameter input: Parameters that specify the speech to synthesize.
     @objc public func synthesize(_ input: TextToSpeechInput) -> Void {
-        self.synthesize(input: input, success: successHandler(result:))
+        self.synthesize(input: input, success: successHandler)
     }
 
     /// Synthesize speech using the provided list of inputs. A successful set of synthesises returns a list of synthesis results.
@@ -196,7 +196,7 @@ private let apiQueue = DispatchQueue(label: TTSQueueName, qos: .userInitiated, a
         Trace.trace(Trace.Level.DEBUG, message: "request \(request.debugDescription) \(String(describing: request.allHTTPHeaderFields)) \(String(data: request.httpBody!, encoding: String.Encoding.utf8) ?? "no body")", config: self.configuration, delegates: self.delegates, caller: self)
         
         let task: URLSessionDataTask = session.dataTask(with: request) { (data, response, error) -> Void in
-            Trace.trace(Trace.Level.DEBUG, message: "task callback \(String(describing: response)) \(String(describing: String(data: data ?? Data(), encoding: String.Encoding.utf8)))) \(String(describing: error))", config: self.configuration, delegates: self.delegates, caller: self)
+            Trace.trace(Trace.Level.DEBUG, message: "task callback \n response: \(String(describing: response)) \n response data: \(String(describing: String(data: data ?? Data(), encoding: String.Encoding.utf8)))) \n response error: \(String(describing: error))", config: self.configuration, delegates: self.delegates, caller: self)
             
             DispatchQueue.global(qos: .userInitiated).async {
                 if let error = error {
@@ -291,6 +291,7 @@ private let apiQueue = DispatchQueue(label: TTSQueueName, qos: .userInitiated, a
         guard let id = response.value(forHTTPHeaderField: "x-request-id") else {
             throw TextToSpeechErrors.deserialization("response headers did not contain request id")
         }
+        // NB the XCode debugger locals won't show a hydrated `body` for some reason. If you're here, you may intepret that as a bug. Instead, `po body.data` or use a debug print in the caller's code to force evaluation of the actually hydrated object.
         let body = try self.decoder.decode(TTSTResponse.self, from: data)
         if let e = body.errors {
             let message = e.map { $0.message }.joined(separator: " ")
@@ -300,7 +301,6 @@ private let apiQueue = DispatchQueue(label: TTSQueueName, qos: .userInitiated, a
         {
             throw TextToSpeechErrors.deserialization("Could not deserialize the response.")
         }
-        
         var url: URL { switch inputFormat {
         // NB the inputFormat switch guarantees safe access to the synthesisFormat url.
         case .ssml: return data.synthesizeSsml!.url

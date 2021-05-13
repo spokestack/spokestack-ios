@@ -1,4 +1,4 @@
-# Spokestack iOS
+<a href="https://www.spokestack.io/docs/ios/getting-started" title="Getting Started with Spokestack + iOS">![Spokestack iOS](./images/spokestack-ios.png)</a>
 
 Spokestack provides an extensible speech recognition pipeline for the iOS
 platform. It includes a variety of built-in speech processors for Voice

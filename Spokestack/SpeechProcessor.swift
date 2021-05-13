@@ -45,24 +45,32 @@ internal enum SpeechProcessors: Int {
     case vadTrigger
     /// spokestackSpeech
     case spokestackSpeech
+    /// tfLiteKeywordRecognizer
+    case tfLiteKeywordRecognizer
 }
 
 /// Profiles that may be passed to `SpeechPipelineBuilder` for easy pipeline configuring.
 @objc public enum SpeechPipelineProfiles: Int {
-    /// VAD-sensitive Apple wakeword activates Apple ASR
-    case appleWakewordAppleSpeech
     /// VAD-sensitive TFLiteWakeword activates Apple ASR
     case tfLiteWakewordAppleSpeech
     /// VAD-triggered Apple ASR
     case vadTriggerAppleSpeech
     /// Apple ASR that is manually activated and deactivated
     case pushToTalkAppleSpeech
-    /// VAD-triggered Spokestack ASR
-    case vadTriggerSpokestackSpeech
     /// VAD-sensitive TFLiteWakeword activates Spokestack ASR
     case tfLiteWakewordSpokestackSpeech
+    /// VAD-triggered Spokestack ASR
+    case vadTriggerSpokestackSpeech
     /// Spokestack ASR that is manually activated and deactivated
     case pushToTalkSpokestackSpeech
+    /// VAD-sensitive TFLiteWakeword activates TFLite Keyword Recognizer
+    case tfLiteWakewordKeyword
+    /// VAD-triggered TFLite Keyword Recognizer
+    case vadTriggerKeyword
+    /// VAD-sensitive Apple wakeword activates Apple ASR
+    case appleWakewordAppleSpeech
+    /// VAD-sensitive Apple wakeword activates TFLite Keyword Recognizer
+    case appleWakewordKeyword
 }
 
 extension SpeechPipelineProfiles {
@@ -84,6 +92,12 @@ extension SpeechPipelineProfiles {
             return [.vad, .tfLiteWakeword, .spokestackSpeech]
         case .appleWakewordAppleSpeech:
             return [.vad, .appleWakeword, .appleSpeech]
+        case .appleWakewordKeyword:
+            return [.vad, .appleWakeword, .tfLiteKeywordRecognizer]
+        case .tfLiteWakewordKeyword:
+            return [.vad, .tfLiteWakeword, .tfLiteKeywordRecognizer]
+        case .vadTriggerKeyword:
+            return [.vad, .vadTrigger, .tfLiteKeywordRecognizer]
         }
     }
 }
