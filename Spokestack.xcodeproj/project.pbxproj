@@ -224,9 +224,9 @@
 		59C2AFD92319CB7100E47AC5 /* RingBufferTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RingBufferTest.swift; sourceTree = "<group>"; };
 		59C2AFED231ED07100E47AC5 /* WebRTCVADTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebRTCVADTest.swift; sourceTree = "<group>"; };
 		59C789822582C5640087881D /* TFLiteKeywordViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TFLiteKeywordViewController.swift; sourceTree = "<group>"; };
-		59C7898E2582CD690087881D /* KeywordDetect.tflite */ = {isa = PBXFileReference; lastKnownFileType = file; path = KeywordDetect.tflite; sourceTree = "<group>"; };
-		59C7898F2582CD690087881D /* KeywordEncode.tflite */ = {isa = PBXFileReference; lastKnownFileType = file; path = KeywordEncode.tflite; sourceTree = "<group>"; };
-		59C789902582CD690087881D /* KeywordFilter.tflite */ = {isa = PBXFileReference; lastKnownFileType = file; path = KeywordFilter.tflite; sourceTree = "<group>"; };
+		59C7898E2582CD690087881D /* KeywordDetect.tflite */ = {isa = PBXFileReference; lastKnownFileType = text; path = KeywordDetect.tflite; sourceTree = "<group>"; };
+		59C7898F2582CD690087881D /* KeywordEncode.tflite */ = {isa = PBXFileReference; lastKnownFileType = text; path = KeywordEncode.tflite; sourceTree = "<group>"; };
+		59C789902582CD690087881D /* KeywordFilter.tflite */ = {isa = PBXFileReference; lastKnownFileType = text; path = KeywordFilter.tflite; sourceTree = "<group>"; };
 		59C789962587C3180087881D /* TFLiteKeywordRecognizerTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TFLiteKeywordRecognizerTest.swift; sourceTree = "<group>"; };
 		59D68CA8257EB346001E2587 /* TFLiteKeywordRecognizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TFLiteKeywordRecognizer.swift; sourceTree = "<group>"; };
 		59D78F5E2322D13700728A98 /* AudioControllerTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioControllerTest.swift; sourceTree = "<group>"; };
@@ -250,9 +250,9 @@
 		59EF51BE233013A9006BA0BD /* AppleSpeechRecognizerTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppleSpeechRecognizerTest.swift; sourceTree = "<group>"; };
 		59EF51C023328D57006BA0BD /* AppleWakewordRecognizerTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppleWakewordRecognizerTest.swift; sourceTree = "<group>"; };
 		59EF51C22332E57B006BA0BD /* Frame.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Frame.swift; sourceTree = "<group>"; };
-		59F492C72588364700F98986 /* mock_kw_detect.tflite */ = {isa = PBXFileReference; lastKnownFileType = file; path = mock_kw_detect.tflite; sourceTree = "<group>"; };
-		59F492C82588364700F98986 /* mock_kw_filter.tflite */ = {isa = PBXFileReference; lastKnownFileType = file; path = mock_kw_filter.tflite; sourceTree = "<group>"; };
-		59F492C92588364700F98986 /* mock_kw_encode.tflite */ = {isa = PBXFileReference; lastKnownFileType = file; path = mock_kw_encode.tflite; sourceTree = "<group>"; };
+		59F492C72588364700F98986 /* mock_kw_detect.tflite */ = {isa = PBXFileReference; explicitFileType = compiled; path = mock_kw_detect.tflite; sourceTree = "<group>"; };
+		59F492C82588364700F98986 /* mock_kw_filter.tflite */ = {isa = PBXFileReference; explicitFileType = compiled; path = mock_kw_filter.tflite; sourceTree = "<group>"; };
+		59F492C92588364700F98986 /* mock_kw_encode.tflite */ = {isa = PBXFileReference; explicitFileType = compiled; path = mock_kw_encode.tflite; sourceTree = "<group>"; };
 		59FB0C8A22AEE4F100FB9662 /* Data+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Data+Extensions.swift"; sourceTree = "<group>"; };
 		59FB0C8C22B0640700FB9662 /* RingBuffer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RingBuffer.swift; sourceTree = "<group>"; };
 		59FB0C8E22B0682900FB9662 /* FFT.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFT.swift; sourceTree = "<group>"; };
