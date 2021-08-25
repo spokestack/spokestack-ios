@@ -102,6 +102,7 @@ class NLUViewController: UIViewController {
         self.configuration.nluModelMetadataPath = metadataPath
 
         let spokestack = try! SpokestackBuilder()
+            .usePipelineProfile(.vadTriggerSpokestackSpeech)
             .setConfiguration(self.configuration)
             .addDelegate(self)
             .build()

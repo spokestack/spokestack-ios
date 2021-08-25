@@ -96,9 +96,9 @@
 		59E0E13522FE2C2B0060F012 /* SignalProcessing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59E0E13422FE2C2B0060F012 /* SignalProcessing.swift */; };
 		59E0E1372301F0A80060F012 /* Trace.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59E0E1362301F0A80060F012 /* Trace.swift */; };
 		59E0E1392301FB920060F012 /* TFLiteViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59E0E1382301FB920060F012 /* TFLiteViewController.swift */; };
-		59E0E13E230DEB7C0060F012 /* Detect.lite in Resources */ = {isa = PBXBuildFile; fileRef = 59E0E13B230DEB7C0060F012 /* Detect.lite */; };
-		59E0E13F230DEB7C0060F012 /* Encode.lite in Resources */ = {isa = PBXBuildFile; fileRef = 59E0E13C230DEB7C0060F012 /* Encode.lite */; };
-		59E0E140230DEB7C0060F012 /* Filter.lite in Resources */ = {isa = PBXBuildFile; fileRef = 59E0E13D230DEB7C0060F012 /* Filter.lite */; };
+		59E0E13E230DEB7C0060F012 /* detect.tflite in Resources */ = {isa = PBXBuildFile; fileRef = 59E0E13B230DEB7C0060F012 /* detect.tflite */; };
+		59E0E13F230DEB7C0060F012 /* encode.tflite in Resources */ = {isa = PBXBuildFile; fileRef = 59E0E13C230DEB7C0060F012 /* encode.tflite */; };
+		59E0E140230DEB7C0060F012 /* filter.tflite in Resources */ = {isa = PBXBuildFile; fileRef = 59E0E13D230DEB7C0060F012 /* filter.tflite */; };
 		59E3E71224C0E83000F12CC4 /* SpokestackSpeechRecognizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59E3E71124C0E83000F12CC4 /* SpokestackSpeechRecognizer.swift */; };
 		59E3E71324C0E83000F12CC4 /* SpokestackSpeechRecognizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59E3E71124C0E83000F12CC4 /* SpokestackSpeechRecognizer.swift */; };
 		59E3E71524C1088200F12CC4 /* SpokestackSpeechRecognizerTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59E3E71424C1088200F12CC4 /* SpokestackSpeechRecognizerTest.swift */; };
@@ -234,9 +234,9 @@
 		59E0E13422FE2C2B0060F012 /* SignalProcessing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignalProcessing.swift; sourceTree = "<group>"; };
 		59E0E1362301F0A80060F012 /* Trace.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Trace.swift; sourceTree = "<group>"; };
 		59E0E1382301FB920060F012 /* TFLiteViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TFLiteViewController.swift; sourceTree = "<group>"; };
-		59E0E13B230DEB7C0060F012 /* Detect.lite */ = {isa = PBXFileReference; lastKnownFileType = file; path = Detect.lite; sourceTree = "<group>"; };
-		59E0E13C230DEB7C0060F012 /* Encode.lite */ = {isa = PBXFileReference; lastKnownFileType = file; path = Encode.lite; sourceTree = "<group>"; };
-		59E0E13D230DEB7C0060F012 /* Filter.lite */ = {isa = PBXFileReference; lastKnownFileType = file; path = Filter.lite; sourceTree = "<group>"; };
+		59E0E13B230DEB7C0060F012 /* detect.tflite */ = {isa = PBXFileReference; lastKnownFileType = file; path = detect.tflite; sourceTree = "<group>"; };
+		59E0E13C230DEB7C0060F012 /* encode.tflite */ = {isa = PBXFileReference; lastKnownFileType = file; path = encode.tflite; sourceTree = "<group>"; };
+		59E0E13D230DEB7C0060F012 /* filter.tflite */ = {isa = PBXFileReference; lastKnownFileType = file; path = filter.tflite; sourceTree = "<group>"; };
 		59E3E71124C0E83000F12CC4 /* SpokestackSpeechRecognizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpokestackSpeechRecognizer.swift; sourceTree = "<group>"; };
 		59E3E71424C1088200F12CC4 /* SpokestackSpeechRecognizerTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpokestackSpeechRecognizerTest.swift; sourceTree = "<group>"; };
 		59E86BAF264B35500070FE17 /* CommandModelMetadata.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommandModelMetadata.swift; sourceTree = "<group>"; };
@@ -309,9 +309,9 @@
 				597D0CA723F5B28F00018D71 /* nlu.tflite */,
 				597D0CA423F5B24A00018D71 /* nlu.json */,
 				59E895A023E0B45800C424D3 /* vocab.txt */,
-				59E0E13B230DEB7C0060F012 /* Detect.lite */,
-				59E0E13C230DEB7C0060F012 /* Encode.lite */,
-				59E0E13D230DEB7C0060F012 /* Filter.lite */,
+				59E0E13B230DEB7C0060F012 /* detect.tflite */,
+				59E0E13C230DEB7C0060F012 /* encode.tflite */,
+				59E0E13D230DEB7C0060F012 /* filter.tflite */,
 				59A0D5C32204E799003709C3 /* Assets.xcassets */,
 				011C191F216BCA3200DB36FD /* AppDelegate.swift */,
 				59A0D5BD2204E786003709C3 /* AppleASRViewController.swift */,
@@ -667,10 +667,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				59E86BB3264C27D70070FE17 /* KeywordMetadata.json in Resources */,
-				59E0E13E230DEB7C0060F012 /* Detect.lite in Resources */,
+				59E0E13E230DEB7C0060F012 /* detect.tflite in Resources */,
 				59C789932582CD690087881D /* KeywordFilter.tflite in Resources */,
 				59C789922582CD690087881D /* KeywordEncode.tflite in Resources */,
-				59E0E140230DEB7C0060F012 /* Filter.lite in Resources */,
+				59E0E140230DEB7C0060F012 /* filter.tflite in Resources */,
 				59C789912582CD690087881D /* KeywordDetect.tflite in Resources */,
 				597D0CA623F5B24A00018D71 /* nlu.json in Resources */,
 				59E895A123E0B45900C424D3 /* vocab.txt in Resources */,
@@ -678,7 +678,7 @@
 				011C1925216BCA3200DB36FD /* Main.storyboard in Resources */,
 				59A0D5C42204E799003709C3 /* Assets.xcassets in Resources */,
 				597D0CA823F5B29000018D71 /* nlu.tflite in Resources */,
-				59E0E13F230DEB7C0060F012 /* Encode.lite in Resources */,
+				59E0E13F230DEB7C0060F012 /* encode.tflite in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
