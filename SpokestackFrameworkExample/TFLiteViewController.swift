@@ -67,14 +67,14 @@ class TFLiteViewController: UIViewController {
     
     func initPipeline() throws -> SpeechPipeline {
         let c = SpeechConfiguration()
-        guard let filterPath = Bundle(for: type(of: self)).path(forResource: c.filterModelName, ofType: "lite") else {
-            throw CommandModelError.filter("could not find \(c.filterModelName).lite in bundle \(self.debugDescription)")
+        guard let filterPath = Bundle(for: type(of: self)).path(forResource: c.filterModelName, ofType: "tflite") else {
+            throw CommandModelError.filter("could not find \(c.filterModelName).tflite in bundle \(self.debugDescription)")
         }
-        guard let encodePath = Bundle(for: type(of: self)).path(forResource: c.encodeModelName, ofType: "lite") else {
-            throw CommandModelError.encode("could not find \(c.encodeModelName).lite in bundle \(self.debugDescription)")
+        guard let encodePath = Bundle(for: type(of: self)).path(forResource: c.encodeModelName, ofType: "tflite") else {
+            throw CommandModelError.encode("could not find \(c.encodeModelName).tflite in bundle \(self.debugDescription)")
         }
-        guard let detectPath = Bundle(for: type(of: self)).path(forResource: c.detectModelName, ofType: "lite") else {
-            throw CommandModelError.detect("could not find \(c.detectModelName).lite in bundle \(self.debugDescription)")
+        guard let detectPath = Bundle(for: type(of: self)).path(forResource: c.detectModelName, ofType: "tflite") else {
+            throw CommandModelError.detect("could not find \(c.detectModelName).tflite in bundle \(self.debugDescription)")
         }
         return try! SpeechPipelineBuilder()
             .addListener(self)

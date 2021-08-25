@@ -81,21 +81,21 @@ import Foundation
     @objc public var preEmphasis: Float = 0.97
     /// The filename of the machine learning model used for the filtering step.
     /// - Remarks: Both the file name and the file path are configurable to allow for flexibility in constructing the path that the recognizer will attempt to load the model from.
-    @objc public var filterModelName: String = "Filter"
+    @objc public var filterModelName: String = "filter"
     /// The filename of the machine learning model used for the encoding step.
     /// - Remarks: Both the file name and the file path are configurable to allow for flexibility in constructing the path that the recognizer will attempt to load the model from.
-    @objc public var encodeModelName: String = "Encode"
+    @objc public var encodeModelName: String = "encode"
     /// The filename of the machine learning model used for the detect step.
     /// - Remarks: Both the file name and the file path are configurable to allow for flexibility in constructing the path that the recognizer will attempt to load the model from.
-    @objc public var detectModelName: String = "Detect"
+    @objc public var detectModelName: String = "detect"
     /// The filesystem path to the machine learning model for the filtering step.
-    @objc public var filterModelPath: String = "Filter.lite"
+    @objc public var filterModelPath: String = "filter.tflite"
     /// The filesystem path to the machine learning model for the encoding step.
     /// - SeeAlso: `TFLiteWakewordRecognizer`
-    @objc public var encodeModelPath: String = "Encode.lite"
+    @objc public var encodeModelPath: String = "encode.tflite"
     /// The filesystem path to the machine learning model for the detect step.
     /// - SeeAlso: `TFLiteWakewordRecognizer`
-    @objc public var detectModelPath: String = "Detect.lite"
+    @objc public var detectModelPath: String = "detect.tflite"
     /// Text To Speech API client identifier key.
     /// - SeeAlso: `TextToSpeech`
     @objc public var apiId: String = "f0bc990c-e9db-4a0c-a2b1-6a6395a3d97e"
