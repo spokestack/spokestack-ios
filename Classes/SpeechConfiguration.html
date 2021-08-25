@@ -1,0 +1,2252 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>SpeechConfiguration Class Reference</title>
+    <link rel="stylesheet" type="text/css" href="../css/jazzy.css" />
+    <link rel="stylesheet" type="text/css" href="../css/highlight.css" />
+    <meta charset="utf-8">
+    <script src="../js/jquery.min.js" defer></script>
+    <script src="../js/jazzy.js" defer></script>
+    
+    <script src="../js/lunr.min.js" defer></script>
+    <script src="../js/typeahead.jquery.js" defer></script>
+    <script src="../js/jazzy.search.js" defer></script>
+  </head>
+  <body>
+
+    <a name="//apple_ref/swift/Class/SpeechConfiguration" class="dashAnchor"></a>
+
+    <a title="SpeechConfiguration Class Reference"></a>
+
+    <header class="header">
+      <p class="header-col header-col--primary">
+        <a class="header-link" href="../index.html">
+          Spokestack 14.2.1 Docs
+        </a>
+         (95% documented)
+      </p>
+    
+      <p class="header-col--secondary">
+        <form role="search" action="../search.json">
+          <input type="text" placeholder="Search documentation" data-typeahead>
+        </form>
+      </p>
+    
+        <p class="header-col header-col--secondary">
+          <a class="header-link" href="https://github.com/spokestack/spokestack-ios">
+            <img class="header-icon" src="../img/gh.png"/>
+            View on GitHub
+          </a>
+        </p>
+    
+    </header>
+
+    <p class="breadcrumbs">
+      <a class="breadcrumb" href="../index.html">Spokestack Reference</a>
+      <img class="carat" src="../img/carat.png" />
+      SpeechConfiguration Class Reference
+    </p>
+
+    <div class="content-wrapper">
+      <nav class="navigation">
+        <ul class="nav-groups">
+          <li class="nav-group-name">
+            <a class="nav-group-name-link" href="../Classes.html">Classes</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/AppleSpeechRecognizer.html">AppleSpeechRecognizer</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/AppleWakewordRecognizer.html">AppleWakewordRecognizer</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/NLUResult.html">NLUResult</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/NLUTensorflow.html">NLUTensorflow</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/Slot.html">Slot</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/SpeechConfiguration.html">SpeechConfiguration</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/SpeechContext.html">SpeechContext</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/SpeechPipeline.html">SpeechPipeline</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/SpeechPipelineBuilder.html">SpeechPipelineBuilder</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/Spokestack.html">Spokestack</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/SpokestackBuilder.html">SpokestackBuilder</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/SpokestackSpeechRecognizer.html">SpokestackSpeechRecognizer</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/TFLiteKeywordRecognizer.html">TFLiteKeywordRecognizer</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/TFLiteWakewordRecognizer.html">TFLiteWakewordRecognizer</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/TextToSpeech.html">TextToSpeech</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/TextToSpeechInput.html">TextToSpeechInput</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/TextToSpeechResult.html">TextToSpeechResult</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/VADTrigger.html">VADTrigger</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/WebRTCVAD.html">WebRTCVAD</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a class="nav-group-name-link" href="../Enums.html">Enumerations</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Enums/AudioError.html">AudioError</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Enums/CommandModelError.html">CommandModelError</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Enums/NLUError.html">NLUError</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Enums/SpeechPipelineError.html">SpeechPipelineError</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Enums/SpeechPipelineProfiles.html">SpeechPipelineProfiles</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Enums/TTSInputFormat.html">TTSInputFormat</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Enums/VADError.html">VADError</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Enums/VADMode.html">VADMode</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a class="nav-group-name-link" href="../Extensions.html">Extensions</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Extensions/Array.html">Array</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a class="nav-group-name-link" href="../Protocols.html">Protocols</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Protocols/NLUService.html">NLUService</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Protocols/SpeechProcessor.html">SpeechProcessor</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Protocols/SpokestackDelegate.html">SpokestackDelegate</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Protocols/Tracer.html">Tracer</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Protocols/TranscriptEditor.html">TranscriptEditor</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a class="nav-group-name-link" href="../Structs.html">Structures</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/SignalProcessing.html">SignalProcessing</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/SignalProcessing/FFTWindowType.html">– FFTWindowType</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/Trace.html">Trace</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/Trace/Level.html">– Level</a>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </nav>
+      <article class="main-content">
+
+        <section class="section">
+          <div class="section-content top-matter">
+            <h1>SpeechConfiguration</h1>
+              <div class="declaration">
+                <div class="language">
+                  
+                  <pre class="highlight swift"><code><span class="kd">@objc</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="kt">SpeechConfiguration</span> <span class="p">:</span> <span class="kt">NSObject</span></code></pre>
+
+                </div>
+              </div>
+            <p>Configuration properties for Spokestack modules.</p>
+
+              <div class="slightly-smaller">
+                <a href="https://github.com/spokestack/spokestack-ios/tree/master/Spokestack/SpeechConfiguration.swift#L12-L195">Show on GitHub</a>
+              </div>
+          </div>
+        </section>
+
+        <section class="section">
+          <div class="section-content">
+            <div class="task-group">
+              <ul class="item-container">
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:@M@Spokestack@objc(cs)SpeechConfiguration(py)wakewords"></a>
+                    <a name="//apple_ref/swift/Property/wakewords" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@M@Spokestack@objc(cs)SpeechConfiguration(py)wakewords">wakewords</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>A comma-separated list of wakeword keywords</p>
+<div class="aside aside-remark">
+    <p class="aside-title">Remark</p>
+    ex: &ldquo;up,dog&rdquo;
+
+</div><div class="aside aside-warning">
+    <p class="aside-title">Warning</p>
+    cannot contain spaces
+
+</div><div class="aside aside-see-also">
+    <p class="aside-title">See also</p>
+    <code><a href="../Classes/AppleWakewordRecognizer.html">AppleWakewordRecognizer</a></code>
+
+</div>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@objc</span>
+<span class="kd">public</span> <span class="k">var</span> <span class="nv">wakewords</span><span class="p">:</span> <span class="kt">String</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div class="slightly-smaller">
+                        <a href="https://github.com/spokestack/spokestack-ios/tree/master/Spokestack/SpeechConfiguration.swift#L17">Show on GitHub</a>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:10Spokestack19SpeechConfigurationC13fftWindowTypeAA16SignalProcessingV09FFTWindowF0Ovp"></a>
+                    <a name="//apple_ref/swift/Property/fftWindowType" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10Spokestack19SpeechConfigurationC13fftWindowTypeAA16SignalProcessingV09FFTWindowF0Ovp">fftWindowType</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The name of the window function to apply to each audio frame before calculating the STFT.</p>
+<div class="aside aside-remark">
+    <p class="aside-title">Remark</p>
+    Currently the &ldquo;hann&rdquo; window is supported.
+
+</div><div class="aside aside-see-also">
+    <p class="aside-title">See also</p>
+    <code><a href="../Classes/TFLiteWakewordRecognizer.html">TFLiteWakewordRecognizer</a></code>
+
+</div>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">fftWindowType</span><span class="p">:</span> <span class="kt"><a href="../Structs/SignalProcessing.html">SignalProcessing</a></span><span class="o">.</span><span class="kt">FFTWindowType</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div class="slightly-smaller">
+                        <a href="https://github.com/spokestack/spokestack-ios/tree/master/Spokestack/SpeechConfiguration.swift#L21">Show on GitHub</a>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:@M@Spokestack@objc(cs)SpeechConfiguration(py)rmsTarget"></a>
+                    <a name="//apple_ref/swift/Property/rmsTarget" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@M@Spokestack@objc(cs)SpeechConfiguration(py)rmsTarget">rmsTarget</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The desired linear Root Mean Squared (RMS) signal energy, which is used for signal normalization and should be tuned to the RMS target used during wakeword model training.</p>
+<div class="aside aside-see-also">
+    <p class="aside-title">See also</p>
+    <code><a href="../Classes/TFLiteWakewordRecognizer.html">TFLiteWakewordRecognizer</a></code>
+
+</div>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@available(*, deprecated, message: "RMS normalization is no longer used during wakeword recognition.")</span>
+<span class="kd">@objc</span>
+<span class="kd">public</span> <span class="k">var</span> <span class="nv">rmsTarget</span><span class="p">:</span> <span class="kt">Float</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div class="slightly-smaller">
+                        <a href="https://github.com/spokestack/spokestack-ios/tree/master/Spokestack/SpeechConfiguration.swift#L25">Show on GitHub</a>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:@M@Spokestack@objc(cs)SpeechConfiguration(py)rmsAlpha"></a>
+                    <a name="//apple_ref/swift/Property/rmsAlpha" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@M@Spokestack@objc(cs)SpeechConfiguration(py)rmsAlpha">rmsAlpha</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The Exponentially Weighted Moving Average (EWMA) update rate for the current  Root Mean Squared (RMS) signal energy (0 for no RMS normalization).</p>
+<div class="aside aside-see-also">
+    <p class="aside-title">See also</p>
+    <code><a href="../Classes/TFLiteWakewordRecognizer.html">TFLiteWakewordRecognizer</a></code>
+
+</div>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@available(*, deprecated, message: "RMS normalization is no longer used during wakeword recognition.")</span>
+<span class="kd">@objc</span>
+<span class="kd">public</span> <span class="k">var</span> <span class="nv">rmsAlpha</span><span class="p">:</span> <span class="kt">Float</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div class="slightly-smaller">
+                        <a href="https://github.com/spokestack/spokestack-ios/tree/master/Spokestack/SpeechConfiguration.swift#L29">Show on GitHub</a>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:@M@Spokestack@objc(cs)SpeechConfiguration(py)fftWindowSize"></a>
+                    <a name="//apple_ref/swift/Property/fftWindowSize" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@M@Spokestack@objc(cs)SpeechConfiguration(py)fftWindowSize">fftWindowSize</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The size of the signal window used to calculate the STFT, in number of samples - should be a power of 2 for maximum efficiency.</p>
+<div class="aside aside-see-also">
+    <p class="aside-title">See also</p>
+    <code><a href="../Classes/TFLiteWakewordRecognizer.html">TFLiteWakewordRecognizer</a></code>
+
+</div>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@objc</span>
+<span class="kd">public</span> <span class="k">var</span> <span class="nv">fftWindowSize</span><span class="p">:</span> <span class="kt">Int</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div class="slightly-smaller">
+                        <a href="https://github.com/spokestack/spokestack-ios/tree/master/Spokestack/SpeechConfiguration.swift#L32">Show on GitHub</a>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:@M@Spokestack@objc(cs)SpeechConfiguration(py)fftHopLength"></a>
+                    <a name="//apple_ref/swift/Property/fftHopLength" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@M@Spokestack@objc(cs)SpeechConfiguration(py)fftHopLength">fftHopLength</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The length of time to skip each time the overlapping STFT is calculated, in milliseconds.</p>
+<div class="aside aside-see-also">
+    <p class="aside-title">See also</p>
+    <code><a href="../Classes/TFLiteWakewordRecognizer.html">TFLiteWakewordRecognizer</a></code>
+
+</div>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@objc</span>
+<span class="kd">public</span> <span class="k">var</span> <span class="nv">fftHopLength</span><span class="p">:</span> <span class="kt">Int</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div class="slightly-smaller">
+                        <a href="https://github.com/spokestack/spokestack-ios/tree/master/Spokestack/SpeechConfiguration.swift#L35">Show on GitHub</a>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:@M@Spokestack@objc(cs)SpeechConfiguration(py)melFrameLength"></a>
+                    <a name="//apple_ref/swift/Property/melFrameLength" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@M@Spokestack@objc(cs)SpeechConfiguration(py)melFrameLength">melFrameLength</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The length of a frame in the mel spectrogram used as an input to the wakeword recognizer encoder, in milliseconds.</p>
+<div class="aside aside-see-also">
+    <p class="aside-title">See also</p>
+    <code><a href="../Classes/TFLiteWakewordRecognizer.html">TFLiteWakewordRecognizer</a></code>
+
+</div>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@objc</span>
+<span class="kd">public</span> <span class="k">var</span> <span class="nv">melFrameLength</span><span class="p">:</span> <span class="kt">Int</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div class="slightly-smaller">
+                        <a href="https://github.com/spokestack/spokestack-ios/tree/master/Spokestack/SpeechConfiguration.swift#L38">Show on GitHub</a>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:@M@Spokestack@objc(cs)SpeechConfiguration(py)melFrameWidth"></a>
+                    <a name="//apple_ref/swift/Property/melFrameWidth" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@M@Spokestack@objc(cs)SpeechConfiguration(py)melFrameWidth">melFrameWidth</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The number of filterbank components in each mel spectrogram frame sent to the wakeword recognizer.</p>
+<div class="aside aside-see-also">
+    <p class="aside-title">See also</p>
+    <code><a href="../Classes/TFLiteWakewordRecognizer.html">TFLiteWakewordRecognizer</a></code>
+
+</div>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@objc</span>
+<span class="kd">public</span> <span class="k">var</span> <span class="nv">melFrameWidth</span><span class="p">:</span> <span class="kt">Int</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div class="slightly-smaller">
+                        <a href="https://github.com/spokestack/spokestack-ios/tree/master/Spokestack/SpeechConfiguration.swift#L41">Show on GitHub</a>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:@M@Spokestack@objc(cs)SpeechConfiguration(py)stateWidth"></a>
+                    <a name="//apple_ref/swift/Property/stateWidth" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@M@Spokestack@objc(cs)SpeechConfiguration(py)stateWidth">stateWidth</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The size of the wakeword recognizer&rsquo;s encoder state output.</p>
+<div class="aside aside-see-also">
+    <p class="aside-title">See also</p>
+    <code><a href="../Classes/TFLiteWakewordRecognizer.html">TFLiteWakewordRecognizer</a></code>, <code><a href="../Classes/SpeechConfiguration.html#/c:@M@Spokestack@objc(cs)SpeechConfiguration(py)encodeWidth">encodeWidth</a></code>
+
+</div><div class="aside aside-remarks">
+    <p class="aside-title">Remarks</p>
+    Defaults to matching the <code><a href="../Classes/SpeechConfiguration.html#/c:@M@Spokestack@objc(cs)SpeechConfiguration(py)encodeWidth">encodeWidth</a></code> value.
+
+</div>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@objc</span>
+<span class="kd">public</span> <span class="k">var</span> <span class="nv">stateWidth</span><span class="p">:</span> <span class="kt">Int</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div class="slightly-smaller">
+                        <a href="https://github.com/spokestack/spokestack-ios/tree/master/Spokestack/SpeechConfiguration.swift#L45">Show on GitHub</a>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:@M@Spokestack@objc(cs)SpeechConfiguration(py)encodeWidth"></a>
+                    <a name="//apple_ref/swift/Property/encodeWidth" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@M@Spokestack@objc(cs)SpeechConfiguration(py)encodeWidth">encodeWidth</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The size of the wakeword recognizer&rsquo;s encoder window output.</p>
+<div class="aside aside-see-also">
+    <p class="aside-title">See also</p>
+    <code><a href="../Classes/TFLiteWakewordRecognizer.html">TFLiteWakewordRecognizer</a></code>
+
+</div>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@objc</span>
+<span class="kd">public</span> <span class="k">var</span> <span class="nv">encodeWidth</span><span class="p">:</span> <span class="kt">Int</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div class="slightly-smaller">
+                        <a href="https://github.com/spokestack/spokestack-ios/tree/master/Spokestack/SpeechConfiguration.swift#L48">Show on GitHub</a>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:@M@Spokestack@objc(cs)SpeechConfiguration(py)encodeLength"></a>
+                    <a name="//apple_ref/swift/Property/encodeLength" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@M@Spokestack@objc(cs)SpeechConfiguration(py)encodeLength">encodeLength</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The length of the sliding window of encoder output used as an input to the wakeword recognizer classifier, in milliseconds.</p>
+<div class="aside aside-see-also">
+    <p class="aside-title">See also</p>
+    <code><a href="../Classes/TFLiteWakewordRecognizer.html">TFLiteWakewordRecognizer</a></code>
+
+</div>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@objc</span>
+<span class="kd">public</span> <span class="k">var</span> <span class="nv">encodeLength</span><span class="p">:</span> <span class="kt">Int</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div class="slightly-smaller">
+                        <a href="https://github.com/spokestack/spokestack-ios/tree/master/Spokestack/SpeechConfiguration.swift#L51">Show on GitHub</a>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:@M@Spokestack@objc(cs)SpeechConfiguration(py)wakeThreshold"></a>
+                    <a name="//apple_ref/swift/Property/wakeThreshold" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@M@Spokestack@objc(cs)SpeechConfiguration(py)wakeThreshold">wakeThreshold</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The threshold of the wakeword recognizer classifier&rsquo;s posterior output, above which the wakeword recognizer activates the pipeline, in the range [0, 1].</p>
+<div class="aside aside-see-also">
+    <p class="aside-title">See also</p>
+    <code><a href="../Classes/TFLiteWakewordRecognizer.html">TFLiteWakewordRecognizer</a></code>
+
+</div>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@objc</span>
+<span class="kd">public</span> <span class="k">var</span> <span class="nv">wakeThreshold</span><span class="p">:</span> <span class="kt">Float</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div class="slightly-smaller">
+                        <a href="https://github.com/spokestack/spokestack-ios/tree/master/Spokestack/SpeechConfiguration.swift#L54">Show on GitHub</a>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:@M@Spokestack@objc(cs)SpeechConfiguration(py)wakeActiveMin"></a>
+                    <a name="//apple_ref/swift/Property/wakeActiveMin" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@M@Spokestack@objc(cs)SpeechConfiguration(py)wakeActiveMin">wakeActiveMin</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The minimum length of an activation, in milliseconds. Used to ignore a Voice Activity Detector (VAD) deactivation after the wakeword.</p>
+<div class="aside aside-see-also">
+    <p class="aside-title">See also</p>
+    TFLiteWakewordRecognizer`
+
+</div>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@objc</span>
+<span class="kd">public</span> <span class="k">var</span> <span class="nv">wakeActiveMin</span><span class="p">:</span> <span class="kt">Int</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div class="slightly-smaller">
+                        <a href="https://github.com/spokestack/spokestack-ios/tree/master/Spokestack/SpeechConfiguration.swift#L57">Show on GitHub</a>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:@M@Spokestack@objc(cs)SpeechConfiguration(py)wakeActiveMax"></a>
+                    <a name="//apple_ref/swift/Property/wakeActiveMax" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@M@Spokestack@objc(cs)SpeechConfiguration(py)wakeActiveMax">wakeActiveMax</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The maximum length of an activation, in milliseconds. Used to time out the speech pipeline activation.</p>
+<div class="aside aside-remarks">
+    <p class="aside-title">Remarks</p>
+    Defaults to 5 seconds to improve perceived responsiveness, although most NLUs use a longer timeout (eg 7s).
+
+</div><div class="aside aside-see-also">
+    <p class="aside-title">See also</p>
+    <code><a href="../Classes/AppleSpeechRecognizer.html">AppleSpeechRecognizer</a></code>, <code><a href="../Classes/TFLiteWakewordRecognizer.html">TFLiteWakewordRecognizer</a></code>
+
+</div>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@objc</span>
+<span class="kd">public</span> <span class="k">var</span> <span class="nv">wakeActiveMax</span><span class="p">:</span> <span class="kt">Int</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div class="slightly-smaller">
+                        <a href="https://github.com/spokestack/spokestack-ios/tree/master/Spokestack/SpeechConfiguration.swift#L61">Show on GitHub</a>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:10Spokestack19SpeechConfigurationC7vadModeAA7VADModeOvp"></a>
+                    <a name="//apple_ref/swift/Property/vadMode" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10Spokestack19SpeechConfigurationC7vadModeAA7VADModeOvp">vadMode</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Indicate to the VAD the level of permissiveness to non-speech activation.</p>
+<div class="aside aside-see-also">
+    <p class="aside-title">See also</p>
+    <code><a href="../Classes/AppleWakewordRecognizer.html">AppleWakewordRecognizer</a></code>, <code><a href="../Classes/TFLiteWakewordRecognizer.html">TFLiteWakewordRecognizer</a></code>
+
+</div>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">vadMode</span><span class="p">:</span> <span class="kt"><a href="../Enums/VADMode.html">VADMode</a></span></code></pre>
+
+                        </div>
+                      </div>
+                      <div class="slightly-smaller">
+                        <a href="https://github.com/spokestack/spokestack-ios/tree/master/Spokestack/SpeechConfiguration.swift#L64">Show on GitHub</a>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:@M@Spokestack@objc(cs)SpeechConfiguration(py)vadFallDelay"></a>
+                    <a name="//apple_ref/swift/Property/vadFallDelay" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@M@Spokestack@objc(cs)SpeechConfiguration(py)vadFallDelay">vadFallDelay</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Delay between a VAD deactivation and the delivery of the recognition results.</p>
+<div class="aside aside-see-also">
+    <p class="aside-title">See also</p>
+    <code><a href="../Classes/AppleSpeechRecognizer.html">AppleSpeechRecognizer</a></code>
+
+</div><div class="aside aside-remark">
+    <p class="aside-title">Remark</p>
+    unique to iOS
+
+</div>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@objc</span>
+<span class="kd">public</span> <span class="k">var</span> <span class="nv">vadFallDelay</span><span class="p">:</span> <span class="kt">Int</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div class="slightly-smaller">
+                        <a href="https://github.com/spokestack/spokestack-ios/tree/master/Spokestack/SpeechConfiguration.swift#L68">Show on GitHub</a>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:10Spokestack19SpeechConfigurationC10sampleRateSivp"></a>
+                    <a name="//apple_ref/swift/Property/sampleRate" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10Spokestack19SpeechConfigurationC10sampleRateSivp">sampleRate</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Audio sampling rate, in Hz.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">sampleRate</span><span class="p">:</span> <span class="kt">Int</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div class="slightly-smaller">
+                        <a href="https://github.com/spokestack/spokestack-ios/tree/master/Spokestack/SpeechConfiguration.swift#L70">Show on GitHub</a>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:@M@Spokestack@objc(cs)SpeechConfiguration(py)frameWidth"></a>
+                    <a name="//apple_ref/swift/Property/frameWidth" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@M@Spokestack@objc(cs)SpeechConfiguration(py)frameWidth">frameWidth</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Audio frame width, in milliseconds.</p>
+<div class="aside aside-to-do">
+    <p class="aside-title">To do</p>
+    Should be renamed wakeFrameWidth.
+
+</div>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@objc</span>
+<span class="kd">public</span> <span class="k">var</span> <span class="nv">frameWidth</span><span class="p">:</span> <span class="kt">Int</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div class="slightly-smaller">
+                        <a href="https://github.com/spokestack/spokestack-ios/tree/master/Spokestack/SpeechConfiguration.swift#L73">Show on GitHub</a>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:@M@Spokestack@objc(cs)SpeechConfiguration(py)wakewordRequestTimeout"></a>
+                    <a name="//apple_ref/swift/Property/wakewordRequestTimeout" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@M@Spokestack@objc(cs)SpeechConfiguration(py)wakewordRequestTimeout">wakewordRequestTimeout</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Length of time to allow an Apple ASR request to run, in milliseconds.</p>
+<div class="aside aside-see-also">
+    <p class="aside-title">See also</p>
+    <code><a href="../Classes/AppleWakewordRecognizer.html">AppleWakewordRecognizer</a></code>
+
+</div><div class="aside aside-remark">
+    <p class="aside-title">Remark</p>
+    Apple has an undocumented limit of 60000ms per request.
+      Unique to iOS.
+
+</div>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@objc</span>
+<span class="kd">public</span> <span class="k">var</span> <span class="nv">wakewordRequestTimeout</span><span class="p">:</span> <span class="kt">Int</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div class="slightly-smaller">
+                        <a href="https://github.com/spokestack/spokestack-ios/tree/master/Spokestack/SpeechConfiguration.swift#L78">Show on GitHub</a>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:@M@Spokestack@objc(cs)SpeechConfiguration(py)preEmphasis"></a>
+                    <a name="//apple_ref/swift/Property/preEmphasis" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@M@Spokestack@objc(cs)SpeechConfiguration(py)preEmphasis">preEmphasis</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The pre-emphasis filter weight to apply to the normalized audio signal, in a range of [0, 1].</p>
+<div class="aside aside-see-also">
+    <p class="aside-title">See also</p>
+    <code><a href="../Classes/TFLiteWakewordRecognizer.html">TFLiteWakewordRecognizer</a></code>
+
+</div>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@objc</span>
+<span class="kd">public</span> <span class="k">var</span> <span class="nv">preEmphasis</span><span class="p">:</span> <span class="kt">Float</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div class="slightly-smaller">
+                        <a href="https://github.com/spokestack/spokestack-ios/tree/master/Spokestack/SpeechConfiguration.swift#L81">Show on GitHub</a>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:@M@Spokestack@objc(cs)SpeechConfiguration(py)filterModelName"></a>
+                    <a name="//apple_ref/swift/Property/filterModelName" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@M@Spokestack@objc(cs)SpeechConfiguration(py)filterModelName">filterModelName</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The filename of the machine learning model used for the filtering step.</p>
+<div class="aside aside-remarks">
+    <p class="aside-title">Remarks</p>
+    Both the file name and the file path are configurable to allow for flexibility in constructing the path that the recognizer will attempt to load the model from.
+
+</div>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@objc</span>
+<span class="kd">public</span> <span class="k">var</span> <span class="nv">filterModelName</span><span class="p">:</span> <span class="kt">String</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div class="slightly-smaller">
+                        <a href="https://github.com/spokestack/spokestack-ios/tree/master/Spokestack/SpeechConfiguration.swift#L84">Show on GitHub</a>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:@M@Spokestack@objc(cs)SpeechConfiguration(py)encodeModelName"></a>
+                    <a name="//apple_ref/swift/Property/encodeModelName" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@M@Spokestack@objc(cs)SpeechConfiguration(py)encodeModelName">encodeModelName</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The filename of the machine learning model used for the encoding step.</p>
+<div class="aside aside-remarks">
+    <p class="aside-title">Remarks</p>
+    Both the file name and the file path are configurable to allow for flexibility in constructing the path that the recognizer will attempt to load the model from.
+
+</div>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@objc</span>
+<span class="kd">public</span> <span class="k">var</span> <span class="nv">encodeModelName</span><span class="p">:</span> <span class="kt">String</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div class="slightly-smaller">
+                        <a href="https://github.com/spokestack/spokestack-ios/tree/master/Spokestack/SpeechConfiguration.swift#L87">Show on GitHub</a>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:@M@Spokestack@objc(cs)SpeechConfiguration(py)detectModelName"></a>
+                    <a name="//apple_ref/swift/Property/detectModelName" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@M@Spokestack@objc(cs)SpeechConfiguration(py)detectModelName">detectModelName</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The filename of the machine learning model used for the detect step.</p>
+<div class="aside aside-remarks">
+    <p class="aside-title">Remarks</p>
+    Both the file name and the file path are configurable to allow for flexibility in constructing the path that the recognizer will attempt to load the model from.
+
+</div>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@objc</span>
+<span class="kd">public</span> <span class="k">var</span> <span class="nv">detectModelName</span><span class="p">:</span> <span class="kt">String</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div class="slightly-smaller">
+                        <a href="https://github.com/spokestack/spokestack-ios/tree/master/Spokestack/SpeechConfiguration.swift#L90">Show on GitHub</a>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:@M@Spokestack@objc(cs)SpeechConfiguration(py)filterModelPath"></a>
+                    <a name="//apple_ref/swift/Property/filterModelPath" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@M@Spokestack@objc(cs)SpeechConfiguration(py)filterModelPath">filterModelPath</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The filesystem path to the machine learning model for the filtering step.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@objc</span>
+<span class="kd">public</span> <span class="k">var</span> <span class="nv">filterModelPath</span><span class="p">:</span> <span class="kt">String</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div class="slightly-smaller">
+                        <a href="https://github.com/spokestack/spokestack-ios/tree/master/Spokestack/SpeechConfiguration.swift#L92">Show on GitHub</a>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:@M@Spokestack@objc(cs)SpeechConfiguration(py)encodeModelPath"></a>
+                    <a name="//apple_ref/swift/Property/encodeModelPath" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@M@Spokestack@objc(cs)SpeechConfiguration(py)encodeModelPath">encodeModelPath</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The filesystem path to the machine learning model for the encoding step.</p>
+<div class="aside aside-see-also">
+    <p class="aside-title">See also</p>
+    <code><a href="../Classes/TFLiteWakewordRecognizer.html">TFLiteWakewordRecognizer</a></code>
+
+</div>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@objc</span>
+<span class="kd">public</span> <span class="k">var</span> <span class="nv">encodeModelPath</span><span class="p">:</span> <span class="kt">String</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div class="slightly-smaller">
+                        <a href="https://github.com/spokestack/spokestack-ios/tree/master/Spokestack/SpeechConfiguration.swift#L95">Show on GitHub</a>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:@M@Spokestack@objc(cs)SpeechConfiguration(py)detectModelPath"></a>
+                    <a name="//apple_ref/swift/Property/detectModelPath" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@M@Spokestack@objc(cs)SpeechConfiguration(py)detectModelPath">detectModelPath</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The filesystem path to the machine learning model for the detect step.</p>
+<div class="aside aside-see-also">
+    <p class="aside-title">See also</p>
+    <code><a href="../Classes/TFLiteWakewordRecognizer.html">TFLiteWakewordRecognizer</a></code>
+
+</div>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@objc</span>
+<span class="kd">public</span> <span class="k">var</span> <span class="nv">detectModelPath</span><span class="p">:</span> <span class="kt">String</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div class="slightly-smaller">
+                        <a href="https://github.com/spokestack/spokestack-ios/tree/master/Spokestack/SpeechConfiguration.swift#L98">Show on GitHub</a>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:@M@Spokestack@objc(cs)SpeechConfiguration(py)apiId"></a>
+                    <a name="//apple_ref/swift/Property/apiId" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@M@Spokestack@objc(cs)SpeechConfiguration(py)apiId">apiId</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Text To Speech API client identifier key.</p>
+<div class="aside aside-see-also">
+    <p class="aside-title">See also</p>
+    <code><a href="../Classes/TextToSpeech.html">TextToSpeech</a></code>
+
+</div>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@objc</span>
+<span class="kd">public</span> <span class="k">var</span> <span class="nv">apiId</span><span class="p">:</span> <span class="kt">String</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div class="slightly-smaller">
+                        <a href="https://github.com/spokestack/spokestack-ios/tree/master/Spokestack/SpeechConfiguration.swift#L101">Show on GitHub</a>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:@M@Spokestack@objc(cs)SpeechConfiguration(py)apiSecret"></a>
+                    <a name="//apple_ref/swift/Property/apiSecret" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@M@Spokestack@objc(cs)SpeechConfiguration(py)apiSecret">apiSecret</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Text To Speech API client secret key.</p>
+<div class="aside aside-see-also">
+    <p class="aside-title">See also</p>
+    <code><a href="../Classes/TextToSpeech.html">TextToSpeech</a></code>
+
+</div>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@objc</span>
+<span class="kd">public</span> <span class="k">var</span> <span class="nv">apiSecret</span><span class="p">:</span> <span class="kt">String</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div class="slightly-smaller">
+                        <a href="https://github.com/spokestack/spokestack-ios/tree/master/Spokestack/SpeechConfiguration.swift#L104">Show on GitHub</a>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:@M@Spokestack@objc(cs)SpeechConfiguration(py)nluVocabularyPath"></a>
+                    <a name="//apple_ref/swift/Property/nluVocabularyPath" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@M@Spokestack@objc(cs)SpeechConfiguration(py)nluVocabularyPath">nluVocabularyPath</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The filesystem path to the vocabulary used for tokenizer encoding.</p>
+<div class="aside aside-see-also">
+    <p class="aside-title">See also</p>
+    <code>Tokenizer</code>
+
+</div>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@objc</span>
+<span class="kd">public</span> <span class="k">var</span> <span class="nv">nluVocabularyPath</span><span class="p">:</span> <span class="kt">String</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div class="slightly-smaller">
+                        <a href="https://github.com/spokestack/spokestack-ios/tree/master/Spokestack/SpeechConfiguration.swift#L107">Show on GitHub</a>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:@M@Spokestack@objc(cs)SpeechConfiguration(py)nluTerminatorTokenIndex"></a>
+                    <a name="//apple_ref/swift/Property/nluTerminatorTokenIndex" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@M@Spokestack@objc(cs)SpeechConfiguration(py)nluTerminatorTokenIndex">nluTerminatorTokenIndex</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The index in the vocabulary of the terminator token. Determined  by the NLU vocabulary.</p>
+<div class="aside aside-see-also">
+    <p class="aside-title">See also</p>
+    <code>BertTokenizer</code>
+
+</div>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@objc</span>
+<span class="kd">public</span> <span class="k">var</span> <span class="nv">nluTerminatorTokenIndex</span><span class="p">:</span> <span class="kt">Int</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div class="slightly-smaller">
+                        <a href="https://github.com/spokestack/spokestack-ios/tree/master/Spokestack/SpeechConfiguration.swift#L110">Show on GitHub</a>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:@M@Spokestack@objc(cs)SpeechConfiguration(py)nluPaddingTokenIndex"></a>
+                    <a name="//apple_ref/swift/Property/nluPaddingTokenIndex" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@M@Spokestack@objc(cs)SpeechConfiguration(py)nluPaddingTokenIndex">nluPaddingTokenIndex</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The index in the vocabulary of the terminator token. Determined  by the NLU vocabulary.</p>
+<div class="aside aside-see-also">
+    <p class="aside-title">See also</p>
+    <code>BertTokenizer</code>
+
+</div>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@objc</span>
+<span class="kd">public</span> <span class="k">var</span> <span class="nv">nluPaddingTokenIndex</span><span class="p">:</span> <span class="kt">Int</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div class="slightly-smaller">
+                        <a href="https://github.com/spokestack/spokestack-ios/tree/master/Spokestack/SpeechConfiguration.swift#L113">Show on GitHub</a>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:@M@Spokestack@objc(cs)SpeechConfiguration(py)nluModelPath"></a>
+                    <a name="//apple_ref/swift/Property/nluModelPath" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@M@Spokestack@objc(cs)SpeechConfiguration(py)nluModelPath">nluModelPath</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The filesystem path to the machine learning model for Natural Language Understanding processing.</p>
+<div class="aside aside-see-also">
+    <p class="aside-title">See also</p>
+    <code>TensorflowNLU</code>
+
+</div>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@objc</span>
+<span class="kd">public</span> <span class="k">var</span> <span class="nv">nluModelPath</span><span class="p">:</span> <span class="kt">String</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div class="slightly-smaller">
+                        <a href="https://github.com/spokestack/spokestack-ios/tree/master/Spokestack/SpeechConfiguration.swift#L116">Show on GitHub</a>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:@M@Spokestack@objc(cs)SpeechConfiguration(py)nluModelMetadataPath"></a>
+                    <a name="//apple_ref/swift/Property/nluModelMetadataPath" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@M@Spokestack@objc(cs)SpeechConfiguration(py)nluModelMetadataPath">nluModelMetadataPath</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The filesystem path to the model metadata for Natural Language Understanding processing.</p>
+<div class="aside aside-see-also">
+    <p class="aside-title">See also</p>
+    <code>TensorflowNLU</code>
+
+</div>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@objc</span>
+<span class="kd">public</span> <span class="k">var</span> <span class="nv">nluModelMetadataPath</span><span class="p">:</span> <span class="kt">String</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div class="slightly-smaller">
+                        <a href="https://github.com/spokestack/spokestack-ios/tree/master/Spokestack/SpeechConfiguration.swift#L119">Show on GitHub</a>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:@M@Spokestack@objc(cs)SpeechConfiguration(py)nluMaxTokenLength"></a>
+                    <a name="//apple_ref/swift/Property/nluMaxTokenLength" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@M@Spokestack@objc(cs)SpeechConfiguration(py)nluMaxTokenLength">nluMaxTokenLength</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The maximum utterance length the NLU can process. Determined  by the NLU model.</p>
+<div class="aside aside-see-also">
+    <p class="aside-title">See also</p>
+    <code>BertTokenizer</code>
+
+</div>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@objc</span>
+<span class="kd">public</span> <span class="k">var</span> <span class="nv">nluMaxTokenLength</span><span class="p">:</span> <span class="kt">Int</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div class="slightly-smaller">
+                        <a href="https://github.com/spokestack/spokestack-ios/tree/master/Spokestack/SpeechConfiguration.swift#L122">Show on GitHub</a>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:@M@Spokestack@objc(cs)SpeechConfiguration(py)tracing"></a>
+                    <a name="//apple_ref/swift/Property/tracing" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@M@Spokestack@objc(cs)SpeechConfiguration(py)tracing">tracing</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Debugging trace levels, for simple filtering.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@objc</span>
+<span class="kd">public</span> <span class="k">var</span> <span class="nv">tracing</span><span class="p">:</span> <span class="kt"><a href="../Structs/Trace.html">Trace</a></span><span class="o">.</span><span class="kt">Level</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div class="slightly-smaller">
+                        <a href="https://github.com/spokestack/spokestack-ios/tree/master/Spokestack/SpeechConfiguration.swift#L124">Show on GitHub</a>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:@M@Spokestack@objc(cs)SpeechConfiguration(py)delegateDispatchQueue"></a>
+                    <a name="//apple_ref/swift/Property/delegateDispatchQueue" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@M@Spokestack@objc(cs)SpeechConfiguration(py)delegateDispatchQueue">delegateDispatchQueue</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Delegate events will be sent using the specified dispatch queue.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@objc</span>
+<span class="kd">public</span> <span class="k">var</span> <span class="nv">delegateDispatchQueue</span><span class="p">:</span> <span class="kt">DispatchQueue</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div class="slightly-smaller">
+                        <a href="https://github.com/spokestack/spokestack-ios/tree/master/Spokestack/SpeechConfiguration.swift#L126">Show on GitHub</a>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:@M@Spokestack@objc(cs)SpeechConfiguration(py)automaticallyClassifyTranscript"></a>
+                    <a name="//apple_ref/swift/Property/automaticallyClassifyTranscript" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@M@Spokestack@objc(cs)SpeechConfiguration(py)automaticallyClassifyTranscript">automaticallyClassifyTranscript</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Automatically run Spokestack&rsquo;s NLU classification on ASR transcripts for clients that use the <code><a href="../Classes/Spokestack.html">Spokestack</a></code> facade.</p>
+<div class="aside aside-note">
+    <p class="aside-title">Note</p>
+    Requires  <code><a href="../Classes/NLUTensorflow.html">NLUTensorflow</a></code> to be correctly configured, notably with <code><a href="../Classes/SpeechConfiguration.html#/c:@M@Spokestack@objc(cs)SpeechConfiguration(py)nluModelPath">nluModelPath</a></code>, <code><a href="../Classes/SpeechConfiguration.html#/c:@M@Spokestack@objc(cs)SpeechConfiguration(py)nluModelMetadataPath">nluModelMetadataPath</a></code>, and <code><a href="../Classes/SpeechConfiguration.html#/c:@M@Spokestack@objc(cs)SpeechConfiguration(py)nluVocabularyPath">nluVocabularyPath</a></code>.
+
+</div><div class="aside aside-see-also">
+    <p class="aside-title">See also</p>
+    <code><a href="../Classes/Spokestack.html">Spokestack</a></code>, <code><a href="../Classes/NLUTensorflow.html">NLUTensorflow</a></code>, <code><a href="../Classes/SpeechConfiguration.html#/c:@M@Spokestack@objc(cs)SpeechConfiguration(py)nluModelPath">nluModelPath</a></code>, <code><a href="../Classes/SpeechConfiguration.html#/c:@M@Spokestack@objc(cs)SpeechConfiguration(py)nluModelMetadataPath">nluModelMetadataPath</a></code>, and <code><a href="../Classes/SpeechConfiguration.html#/c:@M@Spokestack@objc(cs)SpeechConfiguration(py)nluVocabularyPath">nluVocabularyPath</a></code>
+
+</div>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@objc</span>
+<span class="kd">public</span> <span class="k">var</span> <span class="nv">automaticallyClassifyTranscript</span><span class="p">:</span> <span class="kt">Bool</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div class="slightly-smaller">
+                        <a href="https://github.com/spokestack/spokestack-ios/tree/master/Spokestack/SpeechConfiguration.swift#L132">Show on GitHub</a>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:@M@Spokestack@objc(cs)SpeechConfiguration(py)keywordFilterModelName"></a>
+                    <a name="//apple_ref/swift/Property/keywordFilterModelName" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@M@Spokestack@objc(cs)SpeechConfiguration(py)keywordFilterModelName">keywordFilterModelName</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The filename of the machine learning model used for the filtering step of the keyword recognizer.</p>
+<div class="aside aside-remarks">
+    <p class="aside-title">Remarks</p>
+    Both the file name and the file path are configurable to allow for flexibility in constructing the path that the recognizer will attempt to load the model from.
+
+</div><div class="aside aside-see-also">
+    <p class="aside-title">See also</p>
+    <code><a href="../Classes/TFLiteKeywordRecognizer.html">TFLiteKeywordRecognizer</a></code>
+
+</div>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@objc</span>
+<span class="kd">public</span> <span class="k">var</span> <span class="nv">keywordFilterModelName</span><span class="p">:</span> <span class="kt">String</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div class="slightly-smaller">
+                        <a href="https://github.com/spokestack/spokestack-ios/tree/master/Spokestack/SpeechConfiguration.swift#L136">Show on GitHub</a>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:@M@Spokestack@objc(cs)SpeechConfiguration(py)keywordEncodeModelName"></a>
+                    <a name="//apple_ref/swift/Property/keywordEncodeModelName" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@M@Spokestack@objc(cs)SpeechConfiguration(py)keywordEncodeModelName">keywordEncodeModelName</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The filename of the machine learning model used for the encoding step of the keyword recognizer.</p>
+<div class="aside aside-remarks">
+    <p class="aside-title">Remarks</p>
+    Both the file name and the file path are configurable to allow for flexibility in constructing the path that the recognizer will attempt to load the model from.
+
+</div><div class="aside aside-see-also">
+    <p class="aside-title">See also</p>
+    <code><a href="../Classes/TFLiteKeywordRecognizer.html">TFLiteKeywordRecognizer</a></code>
+
+</div>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@objc</span>
+<span class="kd">public</span> <span class="k">var</span> <span class="nv">keywordEncodeModelName</span><span class="p">:</span> <span class="kt">String</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div class="slightly-smaller">
+                        <a href="https://github.com/spokestack/spokestack-ios/tree/master/Spokestack/SpeechConfiguration.swift#L140">Show on GitHub</a>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:@M@Spokestack@objc(cs)SpeechConfiguration(py)keywordDetectModelName"></a>
+                    <a name="//apple_ref/swift/Property/keywordDetectModelName" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@M@Spokestack@objc(cs)SpeechConfiguration(py)keywordDetectModelName">keywordDetectModelName</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The filename of the machine learning model used for the detect step of the keyword recognizer.</p>
+<div class="aside aside-remarks">
+    <p class="aside-title">Remarks</p>
+    Both the file name and the file path are configurable to allow for flexibility in constructing the path that the recognizer will attempt to load the model from.
+
+</div><div class="aside aside-see-also">
+    <p class="aside-title">See also</p>
+    <code><a href="../Classes/TFLiteKeywordRecognizer.html">TFLiteKeywordRecognizer</a></code>
+
+</div>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@objc</span>
+<span class="kd">public</span> <span class="k">var</span> <span class="nv">keywordDetectModelName</span><span class="p">:</span> <span class="kt">String</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div class="slightly-smaller">
+                        <a href="https://github.com/spokestack/spokestack-ios/tree/master/Spokestack/SpeechConfiguration.swift#L144">Show on GitHub</a>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:@M@Spokestack@objc(cs)SpeechConfiguration(py)keywordMetadataName"></a>
+                    <a name="//apple_ref/swift/Property/keywordMetadataName" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@M@Spokestack@objc(cs)SpeechConfiguration(py)keywordMetadataName">keywordMetadataName</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The filename of the model metadata for keyword recognition</p>
+<div class="aside aside-remarks">
+    <p class="aside-title">Remarks</p>
+    Both the file name and the file path are configurable to allow for flexibility in constructing the path that the recognizer will attempt to load the model from.
+
+</div><div class="aside aside-see-also">
+    <p class="aside-title">See also</p>
+    <code><a href="../Classes/TFLiteKeywordRecognizer.html">TFLiteKeywordRecognizer</a></code>
+
+</div>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@objc</span>
+<span class="kd">public</span> <span class="k">var</span> <span class="nv">keywordMetadataName</span><span class="p">:</span> <span class="kt">String</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div class="slightly-smaller">
+                        <a href="https://github.com/spokestack/spokestack-ios/tree/master/Spokestack/SpeechConfiguration.swift#L148">Show on GitHub</a>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:@M@Spokestack@objc(cs)SpeechConfiguration(py)keywordFilterModelPath"></a>
+                    <a name="//apple_ref/swift/Property/keywordFilterModelPath" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@M@Spokestack@objc(cs)SpeechConfiguration(py)keywordFilterModelPath">keywordFilterModelPath</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The filesystem path to the machine learning model for the filtering step of the keyword recognizer.</p>
+<div class="aside aside-see-also">
+    <p class="aside-title">See also</p>
+    <code><a href="../Classes/TFLiteKeywordRecognizer.html">TFLiteKeywordRecognizer</a></code>
+
+</div>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@objc</span>
+<span class="kd">public</span> <span class="k">var</span> <span class="nv">keywordFilterModelPath</span><span class="p">:</span> <span class="kt">String</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div class="slightly-smaller">
+                        <a href="https://github.com/spokestack/spokestack-ios/tree/master/Spokestack/SpeechConfiguration.swift#L151">Show on GitHub</a>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:@M@Spokestack@objc(cs)SpeechConfiguration(py)keywordEncodeModelPath"></a>
+                    <a name="//apple_ref/swift/Property/keywordEncodeModelPath" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@M@Spokestack@objc(cs)SpeechConfiguration(py)keywordEncodeModelPath">keywordEncodeModelPath</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The filesystem path to the machine learning model for the encoding step of the keyword recognizer.</p>
+<div class="aside aside-see-also">
+    <p class="aside-title">See also</p>
+    <code><a href="../Classes/TFLiteKeywordRecognizer.html">TFLiteKeywordRecognizer</a></code>
+
+</div>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@objc</span>
+<span class="kd">public</span> <span class="k">var</span> <span class="nv">keywordEncodeModelPath</span><span class="p">:</span> <span class="kt">String</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div class="slightly-smaller">
+                        <a href="https://github.com/spokestack/spokestack-ios/tree/master/Spokestack/SpeechConfiguration.swift#L154">Show on GitHub</a>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:@M@Spokestack@objc(cs)SpeechConfiguration(py)keywordDetectModelPath"></a>
+                    <a name="//apple_ref/swift/Property/keywordDetectModelPath" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@M@Spokestack@objc(cs)SpeechConfiguration(py)keywordDetectModelPath">keywordDetectModelPath</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The filesystem path to the machine learning model for the detect step of the keyword recognizer.</p>
+<div class="aside aside-see-also">
+    <p class="aside-title">See also</p>
+    <code><a href="../Classes/TFLiteKeywordRecognizer.html">TFLiteKeywordRecognizer</a></code>
+
+</div>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@objc</span>
+<span class="kd">public</span> <span class="k">var</span> <span class="nv">keywordDetectModelPath</span><span class="p">:</span> <span class="kt">String</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div class="slightly-smaller">
+                        <a href="https://github.com/spokestack/spokestack-ios/tree/master/Spokestack/SpeechConfiguration.swift#L157">Show on GitHub</a>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:@M@Spokestack@objc(cs)SpeechConfiguration(py)keywordThreshold"></a>
+                    <a name="//apple_ref/swift/Property/keywordThreshold" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@M@Spokestack@objc(cs)SpeechConfiguration(py)keywordThreshold">keywordThreshold</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The threshold of the keyword recognizer&rsquo;s posterior output, above which the keyword recognizer emits a recognition event for the most probable keyword.</p>
+<div class="aside aside-see-also">
+    <p class="aside-title">See also</p>
+    <code><a href="../Classes/TFLiteKeywordRecognizer.html">TFLiteKeywordRecognizer</a></code>
+
+</div>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@objc</span>
+<span class="kd">public</span> <span class="k">var</span> <span class="nv">keywordThreshold</span><span class="p">:</span> <span class="kt">Float</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div class="slightly-smaller">
+                        <a href="https://github.com/spokestack/spokestack-ios/tree/master/Spokestack/SpeechConfiguration.swift#L160">Show on GitHub</a>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:@M@Spokestack@objc(cs)SpeechConfiguration(py)keywordMetadataPath"></a>
+                    <a name="//apple_ref/swift/Property/keywordMetadataPath" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@M@Spokestack@objc(cs)SpeechConfiguration(py)keywordMetadataPath">keywordMetadataPath</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The filesystem path to the model metadata for keyword recognition</p>
+<div class="aside aside-see-also">
+    <p class="aside-title">See also</p>
+    <code><a href="../Classes/TFLiteKeywordRecognizer.html">TFLiteKeywordRecognizer</a></code>
+
+</div>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@objc</span>
+<span class="kd">public</span> <span class="k">var</span> <span class="nv">keywordMetadataPath</span><span class="p">:</span> <span class="kt">String</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div class="slightly-smaller">
+                        <a href="https://github.com/spokestack/spokestack-ios/tree/master/Spokestack/SpeechConfiguration.swift#L163">Show on GitHub</a>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:@M@Spokestack@objc(cs)SpeechConfiguration(py)keywords"></a>
+                    <a name="//apple_ref/swift/Property/keywords" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@M@Spokestack@objc(cs)SpeechConfiguration(py)keywords">keywords</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>A comma-separated list of keywords to recognize.</p>
+<div class="aside aside-remark">
+    <p class="aside-title">Remark</p>
+    ex: &ldquo;yes,no&rdquo;
+
+</div><div class="aside aside-warning">
+    <p class="aside-title">Warning</p>
+    Cannot contain spaces. Will be ignored in favor of <code><a href="../Classes/SpeechConfiguration.html#/c:@M@Spokestack@objc(cs)SpeechConfiguration(py)keywordMetadataPath">keywordMetadataPath</a></code> if available.
+
+</div><div class="aside aside-see-also">
+    <p class="aside-title">See also</p>
+    <code><a href="../Classes/TFLiteKeywordRecognizer.html">TFLiteKeywordRecognizer</a></code>
+
+</div>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@objc</span>
+<span class="kd">public</span> <span class="k">var</span> <span class="nv">keywords</span><span class="p">:</span> <span class="kt">String</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div class="slightly-smaller">
+                        <a href="https://github.com/spokestack/spokestack-ios/tree/master/Spokestack/SpeechConfiguration.swift#L168">Show on GitHub</a>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:10Spokestack19SpeechConfigurationC20keywordFFTWindowTypeAA16SignalProcessingV0eF0Ovp"></a>
+                    <a name="//apple_ref/swift/Property/keywordFFTWindowType" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10Spokestack19SpeechConfigurationC20keywordFFTWindowTypeAA16SignalProcessingV0eF0Ovp">keywordFFTWindowType</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The name of the window function to apply to each audio frame before calculating the STFT.</p>
+<div class="aside aside-remark">
+    <p class="aside-title">Remark</p>
+    Currently the &ldquo;hann&rdquo; window is supported.
+
+</div><div class="aside aside-see-also">
+    <p class="aside-title">See also</p>
+    <code><a href="../Classes/TFLiteWakewordRecognizer.html">TFLiteWakewordRecognizer</a></code>
+
+</div>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">keywordFFTWindowType</span><span class="p">:</span> <span class="kt"><a href="../Structs/SignalProcessing.html">SignalProcessing</a></span><span class="o">.</span><span class="kt">FFTWindowType</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div class="slightly-smaller">
+                        <a href="https://github.com/spokestack/spokestack-ios/tree/master/Spokestack/SpeechConfiguration.swift#L172">Show on GitHub</a>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:@M@Spokestack@objc(cs)SpeechConfiguration(py)keywordFFTWindowSize"></a>
+                    <a name="//apple_ref/swift/Property/keywordFFTWindowSize" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@M@Spokestack@objc(cs)SpeechConfiguration(py)keywordFFTWindowSize">keywordFFTWindowSize</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The size of the signal window used to calculate the STFT, in number of samples - should be a power of 2 for maximum efficiency.</p>
+<div class="aside aside-see-also">
+    <p class="aside-title">See also</p>
+    <code><a href="../Classes/TFLiteWakewordRecognizer.html">TFLiteWakewordRecognizer</a></code>
+
+</div>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@objc</span>
+<span class="kd">public</span> <span class="k">var</span> <span class="nv">keywordFFTWindowSize</span><span class="p">:</span> <span class="kt">Int</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div class="slightly-smaller">
+                        <a href="https://github.com/spokestack/spokestack-ios/tree/master/Spokestack/SpeechConfiguration.swift#L175">Show on GitHub</a>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:@M@Spokestack@objc(cs)SpeechConfiguration(py)keywordFFTHopLength"></a>
+                    <a name="//apple_ref/swift/Property/keywordFFTHopLength" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@M@Spokestack@objc(cs)SpeechConfiguration(py)keywordFFTHopLength">keywordFFTHopLength</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The length of time to skip each time the overlapping STFT is calculated, in milliseconds.</p>
+<div class="aside aside-see-also">
+    <p class="aside-title">See also</p>
+    <code><a href="../Classes/TFLiteWakewordRecognizer.html">TFLiteWakewordRecognizer</a></code>
+
+</div>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@objc</span>
+<span class="kd">public</span> <span class="k">var</span> <span class="nv">keywordFFTHopLength</span><span class="p">:</span> <span class="kt">Int</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div class="slightly-smaller">
+                        <a href="https://github.com/spokestack/spokestack-ios/tree/master/Spokestack/SpeechConfiguration.swift#L178">Show on GitHub</a>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:@M@Spokestack@objc(cs)SpeechConfiguration(py)keywordMelFrameLength"></a>
+                    <a name="//apple_ref/swift/Property/keywordMelFrameLength" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@M@Spokestack@objc(cs)SpeechConfiguration(py)keywordMelFrameLength">keywordMelFrameLength</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The length of a frame in the mel spectrogram used as an input to the wakeword recognizer encoder, in milliseconds.</p>
+<div class="aside aside-see-also">
+    <p class="aside-title">See also</p>
+    <code><a href="../Classes/TFLiteWakewordRecognizer.html">TFLiteWakewordRecognizer</a></code>
+
+</div>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@objc</span>
+<span class="kd">public</span> <span class="k">var</span> <span class="nv">keywordMelFrameLength</span><span class="p">:</span> <span class="kt">Int</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div class="slightly-smaller">
+                        <a href="https://github.com/spokestack/spokestack-ios/tree/master/Spokestack/SpeechConfiguration.swift#L181">Show on GitHub</a>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:@M@Spokestack@objc(cs)SpeechConfiguration(py)keywordMelFrameWidth"></a>
+                    <a name="//apple_ref/swift/Property/keywordMelFrameWidth" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@M@Spokestack@objc(cs)SpeechConfiguration(py)keywordMelFrameWidth">keywordMelFrameWidth</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The number of filterbank components in each mel spectrogram frame sent to the wakeword recognizer.</p>
+<div class="aside aside-see-also">
+    <p class="aside-title">See also</p>
+    <code><a href="../Classes/TFLiteWakewordRecognizer.html">TFLiteWakewordRecognizer</a></code>
+
+</div>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@objc</span>
+<span class="kd">public</span> <span class="k">var</span> <span class="nv">keywordMelFrameWidth</span><span class="p">:</span> <span class="kt">Int</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div class="slightly-smaller">
+                        <a href="https://github.com/spokestack/spokestack-ios/tree/master/Spokestack/SpeechConfiguration.swift#L184">Show on GitHub</a>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:@M@Spokestack@objc(cs)SpeechConfiguration(py)keywordEncodeWidth"></a>
+                    <a name="//apple_ref/swift/Property/keywordEncodeWidth" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@M@Spokestack@objc(cs)SpeechConfiguration(py)keywordEncodeWidth">keywordEncodeWidth</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The size of the wakeword recognizer&rsquo;s encoder window output.</p>
+<div class="aside aside-see-also">
+    <p class="aside-title">See also</p>
+    <code><a href="../Classes/TFLiteWakewordRecognizer.html">TFLiteWakewordRecognizer</a></code>
+
+</div>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@objc</span>
+<span class="kd">public</span> <span class="k">var</span> <span class="nv">keywordEncodeWidth</span><span class="p">:</span> <span class="kt">Int</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div class="slightly-smaller">
+                        <a href="https://github.com/spokestack/spokestack-ios/tree/master/Spokestack/SpeechConfiguration.swift#L187">Show on GitHub</a>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:@M@Spokestack@objc(cs)SpeechConfiguration(py)keywordEncodeLength"></a>
+                    <a name="//apple_ref/swift/Property/keywordEncodeLength" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@M@Spokestack@objc(cs)SpeechConfiguration(py)keywordEncodeLength">keywordEncodeLength</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The length of the sliding window of encoder output used as an input to the wakeword recognizer classifier, in milliseconds.</p>
+<div class="aside aside-see-also">
+    <p class="aside-title">See also</p>
+    <code><a href="../Classes/TFLiteWakewordRecognizer.html">TFLiteWakewordRecognizer</a></code>
+
+</div>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@objc</span>
+<span class="kd">public</span> <span class="k">var</span> <span class="nv">keywordEncodeLength</span><span class="p">:</span> <span class="kt">Int</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div class="slightly-smaller">
+                        <a href="https://github.com/spokestack/spokestack-ios/tree/master/Spokestack/SpeechConfiguration.swift#L190">Show on GitHub</a>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:@M@Spokestack@objc(cs)SpeechConfiguration(py)semaphoreTimeout"></a>
+                    <a name="//apple_ref/swift/Property/semaphoreTimeout" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@M@Spokestack@objc(cs)SpeechConfiguration(py)semaphoreTimeout">semaphoreTimeout</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Timeout in seconds used for semaphore waits in the speech pipeline</p>
+<div class="aside aside-warning">
+    <p class="aside-title">Warning</p>
+    There is not normally a need to change this value.
+
+</div><div class="aside aside-see-also">
+    <p class="aside-title">See also</p>
+    <code>AudioController</code>, <code><a href="../Classes/AppleWakewordRecognizer.html">AppleWakewordRecognizer</a></code>, <code><a href="../Classes/AppleSpeechRecognizer.html">AppleSpeechRecognizer</a></code>
+
+</div>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@objc</span>
+<span class="kd">public</span> <span class="k">var</span> <span class="nv">semaphoreTimeout</span><span class="p">:</span> <span class="kt">Double</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div class="slightly-smaller">
+                        <a href="https://github.com/spokestack/spokestack-ios/tree/master/Spokestack/SpeechConfiguration.swift#L194">Show on GitHub</a>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+      </article>
+    </div>
+    <section class="footer">
+      <p>&copy; 2021 <a class="link" href="https://spokestack.io" target="_blank" rel="noopener" rel="external">Spokestack</a>. All rights reserved. (Last updated: 2021-08-25)</p>
+      <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="noopener" rel="external">jazzy ♪♫ v0.14.0</a>, a <a class="link" href="https://realm.io" target="_blank" rel="noopener" rel="external">Realm</a> project.</p>
+    </section>
+  </body>
+</div>
+</html>

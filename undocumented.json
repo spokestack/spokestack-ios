@@ -1,0 +1,96 @@
+{
+  "warnings": [
+    {
+      "file": "/Users/runner/work/spokestack-ios/spokestack-ios/Spokestack/NLUResult.swift",
+      "line": 29,
+      "symbol": "NLUResult.description",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/runner/work/spokestack-ios/spokestack-ios/Spokestack/NLUResult.swift",
+      "line": 73,
+      "symbol": "Slot.rawValue",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/runner/work/spokestack-ios/spokestack-ios/Spokestack/NLUResult.swift",
+      "line": 75,
+      "symbol": "Slot.description",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/runner/work/spokestack-ios/spokestack-ios/Spokestack/SignalProcessing.swift",
+      "line": 35,
+      "symbol": "SignalProcessing.FFTWindowType.hann",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/runner/work/spokestack-ios/spokestack-ios/Spokestack/SpeechContext.swift",
+      "line": 13,
+      "symbol": "SpeechContext.configuration",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/runner/work/spokestack-ios/spokestack-ios/Spokestack/TFLiteKeywordRecognizer.swift",
+      "line": 12,
+      "symbol": "TFLiteKeywordRecognizer",
+      "symbol_kind": "source.lang.swift.decl.class",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/runner/work/spokestack-ios/spokestack-ios/Spokestack/TFLiteKeywordRecognizer.swift",
+      "line": 314,
+      "symbol": "TFLiteKeywordRecognizer",
+      "symbol_kind": "source.lang.swift.decl.extension",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/runner/work/spokestack-ios/spokestack-ios/Spokestack/TextToSpeechResult.swift",
+      "line": 13,
+      "symbol": "TextToSpeechResult.url",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/runner/work/spokestack-ios/spokestack-ios/Spokestack/TextToSpeechResult.swift",
+      "line": 14,
+      "symbol": "TextToSpeechResult.id",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/runner/work/spokestack-ios/spokestack-ios/Spokestack/TextToSpeechResult.swift",
+      "line": 16,
+      "symbol": "TextToSpeechResult.init(id:url:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/runner/work/spokestack-ios/spokestack-ios/Spokestack/Trace.swift",
+      "line": 13,
+      "symbol": "Trace.Level",
+      "symbol_kind": "source.lang.swift.decl.enum",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/runner/work/spokestack-ios/spokestack-ios/Spokestack/Tracer.swift",
+      "line": 11,
+      "symbol": "Tracer",
+      "symbol_kind": "source.lang.swift.decl.protocol",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/runner/work/spokestack-ios/spokestack-ios/Spokestack/VADTrigger.swift",
+      "line": 11,
+      "symbol": "VADTrigger",
+      "symbol_kind": "source.lang.swift.decl.class",
+      "warning": "undocumented"
+    }
+  ],
+  "source_directory": "/Users/runner/work/spokestack-ios/spokestack-ios"
+}

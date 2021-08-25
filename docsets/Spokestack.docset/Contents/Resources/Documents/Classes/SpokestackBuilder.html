@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>SpokestackBuilder Class Reference</title>
+    <link rel="stylesheet" type="text/css" href="../css/jazzy.css" />
+    <link rel="stylesheet" type="text/css" href="../css/highlight.css" />
+    <meta charset="utf-8">
+    <script src="../js/jquery.min.js" defer></script>
+    <script src="../js/jazzy.js" defer></script>
+    
+    <script src="../js/lunr.min.js" defer></script>
+    <script src="../js/typeahead.jquery.js" defer></script>
+    <script src="../js/jazzy.search.js" defer></script>
+  </head>
+  <body>
+
+    <a name="//apple_ref/swift/Class/SpokestackBuilder" class="dashAnchor"></a>
+
+    <a title="SpokestackBuilder Class Reference"></a>
+
+    <header class="header">
+      <p class="header-col header-col--primary">
+        <a class="header-link" href="../index.html">
+          Spokestack 14.2.1 Docs
+        </a>
+         (95% documented)
+      </p>
+    
+      <p class="header-col--secondary">
+        <form role="search" action="../search.json">
+          <input type="text" placeholder="Search documentation" data-typeahead>
+        </form>
+      </p>
+    
+        <p class="header-col header-col--secondary">
+          <a class="header-link" href="https://github.com/spokestack/spokestack-ios">
+            <img class="header-icon" src="../img/gh.png"/>
+            View on GitHub
+          </a>
+        </p>
+    
+    </header>
+
+    <p class="breadcrumbs">
+      <a class="breadcrumb" href="../index.html">Spokestack Reference</a>
+      <img class="carat" src="../img/carat.png" />
+      SpokestackBuilder Class Reference
+    </p>
+
+    <div class="content-wrapper">
+      <nav class="navigation">
+        <ul class="nav-groups">
+          <li class="nav-group-name">
+            <a class="nav-group-name-link" href="../Classes.html">Classes</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/AppleSpeechRecognizer.html">AppleSpeechRecognizer</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/AppleWakewordRecognizer.html">AppleWakewordRecognizer</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/NLUResult.html">NLUResult</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/NLUTensorflow.html">NLUTensorflow</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/Slot.html">Slot</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/SpeechConfiguration.html">SpeechConfiguration</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/SpeechContext.html">SpeechContext</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/SpeechPipeline.html">SpeechPipeline</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/SpeechPipelineBuilder.html">SpeechPipelineBuilder</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/Spokestack.html">Spokestack</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/SpokestackBuilder.html">SpokestackBuilder</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/SpokestackSpeechRecognizer.html">SpokestackSpeechRecognizer</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/TFLiteKeywordRecognizer.html">TFLiteKeywordRecognizer</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/TFLiteWakewordRecognizer.html">TFLiteWakewordRecognizer</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/TextToSpeech.html">TextToSpeech</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/TextToSpeechInput.html">TextToSpeechInput</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/TextToSpeechResult.html">TextToSpeechResult</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/VADTrigger.html">VADTrigger</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/WebRTCVAD.html">WebRTCVAD</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a class="nav-group-name-link" href="../Enums.html">Enumerations</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Enums/AudioError.html">AudioError</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Enums/CommandModelError.html">CommandModelError</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Enums/NLUError.html">NLUError</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Enums/SpeechPipelineError.html">SpeechPipelineError</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Enums/SpeechPipelineProfiles.html">SpeechPipelineProfiles</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Enums/TTSInputFormat.html">TTSInputFormat</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Enums/VADError.html">VADError</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Enums/VADMode.html">VADMode</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a class="nav-group-name-link" href="../Extensions.html">Extensions</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Extensions/Array.html">Array</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a class="nav-group-name-link" href="../Protocols.html">Protocols</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Protocols/NLUService.html">NLUService</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Protocols/SpeechProcessor.html">SpeechProcessor</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Protocols/SpokestackDelegate.html">SpokestackDelegate</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Protocols/Tracer.html">Tracer</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Protocols/TranscriptEditor.html">TranscriptEditor</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a class="nav-group-name-link" href="../Structs.html">Structures</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/SignalProcessing.html">SignalProcessing</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/SignalProcessing/FFTWindowType.html">– FFTWindowType</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/Trace.html">Trace</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/Trace/Level.html">– Level</a>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </nav>
+      <article class="main-content">
+
+        <section class="section">
+          <div class="section-content top-matter">
+            <h1>SpokestackBuilder</h1>
+              <div class="declaration">
+                <div class="language">
+                  
+                  <pre class="highlight swift"><code><span class="kd">@objc</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="kt">SpokestackBuilder</span> <span class="p">:</span> <span class="kt">NSObject</span></code></pre>
+
+                </div>
+              </div>
+            <p>Fluent builder interface for configuring Spokestack.</p>
+
+<ul>
+<li><p>Example: <em>using all the builder functions</em></p>
+<pre class="highlight swift"><code><span class="k">let</span> <span class="nv">spokestack</span> <span class="o">=</span> <span class="k">try!</span> <span class="kt">SpokestackBuilder</span><span class="p">()</span>
+<span class="o">.</span><span class="nf">addDelegate</span><span class="p">(</span><span class="k">self</span><span class="p">)</span>
+<span class="o">.</span><span class="nf">usePipelineProfile</span><span class="p">(</span><span class="o">.</span><span class="n">vadTriggerAppleSpeech</span><span class="p">)</span>
+<span class="o">.</span><span class="nf">setConfiguration</span><span class="p">(</span><span class="kt">SpeechConfiguration</span><span class="p">)</span>
+<span class="o">.</span><span class="nf">setProperty</span><span class="p">(</span><span class="s">"tracing"</span><span class="p">,</span> <span class="kt">Trace</span><span class="o">.</span><span class="kt">Level</span><span class="o">.</span><span class="kt">DEBUG</span><span class="p">)</span>
+<span class="o">.</span><span class="nf">setDelegateDispatchQueue</span><span class="p">(</span><span class="kt">DispatchQueue</span><span class="o">.</span><span class="n">main</span><span class="p">)</span>
+<span class="o">.</span><span class="nf">build</span><span class="p">()</span>
+</code></pre></li>
+</ul><div class="aside aside-see-also">
+    <p class="aside-title">See also</p>
+    <p><code><a href="../Classes/Spokestack.html">Spokestack</a></code></p>
+
+</div>
+
+              <div class="slightly-smaller">
+                <a href="https://github.com/spokestack/spokestack-ios/tree/master/Spokestack/Spokestack.swift#L83-L181">Show on GitHub</a>
+              </div>
+          </div>
+        </section>
+
+        <section class="section">
+          <div class="section-content">
+            <div class="task-group">
+              <ul class="item-container">
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:@M@Spokestack@objc(cs)SpokestackBuilder(im)init"></a>
+                    <a name="//apple_ref/swift/Method/init()" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@M@Spokestack@objc(cs)SpokestackBuilder(im)init">init()</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Create a Spokestack builder with a default configuration.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@objc</span>
+<span class="kd">public</span> <span class="k">override</span> <span class="nf">init</span><span class="p">()</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div class="slightly-smaller">
+                        <a href="https://github.com/spokestack/spokestack-ios/tree/master/Spokestack/Spokestack.swift#L91-L94">Show on GitHub</a>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:@M@Spokestack@objc(cs)SpokestackBuilder(im)addDelegate:"></a>
+                    <a name="//apple_ref/swift/Method/addDelegate(_:)" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@M@Spokestack@objc(cs)SpokestackBuilder(im)addDelegate:">addDelegate(_:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Delegate events will be sent to the specified listener.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@objc</span>
+<span class="kd">public</span> <span class="kd">func</span> <span class="nf">addDelegate</span><span class="p">(</span><span class="n">_</span> <span class="nv">delegate</span><span class="p">:</span> <span class="kt"><a href="../Protocols/SpokestackDelegate.html">SpokestackDelegate</a></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">SpokestackBuilder</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>listener</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>A <code><a href="../Protocols/SpokestackDelegate.html">SpokestackDelegate</a></code> instance.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>An updated instance of <code>SpokestackBuilder</code></p>
+                      </div>
+                      <div class="slightly-smaller">
+                        <a href="https://github.com/spokestack/spokestack-ios/tree/master/Spokestack/Spokestack.swift#L99-L102">Show on GitHub</a>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:@M@Spokestack@objc(cs)SpokestackBuilder(im)usePipelineProfile:"></a>
+                    <a name="//apple_ref/swift/Method/usePipelineProfile(_:)" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@M@Spokestack@objc(cs)SpokestackBuilder(im)usePipelineProfile:">usePipelineProfile(_:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Applies configuration from <code><a href="../Enums/SpeechPipelineProfiles.html">SpeechPipelineProfiles</a></code> to the current builder, returning the modified builder.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@objc</span>
+<span class="kd">public</span> <span class="kd">func</span> <span class="nf">usePipelineProfile</span><span class="p">(</span><span class="n">_</span> <span class="nv">profile</span><span class="p">:</span> <span class="kt"><a href="../Enums/SpeechPipelineProfiles.html">SpeechPipelineProfiles</a></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">SpokestackBuilder</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>profile</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Name of the profile to apply.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>An updated instance of <code>SpokestackBuilder</code> for call chaining.</p>
+                      </div>
+                      <div class="slightly-smaller">
+                        <a href="https://github.com/spokestack/spokestack-ios/tree/master/Spokestack/Spokestack.swift#L107-L110">Show on GitHub</a>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:@M@Spokestack@objc(cs)SpokestackBuilder(im)setProperty::"></a>
+                    <a name="//apple_ref/swift/Method/setProperty(_:_:)" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@M@Spokestack@objc(cs)SpokestackBuilder(im)setProperty::">setProperty(_:<wbr>_:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Sets a <code><a href="../Classes/SpeechConfiguration.html">SpeechConfiguration</a></code> configuration value.</p>
+<div class="aside aside-see-also">
+    <p class="aside-title">See also</p>
+    <code><a href="../Classes/SpeechConfiguration.html">SpeechConfiguration</a></code>
+
+</div><div class="aside aside-note">
+    <p class="aside-title">Note</p>
+    &ldquo;tracing&rdquo; key must have a value of <code><a href="../Structs/Trace/Level.html">Trace.Level</a></code>, eg <code><a href="../Structs/Trace/Level.html#/s:10Spokestack5TraceV5LevelO5DEBUGyA2EmF">Trace.Level.DEBUG</a></code>.
+
+</div>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@objc</span>
+<span class="kd">public</span> <span class="kd">func</span> <span class="nf">setProperty</span><span class="p">(</span><span class="n">_</span> <span class="nv">key</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span> <span class="n">_</span> <span class="nv">value</span><span class="p">:</span> <span class="kt">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">SpokestackBuilder</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>key</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Configuration property name</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>value</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Configuration property value</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>An updated instance of <code><a href="../Classes/SpeechPipelineBuilder.html">SpeechPipelineBuilder</a></code> for call chaining.</p>
+                      </div>
+                      <div class="slightly-smaller">
+                        <a href="https://github.com/spokestack/spokestack-ios/tree/master/Spokestack/Spokestack.swift#L119-L130">Show on GitHub</a>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:@M@Spokestack@objc(cs)SpokestackBuilder(im)setConfiguration:"></a>
+                    <a name="//apple_ref/swift/Method/setConfiguration(_:)" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@M@Spokestack@objc(cs)SpokestackBuilder(im)setConfiguration:">setConfiguration(_:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Replaces the default speech configuration with the specified configuration.</p>
+<div class="aside aside-warning">
+    <p class="aside-title">Warning</p>
+    All preceeding <code>setProperty</code> calls will be erased by setting the configuration explicitly.
+
+</div>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@objc</span>
+<span class="kd">public</span> <span class="kd">func</span> <span class="nf">setConfiguration</span><span class="p">(</span><span class="n">_</span> <span class="nv">config</span><span class="p">:</span> <span class="kt"><a href="../Classes/SpeechConfiguration.html">SpeechConfiguration</a></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">SpokestackBuilder</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>config</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>An instance of SpeechConfiguration that the pipeline will use.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div class="slightly-smaller">
+                        <a href="https://github.com/spokestack/spokestack-ios/tree/master/Spokestack/Spokestack.swift#L136-L139">Show on GitHub</a>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:@M@Spokestack@objc(cs)SpokestackBuilder(im)setDelegateDispatchQueue:"></a>
+                    <a name="//apple_ref/swift/Method/setDelegateDispatchQueue(_:)" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@M@Spokestack@objc(cs)SpokestackBuilder(im)setDelegateDispatchQueue:">setDelegateDispatchQueue(_:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Delegate events will be sent using the specified dispatch queue.</p>
+<div class="aside aside-see-also">
+    <p class="aside-title">See also</p>
+    <code><a href="../Classes/SpeechConfiguration.html">SpeechConfiguration</a></code>
+
+</div>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@objc</span>
+<span class="kd">public</span> <span class="kd">func</span> <span class="nf">setDelegateDispatchQueue</span><span class="p">(</span><span class="n">_</span> <span class="nv">queue</span><span class="p">:</span> <span class="kt">DispatchQueue</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">SpokestackBuilder</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>queue</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>A <code>DispatchQueue</code> instance</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>An updated instance of <code><a href="../Classes/SpeechPipelineBuilder.html">SpeechPipelineBuilder</a></code> for call chaining.</p>
+                      </div>
+                      <div class="slightly-smaller">
+                        <a href="https://github.com/spokestack/spokestack-ios/tree/master/Spokestack/Spokestack.swift#L145-L148">Show on GitHub</a>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:@M@Spokestack@objc(cs)SpokestackBuilder(im)setTranscriptEditor:"></a>
+                    <a name="//apple_ref/swift/Method/setTranscriptEditor(_:)" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@M@Spokestack@objc(cs)SpokestackBuilder(im)setTranscriptEditor:">setTranscriptEditor(_:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Sets a transcript editor used to alter ASR transcripts before they are classified by the NLU subsystem.</p>
+
+<p>If a transcript editor is set, registered listeners will still receive the <code>didRecognize</code> event from the speech pipeline with the unedited transcript, but the editor will automatically run on that transcript before the NLU module operates on it. Thus, the <code>utterance</code> inside the <code><a href="../Classes/NLUResult.html">NLUResult</a></code> returned by classification will reflect the edited version of the transcript.</p>
+
+<p>This can be used to alter ASR results that frequently contain a spelling for a homophone that&rsquo;s incorrect for the domain; for example, an app used to summon a genie whose ASR transcripts tend to contain &ldquo;Jen&rdquo; instead of &ldquo;djinn&rdquo;.</p>
+<div class="aside aside-note">
+    <p class="aside-title">Note</p>
+    Transcript editors are <em>not</em> run automatically on inputs to the <code>classify(string:)</code> convenience method.
+
+</div>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@objc</span>
+<span class="kd">public</span> <span class="kd">func</span> <span class="nf">setTranscriptEditor</span><span class="p">(</span><span class="n">_</span> <span class="nv">editor</span><span class="p">:</span> <span class="kt"><a href="../Protocols/TranscriptEditor.html">TranscriptEditor</a></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">SpokestackBuilder</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>editor</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>A transcript editor used to alter ASR results before NLU classification.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>An updated instance of <code><a href="../Classes/SpeechPipelineBuilder.html">SpeechPipelineBuilder</a></code> for call chaining.</p>
+                      </div>
+                      <div class="slightly-smaller">
+                        <a href="https://github.com/spokestack/spokestack-ios/tree/master/Spokestack/Spokestack.swift#L158-L161">Show on GitHub</a>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:@M@Spokestack@objc(cs)SpokestackBuilder(im)buildAndReturnError:"></a>
+                    <a name="//apple_ref/swift/Method/build()" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@M@Spokestack@objc(cs)SpokestackBuilder(im)buildAndReturnError:">build()</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Build this configuration into a <code><a href="../Classes/Spokestack.html">Spokestack</a></code> instance.</p>
+<div class="aside aside-throws">
+    <p class="aside-title">Throws</p>
+    An <code><a href="../Enums/NLUError.html">NLUError</a></code> if the NLU module was unable to build.
+
+</div>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@objc</span>
+<span class="kd">public</span> <span class="kd">func</span> <span class="nf">build</span><span class="p">()</span> <span class="k">throws</span> <span class="o">-&gt;</span> <span class="kt"><a href="../Classes/Spokestack.html">Spokestack</a></span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>An instance of <code><a href="../Classes/Spokestack.html">Spokestack</a></code>.</p>
+                      </div>
+                      <div class="slightly-smaller">
+                        <a href="https://github.com/spokestack/spokestack-ios/tree/master/Spokestack/Spokestack.swift#L166-L180">Show on GitHub</a>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+      </article>
+    </div>
+    <section class="footer">
+      <p>&copy; 2021 <a class="link" href="https://spokestack.io" target="_blank" rel="noopener" rel="external">Spokestack</a>. All rights reserved. (Last updated: 2021-08-25)</p>
+      <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="noopener" rel="external">jazzy ♪♫ v0.14.0</a>, a <a class="link" href="https://realm.io" target="_blank" rel="noopener" rel="external">Realm</a> project.</p>
+    </section>
+  </body>
+</div>
+</html>
