@@ -33,20 +33,21 @@ Activity Detection (VAD), wakeword activation, and Automatic Speech Recognition 
 
 ## Usage
 
+[Spokestack.io hosts extensive usage documentation](https://www.spokestack.io/docs/ios) including tutorials, integrations, and recipe how-tos.
+
 ### Configure Wakeword-activated Automated Speech Recognition
 
  ```
  import Spokestack
- // assume that self implements the SpeechEventListener and PipelineDelegate protocols
+ // assume that self implements the SpokestackDelegate protocol
  let pipeline = SpeechPipelineBuilder()
      .addListener(self)
-     .setDelegateDispatchQueue(DispatchQueue.main)
      .useProfile(.appleWakewordAppleSpeech)
-     .setProperty("tracing", ".DEBUG")
+     .setProperty("tracing", Trace.Level.PERF)
  pipeline.start()
  ```
 
-This example creates a speech recognition pipeline using a wakeword detector that is triggered by VAD, which in turn activates an ASR, returning the resulting utterance to the `SpeechEventListener` observer (`self` in this example).
+This example creates a speech recognition pipeline using a configurable wakeword detector that is triggered by VAD, which in turn activates an the native iOS ASR, returning the resulting utterance to the `SpokestackDelegate` observer (`self` in this example).
 
 See `SpeechPipeline` and `SpeechConfiguration` for further configuration documentation.
 
@@ -61,6 +62,10 @@ tts.speak(TextToSpeechInput("My god, it's full of stars!"))
 ### Natural Language Understanding
 
 ```
+let config = SpeechConfiguration()
+config.nluVocabularyPath = "vocab.txt"
+config.nluModelPath = "nlu.tflite"
+config.nluModelMetadataPath = "metadata.json"
 // assume that self implements the NLUDelegate protocol
 let nlu = try! NLUTensorflow(self, configuration: configuration)
 nlu.classify(utterance: "I can't turn that light in the room on for you, Dave", context: [:])
