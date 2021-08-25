@@ -33,7 +33,7 @@ Activity Detection (VAD), wakeword activation, and Automatic Speech Recognition 
 
 ## Usage
 
-[Spokestack.io hosts extensive additional usage documentation](https://www.spokestack.io/docs/ios) including tutorials, integrations, and recipe how-tos.
+[Spokestack.io hosts extensive usage documentation](https://www.spokestack.io/docs/ios) including tutorials, integrations, and recipe how-tos.
 
 ### Configure Wakeword-activated Automated Speech Recognition
 
